@@ -13,9 +13,11 @@ BaselineOfTheNoteTaker >> baseline: spec [
 		do: [ 
 			spec 
 				package: 'TheNoteTaker';
+				package: 'TheNoteTaker-UI'     with: [ spec requires: #(TheNoteTaker) ];
 				package: 'TheNoteTaker-Tests'	with: [ spec requires: #(TheNoteTaker) ].
 			spec 
 				group: 'Core' 						with: #('TheNoteTaker');
+				group: 'UI'                    with: #('TheNoteTaker-UI');
 				group: 'Tests' 						with: #('TheNoteTaker' 'TheNoteTaker-Tests');
-				group: 'default' 					with: #('Core' 'Tests') ]
+				group: 'default' 					with: #('Core' 'Tests' 'UI') ]
 ]
