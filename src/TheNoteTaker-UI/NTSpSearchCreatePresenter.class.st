@@ -35,7 +35,7 @@ NTSpSearchCreatePresenter >> initializePresenters [
 		yourself.
 	notesSearchButtonPresenter := self newButton
 		icon: (self iconNamed: #smallFind);
-		action: [ self searchList: notesSearchButtonPresenter text ];		
+		action: [ self searchList: notesSearchCreateTextPresenter text ];		
 		help: 'Search note';
 		yourself
 ]
