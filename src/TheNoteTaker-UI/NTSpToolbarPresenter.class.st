@@ -15,7 +15,7 @@ NTSpToolbarPresenter >> defaultLayout [
 
 	^ SpBoxLayout newLeftToRight 
 		add: notesSearchCreateTextPresenter;
-		add: notesSearchButtonPresenter;
+		add: notesSearchButtonPresenter expand: false;
 		yourself
 ]
 
@@ -27,6 +27,13 @@ NTSpToolbarPresenter >> initializePresenters [
 		yourself.
 	notesSearchButtonPresenter := self newButton
 		icon: (self iconNamed: #smallFind);
+		action: [ self searchList: notesSearchButtonPresenter text ];		
 		help: 'Search note';
 		yourself
+]
+
+{ #category : 'callbacks' }
+NTSpToolbarPresenter >> searchList: aString [
+
+	self shouldBeImplemented
 ]

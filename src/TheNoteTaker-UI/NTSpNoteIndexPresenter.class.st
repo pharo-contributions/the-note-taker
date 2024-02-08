@@ -21,18 +21,20 @@ NTSpNoteIndexPresenter >> defaultLayout [
 NTSpNoteIndexPresenter >> initializePresenters [
 
 	notesIndexPresenter := self newTable
-		addColumn: (SpCompositeTableColumn 
+		addColumn: (SpStringTableColumn new
 			title: 'Title';
+			sortFunction: #yourself ascending;			
 			evaluated: #title;
 			yourself);
 		addColumn: (SpStringTableColumn new
 			title: 'Tags';
+			sortFunction: #yourself ascending;			
 			evaluated: #tags;
 			yourself);
 		addColumn: (SpStringTableColumn new
 		   title: 'Date';
+			sortFunction: #yourself ascending;		
 			evaluated: #creationDate;
-			beNotExpandable;			
 			yourself);
 		yourself
 ]
