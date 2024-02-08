@@ -1,6 +1,6 @@
 Class {
-	#name : 'SpNoteTakerApp',
-	#superclass : 'SpApplication',
+	#name : 'NTSpNoteContentPresenter',
+	#superclass : 'SpPresenter',
 	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
 	#tag : 'Core'
