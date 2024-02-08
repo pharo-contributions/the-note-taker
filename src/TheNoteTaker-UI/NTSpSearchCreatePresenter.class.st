@@ -1,5 +1,12 @@
+"
+A toolbar with a text entry which has two roles when text is typed 
+
+- A search for notes begins always, if any match then matching notes are returned.
+- If none matches, then a new note is created after hitting **enter**
+
+"
 Class {
-	#name : 'NTSpToolbarPresenter',
+	#name : 'NTSpSearchCreatePresenter',
 	#superclass : 'SpPresenter',
 	#instVars : [
 		'notesSearchCreateTextPresenter',
@@ -11,7 +18,7 @@ Class {
 }
 
 { #category : 'layout' }
-NTSpToolbarPresenter >> defaultLayout [ 
+NTSpSearchCreatePresenter >> defaultLayout [ 
 
 	^ SpBoxLayout newLeftToRight 
 		add: notesSearchCreateTextPresenter;
@@ -20,10 +27,11 @@ NTSpToolbarPresenter >> defaultLayout [
 ]
 
 { #category : 'initialization' }
-NTSpToolbarPresenter >> initializePresenters [ 
+NTSpSearchCreatePresenter >> initializePresenters [ 
 
 	notesSearchCreateTextPresenter := self newTextInput
-		help: 'Type note to search or create';
+		help: 'Create a note by just typing a name';
+		placeholder: 'Type note to search or create';
 		yourself.
 	notesSearchButtonPresenter := self newButton
 		icon: (self iconNamed: #smallFind);
@@ -33,7 +41,7 @@ NTSpToolbarPresenter >> initializePresenters [
 ]
 
 { #category : 'callbacks' }
-NTSpToolbarPresenter >> searchList: aString [
+NTSpSearchCreatePresenter >> searchList: aString [
 
 	self shouldBeImplemented
 ]

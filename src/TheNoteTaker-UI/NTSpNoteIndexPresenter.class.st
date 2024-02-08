@@ -1,3 +1,7 @@
+"
+Presents a table with basic metadata information about saved notes in the system.
+
+"
 Class {
 	#name : 'NTSpNoteIndexPresenter',
 	#superclass : 'SpPresenter',

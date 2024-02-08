@@ -1,3 +1,7 @@
+"
+Presents the note content when a note is selected in the `NtSpNoteIndexPresenter`.
+
+"
 Class {
 	#name : 'NTSpNoteContentPresenter',
 	#superclass : 'SpPresenter',

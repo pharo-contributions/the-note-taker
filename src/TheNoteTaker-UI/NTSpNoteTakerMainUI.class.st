@@ -1,3 +1,8 @@
+"
+UI class for the note taker application.
+This coordinates main events and layout of the main window.
+
+"
 Class {
 	#name : 'NTSpNoteTakerMainUI',
 	#superclass : 'SpPresenter',
@@ -80,7 +85,7 @@ NTSpNoteTakerMainUI >> initializeNotesIndex [
 NTSpNoteTakerMainUI >> initializeNotesToolbar [
 	"This is a search and creator toolbar"
 	
-	notesToolbarPresenter := self instantiate: NTSpToolbarPresenter.
+	notesToolbarPresenter := self instantiate: NTSpSearchCreatePresenter.
 ]
 
 { #category : 'initialization' }
