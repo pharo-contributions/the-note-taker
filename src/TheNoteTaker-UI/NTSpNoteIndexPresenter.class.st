@@ -51,7 +51,8 @@ NTSpNoteIndexPresenter >> defaultLayout [
 { #category : 'callbacks' }
 NTSpNoteIndexPresenter >> handleNoteChange: aSelectedNote [
 
-	self shouldBeImplemented
+	aSelectedNote
+		ifNotNil: [ 	self shouldBeImplemented ]
 ]
 
 { #category : 'initialization' }
@@ -76,4 +77,10 @@ NTSpNoteIndexPresenter >> initializePresenters [
 		whenSelectionChangedDo: [ : selection | self handleNoteChange: selection selectedItem ];
 		contextMenu: [ (self rootCommandsGroup / 'NTSelContextualMenu') beRoot asMenuPresenter ];	
 		yourself
+]
+
+{ #category : 'accessing' }
+NTSpNoteIndexPresenter >> items: aCollection [ 
+
+	notesIndexPresenter items: aCollection
 ]

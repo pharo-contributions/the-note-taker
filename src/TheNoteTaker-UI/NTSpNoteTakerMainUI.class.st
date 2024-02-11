@@ -85,7 +85,7 @@ NTSpNoteTakerMainUI >> initializeNotesIndex [
 NTSpNoteTakerMainUI >> initializeNotesToolbar [
 	"This is a search and creator toolbar"
 	
-	notesToolbarPresenter := self instantiate: NTSpSearchCreatePresenter.
+	notesToolbarPresenter := self instantiate: NTSpSearchCreatePresenter on: self model.
 ]
 
 { #category : 'initialization' }
@@ -114,6 +114,19 @@ NTSpNoteTakerMainUI >> initializeWindow: aSpWindowPresenter [
 	self setInitialExtentTo: aSpWindowPresenter
 ]
 
+{ #category : 'initialization' }
+NTSpNoteTakerMainUI >> model [
+	"Answer the receiver's <NTNoteFacade>"
+
+	^ self application noteTakerFacade.
+]
+
+{ #category : 'accessing' }
+NTSpNoteTakerMainUI >> notesIndexPresenter [
+
+	^ notesIndexPresenter
+]
+
 { #category : 'showing' }
 NTSpNoteTakerMainUI >> open [ 
 
@@ -135,6 +148,18 @@ NTSpNoteTakerMainUI >> selectedNote [
 	^ nil.
 ]
 
+{ #category : 'accessing' }
+NTSpNoteTakerMainUI >> selectionCount [
+
+	^ selectionCount
+]
+
+{ #category : 'accessing' }
+NTSpNoteTakerMainUI >> selectionCount: anObject [
+
+	selectionCount := anObject
+]
+
 { #category : 'initialization' }
 NTSpNoteTakerMainUI >> setInitialExtentTo: aSpWindowPresenter [
 	
@@ -152,6 +177,12 @@ NTSpNoteTakerMainUI >> setTitleTo: aSpWindowPresenter [
 NTSpNoteTakerMainUI >> setWindowIconTo: aSpWindowPresenter [
 
 	aSpWindowPresenter	windowIcon: (self iconNamed: #page).
+]
+
+{ #category : 'accessing' }
+NTSpNoteTakerMainUI >> statusBar [
+
+	^ statusBar
 ]
 
 { #category : 'accessing - status bar' }

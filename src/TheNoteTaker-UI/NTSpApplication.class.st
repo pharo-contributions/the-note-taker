@@ -11,6 +11,9 @@ This is the main Notes Taker Spec2 application class which:
 Class {
 	#name : 'NTSpApplication',
 	#superclass : 'SpApplication',
+	#instVars : [
+		'noteTakerFacade'
+	],
 	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
 	#tag : 'Core'
@@ -29,11 +32,24 @@ NTSpApplication class >> menuNoteTakersOn: aBuilder [
 		order: 630
 ]
 
+{ #category : 'accessing' }
+NTSpApplication >> initialize [
+
+	super initialize.
+	noteTakerFacade := NoteTakerFacade new
+]
+
 { #category : 'accessig' }
 NTSpApplication >> noteInformation: aNtNodeModel [
 
 	self shouldBeImplemented.
 	^ aNtNodeModel 
+]
+
+{ #category : 'accessing' }
+NTSpApplication >> noteTakerFacade [
+
+	^ noteTakerFacade
 ]
 
 { #category : 'running' }
