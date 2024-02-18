@@ -32,11 +32,18 @@ NTSpApplication class >> menuNoteTakersOn: aBuilder [
 		order: 630
 ]
 
-{ #category : 'accessing' }
+{ #category : 'initialization' }
 NTSpApplication >> initialize [
 
 	super initialize.
 	noteTakerFacade := NoteTakerFacade new
+]
+
+{ #category : 'testing' }
+NTSpApplication >> isValidNote: aString [ 
+	"Answer <true> if aString is a valid note title"
+	
+	^ self noteTakerFacade isValidNote: aString
 ]
 
 { #category : 'accessig' }

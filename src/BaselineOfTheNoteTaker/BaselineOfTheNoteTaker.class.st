@@ -11,6 +11,8 @@ BaselineOfTheNoteTaker >> baseline: spec [
 	spec
 		for: #(common)
 		do: [ 
+			self ical: spec.
+
 			spec 
 				package: 'TheNoteTaker';
 				package: 'TheNoteTaker-UI'     with: [ spec requires: #(TheNoteTaker) ];
@@ -20,4 +22,12 @@ BaselineOfTheNoteTaker >> baseline: spec [
 				group: 'UI'                    with: #('TheNoteTaker-UI');
 				group: 'Tests' 						with: #('TheNoteTaker' 'TheNoteTaker-Tests');
 				group: 'default' 					with: #('Core' 'Tests' 'UI') ]
+]
+
+{ #category : 'baselines' }
+BaselineOfTheNoteTaker >> ical: spec [
+
+	spec
+		baseline: 'ICal'
+		with: [ spec repository: 'github://Ducasse/Infhub/src' ]
 ]

@@ -10,15 +10,33 @@ Class {
 }
 
 { #category : 'adding' }
-NoteTakerFacade >> addNoteNamed: aNoteName [
+NoteTakerFacade >> addNoteNamed: aString [
+	"Add a new note with title aString to the receiver's notes. Answer the receiver"
+	
+	self notes 
+		at: aString 
+		put: (self newNoteNamed: aString)
+]
 
-	self notes add: (self newNoteNamed: aNoteName)
+{ #category : 'testing' }
+NoteTakerFacade >> hasNoteNamed: aString [
+
+	(aString notNil and: [ aString notEmpty ])
+		ifFalse: [ ^ (self notes includesKey: aString trimBoth) not ].
+	^ true
+]
+
+{ #category : 'testing' }
+NoteTakerFacade >> hasNotes [
+	"Answer <true> if the receiver includes any note"
+	
+	^ self notes isNotEmpty
 ]
 
 { #category : 'initialization' }
 NoteTakerFacade >> initialize [
 
-	self notes: OrderedCollection new.
+	self notes: SmallDictionary new.
 ]
 
 { #category : 'adding' }
@@ -27,8 +45,16 @@ NoteTakerFacade >> newNoteNamed: aNoteName [
 	^ NTNoteObject named: aNoteName
 ]
 
-{ #category : 'adding' }
+{ #category : 'accessing' }
+NoteTakerFacade >> noteNamed: aString [
+	"Answer the receiver's <NTNoteObject>"
+	
+	^ self notes at: aString
+]
+
+{ #category : 'accessing' }
 NoteTakerFacade >> notes [
+	"Answer the receiver's <Collection> of <NTNoteObject>"
 
 	^ notes
 ]
@@ -36,4 +62,18 @@ NoteTakerFacade >> notes [
 { #category : 'accessing' }
 NoteTakerFacade >> notes: aCollection [ 
 	notes := aCollection
+]
+
+{ #category : 'accessing' }
+NoteTakerFacade >> notesCount [
+	"Answer an <Integer> representing how many notes the receiver includes"
+	
+	^ self notes size
+]
+
+{ #category : 'removing' }
+NoteTakerFacade >> removeNoteNamed: aString [
+	"Remove the note with title aString in the receiver's notes. Answer the receiver"
+	
+	self notes removeKey: aString
 ]
