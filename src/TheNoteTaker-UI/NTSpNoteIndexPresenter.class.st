@@ -48,6 +48,15 @@ NTSpNoteIndexPresenter >> defaultLayout [
 		yourself.
 ]
 
+{ #category : 'private' }
+NTSpNoteIndexPresenter >> displayNoteTags: selectedNote [
+	"Answer a <String> to be displayed"
+	
+	^ selectedNote tags 
+		ifEmpty: [ '' ] 
+		ifNotEmpty: [ : tags | tags join: ',' ]
+]
+
 { #category : 'callbacks' }
 NTSpNoteIndexPresenter >> handleNoteChange: aSelectedNote [
 
@@ -66,13 +75,14 @@ NTSpNoteIndexPresenter >> initializePresenters [
 			yourself);
 		addColumn: (SpStringTableColumn new
 			title: 'Tags';
-			sortFunction: #yourself ascending;			
-			evaluated: #tags;
+			sortFunction: #yourself ascending;
+			evaluated: [ : selectedNote | self displayNoteTags: selectedNote ];
 			yourself);
 		addColumn: (SpStringTableColumn new
 		   title: 'Date';
+			width: 200 * self currentWorld displayScaleFactor;
 			sortFunction: #yourself ascending;		
-			evaluated: #creationDate;
+			evaluated: [ : selectedNote | ZnUtils httpDate: selectedNote creationDate ] ;
 			yourself);
 		whenSelectionChangedDo: [ : selection | self handleNoteChange: selection selectedItem ];
 		contextMenu: [ (self rootCommandsGroup / 'NTSelContextualMenu') beRoot asMenuPresenter ];	

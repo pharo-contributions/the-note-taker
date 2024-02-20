@@ -61,7 +61,7 @@ NTSpApplication >> noteTakerFacade [
 
 { #category : 'accessing' }
 NTSpApplication >> notes [
-	"Answer the application's <Collection> of <NTObject>"
+	"Answer the application's <Collection> of <NTNoteObject>"
 
 	^ self noteTakerFacade notes
 ]

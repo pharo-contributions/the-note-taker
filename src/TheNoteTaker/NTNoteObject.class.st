@@ -8,7 +8,8 @@ Class {
 		'title',
 		'content',
 		'creationDate',
-		'modificationDate'
+		'modificationDate',
+		'tags'
 	],
 	#category : 'TheNoteTaker-Core',
 	#package : 'TheNoteTaker',
@@ -54,6 +55,7 @@ NTNoteObject >> initialize [
 	super initialize.
 	content := String empty.
 	creationDate := DateAndTime now.
+	tags := OrderedCollection new.
 ]
 
 { #category : 'testing' }
@@ -82,6 +84,18 @@ NTNoteObject >> printOn: aStream [
 		<< '[';
 		<< self title;
 		<< ']'
+]
+
+{ #category : 'accessing' }
+NTNoteObject >> tags [
+
+	^ tags
+]
+
+{ #category : 'accessing' }
+NTNoteObject >> tags: anObject [
+
+	tags := anObject
 ]
 
 { #category : 'accessing' }

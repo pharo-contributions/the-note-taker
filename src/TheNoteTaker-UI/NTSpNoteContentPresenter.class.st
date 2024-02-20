@@ -6,23 +6,42 @@ Class {
 	#name : 'NTSpNoteContentPresenter',
 	#superclass : 'SpPresenter',
 	#instVars : [
-		'notesContentPresenter'
+		'contentPresenter'
 	],
 	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
 	#tag : 'Core'
 }
 
+{ #category : 'accessing' }
+NTSpNoteContentPresenter >> contentPresenter [
+
+	^ contentPresenter
+]
+
+{ #category : 'accessing' }
+NTSpNoteContentPresenter >> contentPresenter: anObject [
+
+	contentPresenter := anObject
+]
+
 { #category : 'layout' }
 NTSpNoteContentPresenter >> defaultLayout [ 
 	
 	^ SpBoxLayout newTopToBottom 
-		add: notesContentPresenter;
+		add: contentPresenter;
 		yourself.
+]
+
+{ #category : 'initialization' }
+NTSpNoteContentPresenter >> document: aString [
+	"Set the receiver's document content to be aString"
+
+	self contentPresenter document: aString
 ]
 
 { #category : 'initialization' }
 NTSpNoteContentPresenter >> initializePresenters [
 
-	notesContentPresenter := self newText.
+	contentPresenter := self instantiate: MicrodownPresenter.
 ]
