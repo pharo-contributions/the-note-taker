@@ -31,8 +31,7 @@ NTSpSearchCreatePresenter >> defaultLayout [
 NTSpSearchCreatePresenter >> filteredNotesFor: aString [ 
 	"Answer a <Collection> of <NTNoteObject> whose names match aString"
 	
-	^ self notes select: [ : note |
-		note noteName beginsWith: aString ]
+	^ self notes select: [ : note | note title beginsWith: aString ]
 ]
 
 { #category : 'initialization' }
@@ -60,7 +59,7 @@ NTSpSearchCreatePresenter >> model [
 NTSpSearchCreatePresenter >> notes [
 	"Answer a <Collection> of <NTNoteObject> representing all the application's notes"
 
-	^ self model notes
+	^ self model noteObjects
 ]
 
 { #category : 'callbacks' }

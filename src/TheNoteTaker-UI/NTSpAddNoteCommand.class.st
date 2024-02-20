@@ -42,7 +42,7 @@ NTSpAddNoteCommand >> execute [
 
 	(self isValidNote: answer) ifFalse: [ ^ self ].
 	self addNoteNamed: answer trimBoth.
-	self notesIndex refresh
+	self context items: self facade noteObjects.
 ]
 
 { #category : 'testing' }

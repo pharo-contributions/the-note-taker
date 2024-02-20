@@ -18,6 +18,17 @@ Class {
 	#tag : 'Core'
 }
 
+{ #category : 'initialization' }
+NTSpNoteTakerMainUI >> connectPresenters [ 
+
+	notesIndexPresenter
+		transmitTo: notesContentPresenter
+		transform: [ : note | 
+			note
+				ifNotNil: [ note content ]
+				ifNil: [ String empty ] ]
+]
+
 { #category : 'accessing - status bar' }
 NTSpNoteTakerMainUI >> decreaseNotesCount [
 

@@ -63,6 +63,13 @@ NoteTakerFacade >> noteNamed: aString [
 ]
 
 { #category : 'accessing' }
+NoteTakerFacade >> noteObjects [
+	"Answer the receiver's <Collection> of <NTNoteObject>"
+
+	^ notes values
+]
+
+{ #category : 'accessing' }
 NoteTakerFacade >> notes [
 	"Answer the receiver's <Collection> of <NTNoteObject>"
 
