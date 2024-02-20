@@ -18,7 +18,7 @@ NTSpAbstractCommand >> applicationClass [
 	^ self application class
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'accessing' }
 NTSpAbstractCommand >> facade [
 
 	^ self application noteTakerFacade.
@@ -33,7 +33,7 @@ NTSpAbstractCommand >> hasSelectedNote [
 { #category : 'accessing' }
 NTSpAbstractCommand >> notesIndex [
 
-	^ self context notesIndex
+	^ self context items
 ]
 
 { #category : 'accessing' }

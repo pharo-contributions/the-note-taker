@@ -59,6 +59,13 @@ NTSpApplication >> noteTakerFacade [
 	^ noteTakerFacade
 ]
 
+{ #category : 'accessing' }
+NTSpApplication >> notes [
+	"Answer the application's <Collection> of <NTObject>"
+
+	^ self noteTakerFacade notes
+]
+
 { #category : 'running' }
 NTSpApplication >> start [
 	" Private - See superimplementor's comment "

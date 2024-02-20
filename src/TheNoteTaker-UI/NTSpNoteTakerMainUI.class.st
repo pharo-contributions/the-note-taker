@@ -78,7 +78,7 @@ NTSpNoteTakerMainUI >> initializeNotesContent [
 { #category : 'initialization' }
 NTSpNoteTakerMainUI >> initializeNotesIndex [
 
-	notesIndexPresenter := self instantiate: NTSpNoteIndexPresenter.
+	notesIndexPresenter := self instantiate: NTSpNoteIndexPresenter on: self application notes.
 ]
 
 { #category : 'initialization' }

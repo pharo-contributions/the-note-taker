@@ -20,10 +20,9 @@ NoteTakerFacade >> addNoteNamed: aString [
 
 { #category : 'testing' }
 NoteTakerFacade >> hasNoteNamed: aString [
+	"Answer <true> if the receiver includes a note with title aString"
 
-	(aString notNil and: [ aString notEmpty ])
-		ifFalse: [ ^ (self notes includesKey: aString trimBoth) not ].
-	^ true
+	^ self notes includesKey: aString
 ]
 
 { #category : 'testing' }
@@ -36,7 +35,18 @@ NoteTakerFacade >> hasNotes [
 { #category : 'initialization' }
 NoteTakerFacade >> initialize [
 
+	super initialize.
 	self notes: SmallDictionary new.
+]
+
+{ #category : 'testing' }
+NoteTakerFacade >> isValidNote: aString [ 
+	"Answer <true> if aString is a valid note title, i.e. 
+		Non-empty, and not already present"
+
+	(aString notNil and: [ aString notEmpty ])
+		ifTrue: [ ^ (self hasNoteNamed: aString trimBoth) not ].
+	^ false
 ]
 
 { #category : 'adding' }

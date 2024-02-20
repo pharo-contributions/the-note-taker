@@ -80,6 +80,13 @@ NTSpNoteIndexPresenter >> initializePresenters [
 ]
 
 { #category : 'accessing' }
+NTSpNoteIndexPresenter >> items [
+	"Answer a <Collection> of notes"
+
+	^ notesIndexPresenter items
+]
+
+{ #category : 'accessing' }
 NTSpNoteIndexPresenter >> items: aCollection [ 
 
 	notesIndexPresenter items: aCollection
