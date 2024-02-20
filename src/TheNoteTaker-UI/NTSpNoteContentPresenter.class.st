@@ -25,19 +25,25 @@ NTSpNoteContentPresenter >> contentPresenter: anObject [
 	contentPresenter := anObject
 ]
 
+{ #category : 'initialization' }
+NTSpNoteContentPresenter >> contents: aString [
+	"Set the receiver's document content to be aString"
+
+	self contentPresenter documentFromString: aString
+]
+
+{ #category : 'transmission' }
+NTSpNoteContentPresenter >> defaultInputPort [ 
+
+	^ SpModelPort newPresenter: self
+]
+
 { #category : 'layout' }
 NTSpNoteContentPresenter >> defaultLayout [ 
 	
 	^ SpBoxLayout newTopToBottom 
 		add: contentPresenter;
 		yourself.
-]
-
-{ #category : 'initialization' }
-NTSpNoteContentPresenter >> document: aString [
-	"Set the receiver's document content to be aString"
-
-	self contentPresenter document: aString
 ]
 
 { #category : 'initialization' }

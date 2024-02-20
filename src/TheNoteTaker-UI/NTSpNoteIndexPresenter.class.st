@@ -48,6 +48,12 @@ NTSpNoteIndexPresenter >> defaultLayout [
 		yourself.
 ]
 
+{ #category : 'layout' }
+NTSpNoteIndexPresenter >> defaultOutputPort [ 
+	
+	^ notesIndexPresenter defaultOutputPort
+]
+
 { #category : 'private' }
 NTSpNoteIndexPresenter >> displayNoteTags: selectedNote [
 	"Answer a <String> to be displayed"
@@ -60,8 +66,8 @@ NTSpNoteIndexPresenter >> displayNoteTags: selectedNote [
 { #category : 'callbacks' }
 NTSpNoteIndexPresenter >> handleNoteChange: aSelectedNote [
 
-	aSelectedNote
-		ifNotNil: [ 	self shouldBeImplemented ]
+"	aSelectedNote
+		ifNotNil: [ 	self shouldBeImplemented ]" 
 ]
 
 { #category : 'initialization' }
