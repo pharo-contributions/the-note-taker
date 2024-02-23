@@ -1,5 +1,5 @@
 Class {
-	#name : 'NoteTakerFacade',
+	#name : 'NTSingleton',
 	#superclass : 'Object',
 	#instVars : [
 		'notes'
@@ -10,7 +10,7 @@ Class {
 }
 
 { #category : 'adding' }
-NoteTakerFacade >> addNoteNamed: aString [
+NTSingleton >> addNoteNamed: aString [
 	"Add a new note with title aString to the receiver's notes. Answer the receiver"
 	
 	self notes 
@@ -19,28 +19,28 @@ NoteTakerFacade >> addNoteNamed: aString [
 ]
 
 { #category : 'testing' }
-NoteTakerFacade >> hasNoteNamed: aString [
+NTSingleton >> hasNoteNamed: aString [
 	"Answer <true> if the receiver includes a note with title aString"
 
 	^ self notes includesKey: aString
 ]
 
 { #category : 'testing' }
-NoteTakerFacade >> hasNotes [
+NTSingleton >> hasNotes [
 	"Answer <true> if the receiver includes any note"
 	
 	^ self notes isNotEmpty
 ]
 
 { #category : 'initialization' }
-NoteTakerFacade >> initialize [
+NTSingleton >> initialize [
 
 	super initialize.
 	self notes: SmallDictionary new.
 ]
 
 { #category : 'testing' }
-NoteTakerFacade >> isValidNote: aString [ 
+NTSingleton >> isValidNote: aString [ 
 	"Answer <true> if aString is a valid note title, i.e. 
 		Non-empty, and not already present"
 
@@ -50,46 +50,46 @@ NoteTakerFacade >> isValidNote: aString [
 ]
 
 { #category : 'adding' }
-NoteTakerFacade >> newNoteNamed: aNoteName [
+NTSingleton >> newNoteNamed: aNoteName [
 
 	^ NTNoteObject named: aNoteName
 ]
 
 { #category : 'accessing' }
-NoteTakerFacade >> noteNamed: aString [
+NTSingleton >> noteNamed: aString [
 	"Answer the receiver's <NTNoteObject>"
 	
 	^ self notes at: aString
 ]
 
 { #category : 'accessing' }
-NoteTakerFacade >> noteObjects [
+NTSingleton >> noteObjects [
 	"Answer the receiver's <Collection> of <NTNoteObject>"
 
 	^ notes values
 ]
 
 { #category : 'accessing' }
-NoteTakerFacade >> notes [
+NTSingleton >> notes [
 	"Answer the receiver's <Collection> of <NTNoteObject>"
 
 	^ notes
 ]
 
 { #category : 'accessing' }
-NoteTakerFacade >> notes: aCollection [ 
+NTSingleton >> notes: aCollection [ 
 	notes := aCollection
 ]
 
 { #category : 'accessing' }
-NoteTakerFacade >> notesCount [
+NTSingleton >> notesCount [
 	"Answer an <Integer> representing how many notes the receiver includes"
 	
 	^ self notes size
 ]
 
 { #category : 'removing' }
-NoteTakerFacade >> removeNoteNamed: aString [
+NTSingleton >> removeNoteNamed: aString [
 	"Remove the note with title aString in the receiver's notes. Answer the receiver"
 	
 	self notes removeKey: aString
