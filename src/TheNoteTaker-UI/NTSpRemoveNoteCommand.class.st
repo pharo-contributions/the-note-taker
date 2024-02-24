@@ -34,6 +34,6 @@ NTSpRemoveNoteCommand >> canBeExecuted [
 NTSpRemoveNoteCommand >> execute [
 	"Request a title to create a new note"
 
-	self application removeNoteNamed: self selectedNoteTitle.
-	self notesIndex refresh
+	self facade removeNote: self selectedNote.
+	self context refresh.
 ]

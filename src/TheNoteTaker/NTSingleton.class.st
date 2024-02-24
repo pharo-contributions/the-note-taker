@@ -139,10 +139,17 @@ NTSingleton >> notesNamed: aString [
 ]
 
 { #category : 'removing' }
+NTSingleton >> removeNote: aNTNoteObject [
+	"Remove the note aNTNoteObject from the receiver's notes. Answer the receiver"
+	
+	self notes remove: aNTNoteObject
+]
+
+{ #category : 'removing' }
 NTSingleton >> removeNoteNamed: aString [
 	"Remove the note with title aString in the receiver's notes. Answer the receiver"
 	
-	self notes remove: (self noteNamed: aString)
+	self removeNote: (self noteNamed: aString)
 ]
 
 { #category : 'removing' }

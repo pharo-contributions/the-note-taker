@@ -36,7 +36,7 @@ NTSpApplication class >> menuNoteTakersOn: aBuilder [
 NTSpApplication >> initialize [
 
 	super initialize.
-	noteTakerFacade := NTSingleton new
+	noteTakerFacade := NTSingleton uniqueInstance
 ]
 
 { #category : 'testing' }

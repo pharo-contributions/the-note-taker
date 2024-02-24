@@ -36,6 +36,12 @@ NTSpNoteIndexPresenter class >> buildNoteTakerOperationsGroupWith: presenterInst
 			forSpecWithIconNamed: #glamorousAdd
 			shortcutKey: 'A' asShortcut) 
 				context: presenterInstance);
+				
+			register: ((NTSpRemoveNoteCommand
+			forSpecWithIconNamed: #glamorousDelete
+			shortcutKey: 'D' asShortcut) 
+				context: presenterInstance);
+								
 		beDisplayedAsGroup;
 		yourself
 ]
@@ -68,6 +74,13 @@ NTSpNoteIndexPresenter >> handleNoteChange: aSelectedNote [
 
 "	aSelectedNote
 		ifNotNil: [ 	self shouldBeImplemented ]" 
+]
+
+{ #category : 'testing' }
+NTSpNoteIndexPresenter >> hasSelectedNote [
+	"Answer <true> if the receiver has a selected note"
+
+	^ notesIndexPresenter listSize ~= 0 and: [ self selectedNote isNote ]
 ]
 
 { #category : 'initialization' }
@@ -106,4 +119,17 @@ NTSpNoteIndexPresenter >> items [
 NTSpNoteIndexPresenter >> items: aCollection [ 
 
 	notesIndexPresenter items: aCollection
+]
+
+{ #category : 'accessing' }
+NTSpNoteIndexPresenter >> refresh [
+	"Update the receievr's notes presenter"
+
+	notesIndexPresenter refresh.
+]
+
+{ #category : 'accessing' }
+NTSpNoteIndexPresenter >> selectedNote [
+
+	^ notesIndexPresenter selectedItem
 ]

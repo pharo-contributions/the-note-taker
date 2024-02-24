@@ -25,7 +25,7 @@ NTSpNoteTakerMainUI >> connectPresenters [
 		transmitTo: notesContentPresenter
 		transform: [ : note | 
 			note
-				ifNotNil: [ note content ]
+				ifNotNil: [ note contents ]
 				ifNil: [ String empty ] ]
 ]
 

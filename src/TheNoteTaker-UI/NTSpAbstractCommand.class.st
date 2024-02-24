@@ -26,8 +26,9 @@ NTSpAbstractCommand >> facade [
 
 { #category : 'testing' }
 NTSpAbstractCommand >> hasSelectedNote [
+	"Answer <true> if the items index presenter has focus on a note"
 
-	^ self selectedNote isNote
+	^ self context hasSelectedNote
 ]
 
 { #category : 'accessing' }
@@ -40,7 +41,8 @@ NTSpAbstractCommand >> notesIndex [
 NTSpAbstractCommand >> selectedNote [
 	"Answer the currently selected <NTObject>"
 	
-	^ self notesIndex selectedItem
+	^ self context selectedNote
+
 ]
 
 { #category : 'accessing' }
