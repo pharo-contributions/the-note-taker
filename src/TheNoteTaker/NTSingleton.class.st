@@ -1,28 +1,71 @@
+"
+Represents a singleton pattern implementation for managing a centralized instance of `NTNoteObject` notes container.
+
+The singleton ensures that there is only one instance of the container throughout the application's lifecycle, providing global access to the collection of notes. It is useful for scenarios where a single instance of a class needs to be shared and accessed globally across multiple parts of the application.
+
+## Usage
+
+To access the unique instance of the Notes container, use the class method 'uniqueInstance'. For example:
+
+```
+| notesContainer |
+notesContainer := NTSingleton uniqueInstance.
+```
+
+### Responsibilities
+
+- Providing a centralized and globally accessible instance of Notes.
+- Ensuring that only one instance of the notes container exists within the application.
+
+Note: It is recommended to use the `uniqueInstance` method to access the singleton rather than instantiating it directly.
+
+"
 Class {
 	#name : 'NTSingleton',
 	#superclass : 'Object',
 	#instVars : [
 		'notes'
 	],
+	#classVars : [
+		'UniqueInstance'
+	],
 	#category : 'TheNoteTaker-Core',
 	#package : 'TheNoteTaker',
 	#tag : 'Core'
 }
 
+{ #category : 'instance creation' }
+NTSingleton class >> new [
+
+	self error: 'Use #uniqueInstance'
+]
+
+{ #category : 'class initialization' }
+NTSingleton class >> reset [
+	<script>
+	
+	UniqueInstance := nil
+]
+
+{ #category : 'instance creation' }
+NTSingleton class >> uniqueInstance [
+
+	^ UniqueInstance
+		ifNil: [ UniqueInstance := self basicNew initialize ]
+]
+
 { #category : 'adding' }
 NTSingleton >> addNoteNamed: aString [
 	"Add a new note with title aString to the receiver's notes. Answer the receiver"
 	
-	self notes 
-		at: aString 
-		put: (self newNoteNamed: aString)
+	^ self notes add: (self newNoteNamed: aString)
 ]
 
 { #category : 'testing' }
 NTSingleton >> hasNoteNamed: aString [
 	"Answer <true> if the receiver includes a note with title aString"
 
-	^ self notes includesKey: aString
+	^ self notes anySatisfy: [ : note | note title = aString ]
 ]
 
 { #category : 'testing' }
@@ -36,7 +79,7 @@ NTSingleton >> hasNotes [
 NTSingleton >> initialize [
 
 	super initialize.
-	self notes: SmallDictionary new.
+	self notes: OrderedCollection new.
 ]
 
 { #category : 'testing' }
@@ -57,16 +100,16 @@ NTSingleton >> newNoteNamed: aNoteName [
 
 { #category : 'accessing' }
 NTSingleton >> noteNamed: aString [
-	"Answer the receiver's <NTNoteObject>"
+	"Answer the first <NTNoteObject> matching aString in its name"
 	
-	^ self notes at: aString
+	^ self notes detect: [ : n | n title = aString ]
 ]
 
 { #category : 'accessing' }
 NTSingleton >> noteObjects [
 	"Answer the receiver's <Collection> of <NTNoteObject>"
 
-	^ notes values
+	^ notes
 ]
 
 { #category : 'accessing' }
@@ -88,9 +131,24 @@ NTSingleton >> notesCount [
 	^ self notes size
 ]
 
+{ #category : 'accessing' }
+NTSingleton >> notesNamed: aString [
+	"Answer a <Collection> with <NTNoteObject> objects named aString"
+	
+	^ self notes select: [ : n | n title = aString ]
+]
+
 { #category : 'removing' }
 NTSingleton >> removeNoteNamed: aString [
 	"Remove the note with title aString in the receiver's notes. Answer the receiver"
 	
-	self notes removeKey: aString
+	self notes remove: (self noteNamed: aString)
+]
+
+{ #category : 'removing' }
+NTSingleton >> removeNotesSuchThat: aBlock [
+
+	self notes copy do: [:each | 
+		(aBlock value: each) 
+			ifTrue: [ self removeNoteNamed: each title ] ]
 ]

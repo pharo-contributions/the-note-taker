@@ -6,10 +6,10 @@ Class {
 	#superclass : 'Object',
 	#instVars : [
 		'title',
-		'content',
 		'creationDate',
 		'modificationDate',
-		'tags'
+		'tags',
+		'contents'
 	],
 	#category : 'TheNoteTaker-Core',
 	#package : 'TheNoteTaker',
@@ -25,16 +25,23 @@ NTNoteObject class >> named: aString [
 		yourself
 ]
 
-{ #category : 'accessing' }
-NTNoteObject >> content [
+{ #category : 'accessing - tags' }
+NTNoteObject >> addTag: aNTTag [ 
 
-	^ content
+	self tags add: aNTTag.
 ]
 
 { #category : 'accessing' }
-NTNoteObject >> content: anObject [
+NTNoteObject >> contents [
 
-	content := anObject
+	^ contents
+]
+
+{ #category : 'accessing' }
+NTNoteObject >> contents: anObject [
+
+	contents := anObject.
+	self modificationDate: DateAndTime now.
 ]
 
 { #category : 'accessing' }
@@ -49,13 +56,20 @@ NTNoteObject >> creationDate: anObject [
 	creationDate := anObject
 ]
 
+{ #category : 'testing' }
+NTNoteObject >> hasTitle [
+
+	^ self title notNil.
+]
+
 { #category : 'initialization' }
 NTNoteObject >> initialize [
 
 	super initialize.
-	content := String empty.
+	contents := String empty.
 	creationDate := DateAndTime now.
-	tags := OrderedCollection new.
+	modificationDate := creationDate.
+	tags := Set new.
 ]
 
 { #category : 'testing' }
@@ -82,17 +96,28 @@ NTNoteObject >> printOn: aStream [
 	super printOn: aStream.
 	aStream 
 		<< '[';
-		<< self title;
+		<< (self hasTitle
+			ifFalse: [ 'no title' ]
+			ifTrue: [ self title asString ]);
 		<< ']'
 ]
 
-{ #category : 'accessing' }
+{ #category : 'accessing - tags' }
+NTNoteObject >> removeTag: aNTTag [ 
+
+	self tags 
+		remove: aNTTag 
+		ifAbsent: [ self error: 'Tag not found: ' , aNTTag tagName ].
+	aNTTag removeNote: self.
+]
+
+{ #category : 'accessing - tags' }
 NTNoteObject >> tags [
 
 	^ tags
 ]
 
-{ #category : 'accessing' }
+{ #category : 'accessing - tags' }
 NTNoteObject >> tags: anObject [
 
 	tags := anObject

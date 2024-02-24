@@ -2,7 +2,7 @@ Class {
 	#name : 'NTBasicTest',
 	#superclass : 'TestCase',
 	#instVars : [
-		'noteFacade'
+		'notesContainer'
 	],
 	#category : 'TheNoteTaker-Tests',
 	#package : 'TheNoteTaker-Tests'
@@ -12,7 +12,20 @@ Class {
 NTBasicTest >> setUp [
 
 	super setUp.
-	noteFacade := NTSingleton new.
+	notesContainer := NTSingleton uniqueInstance.
+]
+
+{ #category : 'accessing' }
+NTBasicTest >> simplestNoteName [
+
+	^ 'testMock Note'
+]
+
+{ #category : 'running' }
+NTBasicTest >> tearDown [
+
+	notesContainer removeNotesSuchThat: [ : n | n title beginsWith: 'testMock' ].
+	super tearDown.
 ]
 
 { #category : 'test - tags' }
@@ -33,7 +46,7 @@ NTBasicTest >> testAccessTagName [
 
     tagName := 'Sample Tag'.
     tag := NTTag newNamed: 'Tag name'.
-    tag renameTagTo: tagName.
+    tag tagName: tagName.
 
     self assert: tag tagName equals: tagName.
 ]
@@ -57,13 +70,13 @@ NTBasicTest >> testAccessTagNotes [
 NTBasicTest >> testAddNewNote [
 
 	self 
-		deny: noteFacade hasNotes
+		deny: notesContainer hasNotes
 		description: 'It tests that yet we haven''t any notes'.
 
-	noteFacade addNoteNamed: (noteFacade newNoteNamed: 'first note').
+	notesContainer addNoteNamed: self simplestNoteName.
 
 	self 
-		assert: noteFacade notesCount 
+		assert: notesContainer notesCount 
 		equals: 1.
 ]
 
@@ -81,10 +94,9 @@ NTBasicTest >> testAddNoteToTag [
 { #category : 'tests - scenarios' }
 NTBasicTest >> testAddingAndRemovingNotes [
     "Test adding and removing notes, and ensure that the singleton is updated accordingly"
-    | notesContainer noteName notes |
+    | noteName notes |
 
-    notesContainer := NTSingleton uniqueInstance.
-    noteName := 'Important Note'.
+    noteName := self simplestNoteName.
     
     notesContainer addNoteNamed: noteName.
     self assert: (notesContainer hasNoteNamed: noteName).
@@ -100,20 +112,20 @@ NTBasicTest >> testAddingAndRemovingNotes [
 { #category : 'tests - scenarios' }
 NTBasicTest >> testAddingNotesWithSameName [
     "Test adding notes with the same name"
-    | notesContainer noteName notes |
+    | noteName notes |
 
-    notesContainer := NTSingleton uniqueInstance.
-    noteName := 'Note'.
+    noteName := self simplestNoteName.
     
     notesContainer addNoteNamed: noteName.
     notesContainer addNoteNamed: noteName.
     
     notes := notesContainer noteObjects.
     
-    self assert: notes size equals: 2. "Two notes should be added"
-    self assert: (notesContainer hasNoteNamed: 'Note').
+	"Two notes should be added"
+    self assert: notes size equals: 2.
+    self assert: (notesContainer hasNoteNamed: self simplestNoteName).
     self 
-		assert: (notesContainer noteNamed: 'Note') isNote
+		assert: (notesContainer noteNamed: self simplestNoteName) isNote
 		description: 'Check if the note is an instance of Note class'
 
 ]
@@ -122,7 +134,7 @@ NTBasicTest >> testAddingNotesWithSameName [
 NTBasicTest >> testCreateNoteObject [
 
 	| aNote |
-	aNote := noteFacade newNoteNamed: 'first note'.
+	aNote := notesContainer newNoteNamed: self simplestNoteName.
 	self assert: aNote isNote.
 ]
 
@@ -142,26 +154,25 @@ NTBasicTest >> testDeleteTag [
 NTBasicTest >> testMultipleNotesCreationAndAccess [
     "Test creating multiple notes and accessing them"
 
-    | notesContainer noteNames notes |
-    notesContainer := NTSingleton uniqueInstance.
-    noteNames := #('Note 1' 'Note 2' 'Note 3').
+	| noteNames notes |
+
+	noteNames := self threeNoteNames.
     
-    noteNames do: [ :name | notesContainer addNoteNamed: name ].
+	noteNames do: [ :name | notesContainer addNoteNamed: name ].
 	notes := notesContainer noteObjects.
     
-    self 
+	self 
 		assert: notes size 
 		equals: noteNames size.
-    noteNames do: [ :name | self assert: (notesContainer hasNoteNamed: name) ].
+	noteNames do: [ :name | self assert: (notesContainer hasNoteNamed: name) ].
 ]
 
 { #category : 'tests - dates' }
 NTBasicTest >> testNoteCreationAndModificationDates [
     "Test that creation and modification dates are correctly set for notes"
-    | notesContainer noteName note creationDate modificationDate |
+    | noteName note creationDate modificationDate |
 
-    notesContainer := NTSingleton uniqueInstance.
-    noteName := 'Date Note'.
+    noteName := self simplestNoteName.
     
     note := notesContainer addNoteNamed: noteName.
     creationDate := note creationDate.
@@ -175,29 +186,28 @@ NTBasicTest >> testNoteCreationAndModificationDates [
 { #category : 'tests - scenarios' }
 NTBasicTest >> testNoteDeletion [
     "Test creating notes and deleting one of them"
-    | notesContainer noteNames notes |
+    | noteNames notes secondNoteName |
 
-    notesContainer := NTSingleton uniqueInstance.
-    noteNames := #('Note 1' 'Note 2' 'Note 3').
+	secondNoteName := self simplestNoteName , '2'.
+	noteNames := self threeNoteNames.
     
-    noteNames do: [ :name | notesContainer addNoteNamed: name ].
+	noteNames do: [ :name | notesContainer addNoteNamed: name ].
     
-    notesContainer removeNoteNamed: 'Note 2'.
+	notesContainer removeNoteNamed: secondNoteName.
     
-    notes := notesContainer noteObjects.
+	notes := notesContainer noteObjects.
     
-    self assert: notes size equals: noteNames size - 1.
-    self deny: (notesContainer hasNoteNamed: 'Note 2').
+	self assert: notes size equals: noteNames size - 1.
+	self deny: (notesContainer hasNoteNamed: secondNoteName).
 
 ]
 
 { #category : 'tests - dates' }
 NTBasicTest >> testNoteModificationDoesNotUpdateCreationDate [
     "Test that modifying a note does not update the creation date"
-    | notesContainer noteName note creationDate initialModificationDate updatedCreationDate |
+    | noteName note creationDate initialModificationDate updatedCreationDate |
 
-    notesContainer := NTSingleton uniqueInstance.
-    noteName := 'Creation Date Note'.
+    noteName := 'testMock Creation Date Note'.
     
     note := notesContainer addNoteNamed: noteName.
     creationDate := note creationDate.
@@ -205,7 +215,7 @@ NTBasicTest >> testNoteModificationDoesNotUpdateCreationDate [
     
     "Simulate some modification after a delay"
     Delay forSeconds: 1.
-    note contents: 'Modified content'.
+    note contents: 'testMock Modified content'.
     
     updatedCreationDate := note creationDate.
     
@@ -216,10 +226,9 @@ NTBasicTest >> testNoteModificationDoesNotUpdateCreationDate [
 { #category : 'tests - dates' }
 NTBasicTest >> testNoteModificationUpdatesModificationDate [
     "Test that modifying a note updates the modification date"
-    | notesContainer noteName note creationDate initialModificationDate updatedModificationDate |
+    | noteName note creationDate initialModificationDate updatedModificationDate |
 
-    notesContainer := NTSingleton uniqueInstance.
-    noteName := 'Modification Note'.
+    noteName := 'testMock Modification Note'.
     
     note := notesContainer addNoteNamed: noteName.
     creationDate := note creationDate.
@@ -227,7 +236,7 @@ NTBasicTest >> testNoteModificationUpdatesModificationDate [
     
     "Simulate some modification after a delay"
     Delay forSeconds: 1.
-    note contents: 'Modified content'.
+    note contents: 'testMock Modified content'.
     
     updatedModificationDate := note modificationDate.
     
@@ -238,10 +247,8 @@ NTBasicTest >> testNoteModificationUpdatesModificationDate [
 NTBasicTest >> testNoteObjectsContainValidNotes [
     "Test that the note objects returned by the container are valid instances of Note class"
 
-    | notesContainer noteName noteObject |
-
-    notesContainer := NTSingleton uniqueInstance.
-    noteName := 'Sample Note'.
+    | noteName noteObject |
+    noteName := self simplestNoteName.
     
     notesContainer addNoteNamed: noteName.
     
@@ -252,24 +259,20 @@ NTBasicTest >> testNoteObjectsContainValidNotes [
 { #category : 'tests - scenarios' }
 NTBasicTest >> testNotesInitialization [
     "Test that the notes singleton is initialized correctly"
-    | notesContainer |
 
-    notesContainer := NTSingleton uniqueInstance.
     self assertEmpty: notesContainer noteObjects.
 ]
 
 { #category : 'tests' }
 NTBasicTest >> testRemoveNote [
 
-	| noteName |
-	noteName :=  'first note'.
-	noteFacade addNoteNamed: noteName.
+	notesContainer addNoteNamed: self simplestNoteName.
 	self 
-		assert: noteFacade notesCount 
+		assert: notesContainer notesCount 
 		equals: 1.
-	noteFacade removeNoteNamed: noteName.
+	notesContainer removeNoteNamed: self simplestNoteName.
 	self 
-		deny: noteFacade hasNotes
+		deny: notesContainer hasNotes
 		description: 'It tests that now we haven''t any notes'.
 ]
 
@@ -291,7 +294,7 @@ NTBasicTest >> testRenameTag [
 
     tag := NTTag new.
     newName := 'New Tag Name'.
-    tag renameTagTo: newName.
+    tag tagName: newName.
 
     self assert: tag tagName equals: newName.
 ]
@@ -314,16 +317,26 @@ NTBasicTest >> testTagNote [
 
 	| noteName note noteTag |
 
-	noteName :=  'first note'.
-	noteFacade addNoteNamed: noteName.
-	note := noteFacade noteNamed: noteName.
+	noteName := self simplestNoteName.
+	notesContainer addNoteNamed: noteName.
+	note := notesContainer noteNamed: noteName.
 	noteTag := NTTag newNamed: 'music'.
 	
 	self assertEmpty: note tags.
 	
-	note addTag: #('music').
+	note addTag: noteTag.
 	
 	self 
 		assert: note tags anyOne
 		equals: noteTag.
+]
+
+{ #category : 'accessing' }
+NTBasicTest >> threeNoteNames [
+
+	^ { 
+		self simplestNoteName , '1' .
+		self simplestNoteName , '2' .
+		self simplestNoteName , '3' 
+		}.
 ]

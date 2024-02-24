@@ -40,6 +40,21 @@ NTTag class >> newNamed: aString [
 		yourself
 ]
 
+{ #category : 'adding' }
+NTTag >> addNote: aNTNoteObject [ 
+
+	self notes add: aNTNoteObject.
+	aNTNoteObject addTag: self.
+]
+
+{ #category : 'initialization' }
+NTTag >> initialize [
+
+	super initialize.
+	self tagId: UUID new asString36.
+	self notes: OrderedCollection new.
+]
+
 { #category : 'accessing' }
 NTTag >> notes [
 
@@ -50,6 +65,14 @@ NTTag >> notes [
 NTTag >> notes: anObject [
 
 	notes := anObject
+]
+
+{ #category : 'removing' }
+NTTag >> removeNote: aNTNoteObject [ 
+
+	self notes
+		remove: aNTNoteObject 
+		ifAbsent: [ self error: 'Note not found: ' , aNTNoteObject title ]
 ]
 
 { #category : 'accessing' }
