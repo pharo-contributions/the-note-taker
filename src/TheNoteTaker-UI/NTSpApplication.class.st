@@ -43,7 +43,7 @@ NTSpApplication >> initialize [
 NTSpApplication >> isValidNote: aString [ 
 	"Answer <true> if aString is a valid note title"
 	
-	^ self noteTakerFacade isValidNote: aString
+	^ self noteTaker isValidNote: aString
 ]
 
 { #category : 'accessig' }
@@ -54,7 +54,7 @@ NTSpApplication >> noteInformation: aNtNodeModel [
 ]
 
 { #category : 'accessing' }
-NTSpApplication >> noteTakerFacade [
+NTSpApplication >> noteTaker [
 
 	^ noteTakerFacade
 ]
@@ -63,7 +63,7 @@ NTSpApplication >> noteTakerFacade [
 NTSpApplication >> notes [
 	"Answer the application's <Collection> of <NTNoteObject>"
 
-	^ self noteTakerFacade notes
+	^ self noteTaker notes
 ]
 
 { #category : 'running' }

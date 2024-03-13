@@ -5,8 +5,10 @@ Presents a table with basic metadata information about saved notes in the system
 Class {
 	#name : 'NTSpNoteIndexPresenter',
 	#superclass : 'SpPresenter',
+	#classTraits : '{} + TraitedClass',
 	#instVars : [
-		'notesIndexPresenter'
+		'notesIndexPresenter',
+		'notes'
 	],
 	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
@@ -104,7 +106,8 @@ NTSpNoteIndexPresenter >> initializePresenters [
 			evaluated: [ : selectedNote | ZnUtils httpDate: selectedNote creationDate ] ;
 			yourself);
 		whenSelectionChangedDo: [ : selection | self handleNoteChange: selection selectedItem ];
-		contextMenu: [ (self rootCommandsGroup / 'NTSelContextualMenu') beRoot asMenuPresenter ];	
+		contextMenu: [ (self rootCommandsGroup / 'NTSelContextualMenu') beRoot asMenuPresenter ];
+		items: notes;
 		yourself
 ]
 
@@ -130,6 +133,13 @@ NTSpNoteIndexPresenter >> refresh [
 
 { #category : 'accessing' }
 NTSpNoteIndexPresenter >> selectedNote [
+	"Answer the receiver's selected <NtNoteModel>"
 
 	^ notesIndexPresenter selectedItem
+]
+
+{ #category : 'accessing - model' }
+NTSpNoteIndexPresenter >> setModelBeforeInitialization: aCollection [
+
+	notes := aCollection
 ]

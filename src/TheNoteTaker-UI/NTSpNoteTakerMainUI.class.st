@@ -129,7 +129,13 @@ NTSpNoteTakerMainUI >> initializeWindow: aSpWindowPresenter [
 NTSpNoteTakerMainUI >> model [
 	"Answer the receiver's <NTNoteFacade>"
 
-	^ self application noteTakerFacade.
+	^ self application noteTaker.
+]
+
+{ #category : 'accessing' }
+NTSpNoteTakerMainUI >> noteTaker [
+
+	^ self application noteTaker
 ]
 
 { #category : 'accessing' }
@@ -155,8 +161,7 @@ NTSpNoteTakerMainUI >> popMessage [
 NTSpNoteTakerMainUI >> selectedNote [
 	"Answer the receiver's selected <NtNoteModel>"
 	
-	"self shouldBeImplemented"
-	^ nil.
+	^ self notesIndexPresenter selectedNote
 ]
 
 { #category : 'accessing' }

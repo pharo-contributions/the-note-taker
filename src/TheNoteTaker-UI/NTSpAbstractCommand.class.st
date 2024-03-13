@@ -21,7 +21,7 @@ NTSpAbstractCommand >> applicationClass [
 { #category : 'accessing' }
 NTSpAbstractCommand >> facade [
 
-	^ self application noteTakerFacade.
+	^ self application noteTaker.
 ]
 
 { #category : 'testing' }
