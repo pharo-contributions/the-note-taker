@@ -1,3 +1,7 @@
+"
+If the command context has a selected note, then provide a confirmation request to the user to delete a note.
+
+"
 Class {
 	#name : 'NTSpRemoveNoteCommand',
 	#superclass : 'NTSpAbstractCommand',
@@ -32,7 +36,7 @@ NTSpRemoveNoteCommand >> canBeExecuted [
 
 { #category : 'executing' }
 NTSpRemoveNoteCommand >> execute [
-	"Request a title to create a new note"
+	"Request a title to delete the selected note"
 
 	self facade removeNote: self selectedNote.
 	self context refresh.

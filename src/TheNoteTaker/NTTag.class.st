@@ -22,14 +22,22 @@ Class {
 	#name : 'NTTag',
 	#superclass : 'Object',
 	#instVars : [
-		'tagName',
 		'tagId',
-		'notes'
+		'notes',
+		'tagName'
 	],
 	#category : 'TheNoteTaker-Core',
 	#package : 'TheNoteTaker',
 	#tag : 'Core'
 }
+
+{ #category : 'accessing' }
+NTTag class >> neoJsonMapping: mapper [
+
+    mapper for: self do: [ :mapping |
+		mapping mapInstVars: #(tagName) ].
+
+]
 
 { #category : 'instance creation' }
 NTTag class >> newNamed: aString [
@@ -89,7 +97,8 @@ NTTag >> tagId: anObject [
 
 { #category : 'accessing' }
 NTTag >> tagName [
-
+	"Answer a <String> representing the receiver's name"
+	
 	^ tagName
 ]
 

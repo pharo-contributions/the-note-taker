@@ -49,7 +49,6 @@ NTSpNoteContentPresenter >> defaultLayout [
 { #category : 'initialization' }
 NTSpNoteContentPresenter >> initializePresenters [
 
-	"contentPresenter := self instantiate: MicrodownPresenter."
-	contentPresenter := MDEditorPresenter new.
+	contentPresenter := NTMDEditorPresenter new.
 	contentPresenter cleanInput.
 ]

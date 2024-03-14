@@ -4,9 +4,21 @@ Class {
 	#instVars : [
 		'notesContainer'
 	],
-	#category : 'TheNoteTaker-Tests',
-	#package : 'TheNoteTaker-Tests'
+	#category : 'TheNoteTaker-Tests-Core',
+	#package : 'TheNoteTaker-Tests',
+	#tag : 'Core'
 }
+
+{ #category : 'accessing' }
+NTBasicTest class >> resources [
+	^ { NTTestResource }
+]
+
+{ #category : 'running' }
+NTBasicTest >> resource [
+
+	^ NTTestResource current
+]
 
 { #category : 'running' }
 NTBasicTest >> setUp [
@@ -101,12 +113,12 @@ NTBasicTest >> testAddingAndRemovingNotes [
     notesContainer addNoteNamed: noteName.
     self assert: (notesContainer hasNoteNamed: noteName).
     
-    notes := notesContainer noteObjects.
+    notes := notesContainer notes.
     self assert: notes size equals: 1.
     
     notesContainer removeNoteNamed: noteName.
     self deny: (notesContainer hasNoteNamed: noteName).
-    self assertEmpty: notesContainer noteObjects.
+    self assertEmpty: notesContainer notes.
 ]
 
 { #category : 'tests - scenarios' }
@@ -119,7 +131,7 @@ NTBasicTest >> testAddingNotesWithSameName [
     notesContainer addNoteNamed: noteName.
     notesContainer addNoteNamed: noteName.
     
-    notes := notesContainer noteObjects.
+    notes := notesContainer notes.
     
 	"Two notes should be added"
     self assert: notes size equals: 2.
@@ -159,7 +171,7 @@ NTBasicTest >> testMultipleNotesCreationAndAccess [
 	noteNames := self threeNoteNames.
     
 	noteNames do: [ :name | notesContainer addNoteNamed: name ].
-	notes := notesContainer noteObjects.
+	notes := notesContainer notes.
     
 	self 
 		assert: notes size 
@@ -195,7 +207,7 @@ NTBasicTest >> testNoteDeletion [
     
 	notesContainer removeNoteNamed: secondNoteName.
     
-	notes := notesContainer noteObjects.
+	notes := notesContainer notes.
     
 	self assert: notes size equals: noteNames size - 1.
 	self deny: (notesContainer hasNoteNamed: secondNoteName).
@@ -260,7 +272,7 @@ NTBasicTest >> testNoteObjectsContainValidNotes [
 NTBasicTest >> testNotesInitialization [
     "Test that the notes singleton is initialized correctly"
 
-    self assertEmpty: notesContainer noteObjects.
+    self assertEmpty: notesContainer notes.
 ]
 
 { #category : 'tests' }

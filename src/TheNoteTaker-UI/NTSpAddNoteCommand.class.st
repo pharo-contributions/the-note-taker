@@ -1,3 +1,6 @@
+"
+Implements logic to add a single note to a note taking application. Particularily, it provides a user-request dialog to ask for note input information to be added.
+"
 Class {
 	#name : 'NTSpAddNoteCommand',
 	#superclass : 'NTSpAbstractCommand',
@@ -42,7 +45,7 @@ NTSpAddNoteCommand >> execute [
 
 	(self isValidNote: answer) ifFalse: [ ^ self ].
 	self addNoteNamed: answer trimBoth.
-	self context items: self facade noteObjects.
+	self context items: self facade notes.
 
 ]
 

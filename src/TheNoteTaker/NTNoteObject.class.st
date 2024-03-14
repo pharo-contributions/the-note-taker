@@ -25,6 +25,18 @@ NTNoteObject class >> named: aString [
 		yourself
 ]
 
+{ #category : 'accessing' }
+NTNoteObject class >> neoJsonMapping: mapper [
+
+   mapper for: self do: [ :mapping |
+		mapping mapInstVars: #(title contents).
+		mapping mapInstVar: #creationDate to: #createdAt.
+		(mapping mapAccessor: #tags) valueSchema: #ArrayOfNTTags. ].
+
+    mapper for: #ArrayOfNTTags customDo: [ :mapping |
+        mapping listOfElementSchema: NTTag ]
+]
+
 { #category : 'accessing - tags' }
 NTNoteObject >> addTag: aNTTag [ 
 

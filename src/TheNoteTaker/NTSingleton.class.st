@@ -106,13 +106,6 @@ NTSingleton >> noteNamed: aString [
 ]
 
 { #category : 'accessing' }
-NTSingleton >> noteObjects [
-	"Answer the receiver's <Collection> of <NTNoteObject>"
-
-	^ notes
-]
-
-{ #category : 'accessing' }
 NTSingleton >> notes [
 	"Answer the receiver's <Collection> of <NTNoteObject>"
 

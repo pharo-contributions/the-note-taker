@@ -59,7 +59,7 @@ NTSpSearchCreatePresenter >> model [
 NTSpSearchCreatePresenter >> notes [
 	"Answer a <Collection> of <NTNoteObject> representing all the application's notes"
 
-	^ self model noteObjects
+	^ self model notes
 ]
 
 { #category : 'callbacks' }
