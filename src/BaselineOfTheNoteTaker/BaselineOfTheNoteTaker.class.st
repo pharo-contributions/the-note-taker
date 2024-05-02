@@ -38,5 +38,5 @@ BaselineOfTheNoteTaker >> microEd: spec [
 
 	spec
 		baseline: 'MicroEd'
-		with: [ spec repository: 'github://pillar-markup/Microdown/src' ]
+		with: [ spec repository: 'github://pillar-markup/MicroEd/src' ]
 ]
