@@ -17,11 +17,10 @@
 # Installation
 
 ```smalltalk
-EpMonitor disableDuring: [ 
-	Metacello new	
-		baseline: 'TheNoteTaker';	
-		repository: 'github://hernanmd/the-note-taker/src';	
-		load ].
+Metacello new	
+	baseline: 'TheNoteTaker';	
+	repository: 'github://hernanmd/the-note-taker/src';	
+	load.
 ```
 
 ## Baseline String 
