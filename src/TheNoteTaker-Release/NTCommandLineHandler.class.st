@@ -5,31 +5,34 @@ Class {
 	#package : 'TheNoteTaker-Release'
 }
 
-{ #category : 'building' }
-NTCommandLineHandler class >> build [
+{ #category : 'accessing' }
+NTCommandLineHandler class >> commandName [
 
-	(self environment at: #EmbeddedSupportOSXGenerator) new
+	^ 'noteTaker'
+]
+
+{ #category : 'building' }
+NTCommandLineHandler class >> generateApplication [
+	<script: 'self generateApplication'>
+	
+	(self environment at: #AppGeneratorOSXGenerator) new
 		properties: { 
         #AppName -> 'NoteTaker' .
         #InfoString -> 'A note taking application written in Pharo' .
         #BundleIdentifier -> 'org.pharo.notetaker' .
         #ShortVersion -> '1.0.0' .
         #DisplayName -> 'Note Taker' .
-        #CommandLineHandler -> 'note' .
+        #CommandLineHandler -> 'noteTaker' .
         #CompanyName -> 'INRIA' } asDictionary;
 		outputDirectory: FileLocator workingDirectory / 'build';
 		generate.
-]
-
-{ #category : 'accessing' }
-NTCommandLineHandler class >> commandName [
-
-	^ 'note'
 ]
 
 { #category : 'activation' }
 NTCommandLineHandler >> activate [
 
 	OSWindowDriver current startUp: true.
+	
+	AppGeneratorSupport errorHandler: AppGeneratorSDLMessageErrorHandler new.
 	NTSpApplication new start.
 ]
