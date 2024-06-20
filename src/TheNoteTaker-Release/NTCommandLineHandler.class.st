@@ -1,9 +1,8 @@
 Class {
 	#name : 'NTCommandLineHandler',
 	#superclass : 'CommandLineHandler',
-	#category : 'TheNoteTaker-Base',
-	#package : 'TheNoteTaker',
-	#tag : 'Base'
+	#category : 'TheNoteTaker-Release',
+	#package : 'TheNoteTaker-Release'
 }
 
 { #category : 'building' }

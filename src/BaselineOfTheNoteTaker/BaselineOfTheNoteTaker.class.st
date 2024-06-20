@@ -13,16 +13,27 @@ BaselineOfTheNoteTaker >> baseline: spec [
 		do: [ 
 			self ical: spec.
 			self microEd: spec.
+			self embeddedSupport: spec.
 
 			spec 
 				package: 'TheNoteTaker';
 				package: 'TheNoteTaker-UI'     with: [ spec requires: #(#MicroEd TheNoteTaker) ];
+				package: 'TheNoteTaker-Release' with: [spec requires: #(EmbeddedSupport) ];
 				package: 'TheNoteTaker-Tests'	with: [ spec requires: #(TheNoteTaker) ].
 			spec 
 				group: 'Core' 						with: #('TheNoteTaker');
 				group: 'UI'                    with: #('TheNoteTaker-UI');
 				group: 'Tests' 						with: #('TheNoteTaker' 'TheNoteTaker-Tests');
+				group: 'Release'               with: #('Core' 'UI' 'TheNoteTaker-Release');
 				group: 'default' 					with: #('Core' 'Tests' 'UI') ]
+]
+
+{ #category : 'baselines' }
+BaselineOfTheNoteTaker >> embeddedSupport: spec [
+
+	spec
+		baseline: 'EmbeddedSupport'
+		with: [ spec repository: 'github://tesonep/pharo-vm-embedded-example:pharo-11/smalltalk-src' ]
 ]
 
 { #category : 'baselines' }
