@@ -48,14 +48,17 @@ NTCommandLineHandler >> activate [
 					m
 						addItemWithTitle: 'Quit'
 						action: [ Smalltalk snapshot: false andQuit: true ]
-						shortcut: 'q' ];
+						shortcut: 'q';
+						
+						addItemWithTitle: 'Restart'
+						action: [ NTSpApplication new start ]
+						shortcut: 's' ];
 				addSubmenu: 'Help' with: [ :m |
 					m
 						addItemWithTitle: 'Show Help'
 						action: [ self inform: 'Help' ]
 						shortcut: '' ].
 			main setAsMainMenu.
-			
 			NTSpApplication new start ]
 		ifFalse: [ self inform: 'Not OSX' ].
 
