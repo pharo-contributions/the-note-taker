@@ -22,17 +22,18 @@ BaselineOfTheNoteTaker >> baseline: spec [
 			self ical: spec.
 			self microEd: spec.
 			self applicationGenerator: spec.
+			self objcbridge: spec.
 
 			spec 
 				package: 'TheNoteTaker';
 				package: 'TheNoteTaker-UI'     with: [ spec requires: #(#MicroEd TheNoteTaker) ];
-				package: 'TheNoteTaker-Release' with: [spec requires: #(ApplicationGenerator) ];
+				package: 'TheNoteTaker-Release' with: [spec requires: #(ApplicationGenerator ObjCBridge) ];
 				package: 'TheNoteTaker-Tests'	with: [ spec requires: #(TheNoteTaker) ].
 			spec 
 				group: 'Core' 						with: #('TheNoteTaker');
 				group: 'UI'                    with: #('TheNoteTaker-UI');
 				group: 'Tests' 						with: #('TheNoteTaker' 'TheNoteTaker-Tests');
-				group: 'Release'               with: #('Core' 'UI' 'TheNoteTaker-Release');
+				group: 'Release'               with: #('Core' 'UI' 'ObjCBridge' 'TheNoteTaker-Release');
 				group: 'default' 					with: #('Core' 'Tests' 'UI') ]
 ]
 
@@ -50,4 +51,11 @@ BaselineOfTheNoteTaker >> microEd: spec [
 	spec
 		baseline: 'MicroEd'
 		with: [ spec repository: 'github://pillar-markup/MicroEd/src' ]
+]
+
+{ #category : 'baselines' }
+BaselineOfTheNoteTaker >> objcbridge: spec [
+
+	spec baseline: 'ObjCBridge' with: [
+		spec repository: 'github://tesonep/objcbridge:master/src' ].	
 ]
