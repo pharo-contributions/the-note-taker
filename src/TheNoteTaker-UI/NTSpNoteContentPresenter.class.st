@@ -35,7 +35,7 @@ NTSpNoteContentPresenter >> contents: aString [
 { #category : 'transmission' }
 NTSpNoteContentPresenter >> defaultInputPort [ 
 
-	^ SpModelPort newPresenter: self
+	^ SpModelPort newPresenter: self 
 ]
 
 { #category : 'layout' }
@@ -51,4 +51,11 @@ NTSpNoteContentPresenter >> initializePresenters [
 
 	contentPresenter := NTMDEditorPresenter new.
 	contentPresenter cleanInput.
+]
+
+{ #category : 'accessing - model' }
+NTSpNoteContentPresenter >> setModel: aNoteObject [ 
+	"Private - Set the receiver's content iterating recursively starting from aNode"
+	
+	self contentPresenter openNote: aNoteObject
 ]

@@ -17,15 +17,9 @@ NTSpRemoveNoteCommand class >> defaultDescription [
 ]
 
 { #category : 'default' }
-NTSpRemoveNoteCommand class >> defaultIconName [
-
-	^ #delete
-]
-
-{ #category : 'default' }
 NTSpRemoveNoteCommand class >> defaultName [
 
-	^ 'Remove Note'
+	^ 'Remove Note(s)'
 ]
 
 { #category : 'testing' }
@@ -38,6 +32,8 @@ NTSpRemoveNoteCommand >> canBeExecuted [
 NTSpRemoveNoteCommand >> execute [
 	"Request a title to delete the selected note"
 
-	self facade removeNote: self selectedNote.
+	(self confirm: 'Are you sure you want to remove the selected note(s)?')
+		ifFalse: [ ^ self ].
+	self facade removeNotes: self selectedNotes.
 	self context refresh.
 ]

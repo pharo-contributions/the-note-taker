@@ -16,12 +16,6 @@ NTSpAddNoteCommand class >> defaultDescription [
 ]
 
 { #category : 'default' }
-NTSpAddNoteCommand class >> defaultIconName [
-
-	^ #add
-]
-
-{ #category : 'default' }
 NTSpAddNoteCommand class >> defaultName [
 
 	^ 'Add Note'

@@ -51,3 +51,11 @@ NTSpAbstractCommand >> selectedNoteTitle [
 	
 	^ self selectedNote title
 ]
+
+{ #category : 'accessing' }
+NTSpAbstractCommand >> selectedNotes [
+	"Answer a <Collection> with the currently selected <NTObject>'s"
+	
+	^ self context selectedNotes
+
+]

@@ -24,9 +24,9 @@ NTSpNoteTakerMainUI >> connectPresenters [
 	notesIndexPresenter
 		transmitTo: notesContentPresenter
 		transform: [ : note | 
-			note
-				ifNotNil: [ note contents ]
-				ifNil: [ String empty ] ]
+			(note isNil or: [ note isEmpty ])
+				ifFalse: [ self processSelectedNote: note ]
+				ifTrue: [ String empty ] ]
 ]
 
 { #category : 'accessing - status bar' }
@@ -155,6 +155,16 @@ NTSpNoteTakerMainUI >> open [
 NTSpNoteTakerMainUI >> popMessage [
 
 	statusBar popMessage
+]
+
+{ #category : 'accessing' }
+NTSpNoteTakerMainUI >> processSelectedNote: aCollection [ 
+	"If we have more than one selection we just display an empty note in the contents presenter"
+
+	aCollection size > 1
+		ifTrue: [ ^ String empty ].
+	^ aCollection anyOne
+
 ]
 
 { #category : 'accessing' }

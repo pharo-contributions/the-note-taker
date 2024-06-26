@@ -6,6 +6,21 @@ Class {
 	#tag : 'Core'
 }
 
+{ #category : 'actions' }
+NTMDEditorPresenter >> openNote: aNoteObject [
+
+	self currentFileState: MDEditorOpenedFile new.
+	textInput text: aNoteObject contents.
+	self cleanOutput.
+	self updateTitle
+]
+
+{ #category : 'actions' }
+NTMDEditorPresenter >> save: aText withExtension: anExtension [
+
+	self shouldBeImplemented 
+]
+
 { #category : 'api' }
 NTMDEditorPresenter >> updateTitle [
 

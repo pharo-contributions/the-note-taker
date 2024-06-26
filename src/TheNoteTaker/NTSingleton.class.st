@@ -55,8 +55,18 @@ NTSingleton class >> uniqueInstance [
 ]
 
 { #category : 'adding' }
-NTSingleton >> addNoteNamed: aString [
+NTSingleton >> addNoteFromFileReference: aFileReference [
 	"Add a new note with title aString to the receiver's notes. Answer the receiver"
+	
+	self notes add: (
+		self 
+			newNoteNamed: aFileReference basenameWithoutExtension 
+			contents: aFileReference contents)
+]
+
+{ #category : 'adding' }
+NTSingleton >> addNoteNamed: aString [
+	"Add a new empty note with title aString to the receiver's notes. Answer the receiver"
 	
 	^ self notes add: (self newNoteNamed: aString)
 ]
@@ -96,6 +106,12 @@ NTSingleton >> isValidNote: aString [
 NTSingleton >> newNoteNamed: aNoteName [
 
 	^ NTNoteObject named: aNoteName
+]
+
+{ #category : 'adding' }
+NTSingleton >> newNoteNamed: aNoteName contents: aString [
+
+	^ NTNoteObject named: aNoteName contents: aString
 ]
 
 { #category : 'accessing' }
@@ -143,6 +159,13 @@ NTSingleton >> removeNoteNamed: aString [
 	"Remove the note with title aString in the receiver's notes. Answer the receiver"
 	
 	self removeNote: (self noteNamed: aString)
+]
+
+{ #category : 'removing' }
+NTSingleton >> removeNotes: aCollectionOfNTNoteObject [
+	"Remove the note aNTNoteObject from the receiver's notes. Answer the receiver"
+	
+	self notes removeAll: aCollectionOfNTNoteObject
 ]
 
 { #category : 'removing' }
