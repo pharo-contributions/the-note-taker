@@ -38,6 +38,11 @@ NTSpNoteIndexPresenter class >> buildNoteTakerOperationsGroupWith: presenterInst
 			shortcutKey: 'A' asShortcut) 
 				context: presenterInstance);
 				
+			register: ((NTSpImportNoteCommand
+			forSpecWithIconNamed: #glamorousInto
+			shortcutKey: 'I' asShortcut) 
+				context: presenterInstance);
+				
 			register: ((NTSpRemoveNoteCommand
 			forSpecWithIconNamed: #glamorousDelete
 			shortcutKey: 'D' asShortcut) 
