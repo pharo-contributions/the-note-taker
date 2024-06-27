@@ -19,14 +19,13 @@ Class {
 }
 
 { #category : 'initialization' }
-NTSpNoteTakerMainUI >> connectPresenters [ 
+NTSpNoteTakerMainUI >> connectPresenters [
 
+	
 	notesIndexPresenter
 		transmitTo: notesContentPresenter
-		transform: [ : note | 
-			note
-				ifNotNil: [ note contents ]
-				ifNil: [ String empty ] ]
+		transform: [ :note |
+		note ifNotNil: [ note contents ] ifNil: [ String empty ] ]
 ]
 
 { #category : 'accessing - status bar' }
@@ -216,6 +215,12 @@ NTSpNoteTakerMainUI >> statusBarMessage [
 NTSpNoteTakerMainUI >> toolbarHeight [
 
 	^ self class toolbarHeight
+]
+
+{ #category : 'initialization' }
+NTSpNoteTakerMainUI >> updateContentOfNote: aContent [ 
+
+	aContent ifNotNil: [ notesIndexPresenter updateModel: aContent ]
 ]
 
 { #category : 'accessing - status bar' }

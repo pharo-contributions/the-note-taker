@@ -29,7 +29,8 @@ NTSpNoteContentPresenter >> contentPresenter: anObject [
 NTSpNoteContentPresenter >> contents: aString [
 	"Set the receiver's document content to be aString"
 
-	self contentPresenter documentFromString: aString
+	self contentPresenter documentFromString: aString.
+	self saveContent: (self contentPresenter documentFromString: aString).
 ]
 
 { #category : 'transmission' }
@@ -51,4 +52,14 @@ NTSpNoteContentPresenter >> initializePresenters [
 
 	contentPresenter := NTMDEditorPresenter new.
 	contentPresenter cleanInput.
+]
+
+{ #category : 'initialization' }
+NTSpNoteContentPresenter >> saveContent: aContent [
+
+	| nameOfContent |
+	nameOfContent := (aContent copyUpTo: Character cr) trimBoth.
+
+	nameOfContent asFileReference writeStreamDo: [ :stream |
+		stream nextPutAll: aContent ] 
 ]

@@ -134,6 +134,14 @@ NTSingleton >> notesNamed: aString [
 	^ self notes select: [ : n | n title = aString ]
 ]
 
+{ #category : 'adding' }
+NTSingleton >> readNoteSton: aNoteSton [
+
+	^ STON reader
+		  on: aNoteSton readStream;
+		  next
+]
+
 { #category : 'removing' }
 NTSingleton >> removeNote: aNTNoteObject [
 	"Remove the note aNTNoteObject from the receiver's notes. Answer the receiver"
@@ -159,8 +167,10 @@ NTSingleton >> removeNotesSuchThat: aBlock [
 { #category : 'adding' }
 NTSingleton >> saveNoteInSton: aNote [
 
-	'notes.ston' asFileReference writeStreamDo: [ :stream |
+	| nameOfNote |
+	nameOfNote := aNote title , '.ston'.
+	nameOfNote asFileReference writeStreamDo: [ :stream |
 		STON writer
 			on: stream;
-			nextPut: aNote  ]
+			nextPut: aNote ] 
 ]

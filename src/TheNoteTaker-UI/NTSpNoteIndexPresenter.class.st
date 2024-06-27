@@ -93,26 +93,37 @@ NTSpNoteIndexPresenter >> hasSelectedNote [
 NTSpNoteIndexPresenter >> initializePresenters [
 
 	notesIndexPresenter := self newTable
-		addColumn: (SpStringTableColumn new
-			title: 'Title';
-			sortFunction: #yourself ascending;			
-			evaluated: #title;
-			yourself);
-		addColumn: (SpStringTableColumn new
-			title: 'Tags';
-			sortFunction: #yourself ascending;
-			evaluated: [ : selectedNote | self displayNoteTags: selectedNote ];
-			yourself);
-		addColumn: (SpStringTableColumn new
-		   title: 'Date';
-			width: 200 * self currentWorld displayScaleFactor;
-			sortFunction: #yourself ascending;		
-			evaluated: [ : selectedNote | ZnUtils httpDate: selectedNote creationDate ] ;
-			yourself);
-		whenSelectionChangedDo: [ : selection | self handleNoteChange: selection selectedItem ];
-		contextMenu: [ (self rootCommandsGroup / 'NTSelContextualMenu') beRoot asMenuPresenter ];
-		items: notes;
-		yourself
+		                       addColumn: (SpStringTableColumn new
+				                        title: 'Title';
+				                        sortFunction: #yourself ascending;
+				                        evaluated: #title;
+				                        yourself);
+		                       addColumn: (SpStringTableColumn new
+				                        title: 'Tags';
+				                        sortFunction: #yourself ascending;
+				                        evaluated: [ :selectedNote |
+					                        self displayNoteTags: selectedNote ];
+				                        yourself);
+		                       addColumn: (SpStringTableColumn new
+				                        title: 'Date';
+				                        width:
+					                        200
+					                        * self currentWorld displayScaleFactor;
+				                        sortFunction: #yourself ascending;
+				                        evaluated: [ :selectedNote |
+					                        ZnUtils httpDate:
+							                        selectedNote creationDate ];
+				                        yourself);
+		                       whenSelectionChangedDo: [ :selection |
+		                       self handleNoteChange: selection selectedItem ];
+		                       contextMenu: [
+			                       (self rootCommandsGroup
+			                        / 'NTSelContextualMenu') beRoot
+				                       asMenuPresenter ];
+		                       whenSelectedItemChangedDo: [ :selection |
+		                       self owner updateContentOfNote: selection ];
+		                       items: notes;
+		                       yourself
 ]
 
 { #category : 'accessing' }
@@ -146,4 +157,10 @@ NTSpNoteIndexPresenter >> selectedNote [
 NTSpNoteIndexPresenter >> setModelBeforeInitialization: aCollection [
 
 	notes := aCollection
+]
+
+{ #category : 'accessing - model' }
+NTSpNoteIndexPresenter >> updateModel: aContent [ 
+
+	self selectedNote contents: aContent 
 ]
