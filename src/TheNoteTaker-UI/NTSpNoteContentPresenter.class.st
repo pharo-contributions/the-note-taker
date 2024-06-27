@@ -25,6 +25,12 @@ NTSpNoteContentPresenter >> contentPresenter: anObject [
 	contentPresenter := anObject
 ]
 
+{ #category : 'accessing' }
+NTSpNoteContentPresenter >> contents: aString [ 
+
+	contentPresenter textInputText: aString
+]
+
 { #category : 'transmission' }
 NTSpNoteContentPresenter >> defaultInputPort [ 
 
