@@ -6,7 +6,31 @@ Class {
 	#tag : 'Core'
 }
 
-{ #category : 'api' }
-NTMDEditorPresenter >> updateTitle [
+{ #category : 'initialization' }
+NTMDEditorPresenter >> initializePresentersWithText: anInputText [
 
+	super initializePresentersWithText: anInputText.
+	textInput whenTextChangedDo: [ self renderDocument ]
+]
+
+{ #category : 'actions' }
+NTMDEditorPresenter >> openNote: aNoteObject [
+
+	self currentFileState: MDEditorOpenedFile new.
+	textInput text: aNoteObject contents.
+	self cleanOutput.
+	self updateTitle.
+	self renderDocument.
+]
+
+{ #category : 'actions' }
+NTMDEditorPresenter >> save: aText withExtension: anExtension [
+
+	self shouldBeImplemented 
+]
+
+{ #category : 'api' }
+NTMDEditorPresenter >> title [
+
+	^ 'NoteTaker - ' , self owner selectedNoteTitle
 ]

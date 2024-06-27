@@ -16,33 +16,26 @@ NTSpImportNoteCommand class >> defaultDescription [
 ]
 
 { #category : 'default' }
-NTSpImportNoteCommand class >> defaultIconName [
-
-	^ #add
-]
-
-{ #category : 'default' }
 NTSpImportNoteCommand class >> defaultName [
 
 	^ 'Import Notes'
 ]
 
 { #category : 'adding' }
-NTSpImportNoteCommand >> addNoteNamed: aString [ 
+NTSpImportNoteCommand >> addNoteFromFileReference: aString [ 
 
-	self facade addNoteNamed: aString
+	self facade addNoteFromFileReference: aString
 ]
 
 { #category : 'executing' }
 NTSpImportNoteCommand >> execute [
 
-	| selection |
-	selection := (StOpenFilePresenter new filter: StFileFilter new)
-		             openModal.
-	(selection notNil and: [ selection isFile ]) ifFalse: [ ^ self ].
-	(self isValidNote: selection asFileReference contents) ifTrue: [
-		self addNoteNamed:
-			selection asFileReference basenameWithoutExtension ].
+	| selections |
+	selections := (StOpenFilePresenter new
+						beMultipleSelection;
+						extensions: self validNoteExtensions;
+						yourself) openModal.
+	self processSelections: selections.
 	self context items: self facade notes
 ]
 
@@ -51,4 +44,25 @@ NTSpImportNoteCommand >> isValidNote: aString [
 	"Answer <true> if aString is a valid note title"
 	
 	^ self application isValidNote: aString
+]
+
+{ #category : 'executing' }
+NTSpImportNoteCommand >> processSelections: selections [
+
+	selections isEmptyOrNil 
+		ifTrue: [ ^ self ].
+	selections 
+		select: [ : selection | self isValidNote: selection asFileReference contents ]
+		thenDo: [ : selection | self addNoteFromFileReference: selection asFileReference ].
+]
+
+{ #category : 'executing' }
+NTSpImportNoteCommand >> validNoteExtensions [
+	"Answer a <Collection> of <String> each one specifying a valid file extension for a note"
+	
+	^ { 
+		'txt' .
+		'mic' .
+		'md' 
+		}
 ]

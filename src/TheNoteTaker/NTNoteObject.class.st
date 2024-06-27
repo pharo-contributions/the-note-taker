@@ -25,6 +25,16 @@ NTNoteObject class >> named: aString [
 		yourself
 ]
 
+{ #category : 'instance creation' }
+NTNoteObject class >> named: aString contents: contentsString [
+	"Answer a new instance of the receiver with title aString"
+	
+	^ self new
+		title: aString;
+		contents: contentsString;
+		yourself
+]
+
 { #category : 'accessing' }
 NTNoteObject class >> neoJsonMapping: mapper [
 

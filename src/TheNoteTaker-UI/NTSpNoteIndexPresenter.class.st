@@ -44,7 +44,7 @@ NTSpNoteIndexPresenter class >> buildNoteTakerOperationsGroupWith: presenterInst
 				context: presenterInstance);
 				
 			register: ((NTSpRemoveNoteCommand
-			forSpecWithIconNamed: #glamorousDelete
+			forSpecWithIconNamed: #delete
 			shortcutKey: 'D' asShortcut) 
 				context: presenterInstance);
 								
@@ -78,8 +78,8 @@ NTSpNoteIndexPresenter >> displayNoteTags: selectedNote [
 { #category : 'callbacks' }
 NTSpNoteIndexPresenter >> handleNoteChange: aSelectedNote [
 
-"	aSelectedNote
-		ifNotNil: [ 	self shouldBeImplemented ]" 
+	aSelectedNote
+		ifNotNil: [ 	 ]
 ]
 
 { #category : 'testing' }
@@ -93,37 +93,7 @@ NTSpNoteIndexPresenter >> hasSelectedNote [
 NTSpNoteIndexPresenter >> initializePresenters [
 
 	notesIndexPresenter := self newTable
-		                       addColumn: (SpStringTableColumn new
-				                        title: 'Title';
-				                        sortFunction: #yourself ascending;
-				                        evaluated: #title;
-				                        yourself);
-		                       addColumn: (SpStringTableColumn new
-				                        title: 'Tags';
-				                        sortFunction: #yourself ascending;
-				                        evaluated: [ :selectedNote |
-					                        self displayNoteTags: selectedNote ];
-				                        yourself);
-		                       addColumn: (SpStringTableColumn new
-				                        title: 'Date';
-				                        width:
-					                        200
-					                        * self currentWorld displayScaleFactor;
-				                        sortFunction: #yourself ascending;
-				                        evaluated: [ :selectedNote |
-					                        ZnUtils httpDate:
-							                        selectedNote creationDate ];
-				                        yourself);
-		                       whenSelectionChangedDo: [ :selection |
-		                       self handleNoteChange: selection selectedItem ];
-		                       contextMenu: [
-			                       (self rootCommandsGroup
-			                        / 'NTSelContextualMenu') beRoot
-				                       asMenuPresenter ];
-		                       whenSelectedItemChangedDo: [ :selection |
-		                       self owner updateContentOfNote: selection ];
-		                       items: notes;
-		                       yourself
+
 ]
 
 { #category : 'accessing' }
@@ -147,10 +117,31 @@ NTSpNoteIndexPresenter >> refresh [
 ]
 
 { #category : 'accessing' }
+NTSpNoteIndexPresenter >> selectNote: aNTNoteObject [
+	"Select aNTNoteObject in the receiver"
+	
+	notesIndexPresenter selectItem: aNTNoteObject
+]
+
+{ #category : 'accessing' }
 NTSpNoteIndexPresenter >> selectedNote [
 	"Answer the receiver's selected <NtNoteModel>"
 
 	^ notesIndexPresenter selectedItem
+]
+
+{ #category : 'accessing' }
+NTSpNoteIndexPresenter >> selectedNoteTitle [
+	"Answer a <String> representing the title of the currently selected note"
+
+	^ self selectedNote title.
+]
+
+{ #category : 'accessing' }
+NTSpNoteIndexPresenter >> selectedNotes [
+	"Answer the <Collection> of <NTNoteObject> which are currently selected"
+
+	^ notesIndexPresenter selectedItems
 ]
 
 { #category : 'accessing - model' }
@@ -159,8 +150,4 @@ NTSpNoteIndexPresenter >> setModelBeforeInitialization: aCollection [
 	notes := aCollection
 ]
 
-{ #category : 'accessing - model' }
-NTSpNoteIndexPresenter >> updateModel: aContent [ 
-
-	self selectedNote contents: aContent 
 ]

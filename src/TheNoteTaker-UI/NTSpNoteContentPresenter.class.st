@@ -25,18 +25,14 @@ NTSpNoteContentPresenter >> contentPresenter: anObject [
 	contentPresenter := anObject
 ]
 
-{ #category : 'initialization' }
-NTSpNoteContentPresenter >> contents: aString [
-	"Set the receiver's document content to be aString"
+{ #category : 'accessing' }
+NTSpNoteContentPresenter >> contents: aString [ 
 
-	self contentPresenter documentFromString: aString.
-	self saveContent: (self contentPresenter documentFromString: aString).
-]
 
 { #category : 'transmission' }
 NTSpNoteContentPresenter >> defaultInputPort [ 
 
-	^ SpModelPort newPresenter: self
+	^ SpModelPort newPresenter: self 
 ]
 
 { #category : 'layout' }
@@ -44,14 +40,30 @@ NTSpNoteContentPresenter >> defaultLayout [
 	
 	^ SpBoxLayout newTopToBottom 
 		add: contentPresenter;
-		yourself.
+		yourself
 ]
 
 { #category : 'initialization' }
 NTSpNoteContentPresenter >> initializePresenters [
 
 	contentPresenter := NTMDEditorPresenter new.
-	contentPresenter cleanInput.
+	contentPresenter 
+		cleanInput;
+		cleanOutput
+]
+
+{ #category : 'accessing' }
+NTSpNoteContentPresenter >> selectedNoteTitle [
+	
+	^ self owner selectedNoteTitle
+]
+
+{ #category : 'accessing - model' }
+NTSpNoteContentPresenter >> setModel: aNoteObject [ 
+	"Private - Set the receiver's content iterating recursively starting from aNode"
+	
+	aNoteObject openFromPresenter: self.
+
 ]
 
 { #category : 'initialization' }
