@@ -29,7 +29,9 @@ NTSpNoteContentPresenter >> contentPresenter: anObject [
 NTSpNoteContentPresenter >> contents: aString [
 	"Set the receiver's document content to be aString"
 
-	self contentPresenter documentFromString: aString
+	self contentPresenter
+		cleanInput;
+		cleanOutput
 ]
 
 { #category : 'transmission' }

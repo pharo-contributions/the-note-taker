@@ -174,5 +174,8 @@ NTSpNoteIndexPresenter >> setModelBeforeInitialization: aCollection [
 NTSpNoteIndexPresenter >> updateRemovedNote [
 
 	self refresh.
-	self owner updateWindowTitle.
+	notesIndexPresenter selectionMode unselectAll.
+	self owner
+		updateWindowTitle;
+		updateContents.
 ]

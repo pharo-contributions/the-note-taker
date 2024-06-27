@@ -248,6 +248,13 @@ NTSpNoteTakerMainUI >> toolbarHeight [
 	^ self class toolbarHeight
 ]
 
+{ #category : 'event handling' }
+NTSpNoteTakerMainUI >> updateContents [
+
+	self halt.
+	notesContentPresenter setModel: self nullNote
+]
+
 { #category : 'accessing - status bar' }
 NTSpNoteTakerMainUI >> updateStatusBar [
 
