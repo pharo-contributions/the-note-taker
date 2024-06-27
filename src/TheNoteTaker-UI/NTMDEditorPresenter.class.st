@@ -6,6 +6,13 @@ Class {
 	#tag : 'Core'
 }
 
+{ #category : 'initialization' }
+NTMDEditorPresenter >> initializePresentersWithText: anInputText [
+
+	super initializePresentersWithText: anInputText.
+	textInput whenTextChangedDo: [ self renderDocument ]
+]
+
 { #category : 'actions' }
 NTMDEditorPresenter >> openNote: aNoteObject [
 

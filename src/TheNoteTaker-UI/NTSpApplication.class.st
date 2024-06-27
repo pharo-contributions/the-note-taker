@@ -70,5 +70,5 @@ NTSpApplication >> notes [
 NTSpApplication >> start [
 	" Private - See superimplementor's comment "
 
-	(NTSpNoteTakerMainUI newApplication: self) "asWorldWindow" open.
+	(NTSpNoteTakerMainUI newApplication: self) asWorldWindow open.
 ]
