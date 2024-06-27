@@ -12,7 +12,8 @@ NTMDEditorPresenter >> openNote: aNoteObject [
 	self currentFileState: MDEditorOpenedFile new.
 	textInput text: aNoteObject contents.
 	self cleanOutput.
-	self updateTitle
+	self updateTitle.
+	self renderDocument.
 ]
 
 { #category : 'actions' }
@@ -22,6 +23,7 @@ NTMDEditorPresenter >> save: aText withExtension: anExtension [
 ]
 
 { #category : 'api' }
-NTMDEditorPresenter >> updateTitle [
+NTMDEditorPresenter >> title [
 
+	^ 'NoteTaker - ' , self owner selectedNoteTitle
 ]

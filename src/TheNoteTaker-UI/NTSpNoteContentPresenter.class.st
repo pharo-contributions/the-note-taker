@@ -53,9 +53,16 @@ NTSpNoteContentPresenter >> initializePresenters [
 	contentPresenter cleanInput.
 ]
 
+{ #category : 'accessing' }
+NTSpNoteContentPresenter >> selectedNoteTitle [
+	
+	^ self owner selectedNoteTitle
+]
+
 { #category : 'accessing - model' }
 NTSpNoteContentPresenter >> setModel: aNoteObject [ 
 	"Private - Set the receiver's content iterating recursively starting from aNode"
 	
-	self contentPresenter openNote: aNoteObject
+	aNoteObject openFromPresenter: self.
+
 ]

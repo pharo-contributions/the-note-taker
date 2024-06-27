@@ -23,24 +23,26 @@ NTSpAddNoteCommand class >> defaultName [
 
 { #category : 'adding' }
 NTSpAddNoteCommand >> addNoteNamed: aString [ 
+	"Answer a new <NTNoteObject> named aString"
 
-	self facade addNoteNamed: aString
+	^ self facade addNoteNamed: aString
 ]
 
 { #category : 'executing' }
 NTSpAddNoteCommand >> execute [
 	"Request a title to create a new note"
 
-	| answer |
+	| answer newNote |
 	answer := self application newRequest
 		title: 'Note title';
 		label: 'Please provide the name of the new note';
 		openModalWithParent: context window.
 
 	(self isValidNote: answer) ifFalse: [ ^ self ].
-	self addNoteNamed: answer trimBoth.
-	self context items: self facade notes.
-
+	newNote := self addNoteNamed: answer trimBoth.
+	self context 
+		items: self facade notes;
+		selectNote: newNote.
 ]
 
 { #category : 'testing' }

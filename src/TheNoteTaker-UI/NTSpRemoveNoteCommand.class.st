@@ -35,5 +35,6 @@ NTSpRemoveNoteCommand >> execute [
 	(self confirm: 'Are you sure you want to remove the selected note(s)?')
 		ifFalse: [ ^ self ].
 	self facade removeNotes: self selectedNotes.
-	self context refresh.
+	self context updateRemovedNote
+
 ]

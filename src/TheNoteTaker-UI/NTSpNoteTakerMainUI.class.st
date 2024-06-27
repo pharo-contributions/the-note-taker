@@ -23,10 +23,10 @@ NTSpNoteTakerMainUI >> connectPresenters [
 
 	notesIndexPresenter
 		transmitTo: notesContentPresenter
-		transform: [ : note | 
-			(note isNil or: [ note isEmpty ])
-				ifFalse: [ self processSelectedNote: note ]
-				ifTrue: [ String empty ] ]
+		transform: [ : notesCollection | 
+			(notesCollection isNil or: [ notesCollection isEmpty ])
+				ifFalse: [ self processSelectedNote: notesCollection ]
+				ifTrue: [ self nullNote ] ]
 ]
 
 { #category : 'accessing - status bar' }
@@ -49,6 +49,12 @@ NTSpNoteTakerMainUI >> defaultLayout [
 			yourself);
 		add: statusBar height: self toolbarHeight;
 		yourself.
+]
+
+{ #category : 'testing' }
+NTSpNoteTakerMainUI >> hasSelectedNote [
+
+	^ notesIndexPresenter hasSelectedNote 
 ]
 
 { #category : 'accessing - status bar' }
@@ -144,6 +150,13 @@ NTSpNoteTakerMainUI >> notesIndexPresenter [
 	^ notesIndexPresenter
 ]
 
+{ #category : 'accessing' }
+NTSpNoteTakerMainUI >> nullNote [
+
+	self updateWindowTitle.
+	^ NTNullNoteObject new 
+]
+
 { #category : 'showing' }
 NTSpNoteTakerMainUI >> open [ 
 
@@ -162,7 +175,7 @@ NTSpNoteTakerMainUI >> processSelectedNote: aCollection [
 	"If we have more than one selection we just display an empty note in the contents presenter"
 
 	aCollection size > 1
-		ifTrue: [ ^ String empty ].
+		ifTrue: [ ^ self nullNote ].
 	^ aCollection anyOne
 
 ]
@@ -172,6 +185,13 @@ NTSpNoteTakerMainUI >> selectedNote [
 	"Answer the receiver's selected <NtNoteModel>"
 	
 	^ self notesIndexPresenter selectedNote
+]
+
+{ #category : 'accessing' }
+NTSpNoteTakerMainUI >> selectedNoteTitle [
+	"Answer the receiver's selected <NtNoteObject> title"
+	
+	^ self notesIndexPresenter selectedNoteTitle
 ]
 
 { #category : 'accessing' }
@@ -232,4 +252,12 @@ NTSpNoteTakerMainUI >> toolbarHeight [
 NTSpNoteTakerMainUI >> updateStatusBar [
 
 	statusBar pushMessage: self statusBarMessage.
+]
+
+{ #category : 'activation' }
+NTSpNoteTakerMainUI >> updateWindowTitle [
+
+	self withWindowDo: [ : w |
+		self hasSelectedNote
+			ifFalse: [ self setTitleTo: w ] ]
 ]

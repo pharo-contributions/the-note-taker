@@ -137,10 +137,24 @@ NTSpNoteIndexPresenter >> refresh [
 ]
 
 { #category : 'accessing' }
+NTSpNoteIndexPresenter >> selectNote: aNTNoteObject [
+	"Select aNTNoteObject in the receiver"
+	
+	notesIndexPresenter selectItem: aNTNoteObject
+]
+
+{ #category : 'accessing' }
 NTSpNoteIndexPresenter >> selectedNote [
 	"Answer the receiver's selected <NtNoteModel>"
 
 	^ notesIndexPresenter selectedItem
+]
+
+{ #category : 'accessing' }
+NTSpNoteIndexPresenter >> selectedNoteTitle [
+	"Answer a <String> representing the title of the currently selected note"
+
+	^ self selectedNote title.
 ]
 
 { #category : 'accessing' }
@@ -154,4 +168,11 @@ NTSpNoteIndexPresenter >> selectedNotes [
 NTSpNoteIndexPresenter >> setModelBeforeInitialization: aCollection [
 
 	notes := aCollection
+]
+
+{ #category : 'as yet unclassified' }
+NTSpNoteIndexPresenter >> updateRemovedNote [
+
+	self refresh.
+	self owner updateWindowTitle.
 ]
