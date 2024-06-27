@@ -58,7 +58,10 @@ NTSingleton class >> uniqueInstance [
 NTSingleton >> addNoteNamed: aString [
 	"Add a new note with title aString to the receiver's notes. Answer the receiver"
 	
-	^ self notes add: (self newNoteNamed: aString)
+	| newNote |
+	newNote := self newNoteNamed: aString.
+	self notes add: newNote.
+	self saveNoteInSton: newNote.
 ]
 
 { #category : 'testing' }
@@ -151,4 +154,13 @@ NTSingleton >> removeNotesSuchThat: aBlock [
 	self notes copy do: [:each | 
 		(aBlock value: each) 
 			ifTrue: [ self removeNoteNamed: each title ] ]
+]
+
+{ #category : 'adding' }
+NTSingleton >> saveNoteInSton: aNote [
+
+	'notes.ston' asFileReference writeStreamDo: [ :stream |
+		STON writer
+			on: stream;
+			nextPut: aNote  ]
 ]
