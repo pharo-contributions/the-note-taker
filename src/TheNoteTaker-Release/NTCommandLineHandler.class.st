@@ -29,7 +29,8 @@ NTCommandLineHandler class >> generateApplication [
         #ShortVersion -> '1.0.0' .
         #DisplayName -> 'Note Taker' .
         #CommandLineHandler -> 'noteTaker' .
-        #CompanyName -> 'INRIA' } asDictionary;
+        #CompanyName -> 'INRIA' .
+		  #VMType -> 'Spur' } asDictionary;
 		outputDirectory: FileLocator workingDirectory / 'build';
 		generate.
 ]
@@ -59,7 +60,7 @@ NTCommandLineHandler >> activate [
 						action: [ self inform: 'Help' ]
 						shortcut: '' ].
 			main setAsMainMenu.
-			NTSpApplication new start ]
+			NTSpApplication new startFullScreen ]
 		ifFalse: [ self inform: 'Not OSX' ].
 
 

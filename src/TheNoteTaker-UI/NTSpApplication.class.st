@@ -72,3 +72,10 @@ NTSpApplication >> start [
 
 	(NTSpNoteTakerMainUI newApplication: self) "asWorldWindow" open.
 ]
+
+{ #category : 'running' }
+NTSpApplication >> startFullScreen [
+	" Private - See superimplementor's comment "
+
+	(NTSpNoteTakerMainUI newApplication: self) asWorldWindow open.
+]
