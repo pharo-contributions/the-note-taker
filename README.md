@@ -39,12 +39,10 @@ If you want to add the TheNoteTaker to your Metacello Baselines or Configuration
 
 # Usage
 
-If you install the application from an executable, the UI will be already displayed.
-
-If you install the application through the Metacello manager:
-
-You can open the application through the UI: Library -> The Note Taker
-You can open the application with the following expression:
+- If you install the application from an executable, the UI will be already displayed.
+- If you install the application through the Metacello manager
+	- You can open the application through the UI: **Library** -> **The Note Taker**
+	- Or you can open the application with the following expression:
 
 ```smalltalk
 NTSpApplication new start.
