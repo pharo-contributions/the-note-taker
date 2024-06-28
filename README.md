@@ -7,7 +7,10 @@
 - [Description](#description)
 - [Installation](#installation)
   - [Baseline String](#baseline-string)
+- [Usage](#usage)
+- [Screenshot](#screenshot)
 - [Implementation notes](#implementation-note)
+  - [Generate a Release](#release) 
 - [Contribute](#contribute)
   - [Version management](#version-management)
 - [License](#license)
@@ -36,6 +39,11 @@ If you want to add the TheNoteTaker to your Metacello Baselines or Configuration
 
 # Usage
 
+- If you install the application from an executable, the UI will be already displayed.
+- If you install the application through the Metacello manager
+	- You can open the application through the UI: **Library** -> **The Note Taker**
+	- Or you can open the application with the following expression:
+
 ```smalltalk
 NTSpApplication new start.
 ```
@@ -44,6 +52,21 @@ NTSpApplication new start.
 
 <img width="915" alt="Screenshot 2024-02-08 at 20 30 03" src="https://github.com/hernanmd/the-note-taker/assets/4825959/707d20ef-b67c-48b3-8e56-4092318a7746">
 
+# Implementation notes
+
+## Generate a Release
+
+### MacOS
+
+To generate a macOS installer (.dmg) and executable file (.app) you can evaluate the following one-liner in your terminal:
+
+```bash
+wget -O- get.pharo.org/64/130+vm | bash; ./pharo Pharo.image metacello install github://hernanmd/the-note-taker/src BaselineOfTheNoteTaker --groups=Release; ./pharo Pharo.image eval "NTCommandLineHandler generateApplication"; chmod 755 build/build.sh; cd build; ./build.sh; open NoteTaker.app
+```
+
+### GNU/Linux
+
+Work in Progress
 
 # Contribute
 
