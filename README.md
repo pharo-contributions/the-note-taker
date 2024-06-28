@@ -10,7 +10,7 @@
 - [Usage](#usage)
 - [Screenshot](#screenshot)
 - [Implementation notes](#implementation-notes)
-  - [Generate a Release](#generatea-a-release) 
+  - [Generate a Release](#generate-a-release) 
 - [Contribute](#contribute)
   - [Version management](#version-management)
 - [License](#license)
