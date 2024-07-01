@@ -26,7 +26,7 @@ NTSpNoteContentPresenter >> contentPresenter: anObject [
 ]
 
 { #category : 'accessing' }
-NTSpNoteContentPresenter >> contents: aString [ 
+NTSpNoteContentPresenter >> contents: aString [
 
 	contentPresenter textInputText: aString
 ]

@@ -24,14 +24,14 @@ NTMDEditorPresenter >> openNote: aNoteObject [
 ]
 
 { #category : 'actions' }
-NTMDEditorPresenter >> save: aText withExtension: anExtension [
+NTMDEditorPresenter >> save: aText withExtension: anExtension [ 
 
 	| nameOfNote nameWithExtension |
 	nameOfNote := (aText substrings: Character cr) trimBoth.
 	nameWithExtension := nameOfNote , '.' , anExtension.
 
 	nameWithExtension asFileReference writeStreamDo: [ :stream |
-		stream nextPutAll: aText ]
+		stream nextPutAll: aText ].
 ]
 
 { #category : 'api' }

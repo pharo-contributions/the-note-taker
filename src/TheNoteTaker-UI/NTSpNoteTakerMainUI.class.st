@@ -251,7 +251,6 @@ NTSpNoteTakerMainUI >> toolbarHeight [
 { #category : 'event handling' }
 NTSpNoteTakerMainUI >> updateContents [
 
-	self halt.
 	notesContentPresenter setModel: self nullNote
 ]
 
