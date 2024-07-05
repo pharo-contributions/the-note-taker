@@ -134,8 +134,7 @@ NTSpNoteTakerMainUI >> initializeWindow: aSpWindowPresenter [
 { #category : 'initialization' }
 NTSpNoteTakerMainUI >> model [
 	"Answer the receiver's <NTNoteFacade>"
-
-	^ self application noteTaker.
+	^ self application noteTaker
 ]
 
 { #category : 'accessing' }
@@ -148,6 +147,12 @@ NTSpNoteTakerMainUI >> noteTaker [
 NTSpNoteTakerMainUI >> notesIndexPresenter [
 
 	^ notesIndexPresenter
+]
+
+{ #category : 'initialization' }
+NTSpNoteTakerMainUI >> notesToolbar [
+
+	^ notesToolbarPresenter
 ]
 
 { #category : 'accessing' }
@@ -190,8 +195,8 @@ NTSpNoteTakerMainUI >> selectedNote [
 { #category : 'accessing' }
 NTSpNoteTakerMainUI >> selectedNoteTitle [
 	"Answer the receiver's selected <NtNoteObject> title"
-	
 	^ self notesIndexPresenter selectedNoteTitle
+	
 ]
 
 { #category : 'accessing' }
@@ -251,7 +256,6 @@ NTSpNoteTakerMainUI >> toolbarHeight [
 { #category : 'event handling' }
 NTSpNoteTakerMainUI >> updateContents [
 
-	self halt.
 	notesContentPresenter setModel: self nullNote
 ]
 

@@ -26,9 +26,9 @@ NTSpNoteContentPresenter >> contentPresenter: anObject [
 ]
 
 { #category : 'accessing' }
-NTSpNoteContentPresenter >> contents: aString [ 
+NTSpNoteContentPresenter >> contents: arg1 [
 
-	contentPresenter textInputText: aString
+	contentPresenter textInputText: arg1
 ]
 
 { #category : 'transmission' }
@@ -38,18 +38,19 @@ NTSpNoteContentPresenter >> defaultInputPort [
 ]
 
 { #category : 'layout' }
-NTSpNoteContentPresenter >> defaultLayout [ 
-	
-	^ SpBoxLayout newTopToBottom 
-		add: contentPresenter;
-		yourself
+NTSpNoteContentPresenter >> defaultLayout [
+
+	| tmp2 |
+	tmp2 := SpBoxLayout newTopToBottom.
+	tmp2 add: contentPresenter.
+	^ tmp2 yourself
 ]
 
 { #category : 'initialization' }
 NTSpNoteContentPresenter >> initializePresenters [
 
 	contentPresenter := NTMDEditorPresenter new.
-	contentPresenter 
+	contentPresenter
 		cleanInput;
 		cleanOutput
 ]

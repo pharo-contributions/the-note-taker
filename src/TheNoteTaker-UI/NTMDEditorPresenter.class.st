@@ -26,7 +26,12 @@ NTMDEditorPresenter >> openNote: aNoteObject [
 { #category : 'actions' }
 NTMDEditorPresenter >> save: aText withExtension: anExtension [
 
-	self shouldBeImplemented 
+	| nameOfNote nameWithExtension |
+	nameOfNote := (aText asString substrings: String cr) first trimBoth.
+	nameWithExtension := nameOfNote , '.' , anExtension.
+
+	nameWithExtension asFileReference writeStreamDo: [ :stream |
+		stream nextPutAll: aText ]
 ]
 
 { #category : 'api' }
