@@ -154,7 +154,9 @@ NTSpNoteIndexPresenter >> selectedNote [
 NTSpNoteIndexPresenter >> selectedNoteTitle [
 	"Answer a <String> representing the title of the currently selected note"
 
-	^ self selectedNote title.
+	^ self selectedNote 
+		ifNotNil: [ : n | n title ]
+		ifNil: [ String empty ]
 ]
 
 { #category : 'accessing' }

@@ -6,6 +6,12 @@ Class {
 	#tag : 'Core'
 }
 
+{ #category : 'private' }
+NTMDEditorPresenter >> applicationTitle [
+
+	^ self application applicationTitle
+]
+
 { #category : 'initialization' }
 NTMDEditorPresenter >> initializePresentersWithText: anInputText [
 
@@ -37,5 +43,8 @@ NTMDEditorPresenter >> save: aText withExtension: anExtension [
 { #category : 'api' }
 NTMDEditorPresenter >> title [
 
-	^ 'NoteTaker - ' , self owner selectedNoteTitle
+	^ String streamContents: [ : stream |
+		stream 
+			<< self applicationTitle;
+			<< self owner selectedNoteTitle ]
 ]

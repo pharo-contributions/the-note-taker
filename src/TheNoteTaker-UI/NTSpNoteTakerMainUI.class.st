@@ -19,6 +19,13 @@ Class {
 }
 
 { #category : 'initialization' }
+NTSpNoteTakerMainUI >> applicationTitle [
+
+	^ self application applicationTitle
+
+]
+
+{ #category : 'initialization' }
 NTSpNoteTakerMainUI >> connectPresenters [ 
 
 	notesIndexPresenter
@@ -68,13 +75,6 @@ NTSpNoteTakerMainUI >> increaseNotesCount [
 NTSpNoteTakerMainUI >> initialExtentForWindow [
 
 	^ (900 @ 600) scaledByDisplayScaleFactor
-]
-
-{ #category : 'initialization' }
-NTSpNoteTakerMainUI >> initialTitle [
-
-	^ 'The Note Taker'
-
 ]
 
 { #category : 'initialization' }
@@ -220,7 +220,7 @@ NTSpNoteTakerMainUI >> setInitialExtentTo: aSpWindowPresenter [
 { #category : 'initialization' }
 NTSpNoteTakerMainUI >> setTitleTo: aSpWindowPresenter [
 
-	aSpWindowPresenter title: self initialTitle
+	aSpWindowPresenter title: self applicationTitle
 
 ]
 

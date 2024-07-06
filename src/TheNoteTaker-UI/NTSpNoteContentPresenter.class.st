@@ -58,7 +58,13 @@ NTSpNoteContentPresenter >> initializePresenters [
 { #category : 'accessing' }
 NTSpNoteContentPresenter >> selectedNoteTitle [
 	
-	^ self owner selectedNoteTitle
+	^ String streamContents: [ : stream |
+		self owner selectedNoteTitle
+			ifNotEmpty: [ : title |
+				stream 
+					<< ' - ';
+					<< title ]
+			ifEmpty: [ String empty ] ]
 ]
 
 { #category : 'accessing - model' }

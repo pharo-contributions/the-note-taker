@@ -20,16 +20,28 @@ Class {
 }
 
 { #category : 'private' }
+NTSpApplication class >> applicationTitle [
+
+	^ 'The Note Taker'
+]
+
+{ #category : 'private' }
 NTSpApplication class >> menuNoteTakersOn: aBuilder [
 	<worldMenu>
 
 	(aBuilder item: #NoteTaker)
 		parent: #Tools;
-		label: 'The Note Taker';
+		label: self applicationTitle;
 		icon: (self iconNamed: #catalog);
 		action: [ NTSpApplication new run ];
 		help: 'The Note Taker';
 		order: 630
+]
+
+{ #category : 'private' }
+NTSpApplication >> applicationTitle [ 
+
+	^ self class applicationTitle 
 ]
 
 { #category : 'initialization' }
