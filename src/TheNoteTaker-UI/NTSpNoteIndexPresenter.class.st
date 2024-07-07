@@ -172,7 +172,7 @@ NTSpNoteIndexPresenter >> setModelBeforeInitialization: aCollection [
 	notes := aCollection
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'callbacks' }
 NTSpNoteIndexPresenter >> updateRemovedNote [
 
 	self refresh.

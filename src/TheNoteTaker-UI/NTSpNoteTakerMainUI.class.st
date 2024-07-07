@@ -58,6 +58,14 @@ NTSpNoteTakerMainUI >> defaultLayout [
 		yourself.
 ]
 
+{ #category : 'accessing' }
+NTSpNoteTakerMainUI >> editorPresenter [
+	"Answer the receiver's MicroDown editor presenter"
+
+	^ notesContentPresenter editorPresenter
+
+]
+
 { #category : 'testing' }
 NTSpNoteTakerMainUI >> hasSelectedNote [
 

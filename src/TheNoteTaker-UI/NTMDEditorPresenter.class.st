@@ -6,6 +6,16 @@ Class {
 	#tag : 'Core'
 }
 
+{ #category : 'visiting' }
+NTMDEditorPresenter >> accept [
+
+	self halt.
+	self application noteTaker notes.
+	self owner model
+	
+	. "a NTSpNoteContentPresenter"
+]
+
 { #category : 'private' }
 NTMDEditorPresenter >> applicationTitle [
 
@@ -16,7 +26,9 @@ NTMDEditorPresenter >> applicationTitle [
 NTMDEditorPresenter >> initializePresentersWithText: anInputText [
 
 	super initializePresentersWithText: anInputText.
-	textInput whenTextChangedDo: [ self renderDocument ]
+	textInput 
+		whenTextChangedDo: [ self renderDocument ];
+		bindKeyCombination: $s meta toAction: [ self accept ].
 ]
 
 { #category : 'actions' }
