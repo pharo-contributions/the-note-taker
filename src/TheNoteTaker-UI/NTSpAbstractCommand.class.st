@@ -1,3 +1,7 @@
+"
+Abstract class to group commands for note taking application.
+
+"
 Class {
 	#name : 'NTSpAbstractCommand',
 	#superclass : 'CmCommand',
@@ -21,7 +25,7 @@ NTSpAbstractCommand >> applicationClass [
 { #category : 'accessing' }
 NTSpAbstractCommand >> facade [
 
-	^ self application noteTaker.
+	^ self application noteTaker
 ]
 
 { #category : 'testing' }
@@ -40,9 +44,8 @@ NTSpAbstractCommand >> notesIndex [
 { #category : 'accessing' }
 NTSpAbstractCommand >> selectedNote [
 	"Answer the currently selected <NTObject>"
-	
-	^ self context selectedNote
 
+	^ self context selectedNote
 ]
 
 { #category : 'accessing' }

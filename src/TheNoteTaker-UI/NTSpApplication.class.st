@@ -38,6 +38,13 @@ NTSpApplication class >> menuNoteTakersOn: aBuilder [
 		order: 630
 ]
 
+{ #category : 'testing' }
+NTSpApplication >> addNoteNamed: aString [ 
+	"Add a new empty note with title aString to the receiver's notes. Answer the receiver"
+	
+	^ self noteTaker addNoteNamed: aString trimBoth
+]
+
 { #category : 'private' }
 NTSpApplication >> applicationTitle [ 
 
@@ -52,10 +59,10 @@ NTSpApplication >> initialize [
 ]
 
 { #category : 'testing' }
-NTSpApplication >> isValidNote: aString [ 
+NTSpApplication >> isValidNoteTitle: aString [ 
 	"Answer <true> if aString is a valid note title"
 	
-	^ self noteTaker isValidNote: aString
+	^ self noteTaker isValidNoteTitle: aString
 ]
 
 { #category : 'accessig' }
@@ -63,6 +70,12 @@ NTSpApplication >> noteInformation: aNtNodeModel [
 
 	self shouldBeImplemented.
 	^ aNtNodeModel 
+]
+
+{ #category : 'callbacks' }
+NTSpApplication >> noteNamed: aString [ 
+
+	^ self noteTaker noteNamed: aString
 ]
 
 { #category : 'accessing' }
@@ -80,14 +93,14 @@ NTSpApplication >> notes [
 
 { #category : 'running' }
 NTSpApplication >> start [
-	" Private - See superimplementor's comment "
+	" Private - Open the main application window for development in Morphic "
 
-	(NTSpNoteTakerMainUI newApplication: self) "asWorldWindow" open.
+	(NTSpNoteTakerMainUI newApplication: self) open
 ]
 
 { #category : 'running' }
 NTSpApplication >> startFullScreen [
-	" Private - See superimplementor's comment "
+	" Private - Open the main application window in full screen, intended for the release version "
 
 	(NTSpNoteTakerMainUI newApplication: self) asWorldWindow open.
 ]

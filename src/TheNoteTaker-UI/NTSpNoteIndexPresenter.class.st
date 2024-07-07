@@ -61,8 +61,8 @@ NTSpNoteIndexPresenter >> defaultLayout [
 ]
 
 { #category : 'layout' }
-NTSpNoteIndexPresenter >> defaultOutputPort [ 
-	
+NTSpNoteIndexPresenter >> defaultOutputPort [
+
 	^ notesIndexPresenter defaultOutputPort
 ]
 
@@ -75,11 +75,23 @@ NTSpNoteIndexPresenter >> displayNoteTags: selectedNote [
 		ifNotEmpty: [ : tags | tags join: ',' ]
 ]
 
+{ #category : 'accessing' }
+NTSpNoteIndexPresenter >> editorPresenter [
+	"Answer the receiver's <NTMDEditorPresenter>"
+
+	^ self owner editorPresenter
+]
+
 { #category : 'callbacks' }
 NTSpNoteIndexPresenter >> handleNoteChange: aSelectedNote [
+	"Private - We handle note change selection event only when the user is not creating a new file.
+	When a new file is created, a selection is made to highlight the new created file, it is not an opened note"
 
-	aSelectedNote
-		ifNotNil: [ 	 ]
+	aSelectedNote ifNil: [ ^ self ].
+	self editorPresenter noNote.
+	aSelectedNote existsAsFile
+		ifTrue: [ aSelectedNote openFromPresenter: self ]
+		ifFalse: [ aSelectedNote newFromPresenter: self ]
 ]
 
 { #category : 'testing' }
@@ -172,7 +184,7 @@ NTSpNoteIndexPresenter >> setModelBeforeInitialization: aCollection [
 	notes := aCollection
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'callbacks' }
 NTSpNoteIndexPresenter >> updateRemovedNote [
 
 	self refresh.

@@ -36,5 +36,4 @@ NTSpRemoveNoteCommand >> execute [
 		ifFalse: [ ^ self ].
 	self facade removeNotes: self selectedNotes.
 	self context updateRemovedNote
-
 ]

@@ -22,12 +22,13 @@ BaselineOfTheNoteTaker >> baseline: spec [
 		self microEd: spec.
 		self applicationGenerator: spec.
 		self objcbridge: spec.
+		self neoJson: spec.
 
 		spec
 			package: 'TheNoteTaker';
 			package: 'TheNoteTaker-UI' 	with: [ spec requires: #( #MicroEd TheNoteTaker ) ];
 			package: 'TheNoteTaker-Release' with: [ spec requires: #( ApplicationGenerator ObjCBridge ) ];
-			package: 'TheNoteTaker-Tests' with: [ spec requires: #( TheNoteTaker ) ].
+			package: 'TheNoteTaker-Tests' with: [ spec requires: #( TheNoteTaker NeoJSON ) ].
 		spec
 			group: 'Core' with: #( 'TheNoteTaker' );
 			group: 'UI' with: #( 'TheNoteTaker-UI' );
@@ -50,6 +51,15 @@ BaselineOfTheNoteTaker >> microEd: spec [
 	spec
 		baseline: 'MicroEd'
 		with: [ spec repository: 'github://pillar-markup/MicroEd/src' ]
+]
+
+{ #category : 'baselines' }
+BaselineOfTheNoteTaker >> neoJson: spec [
+
+	spec
+		baseline: 'NeoJSON';
+		with: [ spec repository: 'github://svenvc/NeoJSON/repository' ]
+
 ]
 
 { #category : 'baselines' }

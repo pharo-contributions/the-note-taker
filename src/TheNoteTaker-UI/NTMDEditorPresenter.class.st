@@ -1,3 +1,7 @@
+"
+Specialized MicroEd editor for note taking application
+
+"
 Class {
 	#name : 'NTMDEditorPresenter',
 	#superclass : 'MDEditorPresenter',
@@ -6,6 +10,14 @@ Class {
 	#tag : 'Core'
 }
 
+{ #category : 'visiting' }
+NTMDEditorPresenter >> accept [
+
+	currentFile file writeStreamDo: [ :str |
+		str nextPutAll: self text asString ].
+	self inform: 'Note ' , currentFile file fullName , ' saved'
+]
+
 { #category : 'private' }
 NTMDEditorPresenter >> applicationTitle [
 
@@ -13,20 +25,45 @@ NTMDEditorPresenter >> applicationTitle [
 ]
 
 { #category : 'initialization' }
+NTMDEditorPresenter >> initialize [ 
+
+	super initialize.
+	self noNote
+]
+
+{ #category : 'initialization' }
 NTMDEditorPresenter >> initializePresentersWithText: anInputText [
 
 	super initializePresentersWithText: anInputText.
-	textInput whenTextChangedDo: [ self renderDocument ]
+	textInput 
+		whenTextChangedDo: [ self renderDocument ];
+		bindKeyCombination: $s meta toAction: [ self accept ].
+]
+
+{ #category : 'actions' }
+NTMDEditorPresenter >> newNote: aNoteObject [
+
+	self currentFileState: (MDEditorNewFile newFromNote: aNoteObject).
+	self updateTitle.
+	textInput text: aNoteObject contents.
+	self cleanOutput.
+	self renderDocument
+]
+
+{ #category : 'initialization' }
+NTMDEditorPresenter >> noNote [
+
+	currentFile := MDEditorNoFile new
 ]
 
 { #category : 'actions' }
 NTMDEditorPresenter >> openNote: aNoteObject [
 
-	self currentFileState: MDEditorOpenedFile new.
-	textInput text: aNoteObject contents.
+	self currentFileState: (MDEditorOpenedFile newFromNote: aNoteObject).
 	self cleanOutput.
+	textInput text: aNoteObject contents.
 	self updateTitle.
-	self renderDocument.
+	self renderDocument
 ]
 
 { #category : 'actions' }
