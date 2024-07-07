@@ -78,6 +78,18 @@ NTNoteObject >> creationDate: anObject [
 	creationDate := anObject
 ]
 
+{ #category : 'defaults' }
+NTNoteObject >> defaultExtension [
+
+	^ '.mic'
+]
+
+{ #category : 'testing' }
+NTNoteObject >> existsAsFile [
+
+	^ self nameForFile asFileReference exists
+]
+
 { #category : 'testing' }
 NTNoteObject >> hasTitle [
 
@@ -110,6 +122,21 @@ NTNoteObject >> modificationDate [
 NTNoteObject >> modificationDate: anObject [
 
 	modificationDate := anObject
+]
+
+{ #category : 'accessing' }
+NTNoteObject >> nameForFile [
+
+	^ String streamContents: [ : stream |
+		stream 
+			<< self title asLowercase;
+			<< self defaultExtension ]
+]
+
+{ #category : 'instance creation' }
+NTNoteObject >> newFromPresenter: aNTSpNoteContentPresenter [ 
+
+	aNTSpNoteContentPresenter editorPresenter newNote: self
 ]
 
 { #category : 'printing' }

@@ -19,9 +19,9 @@ Class {
 }
 
 { #category : 'layout' }
-NTSpSearchCreatePresenter >> defaultLayout [ 
+NTSpSearchCreatePresenter >> defaultLayout [
 
-	^ SpBoxLayout newLeftToRight 
+	^ SpBoxLayout newLeftToRight
 		add: notesSearchCreateTextPresenter;
 		add: notesSearchButtonPresenter expand: false;
 		yourself

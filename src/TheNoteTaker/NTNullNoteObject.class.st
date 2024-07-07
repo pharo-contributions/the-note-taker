@@ -1,3 +1,6 @@
+"
+Used when we need to represent null note object behavior
+"
 Class {
 	#name : 'NTNullNoteObject',
 	#superclass : 'Object',
@@ -5,3 +8,14 @@ Class {
 	#package : 'TheNoteTaker',
 	#tag : 'Core'
 }
+
+{ #category : 'instance creation' }
+NTNullNoteObject >> newFromPresenter: aNTSpNoteContentPresenter [ 
+
+]
+
+{ #category : 'accessing' }
+NTNullNoteObject >> title [
+
+	^ String empty
+]

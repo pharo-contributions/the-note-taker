@@ -22,15 +22,14 @@ Class {
 NTSpNoteTakerMainUI >> applicationTitle [
 
 	^ self application applicationTitle
-
 ]
 
 { #category : 'initialization' }
-NTSpNoteTakerMainUI >> connectPresenters [ 
+NTSpNoteTakerMainUI >> connectPresenters [
 
 	notesIndexPresenter
 		transmitTo: notesContentPresenter
-		transform: [ : notesCollection | 
+		transform: [ : notesCollection |
 			(notesCollection isNil or: [ notesCollection isEmpty ])
 				ifFalse: [ self processSelectedNote: notesCollection ]
 				ifTrue: [ self nullNote ] ]
@@ -41,13 +40,13 @@ NTSpNoteTakerMainUI >> decreaseNotesCount [
 
 	selectionCount >= 1 ifFalse: [ ^ self ].
 	selectionCount := selectionCount - 1.
-	self updateStatusBar.
+	self updateStatusBar
 ]
 
 { #category : 'layout' }
-NTSpNoteTakerMainUI >> defaultLayout [ 
+NTSpNoteTakerMainUI >> defaultLayout [
 
-	^ SpBoxLayout newTopToBottom 
+	^ SpBoxLayout newTopToBottom
 		add: notesToolbarPresenter height: self toolbarHeight;
 		add: (SpPanedLayout newTopToBottom
 			positionOfSlider: 35 percent;
@@ -55,7 +54,7 @@ NTSpNoteTakerMainUI >> defaultLayout [
 			add: notesContentPresenter;
 			yourself);
 		add: statusBar height: self toolbarHeight;
-		yourself.
+		yourself
 ]
 
 { #category : 'accessing' }
@@ -109,14 +108,14 @@ NTSpNoteTakerMainUI >> initializeNotesIndex [
 { #category : 'initialization' }
 NTSpNoteTakerMainUI >> initializeNotesToolbar [
 	"This is a search and creator toolbar"
-	
-	notesToolbarPresenter := self instantiate: NTSpSearchCreatePresenter on: self model.
+
+	notesToolbarPresenter := self instantiate: NTSpSearchCreatePresenter on: self model
 ]
 
 { #category : 'initialization' }
 NTSpNoteTakerMainUI >> initializePresenters [
 
-	self 
+	self
 		initializeNotesToolbar;
 		initializeNotesIndex;
 		initializeNotesContent;
@@ -167,14 +166,14 @@ NTSpNoteTakerMainUI >> notesToolbar [
 NTSpNoteTakerMainUI >> nullNote [
 
 	self updateWindowTitle.
-	^ NTNullNoteObject new 
+	^ NTNullNoteObject new
 ]
 
 { #category : 'showing' }
 NTSpNoteTakerMainUI >> open [ 
 
-	super open;
-		centered
+	super open.
+	self centered
 ]
 
 { #category : 'accessing - status bar' }
@@ -196,7 +195,7 @@ NTSpNoteTakerMainUI >> processSelectedNote: aCollection [
 { #category : 'accessing' }
 NTSpNoteTakerMainUI >> selectedNote [
 	"Answer the receiver's selected <NtNoteModel>"
-	
+
 	^ self notesIndexPresenter selectedNote
 ]
 
@@ -248,7 +247,7 @@ NTSpNoteTakerMainUI >> statusBar [
 NTSpNoteTakerMainUI >> statusBarMessage [
 
 	| selectedNoteInfo |
-	
+
 	selectedNoteInfo := self selectedNote
 		ifNil: [ '' ]
 		ifNotNil: [ (self application noteInformation: self selectedNote) size ].

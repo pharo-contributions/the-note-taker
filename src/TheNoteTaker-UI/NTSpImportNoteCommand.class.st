@@ -22,7 +22,7 @@ NTSpImportNoteCommand class >> defaultName [
 ]
 
 { #category : 'adding' }
-NTSpImportNoteCommand >> addNoteFromFileReference: aString [ 
+NTSpImportNoteCommand >> addNoteFromFileReference: aString [
 
 	self facade addNoteFromFileReference: aString
 ]
@@ -49,11 +49,11 @@ NTSpImportNoteCommand >> isValidNoteTitle: aString [
 { #category : 'executing' }
 NTSpImportNoteCommand >> processSelections: selections [
 
-	selections isEmptyOrNil 
+	selections isEmptyOrNil
 		ifTrue: [ ^ self ].
-	selections 
+	selections
 		select: [ : selection | self isValidNoteTitle: selection asFileReference contents ]
-		thenDo: [ : selection | self addNoteFromFileReference: selection asFileReference ].
+		thenDo: [ : selection | self addNoteFromFileReference: selection asFileReference ]
 ]
 
 { #category : 'executing' }

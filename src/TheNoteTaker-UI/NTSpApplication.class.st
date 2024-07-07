@@ -72,6 +72,12 @@ NTSpApplication >> noteInformation: aNtNodeModel [
 	^ aNtNodeModel 
 ]
 
+{ #category : 'callbacks' }
+NTSpApplication >> noteNamed: aString [ 
+
+	^ self noteTaker noteNamed: aString
+]
+
 { #category : 'accessing' }
 NTSpApplication >> noteTaker [
 
@@ -89,7 +95,7 @@ NTSpApplication >> notes [
 NTSpApplication >> start [
 	" Private - Open the main application window for development in Morphic "
 
-	(NTSpNoteTakerMainUI newApplication: self) open.
+	(NTSpNoteTakerMainUI newApplication: self) open
 ]
 
 { #category : 'running' }

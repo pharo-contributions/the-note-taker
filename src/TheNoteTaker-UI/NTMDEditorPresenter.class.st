@@ -1,3 +1,7 @@
+"
+Specialized MicroEd editor for note taking application
+
+"
 Class {
 	#name : 'NTMDEditorPresenter',
 	#superclass : 'MDEditorPresenter',
@@ -9,17 +13,22 @@ Class {
 { #category : 'visiting' }
 NTMDEditorPresenter >> accept [
 
-	self halt.
-	self application noteTaker notes.
-	self owner model
-	
-	. "a NTSpNoteContentPresenter"
+	currentFile file writeStreamDo: [ :str |
+		str nextPutAll: self text asString ].
+	self inform: 'Note ' , currentFile file fullName , ' saved'
 ]
 
 { #category : 'private' }
 NTMDEditorPresenter >> applicationTitle [
 
 	^ self application applicationTitle
+]
+
+{ #category : 'initialization' }
+NTMDEditorPresenter >> initialize [ 
+
+	super initialize.
+	self noNote
 ]
 
 { #category : 'initialization' }
@@ -32,13 +41,29 @@ NTMDEditorPresenter >> initializePresentersWithText: anInputText [
 ]
 
 { #category : 'actions' }
-NTMDEditorPresenter >> openNote: aNoteObject [
+NTMDEditorPresenter >> newNote: aNoteObject [
 
-	self currentFileState: MDEditorOpenedFile new.
+	self currentFileState: (MDEditorNewFile newFromNote: aNoteObject).
+	self updateTitle.
 	textInput text: aNoteObject contents.
 	self cleanOutput.
+	self renderDocument
+]
+
+{ #category : 'initialization' }
+NTMDEditorPresenter >> noNote [
+
+	currentFile := MDEditorNoFile new
+]
+
+{ #category : 'actions' }
+NTMDEditorPresenter >> openNote: aNoteObject [
+
+	self currentFileState: (MDEditorOpenedFile newFromNote: aNoteObject).
+	self cleanOutput.
+	textInput text: aNoteObject contents.
 	self updateTitle.
-	self renderDocument.
+	self renderDocument
 ]
 
 { #category : 'actions' }
