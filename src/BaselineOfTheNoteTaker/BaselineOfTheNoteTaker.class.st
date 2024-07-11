@@ -57,7 +57,7 @@ BaselineOfTheNoteTaker >> microEd: spec [
 BaselineOfTheNoteTaker >> neoJson: spec [
 
 	spec
-		baseline: 'NeoJSON';
+		baseline: 'NeoJSON'
 		with: [ spec repository: 'github://svenvc/NeoJSON/repository' ]
 
 ]
