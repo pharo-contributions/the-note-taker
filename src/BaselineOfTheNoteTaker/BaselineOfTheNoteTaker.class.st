@@ -23,6 +23,8 @@ BaselineOfTheNoteTaker >> baseline: spec [
 		self applicationGenerator: spec.
 		self objcbridge: spec.
 		self neoJson: spec.
+		self osSubProcess: spec.
+		spec postLoadDoIt: #'postload:package:'.
 
 		spec
 			package: 'TheNoteTaker';
@@ -75,6 +77,16 @@ BaselineOfTheNoteTaker >> osSubProcess: spec [
 	spec 
 		baseline: 'OSSubprocess' 
 		with: [ spec repository: 'github://pharo-contributions/OSSubprocess:v2.0.0/repository' ]
+
+]
+
+{ #category : 'baselines' }
+BaselineOfTheNoteTaker >> postload: loader package: packageSpec [
+	
+	'TheNoteTaker baseline postload ' traceCr
+	
+	"I want to terminate this ugly polling process install by osSubprocess."
+	
 
 ]
 
