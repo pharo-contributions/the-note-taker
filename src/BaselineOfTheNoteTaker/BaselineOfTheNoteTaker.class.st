@@ -68,3 +68,21 @@ BaselineOfTheNoteTaker >> objcbridge: spec [
 	spec baseline: 'ObjCBridge' with: [
 		spec repository: 'github://tesonep/objcbridge:master/src' ].	
 ]
+
+{ #category : 'baselines' }
+BaselineOfTheNoteTaker >> osSubProcess: spec [
+
+	spec 
+		baseline: 'OSSubprocess' 
+		with: [ spec repository: 'github://pharo-contributions/OSSubprocess:v2.0.0/repository' ]
+
+]
+
+{ #category : 'baselines' }
+BaselineOfTheNoteTaker >> processWrapper: spec [ 
+
+	spec configuration: 'ProcessWrapper' with: [
+		spec
+			versionString: '1.2';
+			repository: 'http://smalltalkhub.com/mc/hernan/ProcessWrapper/main' ]
+]
