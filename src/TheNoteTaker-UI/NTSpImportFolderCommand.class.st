@@ -34,7 +34,6 @@ NTSpImportFolderCommand >> execute [
 	folder := StOpenDirectoryPresenter new 
 					extent: 800 @800 ; 
 					openModal.
-	self halt.
 	folder ifNil: [ ^ self ].
 	self processFolder: folder.
 	self context items: self facade notes
@@ -50,8 +49,11 @@ NTSpImportFolderCommand >> isValidNoteTitle: aString [
 { #category : 'executing' }
 NTSpImportFolderCommand >> processFolder: aFileReference [
 
-	aFileReference allChildren
-		select: [ :fileRef | self isValidNoteTitle: fileRef contents ]
+	aFileReference allFiles
+		"this test should be grouped somewhere else!"
+		select: [ :fileRef |  (#('md' 'txt' 'text') includes: fileRef extension asLowercase )
+										ifTrue: [ self isValidNoteTitle: fileRef contents ]
+										ifFalse: [ false ]]
 		thenDo: [ :fileRef | self addNoteFromFileReference: fileRef ]
 ]
 
