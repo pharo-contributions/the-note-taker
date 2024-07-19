@@ -2,7 +2,7 @@
 Implements logic to add a single note to a note taking application. Particularily, it provides a user-request dialog to ask for note input information to be added.
 "
 Class {
-	#name : 'NTSpImportNoteCommand',
+	#name : 'NTSpImportFolderCommand',
 	#superclass : 'NTSpAbstractCommand',
 	#category : 'TheNoteTaker-UI-Commands',
 	#package : 'TheNoteTaker-UI',
@@ -10,44 +10,53 @@ Class {
 }
 
 { #category : 'default' }
-NTSpImportNoteCommand class >> defaultDescription [
+NTSpImportFolderCommand class >> defaultDescription [
 
-	^ 'Import notes'
+	^ 'Import folder of notes'
 ]
 
 { #category : 'default' }
-NTSpImportNoteCommand class >> defaultName [
+NTSpImportFolderCommand class >> defaultName [
 
-	^ 'Import Notes'
+	^ 'Import Folder'
 ]
 
 { #category : 'adding' }
-NTSpImportNoteCommand >> addNoteFromFileReference: aString [
+NTSpImportFolderCommand >> addNoteFromFileReference: aFileReference [
 
-	self facade addNoteFromFileReference: aString
+	self facade addNoteFromFileReference: aFileReference
 ]
 
 { #category : 'executing' }
-NTSpImportNoteCommand >> execute [
+NTSpImportFolderCommand >> execute [
 
-	| selections |
-	selections := (StOpenFilePresenter new
-						extent: 800 @800;
-						extensions: self validNoteExtensions;
-						yourself) open.
-	self processSelections: selections.
+	| folder |
+	folder := StOpenDirectoryPresenter new 
+					extent: 800 @800 ; 
+					openModal.
+	self halt.
+	folder ifNil: [ ^ self ].
+	self processFolder: folder.
 	self context items: self facade notes
 ]
 
 { #category : 'testing' }
-NTSpImportNoteCommand >> isValidNoteTitle: aString [ 
+NTSpImportFolderCommand >> isValidNoteTitle: aString [ 
 	"Answer <true> if aString is a valid note title"
 	
 	^ self application isValidNoteTitle: aString
 ]
 
 { #category : 'executing' }
-NTSpImportNoteCommand >> processSelections: selections [
+NTSpImportFolderCommand >> processFolder: aFileReference [
+
+	aFileReference allChildren
+		select: [ :fileRef | self isValidNoteTitle: fileRef contents ]
+		thenDo: [ :fileRef | self addNoteFromFileReference: fileRef ]
+]
+
+{ #category : 'executing' }
+NTSpImportFolderCommand >> processSelections: selections [
 
 	selections isEmptyOrNil
 		ifTrue: [ ^ self ].
@@ -57,12 +66,11 @@ NTSpImportNoteCommand >> processSelections: selections [
 ]
 
 { #category : 'executing' }
-NTSpImportNoteCommand >> validNoteExtensions [
+NTSpImportFolderCommand >> validNoteExtensions [
 	"Answer a <Collection> of <String> each one specifying a valid file extension for a note"
 	
 	^ { 
 		'txt' .
-		'mic' .
 		'md' 
 		}
 ]
