@@ -34,13 +34,18 @@ NTSpNoteIndexPresenter class >> buildNoteTakerOperationsGroupWith: presenterInst
 
 	^ (CmCommandGroup named: 'NoteTakerMenu') asSpecGroup
 			register: ((NTSpAddNoteCommand
-			forSpecWithIconNamed: #glamorousAdd
+			forSpecWithIconNamed: #add
 			shortcutKey: 'A' asShortcut) 
 				context: presenterInstance);
 				
 			register: ((NTSpImportNoteCommand
-			forSpecWithIconNamed: #glamorousInto
+			forSpecWithIconNamed: #into
 			shortcutKey: 'I' asShortcut) 
+				context: presenterInstance);
+			
+			register: ((NTSpImportFolderCommand
+			forSpecWithIconNamed: #into
+			shortcutKey: 'F' asShortcut) 
 				context: presenterInstance);
 				
 			register: ((NTSpRemoveNoteCommand
