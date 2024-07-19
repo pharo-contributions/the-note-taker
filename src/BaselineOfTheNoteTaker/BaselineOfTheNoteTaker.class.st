@@ -27,7 +27,8 @@ BaselineOfTheNoteTaker >> baseline: spec [
 			package: 'TheNoteTaker';
 			package: 'TheNoteTaker-UI' 	with: [ spec requires: #( #MicroEd TheNoteTaker ) ];
 			package: 'TheNoteTaker-Release' with: [ spec requires: #( ApplicationGenerator ObjCBridge ) ];
-			package: 'TheNoteTaker-Tests' with: [ spec requires: #( TheNoteTaker ) ].
+			package: 'TheNoteTaker-Tests' with: [ spec requires: #( TheNoteTaker ) ];
+			package: 'TheNoteTaker-UI-Tests' with: [ spec requires: #( TheNoteTaker-UI ) ].
 		spec
 			group: 'Core' with: #( 'TheNoteTaker' );
 			group: 'UI' with: #( 'TheNoteTaker-UI' );

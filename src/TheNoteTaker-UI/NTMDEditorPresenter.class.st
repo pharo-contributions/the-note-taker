@@ -1,6 +1,9 @@
 Class {
 	#name : 'NTMDEditorPresenter',
 	#superclass : 'MDEditorPresenter',
+	#instVars : [
+		'actualNote'
+	],
 	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
 	#tag : 'Core'
@@ -16,10 +19,10 @@ NTMDEditorPresenter >> initializePresentersWithText: anInputText [
 { #category : 'actions' }
 NTMDEditorPresenter >> openNote: aNoteObject [
 
-	self currentFileState: MDEditorOpenedFile new.
+	self mdFile: (MDFile newFromFileReference: aNoteObject title asFileReference).
 	textInput text: aNoteObject contents.
 	self cleanOutput.
-	self updateTitle.
+	self window ifNotNil: [self updateTitle].
 	self renderDocument.
 ]
 
