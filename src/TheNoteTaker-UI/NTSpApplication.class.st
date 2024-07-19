@@ -38,6 +38,13 @@ NTSpApplication class >> menuNoteTakersOn: aBuilder [
 		order: 630
 ]
 
+{ #category : 'private' }
+NTSpApplication class >> openIt [
+
+	<script>
+	self new run
+]
+
 { #category : 'testing' }
 NTSpApplication >> addNoteNamed: aString [ 
 	"Add a new empty note with title aString to the receiver's notes. Answer the receiver"
