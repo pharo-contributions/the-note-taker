@@ -83,11 +83,11 @@ BaselineOfTheNoteTaker >> osSubProcess: spec [
 { #category : 'baselines' }
 BaselineOfTheNoteTaker >> postload: loader package: packageSpec [
 	
-	'TheNoteTaker baseline postload ' traceCr
+	'TheNoteTaker baseline postload ' traceCr.
+	"OSSubProcess spawns a process that is polling and it clashes with the automatic rewriting
+	so we kill it for now."
 	
-	"I want to terminate this ugly polling process install by osSubprocess."
-	
-
+	((Process allInstances select: [ :p | p priority = 70 ]) select: [ :e | '*OSSub*' match: e name ]) first terminate
 ]
 
 { #category : 'baselines' }
