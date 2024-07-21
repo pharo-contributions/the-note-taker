@@ -87,7 +87,8 @@ BaselineOfTheNoteTaker >> postload: loader package: packageSpec [
 	"OSSubProcess spawns a process that is polling and it clashes with the automatic rewriting
 	so we kill it for now."
 	
-	((Process allInstances select: [ :p | p priority = 70 ]) select: [ :e | '*OSSub*' match: e name ]) first terminate
+	((Process allInstances select: [ :p | p priority = 70 ]) select: [ :e | '*OSSub*' match: e name ]) 
+		ifNotEmpty: [ : processArray | processArray first terminate ]
 ]
 
 { #category : 'baselines' }
