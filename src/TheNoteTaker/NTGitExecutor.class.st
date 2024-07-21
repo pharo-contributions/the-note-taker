@@ -4,25 +4,33 @@ I'm simple wrapper around git unix commands.
 Class {
 	#name : 'NTGitExecutor',
 	#superclass : 'Object',
-	#instVars : [
-		'projectPathString'
-	],
-	#category : 'TheNoteTaker',
-	#package : 'TheNoteTaker'
+	#category : 'TheNoteTaker-Utilities',
+	#package : 'TheNoteTaker',
+	#tag : 'Utilities'
 }
 
 { #category : 'adding' }
 NTGitExecutor >> add [
-	"I will avoid to hardcode path in the future"
 
-	LibC runCommand: self gitMinusCString , projectPathString , ' add ', projectPathString, '/*'
+	LibC runCommand: self gitMinusCString , self projectPathString , ' add ', self projectPathString , '/*'
 ]
 
 { #category : 'adding' }
 NTGitExecutor >> commit [
 
-	LibC runCommand: 'git -C /Users/ducasse/Workspace/FirstCircle/Writing/Working/researchnotes commit -m "saving"'.
+	LibC runCommand: self gitCommitCommand
 
+]
+
+{ #category : 'adding' }
+NTGitExecutor >> gitCommitCommand [
+	"Answer a <String> with a Git command to commit the current notes to a local folder"
+	
+	^ String streamContents: [ : stream |
+		stream
+			<< self gitMinusCString;
+			<< self projectPathString;
+			<< 'commit -m "saving"' ]
 ]
 
 { #category : 'adding' }
@@ -31,21 +39,21 @@ NTGitExecutor >> gitMinusCString [
 	^ 'git -C '
 ]
 
-{ #category : 'adding' }
-NTGitExecutor >> initialize [
-
-	super initialize.
-	projectPathString := '/Users/ducasse/Workspace/FirstCircle/Writing/Working/researchnotes'
-]
-
 { #category : 'accessing' }
-NTGitExecutor >> projectPathString: aString [
+NTGitExecutor >> projectPathString [
+	"Answer a <String> with a local or remote path where notes will be committed"
 
-	projectPathString := aString
+	^ self settingsClass projectPathString
 ]
 
 { #category : 'adding' }
 NTGitExecutor >> push [
 
-	LibC runCommand: self gitMinusCString , projectPathString , ' push'
+	LibC runCommand: self gitMinusCString , self projectPathString , ' push'
+]
+
+{ #category : 'initialization' }
+NTGitExecutor >> settingsClass [
+
+	^ NTSettings
 ]

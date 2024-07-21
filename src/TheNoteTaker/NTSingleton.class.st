@@ -99,7 +99,7 @@ NTSingleton >> isValidNoteName: aString [
 
 	(aString notNil and: [ aString notEmpty ])
 		ifTrue: [ ^ (self hasNoteNamed: aString trimBoth) not ].
-	self inform: 'Invalid note title: ' , aString.
+	self inform: 'Invalid note title'.
 	^ false
 ]
 
