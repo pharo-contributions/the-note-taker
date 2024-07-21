@@ -38,7 +38,7 @@ NTSpAddNoteCommand >> execute [
 		label: 'Please provide the name of the new note';
 		openModalWithParent: context window.
 
-	(self isValidNoteTitle: answer) ifFalse: [ ^ self ].
+	(self isValidNoteName: answer) ifFalse: [ ^ self ].
 	newNote := self addNoteNamed: answer.
 	self context 
 		items: self facade notes;
@@ -46,8 +46,8 @@ NTSpAddNoteCommand >> execute [
 ]
 
 { #category : 'testing' }
-NTSpAddNoteCommand >> isValidNoteTitle: aString [ 
+NTSpAddNoteCommand >> isValidNoteName: aString [ 
 	"Answer <true> if aString is a valid note title"
 	
-	^ self application isValidNoteTitle: aString
+	^ self application isValidNoteName: aString
 ]
