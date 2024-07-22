@@ -51,6 +51,12 @@ NTSpNoteTakerMainUI >> defaultLayout [
 		yourself.
 ]
 
+{ #category : 'accessing - status bar' }
+NTSpNoteTakerMainUI >> displayNoteContents: aNoteObject [
+
+	notesContentPresenter displayContents: aNoteObject
+]
+
 { #category : 'testing' }
 NTSpNoteTakerMainUI >> hasSelectedNote [
 
@@ -144,10 +150,23 @@ NTSpNoteTakerMainUI >> noteTaker [
 	^ self application noteTaker
 ]
 
+{ #category : 'initialization' }
+NTSpNoteTakerMainUI >> notesContentPresenter [
+
+	^ notesContentPresenter 
+]
+
 { #category : 'accessing' }
 NTSpNoteTakerMainUI >> notesIndexPresenter [
 
 	^ notesIndexPresenter
+]
+
+{ #category : 'initialization' }
+NTSpNoteTakerMainUI >> notesToolbarPresenter [
+	"This is the getter of the notes toolbar"
+	
+	^ notesToolbarPresenter 
 ]
 
 { #category : 'accessing' }
@@ -183,7 +202,7 @@ NTSpNoteTakerMainUI >> processSelectedNote: aCollection [
 { #category : 'accessing' }
 NTSpNoteTakerMainUI >> selectedNote [
 	"Answer the receiver's selected <NtNoteModel>"
-	
+
 	^ self notesIndexPresenter selectedNote
 ]
 
@@ -251,7 +270,6 @@ NTSpNoteTakerMainUI >> toolbarHeight [
 { #category : 'event handling' }
 NTSpNoteTakerMainUI >> updateContents [
 
-	self halt.
 	notesContentPresenter setModel: self nullNote
 ]
 

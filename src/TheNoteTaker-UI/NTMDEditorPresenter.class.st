@@ -9,11 +9,34 @@ Class {
 	#tag : 'Core'
 }
 
+{ #category : 'accessing' }
+NTMDEditorPresenter >> actualNote [
+
+^actualNote
+]
+
+{ #category : 'accessing' }
+NTMDEditorPresenter >> actualNote: aNoteObject [
+
+actualNote := aNoteObject 
+]
+
+{ #category : 'display' }
+NTMDEditorPresenter >> displayContents: aNoteObject [
+self cleanInput.
+actualNote := aNoteObject.
+textInput text: aNoteObject contents asString.
+self renderDocument.
+]
+
 { #category : 'initialization' }
 NTMDEditorPresenter >> initializePresentersWithText: anInputText [
 
 	super initializePresentersWithText: anInputText.
-	textInput whenTextChangedDo: [ self renderDocument ]
+	textInput whenTextChangedDo: [ self 
+		renderDocument.
+		actualNote ifNotNil:[
+			actualNote contents: textInput text asString]]
 ]
 
 { #category : 'actions' }

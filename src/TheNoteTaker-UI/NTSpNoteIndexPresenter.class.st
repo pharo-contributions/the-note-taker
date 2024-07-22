@@ -79,7 +79,7 @@ NTSpNoteIndexPresenter >> displayNoteTags: selectedNote [
 NTSpNoteIndexPresenter >> handleNoteChange: aSelectedNote [
 
 	aSelectedNote
-		ifNotNil: [ 	 ]
+		ifNotNil: [ self owner displayNoteContents: aSelectedNote 	 ]
 ]
 
 { #category : 'testing' }
@@ -140,7 +140,8 @@ NTSpNoteIndexPresenter >> refresh [
 NTSpNoteIndexPresenter >> selectNote: aNTNoteObject [
 	"Select aNTNoteObject in the receiver"
 	
-	notesIndexPresenter selectItem: aNTNoteObject
+	notesIndexPresenter selectItem: aNTNoteObject 
+	
 ]
 
 { #category : 'accessing' }

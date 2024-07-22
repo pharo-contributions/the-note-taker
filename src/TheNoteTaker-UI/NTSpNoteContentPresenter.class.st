@@ -27,7 +27,6 @@ NTSpNoteContentPresenter >> contentPresenter: anObject [
 
 { #category : 'accessing' }
 NTSpNoteContentPresenter >> contents: aString [ 
-
 	contentPresenter textInputText: aString
 ]
 
@@ -45,10 +44,16 @@ NTSpNoteContentPresenter >> defaultLayout [
 		yourself
 ]
 
+{ #category : 'display' }
+NTSpNoteContentPresenter >> displayContents: aNoteObject [
+
+contentPresenter displayContents: aNoteObject 
+]
+
 { #category : 'initialization' }
 NTSpNoteContentPresenter >> initializePresenters [
 
-	contentPresenter := NTMDEditorPresenter new.
+	contentPresenter := self instantiate: NTMDEditorPresenter .
 	contentPresenter 
 		cleanInput;
 		cleanOutput
