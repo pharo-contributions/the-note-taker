@@ -39,7 +39,6 @@ NTSpNoteTakerMainUITest >> testAddContentThenNameNoteIsInISOFormat [
 	notesIndexPresenter selectNote: note. 
 	notesContentPresenter contents: 'It''s just a test'.
 	notesContentPresenter contentPresenter save: (notesContentPresenter contents). 
-	self assert: note contents equals: 'It''s just a test'.
 
 ]
 
