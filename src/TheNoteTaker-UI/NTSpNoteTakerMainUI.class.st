@@ -19,11 +19,17 @@ Class {
 }
 
 { #category : 'initialization' }
-NTSpNoteTakerMainUI >> connectPresenters [ 
+NTSpNoteTakerMainUI >> applicationTitle [
+
+	^ self application applicationTitle
+]
+
+{ #category : 'initialization' }
+NTSpNoteTakerMainUI >> connectPresenters [
 
 	notesIndexPresenter
 		transmitTo: notesContentPresenter
-		transform: [ : notesCollection | 
+		transform: [ : notesCollection |
 			(notesCollection isNil or: [ notesCollection isEmpty ])
 				ifFalse: [ self processSelectedNote: notesCollection ]
 				ifTrue: [ self nullNote ] ]
@@ -34,13 +40,13 @@ NTSpNoteTakerMainUI >> decreaseNotesCount [
 
 	selectionCount >= 1 ifFalse: [ ^ self ].
 	selectionCount := selectionCount - 1.
-	self updateStatusBar.
+	self updateStatusBar
 ]
 
 { #category : 'layout' }
-NTSpNoteTakerMainUI >> defaultLayout [ 
+NTSpNoteTakerMainUI >> defaultLayout [
 
-	^ SpBoxLayout newTopToBottom 
+	^ SpBoxLayout newTopToBottom
 		add: notesToolbarPresenter height: self toolbarHeight;
 		add: (SpPanedLayout newTopToBottom
 			positionOfSlider: 35 percent;
@@ -48,13 +54,21 @@ NTSpNoteTakerMainUI >> defaultLayout [
 			add: notesContentPresenter;
 			yourself);
 		add: statusBar height: self toolbarHeight;
-		yourself.
+		yourself
 ]
 
 { #category : 'accessing - status bar' }
 NTSpNoteTakerMainUI >> displayNoteContents: aNoteObject [
 
 	notesContentPresenter displayContents: aNoteObject
+]
+
+{ #category : 'accessing' }
+NTSpNoteTakerMainUI >> editorPresenter [
+	"Answer the receiver's MicroDown editor presenter"
+
+	^ notesContentPresenter editorPresenter
+
 ]
 
 { #category : 'testing' }
@@ -74,13 +88,6 @@ NTSpNoteTakerMainUI >> increaseNotesCount [
 NTSpNoteTakerMainUI >> initialExtentForWindow [
 
 	^ (900 @ 600) scaledByDisplayScaleFactor
-]
-
-{ #category : 'initialization' }
-NTSpNoteTakerMainUI >> initialTitle [
-
-	^ 'The Note Taker'
-
 ]
 
 { #category : 'initialization' }
@@ -107,14 +114,14 @@ NTSpNoteTakerMainUI >> initializeNotesIndex [
 { #category : 'initialization' }
 NTSpNoteTakerMainUI >> initializeNotesToolbar [
 	"This is a search and creator toolbar"
-	
-	notesToolbarPresenter := self instantiate: NTSpSearchCreatePresenter on: self model.
+
+	notesToolbarPresenter := self instantiate: NTSpSearchCreatePresenter on: self model
 ]
 
 { #category : 'initialization' }
 NTSpNoteTakerMainUI >> initializePresenters [
 
-	self 
+	self
 		initializeNotesToolbar;
 		initializeNotesIndex;
 		initializeNotesContent;
@@ -140,8 +147,7 @@ NTSpNoteTakerMainUI >> initializeWindow: aSpWindowPresenter [
 { #category : 'initialization' }
 NTSpNoteTakerMainUI >> model [
 	"Answer the receiver's <NTNoteFacade>"
-
-	^ self application noteTaker.
+	^ self application noteTaker
 ]
 
 { #category : 'accessing' }
@@ -163,6 +169,12 @@ NTSpNoteTakerMainUI >> notesIndexPresenter [
 ]
 
 { #category : 'initialization' }
+NTSpNoteTakerMainUI >> notesToolbar [
+
+	^ notesToolbarPresenter
+]
+
+{ #category : 'initialization' }
 NTSpNoteTakerMainUI >> notesToolbarPresenter [
 	"This is the getter of the notes toolbar"
 	
@@ -173,14 +185,14 @@ NTSpNoteTakerMainUI >> notesToolbarPresenter [
 NTSpNoteTakerMainUI >> nullNote [
 
 	self updateWindowTitle.
-	^ NTNullNoteObject new 
+	^ NTNullNoteObject new
 ]
 
 { #category : 'showing' }
 NTSpNoteTakerMainUI >> open [ 
 
-	super open;
-		centered
+	super open.
+	self centered
 ]
 
 { #category : 'accessing - status bar' }
@@ -209,8 +221,8 @@ NTSpNoteTakerMainUI >> selectedNote [
 { #category : 'accessing' }
 NTSpNoteTakerMainUI >> selectedNoteTitle [
 	"Answer the receiver's selected <NtNoteObject> title"
-	
 	^ self notesIndexPresenter selectedNoteTitle
+	
 ]
 
 { #category : 'accessing' }
@@ -234,7 +246,7 @@ NTSpNoteTakerMainUI >> setInitialExtentTo: aSpWindowPresenter [
 { #category : 'initialization' }
 NTSpNoteTakerMainUI >> setTitleTo: aSpWindowPresenter [
 
-	aSpWindowPresenter title: self initialTitle
+	aSpWindowPresenter title: self applicationTitle
 
 ]
 
@@ -254,7 +266,7 @@ NTSpNoteTakerMainUI >> statusBar [
 NTSpNoteTakerMainUI >> statusBarMessage [
 
 	| selectedNoteInfo |
-	
+
 	selectedNoteInfo := self selectedNote
 		ifNil: [ '' ]
 		ifNotNil: [ (self application noteInformation: self selectedNote) size ].

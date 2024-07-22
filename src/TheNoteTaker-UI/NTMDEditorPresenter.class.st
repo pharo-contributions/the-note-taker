@@ -9,6 +9,14 @@ Class {
 	#tag : 'Core'
 }
 
+{ #category : 'visiting' }
+NTMDEditorPresenter >> accept [
+
+	currentFile file writeStreamDo: [ :str |
+		str nextPutAll: self text asString ].
+	self inform: 'Note ' , currentFile file fullName , ' saved'
+]
+
 { #category : 'accessing' }
 NTMDEditorPresenter >> actualNote [
 
@@ -21,12 +29,25 @@ NTMDEditorPresenter >> actualNote: aNoteObject [
 actualNote := aNoteObject 
 ]
 
+{ #category : 'private' }
+NTMDEditorPresenter >> applicationTitle [
+
+	^ self application applicationTitle
+]
+
 { #category : 'display' }
 NTMDEditorPresenter >> displayContents: aNoteObject [
 self cleanInput.
 actualNote := aNoteObject.
 textInput text: aNoteObject contents asString.
 self renderDocument.
+]
+
+{ #category : 'initialization' }
+NTMDEditorPresenter >> initialize [ 
+
+	super initialize.
+	self noNote
 ]
 
 { #category : 'initialization' }
@@ -37,6 +58,22 @@ NTMDEditorPresenter >> initializePresentersWithText: anInputText [
 		renderDocument.
 		actualNote ifNotNil:[
 			actualNote contents: textInput text asString]]
+]
+
+{ #category : 'actions' }
+NTMDEditorPresenter >> newNote: aNoteObject [
+
+	self currentFileState: (MDEditorNewFile newFromNote: aNoteObject).
+	self updateTitle.
+	textInput text: aNoteObject contents.
+	self cleanOutput.
+	self renderDocument
+]
+
+{ #category : 'initialization' }
+NTMDEditorPresenter >> noNote [
+
+	currentFile := MDEditorNoFile new
 ]
 
 { #category : 'actions' }
@@ -52,11 +89,19 @@ NTMDEditorPresenter >> openNote: aNoteObject [
 { #category : 'actions' }
 NTMDEditorPresenter >> save: aText withExtension: anExtension [
 
-	self shouldBeImplemented 
+	| nameOfNote nameWithExtension |
+	nameOfNote := (aText asString substrings: String cr) first trimBoth.
+	nameWithExtension := nameOfNote , '.' , anExtension.
+
+	nameWithExtension asFileReference writeStreamDo: [ :stream |
+		stream nextPutAll: aText ]
 ]
 
 { #category : 'api' }
 NTMDEditorPresenter >> title [
 
-	^ 'NoteTaker - ' , self owner selectedNoteTitle
+	^ String streamContents: [ : stream |
+		stream 
+			<< self applicationTitle;
+			<< self owner selectedNoteTitle ]
 ]

@@ -34,13 +34,18 @@ NTSpNoteIndexPresenter class >> buildNoteTakerOperationsGroupWith: presenterInst
 
 	^ (CmCommandGroup named: 'NoteTakerMenu') asSpecGroup
 			register: ((NTSpAddNoteCommand
-			forSpecWithIconNamed: #glamorousAdd
+			forSpecWithIconNamed: #add
 			shortcutKey: 'A' asShortcut) 
 				context: presenterInstance);
 				
 			register: ((NTSpImportNoteCommand
-			forSpecWithIconNamed: #glamorousInto
+			forSpecWithIconNamed: #into
 			shortcutKey: 'I' asShortcut) 
+				context: presenterInstance);
+			
+			register: ((NTSpImportFolderCommand
+			forSpecWithIconNamed: #into
+			shortcutKey: 'F' asShortcut) 
 				context: presenterInstance);
 				
 			register: ((NTSpRemoveNoteCommand
@@ -61,8 +66,8 @@ NTSpNoteIndexPresenter >> defaultLayout [
 ]
 
 { #category : 'layout' }
-NTSpNoteIndexPresenter >> defaultOutputPort [ 
-	
+NTSpNoteIndexPresenter >> defaultOutputPort [
+
 	^ notesIndexPresenter defaultOutputPort
 ]
 
@@ -73,6 +78,13 @@ NTSpNoteIndexPresenter >> displayNoteTags: selectedNote [
 	^ selectedNote tags 
 		ifEmpty: [ '' ] 
 		ifNotEmpty: [ : tags | tags join: ',' ]
+]
+
+{ #category : 'accessing' }
+NTSpNoteIndexPresenter >> editorPresenter [
+	"Answer the receiver's <NTMDEditorPresenter>"
+
+	^ self owner editorPresenter
 ]
 
 { #category : 'callbacks' }
@@ -155,7 +167,9 @@ NTSpNoteIndexPresenter >> selectedNote [
 NTSpNoteIndexPresenter >> selectedNoteTitle [
 	"Answer a <String> representing the title of the currently selected note"
 
-	^ self selectedNote title.
+	^ self selectedNote 
+		ifNotNil: [ : n | n title ]
+		ifNil: [ String empty ]
 ]
 
 { #category : 'accessing' }
@@ -171,7 +185,7 @@ NTSpNoteIndexPresenter >> setModelBeforeInitialization: aCollection [
 	notes := aCollection
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'callbacks' }
 NTSpNoteIndexPresenter >> updateRemovedNote [
 
 	self refresh.

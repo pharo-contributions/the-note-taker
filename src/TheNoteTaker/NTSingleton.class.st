@@ -93,12 +93,13 @@ NTSingleton >> initialize [
 ]
 
 { #category : 'testing' }
-NTSingleton >> isValidNote: aString [ 
+NTSingleton >> isValidNoteTitle: aString [ 
 	"Answer <true> if aString is a valid note title, i.e. 
 		Non-empty, and not already present"
 
 	(aString notNil and: [ aString notEmpty ])
 		ifTrue: [ ^ (self hasNoteNamed: aString trimBoth) not ].
+	self inform: 'Invalid note title: ' , aString.
 	^ false
 ]
 

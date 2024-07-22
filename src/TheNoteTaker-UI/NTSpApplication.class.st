@@ -20,16 +20,42 @@ Class {
 }
 
 { #category : 'private' }
+NTSpApplication class >> applicationTitle [
+
+	^ 'The Note Taker'
+]
+
+{ #category : 'private' }
 NTSpApplication class >> menuNoteTakersOn: aBuilder [
 	<worldMenu>
 
 	(aBuilder item: #NoteTaker)
 		parent: #Tools;
-		label: 'The Note Taker';
+		label: self applicationTitle;
 		icon: (self iconNamed: #catalog);
 		action: [ NTSpApplication new run ];
 		help: 'The Note Taker';
 		order: 630
+]
+
+{ #category : 'private' }
+NTSpApplication class >> openIt [
+
+	<script>
+	self new run
+]
+
+{ #category : 'testing' }
+NTSpApplication >> addNoteNamed: aString [ 
+	"Add a new empty note with title aString to the receiver's notes. Answer the receiver"
+	
+	^ self noteTaker addNoteNamed: aString trimBoth
+]
+
+{ #category : 'private' }
+NTSpApplication >> applicationTitle [ 
+
+	^ self class applicationTitle 
 ]
 
 { #category : 'initialization' }
@@ -40,10 +66,10 @@ NTSpApplication >> initialize [
 ]
 
 { #category : 'testing' }
-NTSpApplication >> isValidNote: aString [ 
+NTSpApplication >> isValidNoteTitle: aString [ 
 	"Answer <true> if aString is a valid note title"
 	
-	^ self noteTaker isValidNote: aString
+	^ self noteTaker isValidNoteTitle: aString
 ]
 
 { #category : 'accessig' }
@@ -51,6 +77,12 @@ NTSpApplication >> noteInformation: aNtNodeModel [
 
 	self shouldBeImplemented.
 	^ aNtNodeModel 
+]
+
+{ #category : 'callbacks' }
+NTSpApplication >> noteNamed: aString [ 
+
+	^ self noteTaker noteNamed: aString
 ]
 
 { #category : 'accessing' }
@@ -68,14 +100,14 @@ NTSpApplication >> notes [
 
 { #category : 'running' }
 NTSpApplication >> start [
-	" Private - See superimplementor's comment "
+	" Private - Open the main application window for development in Morphic "
 
-	(NTSpNoteTakerMainUI newApplication: self) "asWorldWindow" open.
+	(NTSpNoteTakerMainUI newApplication: self) open
 ]
 
 { #category : 'running' }
 NTSpApplication >> startFullScreen [
-	" Private - See superimplementor's comment "
+	" Private - Open the main application window in full screen, intended for the release version "
 
 	(NTSpNoteTakerMainUI newApplication: self) asWorldWindow open.
 ]

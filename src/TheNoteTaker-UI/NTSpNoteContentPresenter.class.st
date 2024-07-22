@@ -14,32 +14,20 @@ Class {
 }
 
 { #category : 'accessing' }
-NTSpNoteContentPresenter >> contentPresenter [
-
-	^ contentPresenter
-]
-
-{ #category : 'accessing' }
-NTSpNoteContentPresenter >> contentPresenter: anObject [
-
-	contentPresenter := anObject
-]
-
-{ #category : 'accessing' }
 NTSpNoteContentPresenter >> contents: aString [ 
 	contentPresenter textInputText: aString
 ]
 
 { #category : 'transmission' }
-NTSpNoteContentPresenter >> defaultInputPort [ 
+NTSpNoteContentPresenter >> defaultInputPort [
 
-	^ SpModelPort newPresenter: self 
+	^ SpModelPort newPresenter: self
 ]
 
 { #category : 'layout' }
-NTSpNoteContentPresenter >> defaultLayout [ 
-	
-	^ SpBoxLayout newTopToBottom 
+NTSpNoteContentPresenter >> defaultLayout [
+
+	^ SpBoxLayout newTopToBottom
 		add: contentPresenter;
 		yourself
 ]
@@ -48,6 +36,13 @@ NTSpNoteContentPresenter >> defaultLayout [
 NTSpNoteContentPresenter >> displayContents: aNoteObject [
 
 contentPresenter displayContents: aNoteObject 
+]
+
+{ #category : 'accessing' }
+NTSpNoteContentPresenter >> editorPresenter [
+	"Answer the receiver's <NTMDEditorPresenter>"
+
+	^ contentPresenter
 ]
 
 { #category : 'initialization' }
@@ -61,14 +56,22 @@ NTSpNoteContentPresenter >> initializePresenters [
 
 { #category : 'accessing' }
 NTSpNoteContentPresenter >> selectedNoteTitle [
-	
-	^ self owner selectedNoteTitle
+
+	^ String streamContents: [ : stream |
+		self owner selectedNoteTitle
+			ifNotEmpty: [ : title |
+				stream
+					<< ' - ';
+					<< title ]
+			ifEmpty: [ String empty ] ]
 ]
 
 { #category : 'accessing - model' }
 NTSpNoteContentPresenter >> setModel: aNoteObject [ 
 	"Private - Set the receiver's content iterating recursively starting from aNode"
 	
-	aNoteObject openFromPresenter: self.
+	"(self editorPresenter canOpenFile: aNoteObject)
+		ifTrue: [ aNoteObject openFromPresenter: self ]
+		ifFalse: [ aNoteObject newFromPresenter: self ]" 
 
 ]
