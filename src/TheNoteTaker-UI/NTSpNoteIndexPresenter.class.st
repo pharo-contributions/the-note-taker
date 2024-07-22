@@ -89,9 +89,15 @@ NTSpNoteIndexPresenter >> editorPresenter [
 
 { #category : 'callbacks' }
 NTSpNoteIndexPresenter >> handleNoteChange: aSelectedNote [
+	"Private - We handle note change selection event only when the user is not creating a new file.
+	When a new file is created, a selection is made to highlight the new created file, it is not an opened note"
 
-	aSelectedNote
-		ifNotNil: [ self owner displayNoteContents: aSelectedNote 	 ]
+	aSelectedNote ifNil: [ ^ self ].
+	self editorPresenter noNote.
+	self owner displayNoteContents: aSelectedNote.
+	aSelectedNote existsAsFile
+		ifTrue: [ aSelectedNote openFromPresenter: self ]
+		ifFalse: [ aSelectedNote newFromPresenter: self ]
 ]
 
 { #category : 'testing' }

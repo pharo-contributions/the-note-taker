@@ -12,21 +12,21 @@ Class {
 { #category : 'visiting' }
 NTMDEditorPresenter >> accept [
 
-	currentFile file writeStreamDo: [ :str |
+	mdFile file writeStreamDo: [ :str |
 		str nextPutAll: self text asString ].
-	self inform: 'Note ' , currentFile file fullName , ' saved'
+	self inform: 'Note ' , mdFile file fullName , ' saved'
 ]
 
 { #category : 'accessing' }
 NTMDEditorPresenter >> actualNote [
 
-^actualNote
+	^ actualNote
 ]
 
 { #category : 'accessing' }
 NTMDEditorPresenter >> actualNote: aNoteObject [
 
-actualNote := aNoteObject 
+	actualNote := aNoteObject
 ]
 
 { #category : 'private' }
@@ -37,10 +37,11 @@ NTMDEditorPresenter >> applicationTitle [
 
 { #category : 'display' }
 NTMDEditorPresenter >> displayContents: aNoteObject [
-self cleanInput.
-actualNote := aNoteObject.
-textInput text: aNoteObject contents asString.
-self renderDocument.
+
+	self cleanInput.
+	actualNote := aNoteObject.
+	textInput text: aNoteObject contents asString.
+	self renderDocument
 ]
 
 { #category : 'initialization' }
@@ -54,16 +55,18 @@ NTMDEditorPresenter >> initialize [
 NTMDEditorPresenter >> initializePresentersWithText: anInputText [
 
 	super initializePresentersWithText: anInputText.
-	textInput whenTextChangedDo: [ self 
-		renderDocument.
-		actualNote ifNotNil:[
-			actualNote contents: textInput text asString]]
+	textInput
+		whenTextChangedDo: [
+			self renderDocument.
+			actualNote ifNotNil: [
+					actualNote contents: textInput text asString ] ];
+		bindKeyCombination: $s meta toAction: [ self accept ]
 ]
 
 { #category : 'actions' }
 NTMDEditorPresenter >> newNote: aNoteObject [
 
-	self currentFileState: (MDEditorNewFile newFromNote: aNoteObject).
+	self mdFile: (MDFile newFromFileReference: aNoteObject title asFileReference).
 	self updateTitle.
 	textInput text: aNoteObject contents.
 	self cleanOutput.
@@ -73,7 +76,7 @@ NTMDEditorPresenter >> newNote: aNoteObject [
 { #category : 'initialization' }
 NTMDEditorPresenter >> noNote [
 
-	currentFile := MDEditorNoFile new
+	mdFile := MDFile new
 ]
 
 { #category : 'actions' }
@@ -84,17 +87,6 @@ NTMDEditorPresenter >> openNote: aNoteObject [
 	self cleanOutput.
 	self window ifNotNil: [self updateTitle].
 	self renderDocument.
-]
-
-{ #category : 'actions' }
-NTMDEditorPresenter >> save: aText withExtension: anExtension [
-
-	| nameOfNote nameWithExtension |
-	nameOfNote := (aText asString substrings: String cr) first trimBoth.
-	nameWithExtension := nameOfNote , '.' , anExtension.
-
-	nameWithExtension asFileReference writeStreamDo: [ :stream |
-		stream nextPutAll: aText ]
 ]
 
 { #category : 'api' }

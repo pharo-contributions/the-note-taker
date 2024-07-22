@@ -14,7 +14,8 @@ Class {
 }
 
 { #category : 'accessing' }
-NTSpNoteContentPresenter >> contents: aString [ 
+NTSpNoteContentPresenter >> contents: aString [
+
 	contentPresenter textInputText: aString
 ]
 
@@ -35,7 +36,7 @@ NTSpNoteContentPresenter >> defaultLayout [
 { #category : 'display' }
 NTSpNoteContentPresenter >> displayContents: aNoteObject [
 
-contentPresenter displayContents: aNoteObject 
+	contentPresenter displayContents: aNoteObject
 ]
 
 { #category : 'accessing' }
@@ -48,10 +49,10 @@ NTSpNoteContentPresenter >> editorPresenter [
 { #category : 'initialization' }
 NTSpNoteContentPresenter >> initializePresenters [
 
-	contentPresenter := self instantiate: NTMDEditorPresenter .
-	contentPresenter 
+	contentPresenter := (self instantiate: NTMDEditorPresenter on: self)
 		cleanInput;
-		cleanOutput
+		cleanOutput;
+		yourself.
 ]
 
 { #category : 'accessing' }
