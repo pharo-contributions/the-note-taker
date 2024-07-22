@@ -40,10 +40,10 @@ NTSpImportFolderCommand >> execute [
 ]
 
 { #category : 'testing' }
-NTSpImportFolderCommand >> isValidNoteTitle: aString [ 
+NTSpImportFolderCommand >> isValidNoteName: aString [ 
 	"Answer <true> if aString is a valid note title"
 	
-	^ self application isValidNoteTitle: aString
+	^ self application isValidNoteName: aString
 ]
 
 { #category : 'executing' }
@@ -52,7 +52,7 @@ NTSpImportFolderCommand >> processFolder: aFileReference [
 	aFileReference allFiles
 		"this test should be grouped somewhere else!"
 		select: [ :fileRef |  (#('md' 'txt' 'text') includes: fileRef extension asLowercase )
-										ifTrue: [ self isValidNoteTitle: fileRef contents ]
+										ifTrue: [ self isValidNoteName: fileRef contents ]
 										ifFalse: [ false ]]
 		thenDo: [ :fileRef | self addNoteFromFileReference: fileRef ]
 ]
@@ -63,7 +63,7 @@ NTSpImportFolderCommand >> processSelections: selections [
 	selections isEmptyOrNil
 		ifTrue: [ ^ self ].
 	selections
-		select: [ : selection | self isValidNoteTitle: selection asFileReference contents ]
+		select: [ : selection | self isValidNoteName: selection asFileReference contents ]
 		thenDo: [ : selection | self addNoteFromFileReference: selection asFileReference ]
 ]
 

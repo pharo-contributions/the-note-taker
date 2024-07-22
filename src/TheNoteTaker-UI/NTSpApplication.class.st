@@ -66,10 +66,10 @@ NTSpApplication >> initialize [
 ]
 
 { #category : 'testing' }
-NTSpApplication >> isValidNoteTitle: aString [ 
+NTSpApplication >> isValidNoteName: aString [ 
 	"Answer <true> if aString is a valid note title"
 	
-	^ self noteTaker isValidNoteTitle: aString
+	^ self noteTaker isValidNoteName: aString
 ]
 
 { #category : 'accessig' }

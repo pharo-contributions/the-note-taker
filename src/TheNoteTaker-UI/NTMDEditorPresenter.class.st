@@ -79,6 +79,7 @@ NTMDEditorPresenter >> save: aText withExtension: anExtension [
 
 { #category : 'api' }
 NTMDEditorPresenter >> title [
+	"Answer a <String> representing the application name and selected note title"
 
 	^ String streamContents: [ : stream |
 		stream 

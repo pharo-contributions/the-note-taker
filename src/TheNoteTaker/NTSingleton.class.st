@@ -93,7 +93,7 @@ NTSingleton >> initialize [
 ]
 
 { #category : 'testing' }
-NTSingleton >> isValidNoteTitle: aString [ 
+NTSingleton >> isValidNoteName: aString [ 
 	"Answer <true> if aString is a valid note title, i.e. 
 		Non-empty, and not already present"
 
