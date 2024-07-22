@@ -33,6 +33,12 @@ NTSpNoteContentPresenter >> defaultLayout [
 		yourself
 ]
 
+{ #category : 'display' }
+NTSpNoteContentPresenter >> displayContents: aNoteObject [
+
+	contentPresenter displayContents: aNoteObject
+]
+
 { #category : 'accessing' }
 NTSpNoteContentPresenter >> editorPresenter [
 	"Answer the receiver's <NTMDEditorPresenter>"

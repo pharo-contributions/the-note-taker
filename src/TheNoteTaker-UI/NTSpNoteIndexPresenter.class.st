@@ -94,6 +94,7 @@ NTSpNoteIndexPresenter >> handleNoteChange: aSelectedNote [
 
 	aSelectedNote ifNil: [ ^ self ].
 	self editorPresenter noNote.
+	self owner displayNoteContents: aSelectedNote.
 	aSelectedNote existsAsFile
 		ifTrue: [ aSelectedNote openFromPresenter: self ]
 		ifFalse: [ aSelectedNote newFromPresenter: self ]
@@ -157,7 +158,8 @@ NTSpNoteIndexPresenter >> refresh [
 NTSpNoteIndexPresenter >> selectNote: aNTNoteObject [
 	"Select aNTNoteObject in the receiver"
 	
-	notesIndexPresenter selectItem: aNTNoteObject
+	notesIndexPresenter selectItem: aNTNoteObject 
+	
 ]
 
 { #category : 'accessing' }

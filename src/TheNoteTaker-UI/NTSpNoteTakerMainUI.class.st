@@ -57,6 +57,12 @@ NTSpNoteTakerMainUI >> defaultLayout [
 		yourself
 ]
 
+{ #category : 'accessing - status bar' }
+NTSpNoteTakerMainUI >> displayNoteContents: aNoteObject [
+
+	notesContentPresenter displayContents: aNoteObject
+]
+
 { #category : 'accessing' }
 NTSpNoteTakerMainUI >> editorPresenter [
 	"Answer the receiver's MicroDown editor presenter"
@@ -150,6 +156,12 @@ NTSpNoteTakerMainUI >> noteTaker [
 	^ self application noteTaker
 ]
 
+{ #category : 'initialization' }
+NTSpNoteTakerMainUI >> notesContentPresenter [
+
+	^ notesContentPresenter 
+]
+
 { #category : 'accessing' }
 NTSpNoteTakerMainUI >> notesIndexPresenter [
 
@@ -160,6 +172,13 @@ NTSpNoteTakerMainUI >> notesIndexPresenter [
 NTSpNoteTakerMainUI >> notesToolbar [
 
 	^ notesToolbarPresenter
+]
+
+{ #category : 'initialization' }
+NTSpNoteTakerMainUI >> notesToolbarPresenter [
+	"This is the getter of the notes toolbar"
+	
+	^ notesToolbarPresenter 
 ]
 
 { #category : 'accessing' }
