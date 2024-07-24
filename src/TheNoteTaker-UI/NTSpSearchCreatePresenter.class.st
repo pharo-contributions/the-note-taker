@@ -11,7 +11,8 @@ Class {
 	#instVars : [
 		'notesSearchCreateTextPresenter',
 		'notesSearchButtonPresenter',
-		'model'
+		'model',
+		'noteSettingsButtonPresenter'
 	],
 	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
@@ -24,6 +25,7 @@ NTSpSearchCreatePresenter >> defaultLayout [
 	^ SpBoxLayout newLeftToRight
 		add: notesSearchCreateTextPresenter;
 		add: notesSearchButtonPresenter expand: false;
+		add: noteSettingsButtonPresenter expand: false;
 		yourself
 ]
 
@@ -52,9 +54,16 @@ NTSpSearchCreatePresenter >> initializePresenters [
 		yourself.
 	notesSearchButtonPresenter := self newButton
 		icon: (self iconNamed: #smallFind);
+		addStyle: 'small';		
 		action: [ self updateNotesList ];		
 		help: 'Search note';
-		yourself
+		yourself.
+	noteSettingsButtonPresenter := self newButton
+		icon: (self iconNamed: #smallConfiguration);
+		addStyle: 'small';		
+		action: [ self openTNTSettings ];
+		help: 'Settings';
+		yourself.
 ]
 
 { #category : 'accessing' }
@@ -75,6 +84,15 @@ NTSpSearchCreatePresenter >> notesList [
 	"Answer the <NTSpNoteIndexPresenter> responsible to display the notes"
 
 	^ self owner notesIndexPresenter
+]
+
+{ #category : 'initialization' }
+NTSpSearchCreatePresenter >> openTNTSettings [
+	
+	self flag: 'ToDo: To be updated when new settings browser takes place'.
+	SettingBrowser new
+		rootNodes: (SettingBrowser currentTree nodeNamed: #tnt) allChildren;
+		open
 ]
 
 { #category : 'callbacks' }
