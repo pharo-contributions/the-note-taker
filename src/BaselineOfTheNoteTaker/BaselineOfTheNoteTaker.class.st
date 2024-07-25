@@ -33,7 +33,7 @@ BaselineOfTheNoteTaker >> baseline: spec [
 		spec
 			group: 'Core' with: #( 'TheNoteTaker' );
 			group: 'UI' with: #( 'TheNoteTaker-UI' );
-			group: 'Tests' with: #( 'Çore' 'TheNoteTaker-Tests' 'TheNoteTaker-UI-Tests' );
+			group: 'Tests' with: #( 'Core' 'TheNoteTaker-Tests' 'TheNoteTaker-UI-Tests' );
 			group: 'Release' with: #( 'Core' 'UI' 'ObjCBridge' 'TheNoteTaker-Release' );
 			group: 'default' with: #( 'Core' 'Tests' 'UI' ) ]
 ]
