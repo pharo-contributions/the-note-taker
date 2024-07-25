@@ -22,7 +22,8 @@ BaselineOfTheNoteTaker >> baseline: spec [
 		self microEd: spec.
 		self applicationGenerator: spec.
 		self objcbridge: spec.
-
+		self osSubProcess: spec.
+		spec postLoadDoIt: #'postload:package:'.
 		spec
 			package: 'TheNoteTaker';
 			package: 'TheNoteTaker-UI' 	with: [ spec requires: #( #MicroEd TheNoteTaker ) ];
@@ -32,7 +33,7 @@ BaselineOfTheNoteTaker >> baseline: spec [
 		spec
 			group: 'Core' with: #( 'TheNoteTaker' );
 			group: 'UI' with: #( 'TheNoteTaker-UI' );
-			group: 'Tests' with: #( 'TheNoteTaker' 'TheNoteTaker-Tests' );
+			group: 'Tests' with: #( 'TheNoteTaker' 'TheNoteTaker-Tests' 'TheNoteTaker-UI-Tests' );
 			group: 'Release' with: #( 'Core' 'UI' 'ObjCBridge' 'TheNoteTaker-Release' );
 			group: 'default' with: #( 'Core' 'Tests' 'UI' ) ]
 ]
