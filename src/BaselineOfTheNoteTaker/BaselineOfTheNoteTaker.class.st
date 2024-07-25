@@ -29,11 +29,11 @@ BaselineOfTheNoteTaker >> baseline: spec [
 			package: 'TheNoteTaker-UI' 	with: [ spec requires: #( #MicroEd TheNoteTaker ) ];
 			package: 'TheNoteTaker-Release' with: [ spec requires: #( ApplicationGenerator ObjCBridge ) ];
 			package: 'TheNoteTaker-Tests' with: [ spec requires: #( TheNoteTaker ) ];
-			package: 'TheNoteTaker-UI-Tests' with: [ spec requires: #( TheNoteTaker-UI ) ].
+			package: 'TheNoteTaker-UI-Tests' with: [ spec requires: #( 'TheNoteTaker-Tests' 'TheNoteTaker-UI' ) ].
 		spec
 			group: 'Core' with: #( 'TheNoteTaker' );
 			group: 'UI' with: #( 'TheNoteTaker-UI' );
-			group: 'Tests' with: #( 'TheNoteTaker' 'TheNoteTaker-Tests' 'TheNoteTaker-UI-Tests' );
+			group: 'Tests' with: #( 'Çore' 'TheNoteTaker-Tests' 'TheNoteTaker-UI-Tests' );
 			group: 'Release' with: #( 'Core' 'UI' 'ObjCBridge' 'TheNoteTaker-Release' );
 			group: 'default' with: #( 'Core' 'Tests' 'UI' ) ]
 ]
@@ -52,15 +52,6 @@ BaselineOfTheNoteTaker >> microEd: spec [
 	spec
 		baseline: 'MicroEd'
 		with: [ spec repository: 'github://hernanmd/MicroEd/src' ]
-]
-
-{ #category : 'baselines' }
-BaselineOfTheNoteTaker >> neoJson: spec [
-
-	spec
-		baseline: 'NeoJSON'
-		with: [ spec repository: 'github://svenvc/NeoJSON/repository' ]
-
 ]
 
 { #category : 'baselines' }
