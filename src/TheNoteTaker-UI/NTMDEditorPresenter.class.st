@@ -66,11 +66,14 @@ NTMDEditorPresenter >> initializePresentersWithText: anInputText [
 { #category : 'actions' }
 NTMDEditorPresenter >> newNote: aNoteObject [
 
-	self mdFile: (MDFile newFromFileReference: aNoteObject title asFileReference).
-	self updateTitle.
+	self mdFile:
+		(MDFile newFromFileReference: aNoteObject title asFileReference).
+	self window ifNotNil: [ self updateTitle ].
 	textInput text: aNoteObject contents.
 	self cleanOutput.
-	self renderDocument
+	self renderDocument.
+	actualNote := aNoteObject.
+	actualNote title: self mdFile basename.
 ]
 
 { #category : 'initialization' }
@@ -87,6 +90,15 @@ NTMDEditorPresenter >> openNote: aNoteObject [
 	self cleanOutput.
 	self window ifNotNil: [self updateTitle].
 	self renderDocument.
+	actualNote := aNoteObject.
+	actualNote contents: self textInputText.
+]
+
+{ #category : 'actions' }
+NTMDEditorPresenter >> saveFile [
+
+	super saveFile.
+	actualNote title: self mdFile basename.
 ]
 
 { #category : 'api' }
