@@ -7,7 +7,8 @@ Class {
 		'notesIndexPresenter',
 		'notesTaker',
 		'notesContentPresenter',
-		'memoryFS'
+		'memoryFS',
+		'note'
 	],
 	#category : 'TheNoteTaker-UI-Tests',
 	#package : 'TheNoteTaker-UI-Tests'
@@ -15,13 +16,19 @@ Class {
 
 { #category : 'running' }
 NTSpNoteTakerMainUITest >> setUp [
-
+	
+	super setUp. 
+	memoryFS := FileSystem memory.
+	
 	app := NTSpApplication new.
 	presenter := app newPresenter: NTSpNoteTakerMainUI.
 	notesIndexPresenter := presenter notesIndexPresenter.
 	notesTaker := presenter noteTaker.
 	notesContentPresenter := presenter notesContentPresenter.
-	memoryFS := FileSystem memory. 
+
+	note := notesTaker newNoteNamed: 'newNote'. 
+	notesContentPresenter editorPresenter newNote: note.
+	
 ]
 
 { #category : 'running' }
@@ -32,18 +39,11 @@ NTSpNoteTakerMainUITest >> tearDown [
 ]
 
 { #category : 'tests' }
-NTSpNoteTakerMainUITest >> testAddContentThenNameNoteIsInISOFormat [
-	" add new note in the note taker, its contents and save it"
-
-	| note date |
-	date := DateAndTime now asDate yyyymmdd.
-	note := notesTaker newNoteNamed: 'newNote'.
-	notesContentPresenter editorPresenter newNote: note.
+NTSpNoteTakerMainUITest >> testAddContent [
+	
 	notesContentPresenter contents: 'It''s just a test'.
 	notesContentPresenter editorPresenter saveFile.
 
-	"Then ask if the title of the note corresponds to that of its saved file, if its contents has been modified"
-	self assert: (note title beginsWith: date).
 	self assert: note contents equals: 'It''s just a test'
 ]
 
@@ -54,6 +54,17 @@ NTSpNoteTakerMainUITest >> testAddNoteByItsName [
 	sizeNotesBeforeAddNote := notesIndexPresenter items size.
 	notesTaker addNoteNamed: 'note1'.
 	self assert: notesIndexPresenter items size equals: sizeNotesBeforeAddNote + 1.
+]
+
+{ #category : 'tests' }
+NTSpNoteTakerMainUITest >> testNameNoteIsInISOFormat [
+	" add new note in the note taker, its contents and save it"
+
+	| date |
+	date := DateAndTime now asDate yyyymmdd.
+	notesContentPresenter editorPresenter saveFile.
+
+	self assert: (note title beginsWith: date).
 ]
 
 { #category : 'tests' }
