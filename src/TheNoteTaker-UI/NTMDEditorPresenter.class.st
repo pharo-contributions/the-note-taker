@@ -103,15 +103,24 @@ NTMDEditorPresenter >> saveFile [
 
 { #category : 'actions' }
 NTMDEditorPresenter >> saveFileByItsContents [
-	"create a new note with its title which corresponds to the first word of the contents"
+	"create a new note with its title which corresponds to the first word of the contents.
+	If the contents has more than three words, the title correponds to its first three words. "
 
-	| newNoteByItsContents nameOfNewNote |
+	| newNoteByItsContents nameOfNewNote collectionOfTextInput |
 	
-	nameOfNewNote := self textInputText substrings first.
+	collectionOfTextInput := self textInputText substrings.
+	nameOfNewNote := String streamContents: [ :stt |
+		                 (collectionOfTextInput size > 3
+			                  ifTrue: [
+			                  collectionOfTextInput copyFrom: 1 to: 3 ]
+			                  ifFalse: [ collectionOfTextInput ]) do: [ :each |
+			                 stt nextPutAll: each ] ].
+
 	newNoteByItsContents := NTSingleton uniqueInstance addNoteNamed:
 		                        nameOfNewNote.
 	self owner owner notesIndexPresenter refresh.
 	newNoteByItsContents contents: self textInputText.
+
 	self newNote: newNoteByItsContents
 ]
 

@@ -48,6 +48,17 @@ NTSpNoteTakerMainUITest >> testAddContent [
 ]
 
 { #category : 'tests' }
+NTSpNoteTakerMainUITest >> testAddNoteByItsContents [ 
+	
+	notesContentPresenter editorPresenter startNewFile.
+	notesContentPresenter contents: 'just a new note'.
+	notesContentPresenter editorPresenter saveFile.
+	
+	self assert: notesContentPresenter editorPresenter mdFile exists.
+	self assert: (notesContentPresenter editorPresenter mdFile basename includesSubstring: 'justanew').
+]
+
+{ #category : 'tests' }
 NTSpNoteTakerMainUITest >> testAddNoteByItsName [ 
 	
 	| sizeNotesBeforeAddNote |
