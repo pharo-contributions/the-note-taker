@@ -33,18 +33,18 @@ NTSpNoteTakerMainUITest >> tearDown [
 
 { #category : 'tests' }
 NTSpNoteTakerMainUITest >> testAddContentThenNameNoteIsInISOFormat [
+	" add new note in the note taker, its contents and save it"
 
-" This test is not yet good.
-
-	| note |
-	note := notesTaker addNoteNamed: 'newNote'.
+	| note date |
+	date := DateAndTime now asDate yyyymmdd.
+	note := notesTaker newNoteNamed: 'newNote'.
 	notesContentPresenter editorPresenter newNote: note.
 	notesContentPresenter contents: 'It''s just a test'.
-	notesContentPresenter editorPresenter mdFile 
-		save: notesContentPresenter editorPresenter textInputText 
-		withExtension: 'md'"
-		
-	self skip. 
+	notesContentPresenter editorPresenter saveFile.
+
+	"Then ask if the title of the note corresponds to that of its saved file, if its contents has been modified"
+	self assert: (note title includesSubstring: date).
+	self assert: note contents equals: 'It''s just a test'
 ]
 
 { #category : 'tests' }
