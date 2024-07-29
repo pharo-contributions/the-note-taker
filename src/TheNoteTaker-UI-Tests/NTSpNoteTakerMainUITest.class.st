@@ -43,7 +43,7 @@ NTSpNoteTakerMainUITest >> testAddContentThenNameNoteIsInISOFormat [
 	notesContentPresenter editorPresenter saveFile.
 
 	"Then ask if the title of the note corresponds to that of its saved file, if its contents has been modified"
-	self assert: (note title includesSubstring: date).
+	self assert: (note title beginsWith: date).
 	self assert: note contents equals: 'It''s just a test'
 ]
 
