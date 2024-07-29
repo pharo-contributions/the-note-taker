@@ -96,9 +96,23 @@ NTMDEditorPresenter >> openNote: aNoteObject [
 
 { #category : 'actions' }
 NTMDEditorPresenter >> saveFile [
+	 
+	self mdFile hasFile ifFalse: [ self saveFileByItsContents ]. 
+	super saveFile
+]
 
-	super saveFile.
-	actualNote title: self mdFile basename.
+{ #category : 'actions' }
+NTMDEditorPresenter >> saveFileByItsContents [
+	"create a new note with its title which corresponds to the first word of the contents"
+
+	| newNoteByItsContents nameOfNewNote |
+	
+	nameOfNewNote := self textInputText substrings first.
+	newNoteByItsContents := NTSingleton uniqueInstance addNoteNamed:
+		                        nameOfNewNote.
+	self owner owner notesIndexPresenter refresh.
+	newNoteByItsContents contents: self textInputText.
+	self newNote: newNoteByItsContents
 ]
 
 { #category : 'api' }
