@@ -16,7 +16,8 @@ Class {
 { #category : 'accessing' }
 NTSpNoteContentPresenter >> contents: aString [
 
-	contentPresenter textInputText: aString
+	contentPresenter textInputText: aString.
+	contentPresenter actualNote contents: aString 
 ]
 
 { #category : 'transmission' }
