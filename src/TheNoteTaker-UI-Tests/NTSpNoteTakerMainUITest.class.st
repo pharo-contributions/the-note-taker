@@ -32,22 +32,6 @@ NTSpNoteTakerMainUITest >> tearDown [
 ]
 
 { #category : 'tests' }
-NTSpNoteTakerMainUITest >> testAddContentThenNameNoteIsInISOFormat [
-
-" This test is not yet good.
-
-	| note |
-	note := notesTaker addNoteNamed: 'newNote'.
-	notesContentPresenter editorPresenter newNote: note.
-	notesContentPresenter contents: 'It''s just a test'.
-	notesContentPresenter editorPresenter mdFile 
-		save: notesContentPresenter editorPresenter textInputText 
-		withExtension: 'md'"
-		
-	self skip. 
-]
-
-{ #category : 'tests' }
 NTSpNoteTakerMainUITest >> testAddNoteByItsName [ 
 	
 	| sizeNotesBeforeAddNote |
