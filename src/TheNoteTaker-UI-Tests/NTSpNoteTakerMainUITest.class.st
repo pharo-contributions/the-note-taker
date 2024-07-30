@@ -8,7 +8,8 @@ Class {
 		'notesTaker',
 		'notesContentPresenter',
 		'memoryFS',
-		'note'
+		'note',
+		'noteFile'
 	],
 	#category : 'TheNoteTaker-UI-Tests',
 	#package : 'TheNoteTaker-UI-Tests'
@@ -18,7 +19,7 @@ Class {
 NTSpNoteTakerMainUITest >> setUp [
 	
 	super setUp. 
-	memoryFS := FileSystem memory.
+	memoryFS := FileSystem memory. 
 	
 	app := NTSpApplication new.
 	presenter := app newPresenter: NTSpNoteTakerMainUI.
@@ -26,8 +27,13 @@ NTSpNoteTakerMainUITest >> setUp [
 	notesTaker := presenter noteTaker.
 	notesContentPresenter := presenter notesContentPresenter.
 
-	note := notesTaker newNoteNamed: 'newNote'. 
+	noteFile := memoryFS workingDirectory / 'newNote.md'. 
+	noteFile writeStreamDo: [ : stream | stream nextPutAll: 'new note' ]. 
+	
+	notesTaker addNoteFromFileReference: noteFile. 
+	note := notesTaker noteNamed: 'newNote'. 
 	notesContentPresenter editorPresenter newNote: note.
+	
 	
 ]
 
@@ -35,6 +41,8 @@ NTSpNoteTakerMainUITest >> setUp [
 NTSpNoteTakerMainUITest >> tearDown [
 
 	notesTaker removeNotes: notesTaker notes.
+	noteFile ensureDelete.
+	notesContentPresenter editorPresenter mdFile fileReference delete.
 	super tearDown.
 ]
 
@@ -56,6 +64,7 @@ NTSpNoteTakerMainUITest >> testAddNoteByItsContents [
 	
 	self assert: notesContentPresenter editorPresenter mdFile exists.
 	self assert: (notesContentPresenter editorPresenter mdFile basename includesSubstring: 'justanew').
+	
 ]
 
 { #category : 'tests' }
@@ -104,4 +113,16 @@ NTSpNoteTakerMainUITest >> testRemoveNote [
 	notesTaker addNoteNamed: 'note2'.
 	notesTaker removeNoteNamed: 'note2'.
 	self assert: notesIndexPresenter items size equals: sizeNotesBeforeAddNote. 
+]
+
+{ #category : 'tests' }
+NTSpNoteTakerMainUITest >> testSelectANote [
+
+	| sizeNotesBeforeAddNote |
+	notesTaker addNoteNamed: 'anotherNote'.
+	sizeNotesBeforeAddNote := notesIndexPresenter items size.
+	notesIndexPresenter selectNote: notesIndexPresenter items first.
+
+	presenter selectedNote contents: 'anotherNote'. 
+	"self assert: (notesContentPresenter editorPresenter textInputText) equals: 'anotherNote'."
 ]
