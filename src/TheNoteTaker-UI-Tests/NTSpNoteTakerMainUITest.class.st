@@ -7,7 +7,8 @@ Class {
 		'notesIndexPresenter',
 		'notesTaker',
 		'notesContentPresenter',
-		'memoryFS'
+		'memoryFS',
+		'note'
 	],
 	#category : 'TheNoteTaker-UI-Tests',
 	#package : 'TheNoteTaker-UI-Tests'
@@ -15,13 +16,19 @@ Class {
 
 { #category : 'running' }
 NTSpNoteTakerMainUITest >> setUp [
-
+	
+	super setUp. 
+	memoryFS := FileSystem memory.
+	
 	app := NTSpApplication new.
 	presenter := app newPresenter: NTSpNoteTakerMainUI.
 	notesIndexPresenter := presenter notesIndexPresenter.
 	notesTaker := presenter noteTaker.
 	notesContentPresenter := presenter notesContentPresenter.
-	memoryFS := FileSystem memory. 
+
+	note := notesTaker newNoteNamed: 'newNote'. 
+	notesContentPresenter editorPresenter newNote: note.
+	
 ]
 
 { #category : 'running' }
@@ -32,19 +39,23 @@ NTSpNoteTakerMainUITest >> tearDown [
 ]
 
 { #category : 'tests' }
-NTSpNoteTakerMainUITest >> testAddContentThenNameNoteIsInISOFormat [
-
-" This test is not yet good.
-
-	| note |
-	note := notesTaker addNoteNamed: 'newNote'.
-	notesContentPresenter editorPresenter newNote: note.
+NTSpNoteTakerMainUITest >> testAddContent [
+	
 	notesContentPresenter contents: 'It''s just a test'.
-	notesContentPresenter editorPresenter mdFile 
-		save: notesContentPresenter editorPresenter textInputText 
-		withExtension: 'md'"
-		
-	self skip. 
+	notesContentPresenter editorPresenter saveFile.
+
+	self assert: note contents equals: 'It''s just a test'
+]
+
+{ #category : 'tests' }
+NTSpNoteTakerMainUITest >> testAddNoteByItsContents [ 
+	
+	notesContentPresenter editorPresenter startNewFile.
+	notesContentPresenter contents: 'just a new note'.
+	notesContentPresenter editorPresenter saveFile.
+	
+	self assert: notesContentPresenter editorPresenter mdFile exists.
+	self assert: (notesContentPresenter editorPresenter mdFile basename includesSubstring: 'justanew').
 ]
 
 { #category : 'tests' }
@@ -54,6 +65,17 @@ NTSpNoteTakerMainUITest >> testAddNoteByItsName [
 	sizeNotesBeforeAddNote := notesIndexPresenter items size.
 	notesTaker addNoteNamed: 'note1'.
 	self assert: notesIndexPresenter items size equals: sizeNotesBeforeAddNote + 1.
+]
+
+{ #category : 'tests' }
+NTSpNoteTakerMainUITest >> testNameNoteIsInISOFormat [
+	" add new note in the note taker, its contents and save it"
+
+	| date |
+	date := DateAndTime now asDate yyyymmdd.
+	notesContentPresenter editorPresenter saveFile.
+
+	self assert: (note title beginsWith: date).
 ]
 
 { #category : 'tests' }
