@@ -123,6 +123,7 @@ NTSpNoteTakerMainUITest >> testSelectANote [
 	sizeNotesBeforeAddNote := notesIndexPresenter items size.
 	notesIndexPresenter selectNote: notesIndexPresenter items first.
 
-	presenter selectedNote contents: 'anotherNote'. 
-	"self assert: (notesContentPresenter editorPresenter textInputText) equals: 'anotherNote'."
+	presenter selectedNote contents: 'anotherNote'.
+	notesContentPresenter editorPresenter openNote: notesIndexPresenter items first.
+	self assert: (notesIndexPresenter editorPresenter textInputText) equals: 'anotherNote'.
 ]

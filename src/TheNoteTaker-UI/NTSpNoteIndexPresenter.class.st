@@ -98,6 +98,7 @@ NTSpNoteIndexPresenter >> handleNoteChange: aSelectedNote [
 	aSelectedNote existsAsFile
 		ifTrue: [ aSelectedNote openFromPresenter: self ]
 		ifFalse: [ aSelectedNote newFromPresenter: self ]
+	
 ]
 
 { #category : 'testing' }

@@ -26,7 +26,8 @@ NTMDEditorPresenter >> actualNote [
 { #category : 'accessing' }
 NTMDEditorPresenter >> actualNote: aNoteObject [
 
-	actualNote := aNoteObject
+	actualNote := aNoteObject.
+	textInput text: actualNote contents
 ]
 
 { #category : 'private' }
@@ -38,7 +39,6 @@ NTMDEditorPresenter >> applicationTitle [
 { #category : 'display' }
 NTMDEditorPresenter >> displayContents: aNoteObject [
 
-	self cleanInput.
 	actualNote := aNoteObject.
 	textInput text: aNoteObject contents asString.
 	self renderDocument
@@ -74,6 +74,7 @@ NTMDEditorPresenter >> newNote: aNoteObject [
 	self renderDocument.
 	actualNote := aNoteObject.
 	actualNote title: self mdFile basename.
+	actualNote contents: textInput text
 ]
 
 { #category : 'initialization' }
