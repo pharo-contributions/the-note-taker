@@ -108,7 +108,6 @@ NTMDEditorPresenter >> saveFileByItsContents [
 	If the contents has more than three words, the title correponds to its first three words. "
 
 	| newNoteByItsContents nameOfNewNote collectionOfTextInput |
-	
 	collectionOfTextInput := self textInputText substrings.
 	nameOfNewNote := String streamContents: [ :stt |
 		                 (collectionOfTextInput size > 3
@@ -117,12 +116,12 @@ NTMDEditorPresenter >> saveFileByItsContents [
 			                  ifFalse: [ collectionOfTextInput ]) do: [ :each |
 			                 stt nextPutAll: each ] ].
 
-	newNoteByItsContents := NTSingleton uniqueInstance addNoteNamed:
-		                        nameOfNewNote.
-	self owner owner notesIndexPresenter refresh.
+	newNoteByItsContents := NTSingleton uniqueInstance addNoteNamed: nameOfNewNote.
 	newNoteByItsContents contents: self textInputText.
-
-	self newNote: newNoteByItsContents
+	
+	self cleanInput.
+	self newNote: newNoteByItsContents.
+	self owner owner notesIndexPresenter refresh
 ]
 
 { #category : 'api' }

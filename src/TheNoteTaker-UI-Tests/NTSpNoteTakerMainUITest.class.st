@@ -118,12 +118,13 @@ NTSpNoteTakerMainUITest >> testRemoveNote [
 { #category : 'tests' }
 NTSpNoteTakerMainUITest >> testSelectANote [
 
-	| sizeNotesBeforeAddNote |
 	notesTaker addNoteNamed: 'anotherNote'.
-	sizeNotesBeforeAddNote := notesIndexPresenter items size.
 	notesIndexPresenter selectNote: notesIndexPresenter items first.
 
 	presenter selectedNote contents: 'anotherNote'.
-	notesContentPresenter editorPresenter openNote: notesIndexPresenter items first.
-	self assert: (notesIndexPresenter editorPresenter textInputText) equals: 'anotherNote'.
+	notesContentPresenter editorPresenter openNote: presenter selectedNote. 
+	
+	self assert: notesContentPresenter editorPresenter textInputText equals: 'anotherNote'.
+
+
 ]
