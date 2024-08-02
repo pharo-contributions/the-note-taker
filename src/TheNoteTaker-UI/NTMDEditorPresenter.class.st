@@ -26,7 +26,8 @@ NTMDEditorPresenter >> actualNote [
 { #category : 'accessing' }
 NTMDEditorPresenter >> actualNote: aNoteObject [
 
-	actualNote := aNoteObject
+	actualNote := aNoteObject.
+	textInput text: actualNote contents
 ]
 
 { #category : 'private' }
@@ -38,7 +39,6 @@ NTMDEditorPresenter >> applicationTitle [
 { #category : 'display' }
 NTMDEditorPresenter >> displayContents: aNoteObject [
 
-	self cleanInput.
 	actualNote := aNoteObject.
 	textInput text: aNoteObject contents asString.
 	self renderDocument
@@ -74,6 +74,7 @@ NTMDEditorPresenter >> newNote: aNoteObject [
 	self renderDocument.
 	actualNote := aNoteObject.
 	actualNote title: self mdFile basename.
+	actualNote contents: textInput text
 ]
 
 { #category : 'initialization' }
@@ -107,7 +108,6 @@ NTMDEditorPresenter >> saveFileByItsContents [
 	If the contents has more than three words, the title correponds to its first three words. "
 
 	| newNoteByItsContents nameOfNewNote collectionOfTextInput |
-	
 	collectionOfTextInput := self textInputText substrings.
 	nameOfNewNote := String streamContents: [ :stt |
 		                 (collectionOfTextInput size > 3
@@ -116,12 +116,12 @@ NTMDEditorPresenter >> saveFileByItsContents [
 			                  ifFalse: [ collectionOfTextInput ]) do: [ :each |
 			                 stt nextPutAll: each ] ].
 
-	newNoteByItsContents := NTSingleton uniqueInstance addNoteNamed:
-		                        nameOfNewNote.
-	self owner owner notesIndexPresenter refresh.
+	newNoteByItsContents := NTSingleton uniqueInstance addNoteNamed: nameOfNewNote.
 	newNoteByItsContents contents: self textInputText.
-
-	self newNote: newNoteByItsContents
+	
+	self cleanInput.
+	self newNote: newNoteByItsContents.
+	self owner owner notesIndexPresenter refresh
 ]
 
 { #category : 'api' }

@@ -34,9 +34,10 @@ NTSpImportNoteCommand >> execute [
 	selections := (StOpenFilePresenter new
 						extent: 800 @800;
 						extensions: self validNoteExtensions;
-						yourself) open.
+						yourself) openModal.
 	self processSelections: selections.
-	self context items: self facade notes
+	self context items: self facade notes.
+	self context refresh. 
 ]
 
 { #category : 'testing' }
@@ -48,12 +49,12 @@ NTSpImportNoteCommand >> isValidNoteName: aString [
 
 { #category : 'executing' }
 NTSpImportNoteCommand >> processSelections: selections [
-
-	selections isEmptyOrNil
-		ifTrue: [ ^ self ].
-	selections
-		select: [ : selection | self isValidNoteName: selection asFileReference contents ]
-		thenDo: [ : selection | self addNoteFromFileReference: selection asFileReference ]
+ 
+	selections isNil 
+        ifTrue: [ ^ self ].
+	
+	self isValidNoteName: selections asFileReference contents.
+	self addNoteFromFileReference: selections asFileReference
 ]
 
 { #category : 'executing' }

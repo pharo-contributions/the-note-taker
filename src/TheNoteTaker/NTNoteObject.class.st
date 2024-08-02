@@ -78,12 +78,6 @@ NTNoteObject >> creationDate: anObject [
 	creationDate := anObject
 ]
 
-{ #category : 'defaults' }
-NTNoteObject >> defaultExtension [
-
-	^ '.mic'
-]
-
 { #category : 'testing' }
 NTNoteObject >> existsAsFile [
 
@@ -129,8 +123,7 @@ NTNoteObject >> nameForFile [
 
 	^ String streamContents: [ : stream |
 		stream 
-			<< self title asLowercase;
-			<< self defaultExtension ]
+			<< self title asLowercase ]
 ]
 
 { #category : 'instance creation' }
