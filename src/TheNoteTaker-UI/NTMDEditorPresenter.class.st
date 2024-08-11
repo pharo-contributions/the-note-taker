@@ -69,7 +69,8 @@ NTMDEditorPresenter >> newNote: aNoteObject [
 	self mdFile:
 		(MDFile newFromFileReference: aNoteObject title asFileReference).
 	self window ifNotNil: [ self updateTitle ].
-	textInput text: aNoteObject contents.
+	self mdFile addMetaDataElements. 
+	textInput text: self mdFile contents.
 	self cleanOutput.
 	self renderDocument.
 	actualNote := aNoteObject.

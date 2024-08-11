@@ -77,6 +77,15 @@ NTSpNoteTakerMainUITest >> testAddNoteByItsName [
 ]
 
 { #category : 'tests' }
+NTSpNoteTakerMainUITest >> testImportNote [ 
+	
+	notesContentPresenter contents: 'It''s just a test'.
+	notesContentPresenter editorPresenter saveFile.
+
+	self assert: note contents equals: 'It''s just a test' 
+]
+
+{ #category : 'tests' }
 NTSpNoteTakerMainUITest >> testNameNoteIsInISOFormat [
 	" add new note in the note taker, its contents and save it"
 
