@@ -111,11 +111,10 @@ NTMDEditorPresenter >> saveFileByItsContents [
 	| newNoteByItsContents nameOfNewNote collectionOfTextInput |
 	collectionOfTextInput := self textInputText substrings.
 	nameOfNewNote := String streamContents: [ :stt |
-		                 (collectionOfTextInput size > 3
-			                  ifTrue: [
-			                  collectionOfTextInput copyFrom: 1 to: 3 ]
-			                  ifFalse: [ collectionOfTextInput ]) do: [ :each |
-			                 stt nextPutAll: each ] ].
+		(collectionOfTextInput size > 3
+			ifTrue: [ collectionOfTextInput copyFrom: 1 to: 3 ]
+			ifFalse: [ collectionOfTextInput ]) 
+				do: [ :each | stt nextPutAll: each ] ].
 
 	newNoteByItsContents := NTSingleton uniqueInstance addNoteNamed: nameOfNewNote.
 	newNoteByItsContents contents: self textInputText.

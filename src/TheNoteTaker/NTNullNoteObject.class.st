@@ -9,11 +9,6 @@ Class {
 	#tag : 'Core'
 }
 
-{ #category : 'instance creation' }
-NTNullNoteObject >> newFromPresenter: aNTSpNoteContentPresenter [ 
-
-]
-
 { #category : 'accessing' }
 NTNullNoteObject >> title [
 

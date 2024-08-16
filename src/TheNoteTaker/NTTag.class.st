@@ -31,14 +31,6 @@ Class {
 	#tag : 'Core'
 }
 
-{ #category : 'accessing' }
-NTTag class >> neoJsonMapping: mapper [
-
-    mapper for: self do: [ :mapping |
-		mapping mapInstVars: #(tagName) ].
-
-]
-
 { #category : 'instance creation' }
 NTTag class >> newNamed: aString [
 	"Answer a new tag named aString"
