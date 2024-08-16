@@ -17,10 +17,25 @@ NTPersistencyTest >> setUp [
 ]
 
 { #category : 'running' }
-NTPersistencyTest >> testNotesInJSONFormat [
-	" The test doesn't pass"
+NTPersistencyTest >> testCreateNoteDoesNotSerialize [
 
-	self skip
-	"self
-		denyEmpty: self resource stonNotes"
+	| sampleNote |
+	sampleNote := NTNoteObject new.
+	self 
+		deny: sampleNote existsAsFile
+		description: 'It test that a Note object is not automatically persisted'.
+	
+	sampleNote title: self simplestNoteName.
+	self 
+		deny: sampleNote existsAsFile
+		description: 'It test that title assignment does not persist the note'.
+
+	
+]
+
+{ #category : 'running' }
+NTPersistencyTest >> testNotesNotEmpty [
+
+	self denyEmpty: self resource stonNotes.
+	
 ]

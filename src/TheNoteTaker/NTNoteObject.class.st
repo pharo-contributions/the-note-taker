@@ -35,18 +35,6 @@ NTNoteObject class >> named: aString contents: contentsString [
 		yourself
 ]
 
-{ #category : 'accessing' }
-NTNoteObject class >> neoJsonMapping: mapper [
-
-   mapper for: self do: [ :mapping |
-		mapping mapInstVars: #(title contents).
-		mapping mapInstVar: #creationDate to: #createdAt.
-		(mapping mapAccessor: #tags) valueSchema: #ArrayOfNTTags. ].
-
-    mapper for: #ArrayOfNTTags customDo: [ :mapping |
-        mapping listOfElementSchema: NTTag ]
-]
-
 { #category : 'accessing - tags' }
 NTNoteObject >> addTag: aNTTag [ 
 
@@ -80,8 +68,9 @@ NTNoteObject >> creationDate: anObject [
 
 { #category : 'testing' }
 NTNoteObject >> existsAsFile [
+	"Answer <true> if the receiver is presnet as <FileReference> in the current directory"
 
-	^ self nameForFile asFileReference exists
+	^ self hasTitle and: [ self nameForFile asFileReference exists ]
 ]
 
 { #category : 'testing' }
@@ -124,12 +113,6 @@ NTNoteObject >> nameForFile [
 	^ String streamContents: [ : stream |
 		stream 
 			<< self title asLowercase ]
-]
-
-{ #category : 'instance creation' }
-NTNoteObject >> newFromPresenter: aNTSpNoteContentPresenter [ 
-
-	aNTSpNoteContentPresenter editorPresenter newNote: self
 ]
 
 { #category : 'printing' }

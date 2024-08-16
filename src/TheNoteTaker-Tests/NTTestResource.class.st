@@ -103,7 +103,7 @@ Here is a recap of what I achieved:\n- Completed project proposal\n- Met with cl
 NTTestResource >> objectNotes [
 	"Answer a <Collection> of <NTNoteObject> to use in tests and examples"
 
-	^ (STONJSON on: self jsonNotes readStream) nextListAs: NTNoteObject.
+	^ STONJSON fromStream: self jsonNotes readStream
 ]
 
 { #category : 'accessing' }
