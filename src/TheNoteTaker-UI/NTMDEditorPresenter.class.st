@@ -51,6 +51,21 @@ NTMDEditorPresenter >> initialize [
 	self noNote
 ]
 
+{ #category : 'api' }
+NTMDEditorPresenter >> initializeMenuBar [
+
+	super initializeMenuBar.
+
+	menu
+		addGroup: [ :group | 
+			group addItem: [ :item | 
+				item
+					name: 'Toggle Preview';
+					description: 'Show/Hide the preview pane';
+					icon: (self iconNamed: #smallInspectIt);
+					action: [ self togglePreview ] ] ]
+]
+
 { #category : 'initialization' }
 NTMDEditorPresenter >> initializePresentersWithText: anInputText [
 
@@ -132,4 +147,19 @@ NTMDEditorPresenter >> title [
 		stream 
 			<< self applicationTitle;
 			<< self owner selectedNoteTitle ]
+]
+
+{ #category : 'callbacks' }
+NTMDEditorPresenter >> togglePreview [
+
+	textOutput isVisible 
+		ifTrue: [ 
+			| editorsLayoutPane |
+			"textOutput hide."
+
+			editorsLayoutPane := self layout children second.
+			editorsLayoutPane remove: #textOutput.
+			"editorsLayoutPane replaceFirst: textInput.
+			self update" ]
+		ifFalse: [ textOutput show ]
 ]
