@@ -20,13 +20,14 @@ BaselineOfTheNoteTaker >> baseline: spec [
 	spec for: #( common ) do: [
 		self ical: spec.
 		self microEd: spec.
+		self microdown: spec.
 		self applicationGenerator: spec.
 		self objcbridge: spec.
 		self osSubProcess: spec.
 		spec postLoadDoIt: #'postload:package:'.
 		spec
 			package: 'TheNoteTaker';
-			package: 'TheNoteTaker-UI' 	with: [ spec requires: #( #MicroEd TheNoteTaker ) ];
+			package: 'TheNoteTaker-UI' 	with: [ spec requires: #( #MicroEd TheNoteTaker Microdown ) ];
 			package: 'TheNoteTaker-Release' with: [ spec requires: #( ApplicationGenerator ObjCBridge ) ];
 			package: 'TheNoteTaker-Tests' with: [ spec requires: #( TheNoteTaker ) ];
 			package: 'TheNoteTaker-UI-Tests' with: [ spec requires: #( 'TheNoteTaker-Tests' 'TheNoteTaker-UI' ) ].
@@ -51,7 +52,17 @@ BaselineOfTheNoteTaker >> microEd: spec [
 
 	spec
 		baseline: 'MicroEd'
-		with: [ spec repository: 'github://hernanmd/MicroEd/src' ]
+		with: [ spec repository: 'github://pillar-markup/MicroEd/src' ]
+]
+
+{ #category : 'baselines' }
+BaselineOfTheNoteTaker >> microdown: spec [
+
+	spec
+		baseline: 'Microdown'
+		with: [ spec 
+			loads: 'Extensions';
+			repository: 'github://pillar-markup/Microdown/src' ].
 ]
 
 { #category : 'baselines' }
