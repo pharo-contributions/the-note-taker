@@ -44,7 +44,7 @@ NTTag class >> newNamed: aString [
 NTTag >> addNote: aNTNoteObject [ 
 
 	self notes add: aNTNoteObject.
-	aNTNoteObject addTag: self.
+	aNTNoteObject addTag: self
 ]
 
 { #category : 'initialization' }
@@ -72,7 +72,7 @@ NTTag >> removeNote: aNTNoteObject [
 
 	self notes
 		remove: aNTNoteObject 
-		ifAbsent: [ self error: 'Note not found: ' , aNTNoteObject title ]
+		ifAbsent: [ ]
 ]
 
 { #category : 'accessing' }

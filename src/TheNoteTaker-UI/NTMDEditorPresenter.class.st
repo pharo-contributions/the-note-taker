@@ -12,9 +12,9 @@ Class {
 { #category : 'visiting' }
 NTMDEditorPresenter >> accept [
 
-	mdFile file writeStreamDo: [ :str |
+	mdFile fileReference writeStreamDo: [ :str |
 		str nextPutAll: self text asString ].
-	self inform: 'Note ' , mdFile file fullName , ' saved'
+	self inform: 'Note ' , mdFile fileReference fullName , ' saved'
 ]
 
 { #category : 'accessing' }
@@ -152,7 +152,7 @@ NTMDEditorPresenter >> title [
 { #category : 'callbacks' }
 NTMDEditorPresenter >> togglePreview [
 
-	textOutput isVisible 
+	renderedText isVisible 
 		ifTrue: [ 
 			| editorsLayoutPane |
 			"textOutput hide."
@@ -161,5 +161,5 @@ NTMDEditorPresenter >> togglePreview [
 			editorsLayoutPane remove: #textOutput.
 			"editorsLayoutPane replaceFirst: textInput.
 			self update" ]
-		ifFalse: [ textOutput show ]
+		ifFalse: [ renderedText show ]
 ]

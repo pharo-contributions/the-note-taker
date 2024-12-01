@@ -38,7 +38,7 @@ NTNoteObject class >> named: aString contents: contentsString [
 { #category : 'accessing - tags' }
 NTNoteObject >> addTag: aNTTag [ 
 
-	self tags add: aNTTag.
+	self tags add: aNTTag
 ]
 
 { #category : 'accessing' }
@@ -51,7 +51,7 @@ NTNoteObject >> contents [
 NTNoteObject >> contents: anObject [
 
 	contents := anObject.
-	self modificationDate: DateAndTime now.
+	self modificationDate: DateAndTime now
 ]
 
 { #category : 'accessing' }
@@ -68,7 +68,7 @@ NTNoteObject >> creationDate: anObject [
 
 { #category : 'testing' }
 NTNoteObject >> existsAsFile [
-	"Answer <true> if the receiver is presnet as <FileReference> in the current directory"
+	"Answer <true> if the receiver is present as <FileReference> in the current directory"
 
 	^ self hasTitle and: [ self nameForFile asFileReference exists ]
 ]
@@ -110,7 +110,7 @@ NTNoteObject >> modificationDate: anObject [
 { #category : 'accessing' }
 NTNoteObject >> nameForFile [
 
-	^ String streamContents: [ : stream |
+	^ String streamContents: [ :stream |
 		stream 
 			<< self title asLowercase ]
 ]
@@ -132,8 +132,8 @@ NTNoteObject >> removeTag: aNTTag [
 
 	self tags 
 		remove: aNTTag 
-		ifAbsent: [ self error: 'Tag not found: ' , aNTTag tagName ].
-	aNTTag removeNote: self.
+		ifAbsent: [ ].
+	aNTTag removeNote: self
 ]
 
 { #category : 'accessing - tags' }
