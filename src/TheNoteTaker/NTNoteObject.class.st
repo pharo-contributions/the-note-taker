@@ -148,6 +148,11 @@ NTNoteObject >> tags: anObject [
 	tags := anObject
 ]
 
+{ #category : 'sorting' }
+NTNoteObject >> threeWayCompareTo: aNTNoteObject [ 
+	^ self creationDate > aNTNoteObject creationDate
+]
+
 { #category : 'accessing' }
 NTNoteObject >> title [
 

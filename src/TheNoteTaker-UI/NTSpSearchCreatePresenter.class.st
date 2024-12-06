@@ -40,7 +40,7 @@ NTSpSearchCreatePresenter >> editorPresenter [
 NTSpSearchCreatePresenter >> filteredNotesFor: aString [
 	"Answer a <Collection> of <NTNoteObject> whose names match aString"
 
-	^ self notes select: [ :note | note title beginsWith: aString ]
+	^ self notes select: [ :note | '*', aString, '*' match: note title ]
 ]
 
 { #category : 'initialization' }
