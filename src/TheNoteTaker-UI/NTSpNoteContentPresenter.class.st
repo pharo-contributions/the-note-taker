@@ -51,8 +51,8 @@ NTSpNoteContentPresenter >> editorPresenter [
 NTSpNoteContentPresenter >> initializePresenters [
 
 	contentPresenter := (self instantiate: NTMDEditorPresenter on: self)
-		cleanInput;
-		cleanOutput;
+		emptyInputText;
+		emptyRenderedText;
 		yourself.
 ]
 

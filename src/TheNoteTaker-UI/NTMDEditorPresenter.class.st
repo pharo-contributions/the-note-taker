@@ -86,7 +86,7 @@ NTMDEditorPresenter >> newNote: aNoteObject [
 	self window ifNotNil: [ self updateTitle ].
 	self mdFile addMetaDataElements. 
 	textInput text: self mdFile contents.
-	self cleanOutput.
+	self emptyRenderedText.
 	self renderDocument.
 	actualNote := aNoteObject.
 	actualNote title: self mdFile basename.
@@ -104,7 +104,7 @@ NTMDEditorPresenter >> openNote: aNoteObject [
 
 	self mdFile: (MDFile newFromFileReference: aNoteObject title asFileReference).
 	textInput text: aNoteObject contents.
-	self cleanOutput.
+	self emptyRenderedText.
 	self window ifNotNil: [self updateTitle].
 	self renderDocument.
 	actualNote := aNoteObject.
@@ -134,7 +134,7 @@ NTMDEditorPresenter >> saveFileByItsContents [
 	newNoteByItsContents := NTSingleton uniqueInstance addNoteNamed: nameOfNewNote.
 	newNoteByItsContents contents: self textInputText.
 	
-	self cleanInput.
+	self emptyInputText.
 	self newNote: newNoteByItsContents.
 	self owner owner notesIndexPresenter refresh
 ]
