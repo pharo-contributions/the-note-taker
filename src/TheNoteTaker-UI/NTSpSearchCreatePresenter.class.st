@@ -39,8 +39,13 @@ NTSpSearchCreatePresenter >> editorPresenter [
 { #category : 'callbacks' }
 NTSpSearchCreatePresenter >> filteredNotesFor: aString [
 	"Answer a <Collection> of <NTNoteObject> whose names match aString"
-
-	^ self notes select: [ :note | '*', aString, '*' match: note title ]
+	
+	"| pattern |
+	self halt.
+	pattern := '*', aString , '*'.
+	^ self notes select: [ :note | pattern match: note title ]"
+	
+	^ self model notesNameMatching: aString 
 ]
 
 { #category : 'initialization' }

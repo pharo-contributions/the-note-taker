@@ -127,6 +127,15 @@ NTSingleton >> newNoteNamed: aNoteName contents: aString [
 ]
 
 { #category : 'accessing' }
+NTSingleton >> noteNameMatching: aString [
+	"Answer the first <NTNoteObject> matching aString in its name"
+
+	| pattern |
+	pattern := '*', aString, '*'.
+	^ self notes detect: [ :n | pattern match: n title ]
+]
+
+{ #category : 'accessing' }
 NTSingleton >> noteNamed: aString [
 	"Answer the first <NTNoteObject> matching aString in its name"
 	
@@ -150,6 +159,15 @@ NTSingleton >> notesCount [
 	"Answer an <Integer> representing how many notes the receiver includes"
 	
 	^ self notes size
+]
+
+{ #category : 'accessing' }
+NTSingleton >> notesNameMatching: aString [
+	"Answer a <Collection> with <NoteObject> objects whose title matched named aString"
+
+	| pattern |
+	pattern := '*' , aString , '*'.
+	^ self notes select: [ :n | pattern match: n title ]
 ]
 
 { #category : 'accessing' }
