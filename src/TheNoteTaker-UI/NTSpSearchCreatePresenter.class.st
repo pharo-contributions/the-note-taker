@@ -89,7 +89,6 @@ NTSpSearchCreatePresenter >> notesList [
 { #category : 'initialization' }
 NTSpSearchCreatePresenter >> openTNTSettings [
 	
-	self flag: 'ToDo: To be updated when new settings browser takes place'.
 	SettingBrowser new
 		rootNodes: (SettingBrowser currentTree nodeNamed: #tnt) allChildren;
 		open

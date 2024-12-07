@@ -48,6 +48,17 @@ NTSingleton class >> reset [
 ]
 
 { #category : 'instance creation' }
+NTSingleton class >> safeDo: aBlock [
+
+	| current res | 
+	[ current := self uniqueInstance. 
+	self reset.
+	res := aBlock value: self uniqueInstance.
+	^ res ]
+		ensure: [ UniqueInstance := current ]
+]
+
+{ #category : 'instance creation' }
 NTSingleton class >> uniqueInstance [
 
 	^ UniqueInstance

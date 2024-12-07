@@ -100,11 +100,12 @@ NTSpNoteTakerMainUITest >> testNameNoteIsInISOFormat [
 NTSpNoteTakerMainUITest >> testNoteSearch [
 
 	| toolbar nameOfNoteToSearch result anotherNameNoteToSearch |
-	" Add some notes to search one of them"
 	notesTaker addNoteNamed: 'newNote'.
 	notesTaker addNoteNamed: 'anotherNote'.
 	notesTaker addNoteNamed: 'thirdNote'.
-
+	self halt.
+	notesTaker notes.
+	
 	toolbar := presenter notesToolbarPresenter.
 	nameOfNoteToSearch := 'newNote'.
 	result := toolbar filteredNotesFor: nameOfNoteToSearch.
