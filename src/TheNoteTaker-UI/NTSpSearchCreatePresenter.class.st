@@ -125,8 +125,12 @@ NTSpSearchCreatePresenter >> setModelBeforeInitialization: aNotesObject [
 { #category : 'callbacks' }
 NTSpSearchCreatePresenter >> updateNotesList [
 
-	self notesList items:  (notesSearchCreateTextPresenter text
-		ifEmpty: [ self notes ]
-		ifNotEmpty: [ :pattern | self filteredNotesFor: pattern ])
-
+	| filteredItems |
+	filteredItems := notesSearchCreateTextPresenter text
+		                 ifEmpty: [ self notes ]
+		                 ifNotEmpty: [ :pattern |
+		                 self filteredNotesFor: pattern ].
+	self notesList items: filteredItems.
+	filteredItems isNotEmpty
+		ifTrue: [ self notesList selectNote: filteredItems first ]
 ]

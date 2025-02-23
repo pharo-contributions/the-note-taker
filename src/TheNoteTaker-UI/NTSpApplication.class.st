@@ -100,7 +100,6 @@ NTSpApplication >> notes [
 
 { #category : 'running' }
 NTSpApplication >> start [
-	" Private - Open the main application window for development in Morphic "
 
 	(NTSpNoteTakerMainUI newApplication: self) open
 ]

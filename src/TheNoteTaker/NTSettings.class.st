@@ -15,18 +15,20 @@ Class {
 
 { #category : 'accessing' }
 NTSettings class >> projectPathSettingsOn: aBuilder [
-	<systemsettings>
 
+	<systemsettings>
 	(aBuilder group: #tnt)
 		label: 'The Note Taker';
 		description: 'All TNT related settings';
 		noOrdering;
 		with: [
 			(aBuilder setting: #projectPathString)
-				label: 'Project Path' ;
-				ghostHelp: '/Users/ducasse/Workspace/FirstCircle/Writing/Working/researchnotes';
-				default: '';
-				description: 'Enter your local or remote path where notes will be committed. It can be empty']
+				label: 'Project Path';
+				ghostHelp:
+					'/Users/ducasse/Workspace/FirstCircle/Writing/Working/researchnotes';
+				default: '/Users/ducasse/Workspace/FirstCircle/Writing/Working/researchnotes/faked';
+				description:
+					'Enter your local or remote path where notes will be committed. It can be empty' ]
 ]
 
 { #category : 'accessing' }

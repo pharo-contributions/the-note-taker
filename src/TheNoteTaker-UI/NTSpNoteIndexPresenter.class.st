@@ -103,9 +103,8 @@ NTSpNoteIndexPresenter >> handleNoteChange: aSelectedNote [
 
 { #category : 'testing' }
 NTSpNoteIndexPresenter >> hasSelectedNote [
-	"Answer <true> if the receiver has a selected note"
 
-	^ notesIndexPresenter listSize ~= 0 and: [ self selectedNote isNote ]
+	^ notesIndexPresenter listSize ~= 0
 ]
 
 { #category : 'initialization' }
@@ -157,15 +156,12 @@ NTSpNoteIndexPresenter >> refresh [
 
 { #category : 'accessing' }
 NTSpNoteIndexPresenter >> selectNote: aNTNoteObject [
-	"Select aNTNoteObject in the receiver"
-	
-	notesIndexPresenter selectItem: aNTNoteObject 
-	
+
+	notesIndexPresenter selectItem: aNTNoteObject
 ]
 
 { #category : 'accessing' }
 NTSpNoteIndexPresenter >> selectedNote [
-	"Answer the receiver's selected <NtNoteModel>"
 
 	^ notesIndexPresenter selectedItem
 ]
@@ -181,7 +177,6 @@ NTSpNoteIndexPresenter >> selectedNoteTitle [
 
 { #category : 'accessing' }
 NTSpNoteIndexPresenter >> selectedNotes [
-	"Answer the <Collection> of <NTNoteObject> which are currently selected"
 
 	^ notesIndexPresenter selectedItems
 ]

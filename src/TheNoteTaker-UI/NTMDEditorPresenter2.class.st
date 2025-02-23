@@ -1,5 +1,5 @@
 Class {
-	#name : 'NTMDEditorPresenter',
+	#name : 'NTMDEditorPresenter2',
 	#superclass : 'MDEditorPresenter',
 	#instVars : [
 		'actualNote'
@@ -10,7 +10,7 @@ Class {
 }
 
 { #category : 'visiting' }
-NTMDEditorPresenter >> accept [
+NTMDEditorPresenter2 >> accept [
 
 	mdFile fileReference writeStreamDo: [ :str |
 		str nextPutAll: self text asString ].
@@ -18,26 +18,26 @@ NTMDEditorPresenter >> accept [
 ]
 
 { #category : 'accessing' }
-NTMDEditorPresenter >> actualNote [
+NTMDEditorPresenter2 >> actualNote [
 
 	^ actualNote
 ]
 
 { #category : 'accessing' }
-NTMDEditorPresenter >> actualNote: aNoteObject [
+NTMDEditorPresenter2 >> actualNote: aNoteObject [
 
 	actualNote := aNoteObject.
 	textInput text: actualNote contents
 ]
 
 { #category : 'private' }
-NTMDEditorPresenter >> applicationTitle [
+NTMDEditorPresenter2 >> applicationTitle [
 
 	^ self application applicationTitle
 ]
 
 { #category : 'display' }
-NTMDEditorPresenter >> displayContents: aNoteObject [
+NTMDEditorPresenter2 >> displayContents: aNoteObject [
 
 	actualNote := aNoteObject.
 	textInput text: aNoteObject contents asString.
@@ -45,14 +45,14 @@ NTMDEditorPresenter >> displayContents: aNoteObject [
 ]
 
 { #category : 'initialization' }
-NTMDEditorPresenter >> initialize [ 
+NTMDEditorPresenter2 >> initialize [ 
 
 	super initialize.
 	self noNote
 ]
 
 { #category : 'api' }
-NTMDEditorPresenter >> initializeMenuBar [
+NTMDEditorPresenter2 >> initializeMenuBar [
 
 	super initializeMenuBar.
 
@@ -67,7 +67,7 @@ NTMDEditorPresenter >> initializeMenuBar [
 ]
 
 { #category : 'initialization' }
-NTMDEditorPresenter >> initializePresentersWithText: anInputText [
+NTMDEditorPresenter2 >> initializePresentersWithText: anInputText [
 
 	super initializePresentersWithText: anInputText.
 	textInput
@@ -79,7 +79,7 @@ NTMDEditorPresenter >> initializePresentersWithText: anInputText [
 ]
 
 { #category : 'actions' }
-NTMDEditorPresenter >> newNote: aNoteObject [
+NTMDEditorPresenter2 >> newNote: aNoteObject [
 
 	self mdFile: (MDFile new title: aNoteObject title).
 	self window ifNotNil: [ self updateTitle ].
@@ -88,18 +88,18 @@ NTMDEditorPresenter >> newNote: aNoteObject [
 	self emptyRenderedText.
 	self renderDocument.
 	actualNote := aNoteObject.
-	actualNote title: self mdFile fileReference basename.
+	actualNote title: self mdFile basename.
 	actualNote contents: textInput text
 ]
 
 { #category : 'initialization' }
-NTMDEditorPresenter >> noNote [
+NTMDEditorPresenter2 >> noNote [
 
 	mdFile := MDFile new
 ]
 
 { #category : 'actions' }
-NTMDEditorPresenter >> openNote: aNoteObject [
+NTMDEditorPresenter2 >> openNote: aNoteObject [
 
 	self mdFile: (MDFile newFromFileReference: aNoteObject title asFileReference).
 	textInput text: aNoteObject contents.
@@ -111,14 +111,14 @@ NTMDEditorPresenter >> openNote: aNoteObject [
 ]
 
 { #category : 'actions' }
-NTMDEditorPresenter >> saveFile [
+NTMDEditorPresenter2 >> saveFile [
 	 
 	self mdFile hasFile ifFalse: [ self saveFileByItsContents ]. 
 	super saveFile
 ]
 
 { #category : 'actions' }
-NTMDEditorPresenter >> saveFileByItsContents [
+NTMDEditorPresenter2 >> saveFileByItsContents [
 	"create a new note with its title which corresponds to the first word of the contents.
 	If the contents has more than three words, the title correponds to its first three words. "
 
@@ -139,7 +139,7 @@ NTMDEditorPresenter >> saveFileByItsContents [
 ]
 
 { #category : 'api' }
-NTMDEditorPresenter >> title [
+NTMDEditorPresenter2 >> title [
 	"Answer a <String> representing the application name and selected note title"
 
 	^ String streamContents: [ : stream |
@@ -149,7 +149,7 @@ NTMDEditorPresenter >> title [
 ]
 
 { #category : 'callbacks' }
-NTMDEditorPresenter >> togglePreview [
+NTMDEditorPresenter2 >> togglePreview [
 
 	renderedText isVisible 
 		ifTrue: [ 

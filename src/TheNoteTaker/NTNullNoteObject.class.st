@@ -12,5 +12,5 @@ Class {
 { #category : 'accessing' }
 NTNullNoteObject >> title [
 
-	^ String empty
+	^ ' '
 ]

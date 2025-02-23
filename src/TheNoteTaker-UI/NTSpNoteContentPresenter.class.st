@@ -50,10 +50,11 @@ NTSpNoteContentPresenter >> editorPresenter [
 { #category : 'initialization' }
 NTSpNoteContentPresenter >> initializePresenters [
 
-	contentPresenter := (self instantiate: NTMDEditorPresenter on: self)
+	contentPresenter := (self instantiate: NTMDEditorPresenter on: self).
+	contentPresenter 
+		layout: contentPresenter defaultLayoutNoMenu;
 		emptyInputText;
-		emptyRenderedText;
-		yourself.
+		emptyRenderedText
 ]
 
 { #category : 'accessing' }
