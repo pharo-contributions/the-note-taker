@@ -20,7 +20,7 @@ BaselineOfTheNoteTaker >> baseline: spec [
 	spec for: #( common ) do: [
 		"self ical: spec."
 		self microEd: spec.
-		self microdown: spec.
+		"self microdown: spec."
 		self applicationGenerator: spec.
 		self objcbridge: spec.
 		self osSubProcess: spec.
