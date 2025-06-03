@@ -38,6 +38,16 @@ NTNoteObject class >> named: aString contents: contentsString [
 		yourself
 ]
 
+{ #category : 'instance creation' }
+NTNoteObject class >> newFromFileReference: aFileReference [
+
+	^ self new
+		  fileReference: aFileReference;
+		  title: aFileReference basename;
+		  contents: aFileReference contents;
+		  yourself
+]
+
 { #category : 'accessing' }
 NTNoteObject >> addMetaDataElements [
 
@@ -136,13 +146,15 @@ NTNoteObject >> fileNamer: anObject [
 { #category : 'accessing' }
 NTNoteObject >> fileReference [ 
 
-	^ fileReference
+	^ fileReference ifNil: [
+		  fileReference := FileSystem workingDirectory / self fileName ]
 ]
 
 { #category : 'accessing' }
 NTNoteObject >> fileReference: aFileReference [
 
-	fileReference := aFileReference
+	fileReference := aFileReference.
+	fileName := aFileReference basenameWithoutExtension.
 ]
 
 { #category : 'testing' }
@@ -155,7 +167,11 @@ NTNoteObject >> hasTitle [
 NTNoteObject >> initialize [
 
 	super initialize.
-	fileNamer := ISOFileNamer new. 
+	contents := String empty.
+	creationDate := DateAndTime now.
+	modificationDate := creationDate.
+	tags := Set new.
+	fileNamer := ISOFileNamer new.
 ]
 
 { #category : 'testing' }

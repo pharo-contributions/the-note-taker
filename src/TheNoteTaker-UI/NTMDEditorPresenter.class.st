@@ -1,9 +1,6 @@
 Class {
 	#name : 'NTMDEditorPresenter',
-	#superclass : 'MDEditorPresenter',
-	#instVars : [
-		'actualNote'
-	],
+	#superclass : 'NTEditorPresenter',
 	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
 	#tag : 'Core'
@@ -12,22 +9,9 @@ Class {
 { #category : 'visiting' }
 NTMDEditorPresenter >> accept [
 
-	mdFile fileReference writeStreamDo: [ :str |
+	note fileReference writeStreamDo: [ :str |
 		str nextPutAll: self text asString ].
-	self inform: 'Note ' , mdFile fileReference fullName , ' saved'
-]
-
-{ #category : 'accessing' }
-NTMDEditorPresenter >> actualNote [
-
-	^ actualNote
-]
-
-{ #category : 'accessing' }
-NTMDEditorPresenter >> actualNote: aNoteObject [
-
-	actualNote := aNoteObject.
-	textInput text: actualNote contents
+	self inform: 'Note ' , note fileReference fullName , ' saved'
 ]
 
 { #category : 'private' }
@@ -39,7 +23,7 @@ NTMDEditorPresenter >> applicationTitle [
 { #category : 'display' }
 NTMDEditorPresenter >> displayContents: aNoteObject [
 
-	actualNote := aNoteObject.
+	note := aNoteObject.
 	textInput text: aNoteObject contents asString.
 	self renderDocument
 ]
@@ -73,47 +57,46 @@ NTMDEditorPresenter >> initializePresentersWithText: anInputText [
 	textInput
 		whenTextChangedDo: [
 			self renderDocument.
-			actualNote ifNotNil: [
-					actualNote contents: textInput text asString ] ];
+			note ifNotNil: [
+					note contents: textInput text asString ] ];
 		bindKeyCombination: $s meta toAction: [ self accept ]
 ]
 
 { #category : 'actions' }
 NTMDEditorPresenter >> newNote: aNoteObject [
 
-	self mdFile: (MDFile new title: aNoteObject title).
+	"self mdFile: (MDFile new title: aNoteObject title)."
 	self window ifNotNil: [ self updateTitle ].
-	self mdFile addMetaDataElements. 
-	textInput text: self mdFile contents.
+	self note addMetaDataElements. 
+	textInput text: self note contents.
 	self emptyRenderedText.
 	self renderDocument.
-	actualNote := aNoteObject.
-	actualNote title: self mdFile fileReference basename.
-	actualNote contents: textInput text
+	note := aNoteObject.
+	note title: self note fileReference basename.
+	note contents: textInput text
 ]
 
 { #category : 'initialization' }
 NTMDEditorPresenter >> noNote [
 
-	mdFile := MDFile new
+	note := NTNoteObject new
 ]
 
 { #category : 'actions' }
 NTMDEditorPresenter >> openNote: aNoteObject [
 
-	self mdFile: (MDFile newFromFileReference: aNoteObject title asFileReference).
 	textInput text: aNoteObject contents.
 	self emptyRenderedText.
 	self window ifNotNil: [self updateTitle].
 	self renderDocument.
-	actualNote := aNoteObject.
-	actualNote contents: self textInputText.
+	note := aNoteObject.
+	note contents: self textInputText.
 ]
 
 { #category : 'actions' }
 NTMDEditorPresenter >> saveFile [
 	 
-	self mdFile hasFile ifFalse: [ self saveFileByItsContents ]. 
+	self note hasFile ifFalse: [ self saveFileByItsContents ]. 
 	super saveFile
 ]
 
