@@ -165,7 +165,7 @@ NTEditorPresenter >> saveFile [
 		                 onCancel: [ '' ];
 		                 openModal.
 		self note title: answer ].
-	self note save: self textInputText asString.
+	self note save.
 	isTextDirty := false.
 	self window ifNotNil: [ self updateTitle ]
 ]
@@ -192,6 +192,19 @@ NTEditorPresenter >> saveFileByItsContents [
 ]
 
 { #category : 'accessing' }
+NTEditorPresenter >> startNewFile [
+	"NEW button is pressed: reset tool"
+
+	self mayLoseEdits ifTrue: [ (self application confirm:
+			 'You have unsaved edits. Do you want to proceed?')
+			ifFalse: [ ^ self ]  ].
+
+	self emptyInputText.
+	note := NTNoteObject new.
+	self window ifNotNil: [ self updateTitle ]
+]
+
+{ #category : 'accessing' }
 NTEditorPresenter >> textInputText [
 
 	^ textInput text
@@ -201,6 +214,7 @@ NTEditorPresenter >> textInputText [
 NTEditorPresenter >> textInputText: aString [
 
 	textInput text: aString asString.
+	note contents: self textInputText.
 	isTextDirty := false
 ]
 

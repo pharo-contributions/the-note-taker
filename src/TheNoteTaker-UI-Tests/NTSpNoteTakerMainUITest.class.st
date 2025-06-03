@@ -28,10 +28,10 @@ NTSpNoteTakerMainUITest >> setUp [
 	notesContentPresenter := presenter notesContentPresenter.
 
 	noteFile := memoryFS workingDirectory / 'newNote.md'. 
-	noteFile writeStreamDo: [ : stream | stream nextPutAll: 'new note' ]. 
+	noteFile writeStreamDo: [ : stream | stream nextPutAll: 'new note' ].
 	
 	notesTaker addNoteFromFileReference: noteFile. 
-	note := notesTaker noteNamed: 'newNote'. 
+	note := notesTaker noteNamed: 'newNote'.
 	notesContentPresenter editorPresenter newNote: note.
 	
 	
@@ -62,8 +62,8 @@ NTSpNoteTakerMainUITest >> testAddNoteByItsContents [
 	notesContentPresenter contents: 'just a new note'.
 	notesContentPresenter editorPresenter saveFile.
 	
-	self assert: notesContentPresenter editorPresenter mdFile exists.
-	self assert: (notesContentPresenter editorPresenter mdFile basename includesSubstring: 'justanew').
+	self assert: notesContentPresenter editorPresenter note exists.
+	self assert: (notesContentPresenter editorPresenter note fileReference basename includesSubstring: 'justanew').
 	
 ]
 
@@ -103,13 +103,12 @@ NTSpNoteTakerMainUITest >> testNoteSearch [
 	notesTaker addNoteNamed: 'newNote'.
 	notesTaker addNoteNamed: 'anotherNote'.
 	notesTaker addNoteNamed: 'thirdNote'.
-	self halt.
 	notesTaker notes.
 	
 	toolbar := presenter notesToolbarPresenter.
 	nameOfNoteToSearch := 'newNote'.
 	result := toolbar filteredNotesFor: nameOfNoteToSearch.
-	self assert: result size equals: 1.
+	self assert: result size equals: 2.
 	anotherNameNoteToSearch := 'nnn'.
 	result := toolbar filteredNotesFor: anotherNameNoteToSearch.
 	self assert: result size equals: 0

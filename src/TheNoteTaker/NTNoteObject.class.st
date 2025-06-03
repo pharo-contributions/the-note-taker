@@ -228,9 +228,9 @@ NTNoteObject >> removeTag: aNTTag [
 ]
 
 { #category : 'accessing' }
-NTNoteObject >> save: aString [
+NTNoteObject >> save [
 
-	self fileReference writeStreamDo: [ :str | str nextPutAll: aString ]
+	self fileReference writeStreamDo: [ :str | str nextPutAll: contents ]
 ]
 
 { #category : 'accessing - tags' }
@@ -259,7 +259,8 @@ NTNoteObject >> title [
 { #category : 'accessing' }
 NTNoteObject >> title: aString [
 
-	title := fileNamer curateString: aString
+	"title := fileNamer curateString: aString"
+	title := aString
 ]
 
 { #category : 'accessing' }
