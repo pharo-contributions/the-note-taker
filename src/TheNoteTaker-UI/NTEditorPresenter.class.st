@@ -21,42 +21,14 @@ Class {
 	#tag : 'Manifest'
 }
 
-{ #category : 'world menu' }
-NTEditorPresenter class >> menuCommandOn: aBuilder [
+{ #category : 'layout' }
+NTEditorPresenter >> applicationTitle [
 
-	<worldMenu>
-	(aBuilder item: #MicroEd)
-		parent: #Tools;
-		action: [ self open ];
-		order: 40;
-		help: 'A microdown Editor & Renderer';
-		icon: (self iconNamed: #browseIconName).
-	aBuilder withSeparatorAfter
-]
-
-{ #category : 'examples' }
-NTEditorPresenter class >> open [
-
-	<example>
-	| pres |
-	pres := self new. 
-	^ pres openWithLayout: pres defaultLayoutNoMenu 
+	^ self application applicationTitle
 ]
 
 { #category : 'layout' }
 NTEditorPresenter >> defaultLayout [
-
-	 ^ SpBoxLayout newTopToBottom
-		add: #menu expand: false;
-		add: (SpPanedLayout newLeftToRight
-			add: textInput;
-			add: renderedText;
-		yourself);
-	yourself
-]
-
-{ #category : 'layout' }
-NTEditorPresenter >> defaultLayoutNoMenu [
 
 	^ SpBoxLayout newTopToBottom
 		  add: (SpPanedLayout newLeftToRight
@@ -64,6 +36,14 @@ NTEditorPresenter >> defaultLayoutNoMenu [
 				   add: renderedText;
 				   yourself);
 		  yourself
+]
+
+{ #category : 'api' }
+NTEditorPresenter >> displayContents: aNoteObject [
+
+	note := aNoteObject.
+	textInput text: aNoteObject contents asString.
+	self renderDocument
 ]
 
 { #category : 'actions' }
@@ -80,64 +60,20 @@ NTEditorPresenter >> emptyRenderedText [
 	renderedText text: ''
 ]
 
-{ #category : 'api' }
-NTEditorPresenter >> initializeMenuBar [
+{ #category : 'accessing' }
+NTEditorPresenter >> initialize [ 
 
-	menu := self newMenuBar.
-
-	menu
-		addGroup: [ :group |
-			group addItem: [ :item |
-					item
-						name: 'New';
-						description: 'Start in a new file';
-						icon: (self iconNamed: #pageIconName);
-						action: [ self startNewFile ] ].
-			group addItem: [ :item |
-				item
-					name: 'Open';
-					description: 'Open file';
-					shortcut: $o meta;
-					icon: (self iconNamed: #openIconName);
-					action: [ self loadFile ] ].
-			group addItem: [ :item |
-				item
-					name: 'Save';
-					description: 'Save file';
-					shortcut: $s meta;
-					icon: (self iconNamed: #smallSaveIconName);
-					action: [ self saveFile ] ] ];
-		addGroup: [ :group |
-			group addItem: [ :item |
-				item
-					name: 'Render';
-					icon: (self iconNamed: #smallDoItIconName);
-					description: 'Render your input text';
-					action: [ self renderDocument ] ].
-
-			group addItem: [ :item |
-				item
-					name: 'Get example';
-					description: 'Give a text input example in current syntax';
-					icon: (self iconNamed: #smallFindIconName) ] ]
+	super initialize.
+	self noNote
 ]
 
 { #category : 'initialization' }
 NTEditorPresenter >> initializePresenters [
 
-	| initialText |
 	"in initialize it is called after so defeat textInputText: logic"
 	composer := MicRichTextComposer new.
-	initialText := '% Type your marked-up text here. Render it and see right the output generated as rich text'.
-	self initializePresentersWithText: initialText.
-	self initializeMenuBar
-]
-
-{ #category : 'initialization' }
-NTEditorPresenter >> initializePresentersWithText: anInputText [
-
+	
 	textInput := self newText.
-	self textInputText: anInputText.
 	textInput
 		bindKeyCombination: (KMKeyCombinationChoice withShortcuts: { Character space asKeyCombination . Character cr asKeyCombination })
 		toAction: [ :target :morph :event |
@@ -150,38 +86,7 @@ NTEditorPresenter >> initializePresentersWithText: anInputText [
 
 	renderedText := self newText
 		                beNotEditable;
-		                yourself
-]
-
-{ #category : 'initialization' }
-NTEditorPresenter >> initializeWindow: aWindowPresenter [
-
-	aWindowPresenter
-		title: self title;
-		initialExtent: 800 @ 600;
-		windowIcon: (self application iconNamed: #browseIconName)
-]
-
-{ #category : 'actions' }
-NTEditorPresenter >> loadFile [
-	"OPEN button is pressed: open window"
-
-	| selectedFile |
-	self mayLoseEdits 
-		ifTrue: [ (self application confirm: 'You have unsaved edits. Do you want to proceed?')
-						ifFalse: [ ^ self ] ].
-					
-	selectedFile := StOpenFilePresenter new
-		                extensions: #( 'md' );
-		                openModal.
-	selectedFile
-		ifNotNil: [
-			self note:
-				(NTNoteObject newFromFileReference: selectedFile asFileReference).
-			self textInputText: selectedFile contents.
-			self renderDocument.
-			self updateTitle ]
-		ifNil: [ self note: NTNoteObject new ]
+		                yourself.
 ]
 
 { #category : 'testing' }
@@ -190,16 +95,47 @@ NTEditorPresenter >> mayLoseEdits [
 	^ self textInputText isNotEmpty and: [ isTextDirty ]
 ]
 
-{ #category : 'accessing' }
-NTEditorPresenter >> note [
+{ #category : 'api' }
+NTEditorPresenter >> newNote: aNoteObject [
 
-	^ note ifNil: [ note := MDFile new ]
+	"self mdFile: (MDFile new title: aNoteObject title)."
+	self note: aNoteObject.
+	self window ifNotNil: [ self updateTitle ].
+	self note addMetaDataElements.
+	textInput text: self note contents.
+	self emptyRenderedText.
+	self renderDocument.
+	note title: self note fileReference basename.
+	note contents: textInput text
+]
+
+{ #category : 'api' }
+NTEditorPresenter >> noNote [
+
+	note := NTNoteObject new
 ]
 
 { #category : 'accessing' }
-NTEditorPresenter >> note: aMDFile [
+NTEditorPresenter >> note [
 
-	note := aMDFile
+	^ note ifNil: [ note := NTNoteObject new ]
+]
+
+{ #category : 'accessing' }
+NTEditorPresenter >> note: aNTNoteObject [
+
+	note := aNTNoteObject
+]
+
+{ #category : 'api' }
+NTEditorPresenter >> openNote: aNoteObject [
+
+	textInput text: aNoteObject contents.
+	self emptyRenderedText.
+	self window ifNotNil: [self updateTitle].
+	self renderDocument.
+	note := aNoteObject.
+	note contents: self textInputText.
 ]
 
 { #category : 'actions' }
@@ -221,6 +157,7 @@ NTEditorPresenter >> renderedText [
 { #category : 'actions' }
 NTEditorPresenter >> saveFile [
 
+	self note existsAsFile ifFalse: [ self saveFileByItsContents ]. 
 	self note hasTitle ifFalse: [ 
 		| answer |
 		answer := self application newRequest
@@ -233,17 +170,25 @@ NTEditorPresenter >> saveFile [
 	self window ifNotNil: [ self updateTitle ]
 ]
 
-{ #category : 'actions' }
-NTEditorPresenter >> startNewFile [
-	"NEW button is pressed: reset tool"
+{ #category : 'testing' }
+NTEditorPresenter >> saveFileByItsContents [
+	"create a new note with its title which corresponds to the first word of the contents.
+	If the contents has more than three words, the title correponds to its first three words. "
 
-	self mayLoseEdits ifTrue: [ (self application confirm:
-			 'You have unsaved edits. Do you want to proceed?')
-			ifFalse: [ ^ self ]  ].
+	| newNoteByItsContents nameOfNewNote collectionOfTextInput |
+	collectionOfTextInput := self textInputText substrings.
+	nameOfNewNote := String streamContents: [ :stt |
+		(collectionOfTextInput size > 3
+			ifTrue: [ collectionOfTextInput copyFrom: 1 to: 3 ]
+			ifFalse: [ collectionOfTextInput ]) 
+				do: [ :each | stt nextPutAll: each ] ].
 
+	newNoteByItsContents := NTSingleton uniqueInstance addNoteNamed: nameOfNewNote.
+	newNoteByItsContents contents: self textInputText.
+	
 	self emptyInputText.
-	note := MDFile new.
-	self window ifNotNil: [ self updateTitle ]
+	self newNote: newNoteByItsContents.
+	self owner owner notesIndexPresenter refresh
 ]
 
 { #category : 'accessing' }
@@ -261,8 +206,12 @@ NTEditorPresenter >> textInputText: aString [
 
 { #category : 'api' }
 NTEditorPresenter >> title [
+	"Answer a <String> representing the application name and selected note title"
 
-	^ 'MicroDown Editor - ' , self note fileName
+	^ String streamContents: [ : stream |
+		stream 
+			<< self applicationTitle;
+			<< self owner selectedNoteTitle ]
 ]
 
 { #category : 'api' }

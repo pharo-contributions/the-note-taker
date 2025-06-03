@@ -42,7 +42,7 @@ NTSpNoteTakerMainUITest >> tearDown [
 
 	notesTaker removeNotes: notesTaker notes.
 	noteFile ensureDelete.
-	notesContentPresenter editorPresenter mdFile fileReference delete.
+	notesContentPresenter editorPresenter note fileReference delete.
 	super tearDown.
 ]
 
