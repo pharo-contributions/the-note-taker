@@ -171,7 +171,7 @@ NTNoteObject >> initialize [
 	creationDate := DateAndTime now.
 	modificationDate := creationDate.
 	tags := Set new.
-	fileNamer := ISOFileNamer new.
+	fileNamer := NTISOFileNamer new.
 ]
 
 { #category : 'testing' }
