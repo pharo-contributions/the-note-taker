@@ -9,7 +9,10 @@ Class {
 		'creationDate',
 		'modificationDate',
 		'tags',
-		'contents'
+		'contents',
+		'fileReference',
+		'fileNamer',
+		'fileName'
 	],
 	#category : 'TheNoteTaker-Core',
 	#package : 'TheNoteTaker',
@@ -33,6 +36,39 @@ NTNoteObject class >> named: aString contents: contentsString [
 		title: aString;
 		contents: contentsString;
 		yourself
+]
+
+{ #category : 'accessing' }
+NTNoteObject >> addMetaDataElements [
+
+	| root newDoc |
+	self fileReference ensureCreateFile.
+	root := MicrodownParser parse: self fileReference contents.
+
+	root hasMetaDataElement
+		ifFalse: [
+"pay attention MD is line based. so the } should be on another line."
+			newDoc := MicrodownParser parse: '{ 
+"author" : "addos" 
+}'.
+			root addChild: newDoc children first. 
+			"yes the metadata element in the first one.
+			The API of Microdown could be better."
+			root metaDataElement
+				atKey: 'author' 
+				put: 'toto for now';
+				
+				atKey: 'title' 
+				put: self title;
+				
+				atKey: 'lastModificationDate'
+				put: self fileReference modificationTime asDate yyyymmdd ]
+		ifTrue: [
+			root metaDataElement
+				atKey: 'lastModificationDate'
+				put: self fileReference modificationTime asDate yyyymmdd ].
+
+	self writeFileContentsOf: root
 ]
 
 { #category : 'accessing - tags' }
@@ -67,10 +103,46 @@ NTNoteObject >> creationDate: anObject [
 ]
 
 { #category : 'testing' }
+NTNoteObject >> exists [
+
+	^ self fileReference exists
+]
+
+{ #category : 'testing' }
 NTNoteObject >> existsAsFile [
 	"Answer <true> if the receiver is present as <FileReference> in the current directory"
 
 	^ self hasTitle and: [ self nameForFile asFileReference exists ]
+]
+
+{ #category : 'testing' }
+NTNoteObject >> fileName [
+
+	^ fileName ifNil: [ fileName := fileNamer newNameBasedOn: self title ]
+]
+
+{ #category : 'accessing' }
+NTNoteObject >> fileNamer [
+
+	^ fileNamer
+]
+
+{ #category : 'accessing' }
+NTNoteObject >> fileNamer: anObject [
+
+	fileNamer := anObject
+]
+
+{ #category : 'accessing' }
+NTNoteObject >> fileReference [ 
+
+	^ fileReference
+]
+
+{ #category : 'accessing' }
+NTNoteObject >> fileReference: aFileReference [
+
+	fileReference := aFileReference
 ]
 
 { #category : 'testing' }
@@ -79,14 +151,17 @@ NTNoteObject >> hasTitle [
 	^ self title notNil.
 ]
 
-{ #category : 'initialization' }
+{ #category : 'accessing' }
 NTNoteObject >> initialize [
 
 	super initialize.
-	contents := String empty.
-	creationDate := DateAndTime now.
-	modificationDate := creationDate.
-	tags := Set new.
+	fileNamer := ISOFileNamer new. 
+]
+
+{ #category : 'testing' }
+NTNoteObject >> isDirty [ 
+
+	^ (contents equals: fileReference contents) not
 ]
 
 { #category : 'testing' }
@@ -136,6 +211,12 @@ NTNoteObject >> removeTag: aNTTag [
 	aNTTag removeNote: self
 ]
 
+{ #category : 'accessing' }
+NTNoteObject >> save: aString [
+
+	self fileReference writeStreamDo: [ :str | str nextPutAll: aString ]
+]
+
 { #category : 'accessing - tags' }
 NTNoteObject >> tags [
 
@@ -156,11 +237,21 @@ NTNoteObject >> threeWayCompareTo: aNTNoteObject [
 { #category : 'accessing' }
 NTNoteObject >> title [
 
-	^ title
+	^ title ifNil: [ title := fileNamer defaultEmptyName ]
 ]
 
 { #category : 'accessing' }
-NTNoteObject >> title: anObject [
+NTNoteObject >> title: aString [
 
-	title := anObject
+	title := fileNamer curateString: aString
+]
+
+{ #category : 'accessing' }
+NTNoteObject >> writeFileContentsOf: aRoot [
+
+	| visitor |
+	visitor := MicTextualMicrodownExporter new.
+	visitor visit: aRoot.
+	fileReference writeStreamDo: [ :stream |
+		stream nextPutAll: visitor contents ]
 ]
