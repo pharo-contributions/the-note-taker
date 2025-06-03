@@ -69,24 +69,31 @@ NTEditorPresenter >> initialize [
 
 { #category : 'initialization' }
 NTEditorPresenter >> initializePresenters [
-
 	"in initialize it is called after so defeat textInputText: logic"
+
 	composer := MicRichTextComposer new.
-	
+
 	textInput := self newText.
 	textInput
-		bindKeyCombination: (KMKeyCombinationChoice withShortcuts: { Character space asKeyCombination . Character cr asKeyCombination })
+		bindKeyCombination: (KMKeyCombinationChoice withShortcuts: {
+					 Character space asKeyCombination.
+					 Character cr asKeyCombination })
 		toAction: [ :target :morph :event |
-			[ self renderDocument ] schedule.
-			event wasHandled: false ].
+				[ self renderDocument ] schedule.
+				event wasHandled: false ].
 
 	textInput eventHandler whenKeyDownDo: [ :anEvent |
-		isTextDirty := true.
-		anEvent wasHandled: false ].
+			isTextDirty := true.
+			anEvent wasHandled: false ].
 
 	renderedText := self newText
 		                beNotEditable;
 		                yourself.
+	textInput
+		whenTextChangedDo: [
+				self renderDocument.
+				note ifNotNil: [ note contents: textInput text asString ] ];
+		bindKeyCombination: $s meta toAction: [ note save . self inform: 'Note ' , note fileReference fullName , ' saved' ]
 ]
 
 { #category : 'testing' }
