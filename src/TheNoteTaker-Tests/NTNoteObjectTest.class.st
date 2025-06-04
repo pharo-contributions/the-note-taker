@@ -82,3 +82,21 @@ NTNoteObjectTest >> testNoteModificationUpdatesModificationDate [
 
 	self assert: updatedModificationDate > initialModificationDate
 ]
+
+{ #category : 'tests' }
+NTNoteObjectTest >> testSaveNote [
+	
+	| note modificationDate metadata finalContents |
+	
+	note := NTNoteObject named: 'Test' contents: 'Ceci est un test'.
+	modificationDate := note modificationDate.
+	note fileReference: memoryFS.
+	note save.
+	
+	self denyEmpty: memoryFS contents.
+	
+	metadata := self generateMetaDataWithFileName: 'Test' modificationDate: note modificationDate.
+	finalContents :=  metadata, String crlf, String crlf, 'Ceci est un test'.
+	
+	self assert: memoryFS contents equals: finalContents
+]

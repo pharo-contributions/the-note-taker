@@ -77,8 +77,8 @@ NTNoteObject >> addMetaDataElements [
 			root metaDataElement
 				atKey: 'lastModificationDate'
 				put: self fileReference modificationTime asDate yyyymmdd ].
-
-	self writeFileContentsOf: root
+			
+	^ (MicTextualMicrodownExporter new visit: root) contents
 ]
 
 { #category : 'accessing - tags' }
@@ -230,7 +230,11 @@ NTNoteObject >> removeTag: aNTTag [
 { #category : 'accessing' }
 NTNoteObject >> save [
 
-	self fileReference writeStreamDo: [ :str | str nextPutAll: contents ]
+	self fileReference writeStreamDo: [ :str | 
+		str nextPutAll: self addMetaDataElements.
+		str nextPutAll: String crlf.
+		str nextPutAll: String crlf.
+		str nextPutAll: contents ]
 ]
 
 { #category : 'accessing - tags' }
@@ -261,14 +265,4 @@ NTNoteObject >> title: aString [
 
 	"title := fileNamer curateString: aString"
 	title := aString
-]
-
-{ #category : 'accessing' }
-NTNoteObject >> writeFileContentsOf: aRoot [
-
-	| visitor |
-	visitor := MicTextualMicrodownExporter new.
-	visitor visit: aRoot.
-	fileReference writeStreamDo: [ :stream |
-		stream nextPutAll: visitor contents ]
 ]
