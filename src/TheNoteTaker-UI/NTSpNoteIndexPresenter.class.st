@@ -95,7 +95,7 @@ NTSpNoteIndexPresenter >> handleNoteChange: aSelectedNote [
 	aSelectedNote ifNil: [ ^ self ].
 	self editorPresenter noNote.
 	self owner displayNoteContents: aSelectedNote.
-	aSelectedNote existsAsFile
+	aSelectedNote exists
 		ifTrue: [ aSelectedNote openFromPresenter: self ]
 		ifFalse: [ aSelectedNote newFromPresenter: self ]
 	

@@ -108,11 +108,10 @@ NTEditorPresenter >> newNote: aNoteObject [
 	"self mdFile: (MDFile new title: aNoteObject title)."
 	self note: aNoteObject.
 	self window ifNotNil: [ self updateTitle ].
-	self note addMetaDataElements.
 	textInput text: self note contents.
 	self emptyRenderedText.
 	self renderDocument.
-	note title: self note fileReference basename.
+	note title: self note title.
 	note contents: textInput text
 ]
 
@@ -164,38 +163,9 @@ NTEditorPresenter >> renderedText [
 { #category : 'actions' }
 NTEditorPresenter >> saveFile [
 
-	self note existsAsFile ifFalse: [ self saveFileByItsContents ]. 
-	self note hasTitle ifFalse: [ 
-		| answer |
-		answer := self application newRequest
-		                 title: 'Enter a title.';
-		                 onCancel: [ '' ];
-		                 openModal.
-		self note title: answer ].
 	self note save.
 	isTextDirty := false.
 	self window ifNotNil: [ self updateTitle ]
-]
-
-{ #category : 'testing' }
-NTEditorPresenter >> saveFileByItsContents [
-	"create a new note with its title which corresponds to the first word of the contents.
-	If the contents has more than three words, the title correponds to its first three words. "
-
-	| newNoteByItsContents nameOfNewNote collectionOfTextInput |
-	collectionOfTextInput := self textInputText substrings.
-	nameOfNewNote := String streamContents: [ :stt |
-		(collectionOfTextInput size > 3
-			ifTrue: [ collectionOfTextInput copyFrom: 1 to: 3 ]
-			ifFalse: [ collectionOfTextInput ]) 
-				do: [ :each | stt nextPutAll: each ] ].
-
-	newNoteByItsContents := NTSingleton uniqueInstance addNoteNamed: nameOfNewNote.
-	newNoteByItsContents contents: self textInputText.
-	
-	self emptyInputText.
-	self newNote: newNoteByItsContents.
-	self owner owner notesIndexPresenter refresh
 ]
 
 { #category : 'accessing' }

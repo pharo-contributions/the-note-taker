@@ -48,39 +48,6 @@ NTNoteObject class >> newFromFileReference: aFileReference [
 		  yourself
 ]
 
-{ #category : 'accessing' }
-NTNoteObject >> addMetaDataElements [
-
-	| root newDoc |
-	self fileReference ensureCreateFile.
-	root := MicrodownParser parse: self fileReference contents.
-
-	root hasMetaDataElement
-		ifFalse: [
-"pay attention MD is line based. so the } should be on another line."
-			newDoc := MicrodownParser parse: '{ 
-"author" : "addos" 
-}'.
-			root addChild: newDoc children first. 
-			"yes the metadata element in the first one.
-			The API of Microdown could be better."
-			root metaDataElement
-				atKey: 'author' 
-				put: 'toto for now';
-				
-				atKey: 'title' 
-				put: self title;
-				
-				atKey: 'lastModificationDate'
-				put: self fileReference modificationTime asDate yyyymmdd ]
-		ifTrue: [
-			root metaDataElement
-				atKey: 'lastModificationDate'
-				put: self fileReference modificationTime asDate yyyymmdd ].
-			
-	^ (MicTextualMicrodownExporter new visit: root) contents
-]
-
 { #category : 'accessing - tags' }
 NTNoteObject >> addTag: aNTTag [ 
 
@@ -115,14 +82,7 @@ NTNoteObject >> creationDate: anObject [
 { #category : 'testing' }
 NTNoteObject >> exists [
 
-	^ self fileReference exists
-]
-
-{ #category : 'testing' }
-NTNoteObject >> existsAsFile [
-	"Answer <true> if the receiver is present as <FileReference> in the current directory"
-
-	^ self hasTitle and: [ self nameForFile asFileReference exists ]
+	^ self fileReference ifNil: [ ^ false ] ifNotNil: [ self fileReference exists]
 ]
 
 { #category : 'testing' }
@@ -146,8 +106,7 @@ NTNoteObject >> fileNamer: anObject [
 { #category : 'accessing' }
 NTNoteObject >> fileReference [ 
 
-	^ fileReference ifNil: [
-		  fileReference := FileSystem workingDirectory / self fileName ]
+	^ fileReference
 ]
 
 { #category : 'accessing' }
@@ -157,13 +116,53 @@ NTNoteObject >> fileReference: aFileReference [
 	fileName := aFileReference basenameWithoutExtension.
 ]
 
+{ #category : 'generate' }
+NTNoteObject >> generateDefaultFileReference [
+
+	self hasTitle ifFalse: [ self generateTitle ].
+	
+	self fileReference: FileReference / (NTSettings projectPathString ) / 'notes' / self title
+]
+
+{ #category : 'generate' }
+NTNoteObject >> generateMetaDataElements [
+
+	| meta |
+	meta := MicMetaDataBlock new.
+	meta body: Dictionary new.
+	meta
+		atKey: 'author' put: 'toto for now';
+		atKey: 'title' put: self title;
+		atKey: 'lastModificationDate'
+		put: self modificationDate asDate yyyymmdd.
+
+	^ (MicTextualMicrodownExporter new visit: meta) contents
+]
+
+{ #category : 'generate' }
+NTNoteObject >> generateTitle [
+
+"create a new title which corresponds to the first word of the contents.
+	If the contents has more than three words, the title correponds to its first three words. "
+
+	| nameOfNewNote collectionOfContents |
+	collectionOfContents := contents substrings.
+	nameOfNewNote := String streamContents: [ :stt |
+		(collectionOfContents size > 3
+			ifTrue: [ collectionOfContents copyFrom: 1 to: 3 ]
+			ifFalse: [ collectionOfContents ]) 
+				do: [ :each | stt nextPutAll: each ] ].
+			
+	self title: nameOfNewNote
+]
+
 { #category : 'testing' }
 NTNoteObject >> hasTitle [
 
 	^ self title notNil.
 ]
 
-{ #category : 'accessing' }
+{ #category : 'initialization' }
 NTNoteObject >> initialize [
 
 	super initialize.
@@ -198,14 +197,6 @@ NTNoteObject >> modificationDate: anObject [
 	modificationDate := anObject
 ]
 
-{ #category : 'accessing' }
-NTNoteObject >> nameForFile [
-
-	^ String streamContents: [ :stream |
-		stream 
-			<< self title asLowercase ]
-]
-
 { #category : 'printing' }
 NTNoteObject >> printOn: aStream [
 
@@ -227,11 +218,12 @@ NTNoteObject >> removeTag: aNTTag [
 	aNTTag removeNote: self
 ]
 
-{ #category : 'accessing' }
+{ #category : 'saving' }
 NTNoteObject >> save [
 
+	self fileReference ifNil: [ self generateDefaultFileReference ].
 	self fileReference writeStreamDo: [ :str | 
-		str nextPutAll: self addMetaDataElements.
+		str nextPutAll: self generateMetaDataElements.
 		str nextPutAll: String crlf.
 		str nextPutAll: String crlf.
 		str nextPutAll: contents ]
