@@ -83,7 +83,6 @@ NTMDEditorPresenter2 >> newNote: aNoteObject [
 
 	self mdFile: (MDFile new title: aNoteObject title).
 	self window ifNotNil: [ self updateTitle ].
-	self mdFile addMetaDataElements. 
 	textInput text: self mdFile contents.
 	self emptyRenderedText.
 	self renderDocument.

@@ -9,7 +9,10 @@ Class {
 		'creationDate',
 		'modificationDate',
 		'tags',
-		'contents'
+		'contents',
+		'fileReference',
+		'fileNamer',
+		'fileName'
 	],
 	#category : 'TheNoteTaker-Core',
 	#package : 'TheNoteTaker',
@@ -33,6 +36,16 @@ NTNoteObject class >> named: aString contents: contentsString [
 		title: aString;
 		contents: contentsString;
 		yourself
+]
+
+{ #category : 'instance creation' }
+NTNoteObject class >> newFromFileReference: aFileReference [
+
+	^ self new
+		  fileReference: aFileReference;
+		  title: aFileReference basename;
+		  contents: aFileReference contents;
+		  yourself
 ]
 
 { #category : 'accessing - tags' }
@@ -67,10 +80,80 @@ NTNoteObject >> creationDate: anObject [
 ]
 
 { #category : 'testing' }
-NTNoteObject >> existsAsFile [
-	"Answer <true> if the receiver is present as <FileReference> in the current directory"
+NTNoteObject >> exists [
 
-	^ self hasTitle and: [ self nameForFile asFileReference exists ]
+	^ self fileReference ifNil: [ ^ false ] ifNotNil: [ self fileReference exists]
+]
+
+{ #category : 'testing' }
+NTNoteObject >> fileName [
+
+	^ fileName ifNil: [ fileName := fileNamer newNameBasedOn: self title ]
+]
+
+{ #category : 'accessing' }
+NTNoteObject >> fileNamer [
+
+	^ fileNamer
+]
+
+{ #category : 'accessing' }
+NTNoteObject >> fileNamer: anObject [
+
+	fileNamer := anObject
+]
+
+{ #category : 'accessing' }
+NTNoteObject >> fileReference [ 
+
+	^ fileReference
+]
+
+{ #category : 'accessing' }
+NTNoteObject >> fileReference: aFileReference [
+
+	fileReference := aFileReference.
+	fileName := aFileReference basenameWithoutExtension.
+]
+
+{ #category : 'generate' }
+NTNoteObject >> generateDefaultFileReference [
+
+	self hasTitle ifFalse: [ self generateTitle ].
+	
+	self fileReference: FileReference / (NTSettings projectPathString ) / 'notes' / self title
+]
+
+{ #category : 'generate' }
+NTNoteObject >> generateMetaDataElements [
+
+	| meta |
+	meta := MicMetaDataBlock new.
+	meta body: Dictionary new.
+	meta
+		atKey: 'author' put: 'toto for now';
+		atKey: 'title' put: self title;
+		atKey: 'lastModificationDate'
+		put: self modificationDate asDate yyyymmdd.
+
+	^ (MicTextualMicrodownExporter new visit: meta) contents
+]
+
+{ #category : 'generate' }
+NTNoteObject >> generateTitle [
+
+"create a new title which corresponds to the first word of the contents.
+	If the contents has more than three words, the title correponds to its first three words. "
+
+	| nameOfNewNote collectionOfContents |
+	collectionOfContents := contents substrings.
+	nameOfNewNote := String streamContents: [ :stt |
+		(collectionOfContents size > 3
+			ifTrue: [ collectionOfContents copyFrom: 1 to: 3 ]
+			ifFalse: [ collectionOfContents ]) 
+				do: [ :each | stt nextPutAll: each ] ].
+			
+	self title: nameOfNewNote
 ]
 
 { #category : 'testing' }
@@ -87,6 +170,13 @@ NTNoteObject >> initialize [
 	creationDate := DateAndTime now.
 	modificationDate := creationDate.
 	tags := Set new.
+	fileNamer := NTISOFileNamer new.
+]
+
+{ #category : 'testing' }
+NTNoteObject >> isDirty [ 
+
+	^ (contents equals: fileReference contents) not
 ]
 
 { #category : 'testing' }
@@ -105,14 +195,6 @@ NTNoteObject >> modificationDate [
 NTNoteObject >> modificationDate: anObject [
 
 	modificationDate := anObject
-]
-
-{ #category : 'accessing' }
-NTNoteObject >> nameForFile [
-
-	^ String streamContents: [ :stream |
-		stream 
-			<< self title asLowercase ]
 ]
 
 { #category : 'printing' }
@@ -136,6 +218,17 @@ NTNoteObject >> removeTag: aNTTag [
 	aNTTag removeNote: self
 ]
 
+{ #category : 'saving' }
+NTNoteObject >> save [
+
+	self fileReference ifNil: [ self generateDefaultFileReference ].
+	self fileReference writeStreamDo: [ :str | 
+		str nextPutAll: self generateMetaDataElements.
+		str nextPutAll: String crlf.
+		str nextPutAll: String crlf.
+		str nextPutAll: contents ]
+]
+
 { #category : 'accessing - tags' }
 NTNoteObject >> tags [
 
@@ -156,11 +249,12 @@ NTNoteObject >> threeWayCompareTo: aNTNoteObject [
 { #category : 'accessing' }
 NTNoteObject >> title [
 
-	^ title
+	^ title ifNil: [ title := fileNamer defaultEmptyName ]
 ]
 
 { #category : 'accessing' }
-NTNoteObject >> title: anObject [
+NTNoteObject >> title: aString [
 
-	title := anObject
+	"title := fileNamer curateString: aString"
+	title := aString
 ]

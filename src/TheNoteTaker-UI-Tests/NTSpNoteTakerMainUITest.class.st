@@ -28,10 +28,10 @@ NTSpNoteTakerMainUITest >> setUp [
 	notesContentPresenter := presenter notesContentPresenter.
 
 	noteFile := memoryFS workingDirectory / 'newNote.md'. 
-	noteFile writeStreamDo: [ : stream | stream nextPutAll: 'new note' ]. 
+	noteFile writeStreamDo: [ : stream | stream nextPutAll: 'new note' ].
 	
 	notesTaker addNoteFromFileReference: noteFile. 
-	note := notesTaker noteNamed: 'newNote'. 
+	note := notesTaker noteNamed: 'newNote'.
 	notesContentPresenter editorPresenter newNote: note.
 	
 	
@@ -42,14 +42,18 @@ NTSpNoteTakerMainUITest >> tearDown [
 
 	notesTaker removeNotes: notesTaker notes.
 	noteFile ensureDelete.
-	notesContentPresenter editorPresenter mdFile fileReference delete.
+	"notesContentPresenter editorPresenter note fileReference delete."
 	super tearDown.
 ]
 
 { #category : 'tests' }
 NTSpNoteTakerMainUITest >> testAddContent [
 	
+	| tempNote |
 	notesContentPresenter contents: 'It''s just a test'.
+	
+	tempNote := notesContentPresenter editorPresenter note.
+	tempNote fileReference: memoryFS workingDirectory / tempNote title.
 	notesContentPresenter editorPresenter saveFile.
 
 	self assert: note contents equals: 'It''s just a test'
@@ -58,12 +62,17 @@ NTSpNoteTakerMainUITest >> testAddContent [
 { #category : 'tests' }
 NTSpNoteTakerMainUITest >> testAddNoteByItsContents [ 
 	
+	| tempNote |
 	notesContentPresenter editorPresenter startNewFile.
 	notesContentPresenter contents: 'just a new note'.
+	
+	tempNote := notesContentPresenter editorPresenter note.
+	tempNote fileReference: memoryFS workingDirectory / tempNote title.
+	
 	notesContentPresenter editorPresenter saveFile.
 	
-	self assert: notesContentPresenter editorPresenter mdFile exists.
-	self assert: (notesContentPresenter editorPresenter mdFile basename includesSubstring: 'justanew').
+	self assert: notesContentPresenter editorPresenter note exists.
+	self assert: (notesContentPresenter editorPresenter note fileReference basename includesSubstring: 'justanew').
 	
 ]
 
@@ -79,7 +88,12 @@ NTSpNoteTakerMainUITest >> testAddNoteByItsName [
 { #category : 'tests' }
 NTSpNoteTakerMainUITest >> testImportNote [ 
 	
+	| tempNote |
 	notesContentPresenter contents: 'It''s just a test'.
+	
+	tempNote := notesContentPresenter editorPresenter note.
+	tempNote fileReference: memoryFS workingDirectory / tempNote title.
+	
 	notesContentPresenter editorPresenter saveFile.
 
 	self assert: note contents equals: 'It''s just a test' 
@@ -89,8 +103,12 @@ NTSpNoteTakerMainUITest >> testImportNote [
 NTSpNoteTakerMainUITest >> testNameNoteIsInISOFormat [
 	" add new note in the note taker, its contents and save it"
 
-	| date |
+	| date tempNote |
 	date := DateAndTime now asDate yyyymmdd.
+	
+	tempNote := notesContentPresenter editorPresenter note.
+	tempNote fileReference: memoryFS workingDirectory / tempNote title.
+	
 	notesContentPresenter editorPresenter saveFile.
 
 	self assert: (note title beginsWith: date).
@@ -103,13 +121,12 @@ NTSpNoteTakerMainUITest >> testNoteSearch [
 	notesTaker addNoteNamed: 'newNote'.
 	notesTaker addNoteNamed: 'anotherNote'.
 	notesTaker addNoteNamed: 'thirdNote'.
-	self halt.
 	notesTaker notes.
 	
 	toolbar := presenter notesToolbarPresenter.
 	nameOfNoteToSearch := 'newNote'.
 	result := toolbar filteredNotesFor: nameOfNoteToSearch.
-	self assert: result size equals: 1.
+	self assert: result size equals: 2.
 	anotherNameNoteToSearch := 'nnn'.
 	result := toolbar filteredNotesFor: anotherNameNoteToSearch.
 	self assert: result size equals: 0

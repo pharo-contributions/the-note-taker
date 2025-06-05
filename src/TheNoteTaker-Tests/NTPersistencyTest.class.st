@@ -21,13 +21,14 @@ NTPersistencyTest >> testCreateNoteDoesNotSerialize [
 
 	| sampleNote |
 	sampleNote := NTNoteObject new.
+	
 	self 
-		deny: sampleNote existsAsFile
+		deny: sampleNote exists
 		description: 'It test that a Note object is not automatically persisted'.
 	
 	sampleNote title: self simplestNoteName.
 	self 
-		deny: sampleNote existsAsFile
+		deny: sampleNote exists
 		description: 'It test that title assignment does not persist the note'.
 
 	
