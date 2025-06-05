@@ -70,16 +70,15 @@ NTSingleton >> addNoteFromFileReference: aFileReference [
 	"Add a new note with title aString to the receiver's notes. Answer the receiver"
 	
 	self notes add: (
-		self 
-			newNoteNamed: aFileReference basenameWithoutExtension 
-			contents: aFileReference contents)
+		NTNoteObject 
+			newFromFileReference: aFileReference )
 ]
 
 { #category : 'adding' }
 NTSingleton >> addNoteNamed: aString [
 	"Add a new empty note with title aString to the receiver's notes. Answer the receiver"
 	
-	^ self notes add: (self newNoteNamed: aString)
+	^ self notes add: ( NTNoteObject named: aString)
 ]
 
 { #category : 'testing' }
@@ -112,18 +111,6 @@ NTSingleton >> isValidNoteName: aString [
 		ifTrue: [ ^ (self hasNoteNamed: aString trimBoth) not ].
 	self inform: 'Invalid note title'.
 	^ false
-]
-
-{ #category : 'adding' }
-NTSingleton >> newNoteNamed: aNoteName [
-
-	^ NTNoteObject named: aNoteName
-]
-
-{ #category : 'adding' }
-NTSingleton >> newNoteNamed: aNoteName contents: aString [
-
-	^ NTNoteObject named: aNoteName contents: aString
 ]
 
 { #category : 'accessing' }

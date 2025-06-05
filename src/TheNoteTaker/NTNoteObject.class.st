@@ -33,7 +33,7 @@ NTNoteObject class >> named: aString contents: contentsString [
 	"Answer a new instance of the receiver with title aString"
 	
 	^ self new
-		title: aString;
+		fileName: aString;
 		contents: contentsString;
 		yourself
 ]
@@ -42,8 +42,8 @@ NTNoteObject class >> named: aString contents: contentsString [
 NTNoteObject class >> newFromFileReference: aFileReference [
 
 	^ self new
-		  fileReference: aFileReference;
-		  title: aFileReference basename;
+		  folderReference: aFileReference;
+		  fileName: aFileReference basenameWithoutExtension;
 		  contents: aFileReference contents;
 		  yourself
 ]
@@ -64,7 +64,8 @@ NTNoteObject >> contents [
 NTNoteObject >> contents: anObject [
 
 	contents := anObject.
-	self modificationDate: DateAndTime now
+	self modificationDate: DateAndTime now.
+	self generateTitle
 ]
 
 { #category : 'accessing' }
@@ -85,10 +86,16 @@ NTNoteObject >> exists [
 	^ self fileReference ifNil: [ ^ false ] ifNotNil: [ self fileReference exists]
 ]
 
-{ #category : 'testing' }
+{ #category : 'accessing' }
 NTNoteObject >> fileName [
 
 	^ fileName ifNil: [ fileName := fileNamer newNameBasedOn: self title ]
+]
+
+{ #category : 'accessing' }
+NTNoteObject >> fileName: aString [
+
+	fileName := aString
 ]
 
 { #category : 'accessing' }
@@ -110,18 +117,15 @@ NTNoteObject >> fileReference [
 ]
 
 { #category : 'accessing' }
-NTNoteObject >> fileReference: aFileReference [
+NTNoteObject >> folderReference: aFileReference [
 
 	fileReference := aFileReference.
-	fileName := aFileReference basenameWithoutExtension.
 ]
 
 { #category : 'generate' }
 NTNoteObject >> generateDefaultFileReference [
-
-	self hasTitle ifFalse: [ self generateTitle ].
 	
-	self fileReference: FileReference / (NTSettings projectPathString ) / 'notes' / self title
+	self folderReference: FileReference / (NTSettings projectPathString ) / 'notes'
 ]
 
 { #category : 'generate' }
@@ -151,7 +155,7 @@ NTNoteObject >> generateTitle [
 		(collectionOfContents size > 3
 			ifTrue: [ collectionOfContents copyFrom: 1 to: 3 ]
 			ifFalse: [ collectionOfContents ]) 
-				do: [ :each | stt nextPutAll: each ] ].
+				do: [ :each | stt nextPutAll: each, String space ] ].
 			
 	self title: nameOfNewNote
 ]
@@ -220,8 +224,10 @@ NTNoteObject >> removeTag: aNTTag [
 
 { #category : 'saving' }
 NTNoteObject >> save [
-
-	self fileReference ifNil: [ self generateDefaultFileReference ].
+	
+	fileReference ifNil: [ self generateDefaultFileReference ].
+	fileReference := fileReference / (self fileName).
+	
 	self fileReference writeStreamDo: [ :str | 
 		str nextPutAll: self generateMetaDataElements.
 		str nextPutAll: String crlf.
@@ -249,12 +255,11 @@ NTNoteObject >> threeWayCompareTo: aNTNoteObject [
 { #category : 'accessing' }
 NTNoteObject >> title [
 
-	^ title ifNil: [ title := fileNamer defaultEmptyName ]
+	^ title ifNil: [ self generateTitle ]
 ]
 
 { #category : 'accessing' }
 NTNoteObject >> title: aString [
 
-	"title := fileNamer curateString: aString"
 	title := aString
 ]

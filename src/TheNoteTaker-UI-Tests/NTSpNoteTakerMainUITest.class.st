@@ -67,7 +67,7 @@ NTSpNoteTakerMainUITest >> testAddNoteByItsContents [
 	notesContentPresenter contents: 'just a new note'.
 	
 	tempNote := notesContentPresenter editorPresenter note.
-	tempNote fileReference: memoryFS workingDirectory / tempNote title.
+	tempNote fileReference: memoryFS workingDirectory.
 	
 	notesContentPresenter editorPresenter saveFile.
 	

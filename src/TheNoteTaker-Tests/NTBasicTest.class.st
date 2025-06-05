@@ -92,7 +92,7 @@ NTBasicTest >> testCreateNoteObject [
 
 	sing safeDo: [ :uniq |
 	| aNote |
-	aNote := uniq newNoteNamed: self simplestNoteName.
+	aNote := uniq addNoteNamed: self simplestNoteName.
 	self assert: aNote isNote ]
 ]
 

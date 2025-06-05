@@ -23,7 +23,14 @@ NTNoteObjectTest >> generateMetaDataWithFileName: filename modificationDate: mod
 NTNoteObjectTest >> setUp [
 	
 	super setUp.
-	memoryFS := FileSystem memory / 'test.md'.
+	memoryFS := FileSystem memory workingDirectory.
+]
+
+{ #category : 'tests' }
+NTNoteObjectTest >> testLoadNote [
+
+	self skip.
+	self assert: false.
 ]
 
 { #category : 'tests' }
@@ -90,13 +97,13 @@ NTNoteObjectTest >> testSaveNote [
 	
 	note := NTNoteObject named: 'Test' contents: 'Ceci est un test'.
 	modificationDate := note modificationDate.
-	note fileReference: memoryFS.
+	note folderReference: memoryFS.
 	note save.
 	
-	self denyEmpty: memoryFS contents.
+	self denyEmpty: note fileReference contents.
 	
-	metadata := self generateMetaDataWithFileName: 'Test' modificationDate: note modificationDate.
+	metadata := self generateMetaDataWithFileName: 'Ceci est un ' modificationDate: note modificationDate.
 	finalContents :=  metadata, String crlf, String crlf, 'Ceci est un test'.
 	
-	self assert: memoryFS contents equals: finalContents
+	self assert: note fileReference contents equals: finalContents
 ]
