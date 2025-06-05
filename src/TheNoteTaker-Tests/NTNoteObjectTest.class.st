@@ -102,7 +102,7 @@ NTNoteObjectTest >> testSaveNote [
 	
 	self denyEmpty: note fileReference contents.
 	
-	metadata := self generateMetaDataWithFileName: 'Ceci est un ' modificationDate: note modificationDate.
+	metadata := self generateMetaDataWithFileName: 'Ceciestun' modificationDate: note modificationDate.
 	finalContents :=  metadata, String crlf, String crlf, 'Ceci est un test'.
 	
 	self assert: note fileReference contents equals: finalContents

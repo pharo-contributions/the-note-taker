@@ -24,7 +24,7 @@ NTNoteObject class >> named: aString [
 	"Answer a new instance of the receiver with title aString"
 	
 	^ self new
-		title: aString;
+		fileName: aString;
 		yourself
 ]
 
@@ -95,7 +95,8 @@ NTNoteObject >> fileName [
 { #category : 'accessing' }
 NTNoteObject >> fileName: aString [
 
-	fileName := aString
+	"fileName := aString"
+	fileName := fileNamer newNameBasedOn: aString
 ]
 
 { #category : 'accessing' }
@@ -155,7 +156,7 @@ NTNoteObject >> generateTitle [
 		(collectionOfContents size > 3
 			ifTrue: [ collectionOfContents copyFrom: 1 to: 3 ]
 			ifFalse: [ collectionOfContents ]) 
-				do: [ :each | stt nextPutAll: each, String space ] ].
+				do: [ :each | stt nextPutAll: each ] ].
 			
 	self title: nameOfNewNote
 ]

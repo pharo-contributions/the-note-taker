@@ -69,7 +69,7 @@ NTSingleton class >> uniqueInstance [
 NTSingleton >> addNoteFromFileReference: aFileReference [
 	"Add a new note with title aString to the receiver's notes. Answer the receiver"
 	
-	self notes add: (
+	^ self notes add: (
 		NTNoteObject 
 			newFromFileReference: aFileReference )
 ]
@@ -85,7 +85,7 @@ NTSingleton >> addNoteNamed: aString [
 NTSingleton >> hasNoteNamed: aString [
 	"Answer <true> if the receiver includes a note with title aString"
 
-	^ self notes anySatisfy: [ : note | note title = aString ]
+	^ self notes anySatisfy: [ : note | note fileName = aString ]
 ]
 
 { #category : 'testing' }
@@ -119,14 +119,14 @@ NTSingleton >> noteNameMatching: aString [
 
 	| pattern |
 	pattern := '*', aString, '*'.
-	^ self notes detect: [ :n | pattern match: n title ]
+	^ self notes detect: [ :n | pattern match: n fileName ]
 ]
 
 { #category : 'accessing' }
 NTSingleton >> noteNamed: aString [
 	"Answer the first <NTNoteObject> matching aString in its name"
 	
-	^ self notes detect: [ : n | n title = aString ]
+	^ self notes detect: [ : n | n fileName = aString ]
 ]
 
 { #category : 'accessing' }
@@ -154,14 +154,14 @@ NTSingleton >> notesNameMatching: aString [
 
 	| pattern |
 	pattern := '*' , aString , '*'.
-	^ self notes select: [ :n | pattern match: n title ]
+	^ self notes select: [ :n | pattern match: n fileName ]
 ]
 
 { #category : 'accessing' }
 NTSingleton >> notesNamed: aString [
 	"Answer a <Collection> with <NTNoteObject> objects named aString"
 	
-	^ self notes select: [ : n | n title = aString ]
+	^ self notes select: [ : n | n fileName = aString ]
 ]
 
 { #category : 'removing' }

@@ -18,6 +18,7 @@ Class {
 { #category : 'running' }
 NTSpNoteTakerMainUITest >> setUp [
 	
+	| noteFileName |
 	super setUp. 
 	memoryFS := FileSystem memory. 
 	
@@ -30,8 +31,8 @@ NTSpNoteTakerMainUITest >> setUp [
 	noteFile := memoryFS workingDirectory / 'newNote.md'. 
 	noteFile writeStreamDo: [ : stream | stream nextPutAll: 'new note' ].
 	
-	notesTaker addNoteFromFileReference: noteFile. 
-	note := notesTaker noteNamed: 'newNote'.
+	noteFileName := (notesTaker addNoteFromFileReference: noteFile) fileName. 
+	note := notesTaker noteNamed: noteFileName.
 	notesContentPresenter editorPresenter newNote: note.
 	
 	
@@ -53,7 +54,7 @@ NTSpNoteTakerMainUITest >> testAddContent [
 	notesContentPresenter contents: 'It''s just a test'.
 	
 	tempNote := notesContentPresenter editorPresenter note.
-	tempNote fileReference: memoryFS workingDirectory / tempNote title.
+	tempNote folderReference: memoryFS workingDirectory.
 	notesContentPresenter editorPresenter saveFile.
 
 	self assert: note contents equals: 'It''s just a test'
@@ -67,7 +68,7 @@ NTSpNoteTakerMainUITest >> testAddNoteByItsContents [
 	notesContentPresenter contents: 'just a new note'.
 	
 	tempNote := notesContentPresenter editorPresenter note.
-	tempNote fileReference: memoryFS workingDirectory.
+	tempNote folderReference: memoryFS workingDirectory.
 	
 	notesContentPresenter editorPresenter saveFile.
 	
@@ -92,7 +93,7 @@ NTSpNoteTakerMainUITest >> testImportNote [
 	notesContentPresenter contents: 'It''s just a test'.
 	
 	tempNote := notesContentPresenter editorPresenter note.
-	tempNote fileReference: memoryFS workingDirectory / tempNote title.
+	tempNote folderReference: memoryFS workingDirectory.
 	
 	notesContentPresenter editorPresenter saveFile.
 
@@ -107,11 +108,11 @@ NTSpNoteTakerMainUITest >> testNameNoteIsInISOFormat [
 	date := DateAndTime now asDate yyyymmdd.
 	
 	tempNote := notesContentPresenter editorPresenter note.
-	tempNote fileReference: memoryFS workingDirectory / tempNote title.
+	tempNote folderReference: memoryFS workingDirectory.
 	
 	notesContentPresenter editorPresenter saveFile.
 
-	self assert: (note title beginsWith: date).
+	self assert: (note fileName beginsWith: date).
 ]
 
 { #category : 'tests' }
@@ -137,8 +138,7 @@ NTSpNoteTakerMainUITest >> testRemoveNote [
 	
 	| sizeNotesBeforeAddNote |
 	sizeNotesBeforeAddNote := notesIndexPresenter items size.
-	notesTaker addNoteNamed: 'note2'.
-	notesTaker removeNoteNamed: 'note2'.
+	notesTaker removeNoteNamed: (notesTaker addNoteNamed: 'note2') fileName.
 	self assert: notesIndexPresenter items size equals: sizeNotesBeforeAddNote. 
 ]
 
