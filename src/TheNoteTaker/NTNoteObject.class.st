@@ -10,7 +10,7 @@ Class {
 		'modificationDate',
 		'tags',
 		'contents',
-		'fileReference',
+		'folderReference',
 		'fileNamer',
 		'fileName'
 	],
@@ -83,13 +83,13 @@ NTNoteObject >> creationDate: anObject [
 { #category : 'testing' }
 NTNoteObject >> exists [
 
-	^ self fileReference ifNil: [ ^ false ] ifNotNil: [ self fileReference exists]
+	^ folderReference ifNil: [ ^ false ] ifNotNil: [ self fileReference exists]
 ]
 
 { #category : 'accessing' }
 NTNoteObject >> fileName [
 
-	^ fileName ifNil: [ fileName := fileNamer newNameBasedOn: self title ]
+	^ fileName ifNil: [ self title ifNotEmpty: [ fileName := fileNamer newNameBasedOn: self title]]
 ]
 
 { #category : 'accessing' }
@@ -114,13 +114,13 @@ NTNoteObject >> fileNamer: anObject [
 { #category : 'accessing' }
 NTNoteObject >> fileReference [ 
 
-	^ fileReference
+	^ folderReference / (self fileName)
 ]
 
 { #category : 'accessing' }
 NTNoteObject >> folderReference: aFileReference [
 
-	fileReference := aFileReference.
+	folderReference := aFileReference.
 ]
 
 { #category : 'generate' }
@@ -181,7 +181,7 @@ NTNoteObject >> initialize [
 { #category : 'testing' }
 NTNoteObject >> isDirty [ 
 
-	^ (contents equals: fileReference contents) not
+	^ (contents equals: self fileReference contents) not
 ]
 
 { #category : 'testing' }
@@ -226,8 +226,9 @@ NTNoteObject >> removeTag: aNTTag [
 { #category : 'saving' }
 NTNoteObject >> save [
 	
-	fileReference ifNil: [ self generateDefaultFileReference ].
-	fileReference := fileReference / (self fileName).
+	folderReference ifNil: [ self generateDefaultFileReference ].
+	
+	self exists ifFalse: [ self fileReference ensureCreateFile ]	.
 	
 	self fileReference writeStreamDo: [ :str | 
 		str nextPutAll: self generateMetaDataElements.
@@ -256,7 +257,10 @@ NTNoteObject >> threeWayCompareTo: aNTNoteObject [
 { #category : 'accessing' }
 NTNoteObject >> title [
 
-	^ title ifNil: [ self generateTitle ]
+	| titleTemp |
+	titleTemp := title.
+	titleTemp ifNil: [ self generateTitle. titleTemp := title ].
+	^ titleTemp
 ]
 
 { #category : 'accessing' }
