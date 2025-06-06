@@ -73,7 +73,7 @@ NTSpNoteTakerMainUITest >> testAddNoteByItsContents [
 	notesContentPresenter editorPresenter saveFile.
 	
 	self assert: notesContentPresenter editorPresenter note exists.
-	self assert: (notesContentPresenter editorPresenter note fileReference basename includesSubstring: 'justanew').
+	self assert: (notesContentPresenter editorPresenter note fileReference basename includesSubstring: 'just a new').
 	
 ]
 

@@ -10,7 +10,7 @@ Class {
 }
 
 { #category : 'accessing' }
-NTNoteObjectTest >> generateMetaDataWithFileName: filename modificationDate: modificationDate [
+NTNoteObjectTest >> generateMetaDataWithTitle: filename modificationDate: modificationDate [
 
 ^ '{
 "lastModificationDate" : "', modificationDate asDate yyyymmdd asString ,'",
@@ -27,7 +27,7 @@ NTNoteObjectTest >> setUp [
 ]
 
 { #category : 'tests' }
-NTNoteObjectTest >> testLoadNote [
+NTNoteObjectTest >> testLoadNoteWithoutMetadata [
 
 	| note noteFile |
 	
@@ -39,7 +39,7 @@ NTNoteObjectTest >> testLoadNote [
 	self assert: note exists.
 	self assert: note contents equals: 'This is just a new note'.
 	self assert: note fileName equals: '2024-06-12_newNote.md'.
-	self assert: note title equals: 'Thisisjust'.
+	self assert: note title equals: 'This is just a new note'.
 ]
 
 { #category : 'tests' }
@@ -111,7 +111,7 @@ NTNoteObjectTest >> testSaveNote [
 	
 	self denyEmpty: note fileReference contents.
 	
-	metadata := self generateMetaDataWithFileName: 'Ceciestun' modificationDate: note modificationDate.
+	metadata := self generateMetaDataWithTitle: 'Ceci est un test' modificationDate: note modificationDate.
 	finalContents :=  metadata, String crlf, String crlf, 'Ceci est un test'.
 	
 	self assert: note fileReference contents equals: finalContents
