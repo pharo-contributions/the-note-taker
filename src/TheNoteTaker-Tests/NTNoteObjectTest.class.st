@@ -27,6 +27,25 @@ NTNoteObjectTest >> setUp [
 ]
 
 { #category : 'tests' }
+NTNoteObjectTest >> testLoadNoteWithMetadata [
+
+	| note noteFile metadata |
+	
+	self skip.
+	
+	noteFile := memoryFS / '2024-06-12_newNote.md'. 
+	metadata := self generateMetaDataWithTitle: 'Ceci est un test' modificationDate: '2024-01-01' asDateAndTime.
+	noteFile writeStreamDo: [ : stream | stream nextPutAll: metadata, String crlf, String crlf, 'This is just a new note' ].
+	
+	note := NTNoteObject newFromFileReference: noteFile.
+	
+	self assert: note exists.
+	self assert: note contents equals: 'This is just a new note'.
+	self assert: note fileName equals: '2024-06-12_newNote.md'.
+	self assert: note title equals: 'This is just a new note'.
+]
+
+{ #category : 'tests' }
 NTNoteObjectTest >> testLoadNoteWithoutMetadata [
 
 	| note noteFile |
@@ -100,6 +119,28 @@ NTNoteObjectTest >> testNoteModificationUpdatesModificationDate [
 ]
 
 { #category : 'tests' }
+NTNoteObjectTest >> testSaveExistingFileWithDifferentTitle [
+
+	| note modificationDate metadata finalContents fileName |
+	
+	note := NTNoteObject named: 'Test' contents: 'Ceci est un test'.
+	modificationDate := note modificationDate.
+	note folderReference: memoryFS.
+	note save.
+	fileName := note fileName.
+	note contents: 'I change the title'.
+	note save.
+	
+	self denyEmpty: note fileReference contents.
+	
+	metadata := self generateMetaDataWithTitle: 'I change the title' modificationDate: note modificationDate.
+	finalContents :=  metadata, String crlf, String crlf, 'I change the title'.
+	
+	self assert: note fileReference contents equals: finalContents.
+	self assert: note fileName equals: fileName.
+]
+
+{ #category : 'tests' }
 NTNoteObjectTest >> testSaveNote [
 	
 	| note modificationDate metadata finalContents |
@@ -115,4 +156,18 @@ NTNoteObjectTest >> testSaveNote [
 	finalContents :=  metadata, String crlf, String crlf, 'Ceci est un test'.
 	
 	self assert: note fileReference contents equals: finalContents
+]
+
+{ #category : 'tests' }
+NTNoteObjectTest >> testTitleIsFirstLineOfContents [
+
+	| note1 note2 note3 |
+	
+	note1 := NTNoteObject named: 'Test1' contents: 'test with only one line'.
+	note2 := NTNoteObject named: 'Test2' contents: 'test with two line', String crlf, 'Second Line'.
+	note3 := NTNoteObject named: 'Test3' contents: ''.	
+	
+	self assert: note1 title equals: 'test with only one line';
+		assert: note2 title equals: 'test with two line';
+		assert: note3 title equals: ''.
 ]
