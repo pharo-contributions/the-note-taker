@@ -54,8 +54,7 @@ NTSpSearchCreatePresenter >> initializePresenters [
 	notesSearchCreateTextPresenter := self newTextInput
 		help: 'Create a note by just typing a name';
 		placeholder: 'Type note to search or create';
-		whenTextChangedDo: [ self updateNotesList ];	
-		whenSubmitDo: [ : newNoteName | self requestNewNoteNamed: newNoteName ];
+		whenTextChangedDo: [ self updateNotesList ];
 		yourself.
 	notesSearchButtonPresenter := self newButton
 		icon: (self iconNamed: #smallFind);
@@ -97,23 +96,6 @@ NTSpSearchCreatePresenter >> openTNTSettings [
 	SettingBrowser new
 		rootNodes: (SettingBrowser currentTree nodeNamed: #tnt) allChildren;
 		open
-]
-
-{ #category : 'callbacks' }
-NTSpSearchCreatePresenter >> requestNewNoteNamed: aString [ 
-
-	| newNote |
-	(self confirm: 'Do you want to create a new note named: ' , aString)
-		ifFalse: [ ^ self ].
-	(self model isValidNoteName: aString) 
-		ifFalse: [ ^ self ].
-
-	newNote := self application addNoteNamed: aString.
-	self updateNotesList.
-	self notesList selectNote: newNote.
-
-	self editorPresenter takeKeyboardFocus.
-
 ]
 
 { #category : 'accessing - model' }
