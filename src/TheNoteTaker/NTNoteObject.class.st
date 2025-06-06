@@ -42,8 +42,8 @@ NTNoteObject class >> named: aString contents: contentsString [
 NTNoteObject class >> newFromFileReference: aFileReference [
 
 	^ self new
-		  folderReference: aFileReference;
-		  fileName: aFileReference basenameWithoutExtension;
+		  folderReference: (aFileReference fullName withoutSuffix: aFileReference basename) asFileReference;
+		  fileName: aFileReference basename;
 		  contents: aFileReference contents;
 		  yourself
 ]

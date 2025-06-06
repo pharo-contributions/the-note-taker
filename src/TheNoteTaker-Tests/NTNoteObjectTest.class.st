@@ -29,8 +29,17 @@ NTNoteObjectTest >> setUp [
 { #category : 'tests' }
 NTNoteObjectTest >> testLoadNote [
 
-	self skip.
-	self assert: false.
+	| note noteFile |
+	
+	noteFile := memoryFS / '2024-06-12_newNote.md'. 
+	noteFile writeStreamDo: [ : stream | stream nextPutAll: 'This is just a new note' ].
+	
+	note := NTNoteObject newFromFileReference: noteFile.
+	
+	self assert: note exists.
+	self assert: note contents equals: 'This is just a new note'.
+	self assert: note fileName equals: '2024-06-12_newNote.md'.
+	self assert: note title equals: 'Thisisjust'.
 ]
 
 { #category : 'tests' }
