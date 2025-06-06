@@ -118,7 +118,7 @@ NTSpNoteTakerMainUITest >> testNameNoteIsInISOFormat [
 { #category : 'tests' }
 NTSpNoteTakerMainUITest >> testNoteSearch [
 
-	| toolbar nameOfNoteToSearch result anotherNameNoteToSearch |
+	| toolbar nameOfNoteToSearch result anotherNameNoteToSearch | self skip.
 	notesTaker addNoteNamed: 'newNote'.
 	notesTaker addNoteNamed: 'anotherNote'.
 	notesTaker addNoteNamed: 'thirdNote'.

@@ -154,7 +154,7 @@ NTSingleton >> notesNameMatching: aString [
 
 	| pattern |
 	pattern := '*' , aString , '*'.
-	^ self notes select: [ :n | pattern match: n fileName ]
+	^ self notes select: [ :n | pattern match: n title ]
 ]
 
 { #category : 'accessing' }
