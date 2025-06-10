@@ -208,7 +208,7 @@ NTNoteObject >> loadFileContents: aString [
 				self contents:
 					(fileContentsPart second withoutPrefix: String crlf , String crlf).
 				self loadMetaData: fileContentsPart first ]
-		ifFalse: (self contents: aString)
+		ifFalse: [self contents: aString]
 ]
 
 { #category : 'generate' }
