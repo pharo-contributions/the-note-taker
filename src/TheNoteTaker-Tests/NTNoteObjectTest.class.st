@@ -137,7 +137,7 @@ NTNoteObjectTest >> testNoteModificationUpdatesModificationDate [
 	initialModificationDate := note modificationDate.
 
 	"Simulate some modification after a delay"
-	(Delay forSeconds: 1) wait.
+	(Delay forSeconds: 0.1) wait.
 	note contents: 'testMock Modified content'.
 
 	updatedModificationDate := note modificationDate.
