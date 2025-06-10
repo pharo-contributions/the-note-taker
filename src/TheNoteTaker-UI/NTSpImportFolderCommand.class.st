@@ -39,6 +39,15 @@ NTSpImportFolderCommand >> execute [
 	self context items: self facade notes
 ]
 
+{ #category : 'executing' }
+NTSpImportFolderCommand >> executeWithDefaultFolder [
+
+	| folder |
+	folder := NTSettings projectPathString asFileReference.
+	self processFolder: folder.
+	self context items: self facade notes
+]
+
 { #category : 'testing' }
 NTSpImportFolderCommand >> isValidNoteName: aString [ 
 	"Answer <true> if aString is a valid note title"
