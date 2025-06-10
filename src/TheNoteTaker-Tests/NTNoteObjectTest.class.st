@@ -34,19 +34,25 @@ NTNoteObjectTest >> setUp [
 NTNoteObjectTest >> testLoadNoteWithMetadata [
 
 	| note noteFile metadata |
-	
-	self skip.
-	
-	noteFile := memoryFS / '2024-06-12_newNote.md'. 
-	metadata := self generateMetaDataWithTitle: 'Ceci est un test' modificationDate: '2024-01-01' asDateAndTime.
-	noteFile writeStreamDo: [ : stream | stream nextPutAll: metadata, String crlf, String crlf, 'This is just a new note' ].
-	
+	noteFile := memoryFS / '2024-06-12_newNote.md'.
+	metadata := self
+		            generateMetaDataWithCreationDate:
+		            '2025-01-01' asDateAndTime
+		            modificationDate: '2024-01-01' asDateAndTime.
+	noteFile writeStreamDo: [ :stream |
+			stream nextPutAll: metadata;
+				nextPutAll: String crlf;
+				nextPutAll: String crlf;
+				nextPutAll: 'This is just a new note'].
+
 	note := NTNoteObject newFromFileReference: noteFile.
-	
+
 	self assert: note exists.
 	self assert: note contents equals: 'This is just a new note'.
 	self assert: note fileName equals: '2024-06-12_newNote.md'.
 	self assert: note title equals: 'This is just a new note'.
+	self assert: note creationDate equals: '2025-01-01' asDateAndTime.
+	self assert: note modificationDate equals: '2024-01-01' asDateAndTime
 ]
 
 { #category : 'tests' }

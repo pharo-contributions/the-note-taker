@@ -44,7 +44,7 @@ NTNoteObject class >> newFromFileReference: aFileReference [
 	^ self new
 		  folderReference: (aFileReference fullName withoutSuffix: aFileReference basename) asFileReference;
 		  fileName: aFileReference basename;
-		  contents: aFileReference contents;
+		  loadFileContents: aFileReference contents;
 		  yourself
 ]
 
@@ -196,6 +196,28 @@ NTNoteObject >> isDirty [
 NTNoteObject >> isNote [
 
 	^ true
+]
+
+{ #category : 'generate' }
+NTNoteObject >> loadFileContents: aString [
+
+	| fileContentsPart |
+	(aString beginsWith: '{')
+		ifTrue: [
+				fileContentsPart := aString substrings: '}'.
+				self contents:
+					(fileContentsPart second withoutPrefix: String crlf , String crlf).
+				self loadMetaData: fileContentsPart first ]
+		ifFalse: (self contents: aString)
+]
+
+{ #category : 'generate' }
+NTNoteObject >> loadMetaData: aString [
+
+	| metaData |
+	metaData := (MicrodownParser parse: aString) metaDataElement.
+	self creationDate: (metaData at: 'creationDate') asDateAndTime.
+	self modificationDate: (metaData at: 'lastModificationDate') asDateAndTime
 ]
 
 { #category : 'accessing' }
