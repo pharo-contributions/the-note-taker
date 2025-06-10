@@ -33,7 +33,7 @@ NTSpNoteTakerMainUITest >> setUp [
 	
 	noteFileName := (notesTaker addNoteFromFileReference: noteFile) fileName. 
 	note := notesTaker noteNamed: noteFileName.
-	notesContentPresenter editorPresenter newNote: note.
+	notesContentPresenter newNote: note.
 	
 	
 ]
@@ -51,11 +51,11 @@ NTSpNoteTakerMainUITest >> tearDown [
 NTSpNoteTakerMainUITest >> testAddContent [
 	
 	| tempNote |
-	notesContentPresenter contents: 'It''s just a test'.
+	notesContentPresenter textInputText: 'It''s just a test'.
 	
-	tempNote := notesContentPresenter editorPresenter note.
+	tempNote := notesContentPresenter note.
 	tempNote folderReference: memoryFS workingDirectory.
-	notesContentPresenter editorPresenter saveFile.
+	notesContentPresenter saveFile.
 
 	self assert: note contents equals: 'It''s just a test'
 ]
@@ -64,16 +64,16 @@ NTSpNoteTakerMainUITest >> testAddContent [
 NTSpNoteTakerMainUITest >> testAddNoteByItsContents [ 
 	
 	| tempNote |
-	notesContentPresenter editorPresenter startNewFile.
-	notesContentPresenter contents: 'just a new note'.
+	notesContentPresenter startNewFile.
+	notesContentPresenter textInputText: 'just a new note'.
 	
-	tempNote := notesContentPresenter editorPresenter note.
+	tempNote := notesContentPresenter note.
 	tempNote folderReference: memoryFS workingDirectory.
 	
-	notesContentPresenter editorPresenter saveFile.
+	notesContentPresenter saveFile.
 	
-	self assert: notesContentPresenter editorPresenter note exists.
-	self assert: (notesContentPresenter editorPresenter note fileReference basename includesSubstring: 'just a new').
+	self assert: notesContentPresenter note exists.
+	self assert: (notesContentPresenter note fileReference basename includesSubstring: 'just a new').
 	
 ]
 
@@ -90,12 +90,12 @@ NTSpNoteTakerMainUITest >> testAddNoteByItsName [
 NTSpNoteTakerMainUITest >> testImportNote [ 
 	
 	| tempNote |
-	notesContentPresenter contents: 'It''s just a test'.
+	notesContentPresenter textInputText: 'It''s just a test'.
 	
-	tempNote := notesContentPresenter editorPresenter note.
+	tempNote := notesContentPresenter note.
 	tempNote folderReference: memoryFS workingDirectory.
 	
-	notesContentPresenter editorPresenter saveFile.
+	notesContentPresenter saveFile.
 
 	self assert: note contents equals: 'It''s just a test' 
 ]
@@ -107,10 +107,10 @@ NTSpNoteTakerMainUITest >> testNameNoteIsInISOFormat [
 	| date tempNote |
 	date := DateAndTime now asDate yyyymmdd.
 	
-	tempNote := notesContentPresenter editorPresenter note.
+	tempNote := notesContentPresenter note.
 	tempNote folderReference: memoryFS workingDirectory.
 	
-	notesContentPresenter editorPresenter saveFile.
+	notesContentPresenter saveFile.
 
 	self assert: (note fileName beginsWith: date).
 ]
@@ -149,9 +149,9 @@ NTSpNoteTakerMainUITest >> testSelectANote [
 	notesIndexPresenter selectNote: notesIndexPresenter items first.
 
 	presenter selectedNote contents: 'anotherNote'.
-	notesContentPresenter editorPresenter openNote: presenter selectedNote. 
+	notesContentPresenter openNote: presenter selectedNote. 
 	
-	self assert: notesContentPresenter editorPresenter textInputText equals: 'anotherNote'.
+	self assert: notesContentPresenter textInputText equals: 'anotherNote'.
 
 
 ]
