@@ -42,7 +42,7 @@ NTNoteObject class >> named: aString contents: contentsString [
 NTNoteObject class >> newFromFileReference: aFileReference [
 
 	^ self new
-		  folderReference: (aFileReference fullName withoutSuffix: aFileReference basename) asFileReference;
+		  folderReference: aFileReference parent;
 		  fileName: aFileReference basename;
 		  loadFileContents: aFileReference contents;
 		  yourself
@@ -118,6 +118,19 @@ NTNoteObject >> fileReference [
 ]
 
 { #category : 'accessing' }
+NTNoteObject >> fileReferenceContents [
+
+	| fileContentsPart aString |
+	
+	aString := self fileReference contents.
+	(self fileReference contents beginsWith: '{')
+		ifTrue: [
+				fileContentsPart := aString substrings: '}'.
+				^ fileContentsPart second withoutPrefix: String crlf , String crlf].
+		^ aString
+]
+
+{ #category : 'accessing' }
 NTNoteObject >> folderReference: aFileReference [
 
 	folderReference := aFileReference.
@@ -189,7 +202,7 @@ NTNoteObject >> initialize [
 { #category : 'testing' }
 NTNoteObject >> isDirty [ 
 
-	^ (contents equals: self fileReference contents) not
+	^ (contents = self fileReferenceContents) not
 ]
 
 { #category : 'testing' }
@@ -198,7 +211,7 @@ NTNoteObject >> isNote [
 	^ true
 ]
 
-{ #category : 'generate' }
+{ #category : 'loading' }
 NTNoteObject >> loadFileContents: aString [
 
 	| fileContentsPart |
@@ -211,7 +224,7 @@ NTNoteObject >> loadFileContents: aString [
 		ifFalse: [self contents: aString]
 ]
 
-{ #category : 'generate' }
+{ #category : 'loading' }
 NTNoteObject >> loadMetaData: aString [
 
 	| metaData |

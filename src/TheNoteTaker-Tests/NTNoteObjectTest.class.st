@@ -31,6 +31,23 @@ NTNoteObjectTest >> setUp [
 ]
 
 { #category : 'tests' }
+NTNoteObjectTest >> testContentsIsDirty [
+	
+	| noteFile note |
+	noteFile := memoryFS / '2024-06-12_newNote.md'. 
+	noteFile writeStreamDo: [ : stream | stream nextPutAll: 'This is just a new note' ].
+	
+	note := NTNoteObject newFromFileReference: noteFile.
+	self deny: note isDirty.
+	
+	note contents: 'Change the contents'.
+	self assert: note isDirty.
+	
+	note save.
+	self deny: note isDirty.
+]
+
+{ #category : 'tests' }
 NTNoteObjectTest >> testLoadNoteWithMetadata [
 
 	| note noteFile metadata |
