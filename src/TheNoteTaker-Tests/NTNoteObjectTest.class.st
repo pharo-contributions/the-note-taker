@@ -10,13 +10,17 @@ Class {
 }
 
 { #category : 'accessing' }
-NTNoteObjectTest >> generateMetaDataWithTitle: filename modificationDate: modificationDate [
+NTNoteObjectTest >> generateMetaDataWithCreationDate: creationDate modificationDate: modificationDate [
 
-^ '{
-"lastModificationDate" : "', modificationDate asDate yyyymmdd asString ,'",
-"author" : "toto for now",
-"title" : "',filename ,'"
-}'
+	| meta |
+	meta := MicMetaDataBlock new.
+	meta body: Dictionary new.
+	meta
+		atKey: 'creationDate' put: creationDate asString;
+		atKey: 'lastModificationDate'
+		put: modificationDate asString.
+
+	^ (MicTextualMicrodownExporter new visit: meta) contents
 ]
 
 { #category : 'running' }
@@ -133,7 +137,7 @@ NTNoteObjectTest >> testSaveExistingFileWithDifferentTitle [
 	
 	self denyEmpty: note fileReference contents.
 	
-	metadata := self generateMetaDataWithTitle: 'I change the title' modificationDate: note modificationDate.
+	metadata := self generateMetaDataWithCreationDate: note creationDate modificationDate: note modificationDate.
 	finalContents :=  metadata, String crlf, String crlf, 'I change the title'.
 	
 	self assert: note fileReference contents equals: finalContents.
@@ -152,8 +156,30 @@ NTNoteObjectTest >> testSaveNote [
 	
 	self denyEmpty: note fileReference contents.
 	
-	metadata := self generateMetaDataWithTitle: 'Ceci est un test' modificationDate: note modificationDate.
+	metadata := self generateMetaDataWithCreationDate: note creationDate modificationDate: note modificationDate.
 	finalContents :=  metadata, String crlf, String crlf, 'Ceci est un test'.
+	
+	self assert: note fileReference contents equals: finalContents
+]
+
+{ #category : 'tests' }
+NTNoteObjectTest >> testSaveNoteLoadedWithoutMetadata [
+	
+	| note modificationDate metadata finalContents noteFile |
+	
+	noteFile := memoryFS / '2024-06-12_newNote.md'. 
+	noteFile writeStreamDo: [ : stream | stream nextPutAll: 'This is just a new note' ].
+	
+	note := NTNoteObject newFromFileReference: noteFile.
+	
+	modificationDate := note modificationDate.
+	note folderReference: memoryFS.
+	note save.
+	
+	self denyEmpty: note fileReference contents.
+	
+	metadata := self generateMetaDataWithCreationDate: note creationDate modificationDate: note modificationDate.
+	finalContents :=  metadata, String crlf, String crlf, 'This is just a new note'.
 	
 	self assert: note fileReference contents equals: finalContents
 ]

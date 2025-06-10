@@ -136,10 +136,10 @@ NTNoteObject >> generateMetaDataElements [
 	meta := MicMetaDataBlock new.
 	meta body: Dictionary new.
 	meta
-		atKey: 'author' put: 'toto for now';
-		atKey: 'title' put: self title;
+		"atKey: 'author' put: 'toto for now';"
+		atKey: 'creationDate' put: self creationDate asString;
 		atKey: 'lastModificationDate'
-		put: self modificationDate asDate yyyymmdd.
+		put: self modificationDate asString.
 
 	^ (MicTextualMicrodownExporter new visit: meta) contents
 ]
