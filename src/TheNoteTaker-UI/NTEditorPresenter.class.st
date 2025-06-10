@@ -27,6 +27,12 @@ NTEditorPresenter >> applicationTitle [
 	^ self application applicationTitle
 ]
 
+{ #category : 'actions' }
+NTEditorPresenter >> defaultInputPort [
+
+	^ SpModelPort newPresenter: self
+]
+
 { #category : 'layout' }
 NTEditorPresenter >> defaultLayout [
 
@@ -160,6 +166,15 @@ NTEditorPresenter >> saveFile [
 	self window ifNotNil: [ self updateTitle ]
 ]
 
+{ #category : 'api' }
+NTEditorPresenter >> setModel: aNoteObject [ 
+	"Private - Set the receiver's content iterating recursively starting from aNode"
+	
+	"(self editorPresenter canOpenFile: aNoteObject)
+		ifTrue: [ aNoteObject openFromPresenter: self ]
+		ifFalse: [ aNoteObject newFromPresenter: self ]" 
+]
+
 { #category : 'accessing' }
 NTEditorPresenter >> startNewFile [
 	"NEW button is pressed: reset tool"
@@ -191,10 +206,10 @@ NTEditorPresenter >> textInputText: aString [
 NTEditorPresenter >> title [
 	"Answer a <String> representing the application name and selected note title"
 
-	^ String streamContents: [ : stream |
-		stream 
-			<< self applicationTitle;
-			<< self owner selectedNoteTitle ]
+	^ String streamContents: [ :stream |
+			  stream
+				  << self applicationTitle;
+				  << self owner selectedNoteTitle ]
 ]
 
 { #category : 'api' }
