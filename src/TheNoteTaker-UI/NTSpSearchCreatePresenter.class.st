@@ -112,7 +112,6 @@ NTSpSearchCreatePresenter >> requestNewNoteNamed: aString [
 	"(self confirm: 'Do you want to create a new note named: ' , aString)
 		ifFalse: [ ^ self ].
 	(self model isValidNoteName: aString) ifFalse: [ ^ self ]."
-
 	newNote := self application addNoteNamed: aString.
 	self updateNotesList.
 	self notesList selectNote: newNote.

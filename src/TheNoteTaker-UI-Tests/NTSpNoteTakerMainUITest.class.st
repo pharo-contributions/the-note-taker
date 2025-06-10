@@ -118,19 +118,22 @@ NTSpNoteTakerMainUITest >> testNameNoteIsInISOFormat [
 { #category : 'tests' }
 NTSpNoteTakerMainUITest >> testNoteSearch [
 
-	| toolbar nameOfNoteToSearch result anotherNameNoteToSearch | self skip.
+	| toolbar result |
 	notesTaker addNoteNamed: 'newNote'.
 	notesTaker addNoteNamed: 'anotherNote'.
 	notesTaker addNoteNamed: 'thirdNote'.
 	notesTaker notes.
 	
 	toolbar := presenter notesToolbarPresenter.
-	nameOfNoteToSearch := 'newNote'.
-	result := toolbar filteredNotesFor: nameOfNoteToSearch.
-	self assert: result size equals: 2.
-	anotherNameNoteToSearch := 'nnn'.
-	result := toolbar filteredNotesFor: anotherNameNoteToSearch.
-	self assert: result size equals: 0
+	
+	result := toolbar filteredNotesFor: 'newNote'.
+	self assert: result size equals: 1.
+	
+	result := toolbar filteredNotesFor: 'nnn'.
+	self assert: result size equals: 0.
+	
+	result := toolbar filteredNotesFor: 'Note'.
+	self assert: result size equals: 4
 ]
 
 { #category : 'tests' }

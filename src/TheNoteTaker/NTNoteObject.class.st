@@ -24,7 +24,7 @@ NTNoteObject class >> named: aString [
 	"Answer a new instance of the receiver with title aString"
 	
 	^ self new
-		fileName: aString;
+		contents: aString;
 		yourself
 ]
 
