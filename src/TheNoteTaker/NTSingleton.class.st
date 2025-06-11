@@ -69,24 +69,23 @@ NTSingleton class >> uniqueInstance [
 NTSingleton >> addNoteFromFileReference: aFileReference [
 	"Add a new note with title aString to the receiver's notes. Answer the receiver"
 	
-	self notes add: (
-		self 
-			newNoteNamed: aFileReference basenameWithoutExtension 
-			contents: aFileReference contents)
+	^ self notes add: (
+		NTNoteObject 
+			newFromFileReference: aFileReference )
 ]
 
 { #category : 'adding' }
 NTSingleton >> addNoteNamed: aString [
 	"Add a new empty note with title aString to the receiver's notes. Answer the receiver"
 	
-	^ self notes add: (self newNoteNamed: aString)
+	^ self notes add: ( NTNoteObject named: aString)
 ]
 
 { #category : 'testing' }
 NTSingleton >> hasNoteNamed: aString [
 	"Answer <true> if the receiver includes a note with title aString"
 
-	^ self notes anySatisfy: [ : note | note title = aString ]
+	^ self notes anySatisfy: [ : note | note fileName = aString ]
 ]
 
 { #category : 'testing' }
@@ -114,32 +113,20 @@ NTSingleton >> isValidNoteName: aString [
 	^ false
 ]
 
-{ #category : 'adding' }
-NTSingleton >> newNoteNamed: aNoteName [
-
-	^ NTNoteObject named: aNoteName
-]
-
-{ #category : 'adding' }
-NTSingleton >> newNoteNamed: aNoteName contents: aString [
-
-	^ NTNoteObject named: aNoteName contents: aString
-]
-
 { #category : 'accessing' }
 NTSingleton >> noteNameMatching: aString [
 	"Answer the first <NTNoteObject> matching aString in its name"
 
 	| pattern |
 	pattern := '*', aString, '*'.
-	^ self notes detect: [ :n | pattern match: n title ]
+	^ self notes detect: [ :n | pattern match: n fileName ]
 ]
 
 { #category : 'accessing' }
 NTSingleton >> noteNamed: aString [
 	"Answer the first <NTNoteObject> matching aString in its name"
 	
-	^ self notes detect: [ : n | n title = aString ]
+	^ self notes detect: [ : n | n fileName = aString ]
 ]
 
 { #category : 'accessing' }
@@ -174,7 +161,7 @@ NTSingleton >> notesNameMatching: aString [
 NTSingleton >> notesNamed: aString [
 	"Answer a <Collection> with <NTNoteObject> objects named aString"
 	
-	^ self notes select: [ : n | n title = aString ]
+	^ self notes select: [ : n | n fileName = aString ]
 ]
 
 { #category : 'removing' }

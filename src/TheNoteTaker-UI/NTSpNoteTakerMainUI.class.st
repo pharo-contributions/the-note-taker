@@ -67,7 +67,7 @@ NTSpNoteTakerMainUI >> displayNoteContents: aNoteObject [
 NTSpNoteTakerMainUI >> editorPresenter [
 	"Answer the receiver's MicroDown editor presenter"
 
-	^ notesContentPresenter editorPresenter
+	^ notesContentPresenter
 
 ]
 
@@ -101,8 +101,12 @@ NTSpNoteTakerMainUI >> initialize [
 
 { #category : 'initialization' }
 NTSpNoteTakerMainUI >> initializeNotesContent [
-
-	notesContentPresenter := self instantiate: NTSpNoteContentPresenter.
+	
+	notesContentPresenter := (self instantiate: NTEditorPresenter on: self).
+	notesContentPresenter 
+		layout: notesContentPresenter defaultLayout;
+		emptyInputText;
+		emptyRenderedText
 ]
 
 { #category : 'initialization' }

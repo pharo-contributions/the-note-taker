@@ -130,8 +130,10 @@ NTSpNoteIndexPresenter >> initializePresenters [
 			yourself);
 		whenSelectionChangedDo: [ : selection | self handleNoteChange: selection selectedItem ];
 		contextMenu: [ (self rootCommandsGroup / 'NTSelContextualMenu') beRoot asMenuPresenter ];
-		items: notes;
-		yourself
+		items: notes.
+		
+		NTSingleton reset.
+	( NTSpImportFolderCommand new context: self) executeWithDefaultFolder.
 ]
 
 { #category : 'accessing' }
@@ -169,7 +171,7 @@ NTSpNoteIndexPresenter >> selectedNote [
 { #category : 'accessing' }
 NTSpNoteIndexPresenter >> selectedNoteTitle [
 	"Answer a <String> representing the title of the currently selected note"
-
+	
 	^ self selectedNote 
 		ifNotNil: [ : n | n title ]
 		ifNil: [ String empty ]
@@ -184,7 +186,7 @@ NTSpNoteIndexPresenter >> selectedNotes [
 { #category : 'accessing - model' }
 NTSpNoteIndexPresenter >> setModelBeforeInitialization: aCollection [
 
-	notes := aCollection
+	notes := aCollection.
 ]
 
 { #category : 'callbacks' }

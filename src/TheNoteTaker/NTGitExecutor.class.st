@@ -47,6 +47,12 @@ NTGitExecutor >> projectPathString [
 ]
 
 { #category : 'adding' }
+NTGitExecutor >> pull [
+
+	LibC runCommand: self gitMinusCString , self projectPathString , ' pull'
+]
+
+{ #category : 'adding' }
 NTGitExecutor >> push [
 
 	LibC runCommand: self gitMinusCString , self projectPathString , ' push'

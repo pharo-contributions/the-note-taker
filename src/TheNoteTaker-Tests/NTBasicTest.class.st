@@ -53,7 +53,7 @@ NTBasicTest >> testAddingAndRemovingNotes [
 	NTSingleton safeDo: [ :uniq |
 		| noteName notes |
 		noteName := self simplestNoteName.
-		uniq addNoteNamed: noteName.
+		noteName := (uniq addNoteNamed: noteName) fileName.
 		self assert: (uniq hasNoteNamed: noteName).
 
 		notes := uniq notes.
@@ -73,16 +73,16 @@ NTBasicTest >> testAddingNotesWithSameName [
 	| noteName notes |
 	noteName := self simplestNoteName.
 
-	uniq addNoteNamed: noteName.
+	noteName := (uniq addNoteNamed: noteName) fileName.
 	uniq addNoteNamed: noteName.
 
 	notes := uniq notes.
 
 	"Two notes should be added"
 	self assert: notes size equals: 2.
-	self assert: (uniq hasNoteNamed: self simplestNoteName).
+	self assert: (uniq hasNoteNamed: noteName).
 	self
-		assert: (uniq noteNamed: self simplestNoteName) isNote
+		assert: (uniq noteNamed: noteName) isNote
 		description: 'Check if the note is an instance of Note class'
 		]
 ]
@@ -92,7 +92,7 @@ NTBasicTest >> testCreateNoteObject [
 
 	sing safeDo: [ :uniq |
 	| aNote |
-	aNote := uniq newNoteNamed: self simplestNoteName.
+	aNote := uniq addNoteNamed: self simplestNoteName.
 	self assert: aNote isNote ]
 ]
 
@@ -100,15 +100,16 @@ NTBasicTest >> testCreateNoteObject [
 NTBasicTest >> testMultipleNotesCreationAndAccess [
 	"Test creating multiple notes and accessing them"
 
+	| noteFileName |
 	sing safeDo: [  :uniq |  
 	| noteNames notes |
 	noteNames := self threeNoteNames.
 
-	noteNames do: [ :name | uniq addNoteNamed: name ].
+	noteFileName := noteNames collect: [ :name | (uniq addNoteNamed: name) fileName ].
 	notes := uniq notes.
 
 	self assert: notes size equals: noteNames size.
-	noteNames do: [ :name |
+	noteFileName do: [ :name |
 		self assert: (uniq hasNoteNamed: name) ]
 	]
 ]
@@ -118,11 +119,12 @@ NTBasicTest >> testNoteDeletion [
 	"Test creating notes and deleting one of them"
 
 	sing safeDo: [ :uniq | 
-	| noteNames notes secondNoteName |
-	secondNoteName := self simplestNoteName , '2'.
+	| noteNames notes secondNoteName tempNotes |
 	noteNames := self threeNoteNames.
 
-	noteNames do: [ :name | uniq addNoteNamed: name ].
+	tempNotes := noteNames collect: [ :name | uniq addNoteNamed: name ].
+	
+	secondNoteName := tempNotes second fileName.
 
 	uniq removeNoteNamed: secondNoteName.
 	notes := uniq notes.
@@ -136,12 +138,12 @@ NTBasicTest >> testNoteObjectsContainValidNotes [
 	"Test that the note objects returned by the container are valid instances of Note class"
 
 	sing safeDo: [  :uniq | 
-	| noteName noteObject |
+	| noteName noteObject note |
 	noteName := self simplestNoteName.
 
-	uniq addNoteNamed: noteName.
+	note := uniq addNoteNamed: noteName.
 
-	noteObject := uniq noteNamed: noteName.
+	noteObject := uniq noteNamed: note fileName.
 	self assert: noteObject isNote ] 
 ]
 
@@ -158,9 +160,10 @@ NTBasicTest >> testNotesInitialization [
 NTBasicTest >> testRemoveNote [
 
 	sing safeDo: [ :uniq |
-		uniq addNoteNamed: self simplestNoteName.
+		|note |
+		note := uniq addNoteNamed: self simplestNoteName.
 		self assert: uniq notesCount equals: 1.
-		uniq removeNoteNamed: self simplestNoteName.
+		uniq removeNoteNamed: note fileName.
 		self
 			deny: uniq hasNotes
 			description: 'It tests that now we haven''t any notes' ]

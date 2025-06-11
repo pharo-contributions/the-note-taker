@@ -18,6 +18,7 @@ Class {
 { #category : 'running' }
 NTSpNoteTakerMainUITest >> setUp [
 	
+	| noteFileName |
 	super setUp. 
 	memoryFS := FileSystem memory. 
 	
@@ -30,9 +31,9 @@ NTSpNoteTakerMainUITest >> setUp [
 	noteFile := memoryFS workingDirectory / 'newNote.md'. 
 	noteFile writeStreamDo: [ : stream | stream nextPutAll: 'new note' ].
 	
-	notesTaker addNoteFromFileReference: noteFile. 
-	note := notesTaker noteNamed: 'newNote'.
-	notesContentPresenter editorPresenter newNote: note.
+	noteFileName := (notesTaker addNoteFromFileReference: noteFile) fileName. 
+	note := notesTaker noteNamed: noteFileName.
+	notesContentPresenter newNote: note.
 	
 	
 ]
@@ -50,11 +51,11 @@ NTSpNoteTakerMainUITest >> tearDown [
 NTSpNoteTakerMainUITest >> testAddContent [
 	
 	| tempNote |
-	notesContentPresenter contents: 'It''s just a test'.
+	notesContentPresenter textInputText: 'It''s just a test'.
 	
-	tempNote := notesContentPresenter editorPresenter note.
-	tempNote fileReference: memoryFS workingDirectory / tempNote title.
-	notesContentPresenter editorPresenter saveFile.
+	tempNote := notesContentPresenter note.
+	tempNote folderReference: memoryFS workingDirectory.
+	notesContentPresenter saveFile.
 
 	self assert: note contents equals: 'It''s just a test'
 ]
@@ -63,16 +64,16 @@ NTSpNoteTakerMainUITest >> testAddContent [
 NTSpNoteTakerMainUITest >> testAddNoteByItsContents [ 
 	
 	| tempNote |
-	notesContentPresenter editorPresenter startNewFile.
-	notesContentPresenter contents: 'just a new note'.
+	notesContentPresenter startNewFile.
+	notesContentPresenter textInputText: 'just a new note'.
 	
-	tempNote := notesContentPresenter editorPresenter note.
-	tempNote fileReference: memoryFS workingDirectory / tempNote title.
+	tempNote := notesContentPresenter note.
+	tempNote folderReference: memoryFS workingDirectory.
 	
-	notesContentPresenter editorPresenter saveFile.
+	notesContentPresenter saveFile.
 	
-	self assert: notesContentPresenter editorPresenter note exists.
-	self assert: (notesContentPresenter editorPresenter note fileReference basename includesSubstring: 'justanew').
+	self assert: notesContentPresenter note exists.
+	self assert: (notesContentPresenter note fileReference basename includesSubstring: 'just a new').
 	
 ]
 
@@ -89,12 +90,12 @@ NTSpNoteTakerMainUITest >> testAddNoteByItsName [
 NTSpNoteTakerMainUITest >> testImportNote [ 
 	
 	| tempNote |
-	notesContentPresenter contents: 'It''s just a test'.
+	notesContentPresenter textInputText: 'It''s just a test'.
 	
-	tempNote := notesContentPresenter editorPresenter note.
-	tempNote fileReference: memoryFS workingDirectory / tempNote title.
+	tempNote := notesContentPresenter note.
+	tempNote folderReference: memoryFS workingDirectory.
 	
-	notesContentPresenter editorPresenter saveFile.
+	notesContentPresenter saveFile.
 
 	self assert: note contents equals: 'It''s just a test' 
 ]
@@ -106,30 +107,33 @@ NTSpNoteTakerMainUITest >> testNameNoteIsInISOFormat [
 	| date tempNote |
 	date := DateAndTime now asDate yyyymmdd.
 	
-	tempNote := notesContentPresenter editorPresenter note.
-	tempNote fileReference: memoryFS workingDirectory / tempNote title.
+	tempNote := notesContentPresenter note.
+	tempNote folderReference: memoryFS workingDirectory.
 	
-	notesContentPresenter editorPresenter saveFile.
+	notesContentPresenter saveFile.
 
-	self assert: (note title beginsWith: date).
+	self assert: (note fileName beginsWith: date).
 ]
 
 { #category : 'tests' }
 NTSpNoteTakerMainUITest >> testNoteSearch [
 
-	| toolbar nameOfNoteToSearch result anotherNameNoteToSearch |
+	| toolbar result |
 	notesTaker addNoteNamed: 'newNote'.
 	notesTaker addNoteNamed: 'anotherNote'.
 	notesTaker addNoteNamed: 'thirdNote'.
 	notesTaker notes.
 	
 	toolbar := presenter notesToolbarPresenter.
-	nameOfNoteToSearch := 'newNote'.
-	result := toolbar filteredNotesFor: nameOfNoteToSearch.
-	self assert: result size equals: 2.
-	anotherNameNoteToSearch := 'nnn'.
-	result := toolbar filteredNotesFor: anotherNameNoteToSearch.
-	self assert: result size equals: 0
+	
+	result := toolbar filteredNotesFor: 'newNote'.
+	self assert: result size equals: 1.
+	
+	result := toolbar filteredNotesFor: 'nnn'.
+	self assert: result size equals: 0.
+	
+	result := toolbar filteredNotesFor: 'Note'.
+	self assert: result size equals: 4
 ]
 
 { #category : 'tests' }
@@ -137,8 +141,7 @@ NTSpNoteTakerMainUITest >> testRemoveNote [
 	
 	| sizeNotesBeforeAddNote |
 	sizeNotesBeforeAddNote := notesIndexPresenter items size.
-	notesTaker addNoteNamed: 'note2'.
-	notesTaker removeNoteNamed: 'note2'.
+	notesTaker removeNoteNamed: (notesTaker addNoteNamed: 'note2') fileName.
 	self assert: notesIndexPresenter items size equals: sizeNotesBeforeAddNote. 
 ]
 
@@ -149,9 +152,9 @@ NTSpNoteTakerMainUITest >> testSelectANote [
 	notesIndexPresenter selectNote: notesIndexPresenter items first.
 
 	presenter selectedNote contents: 'anotherNote'.
-	notesContentPresenter editorPresenter openNote: presenter selectedNote. 
+	notesContentPresenter openNote: presenter selectedNote. 
 	
-	self assert: notesContentPresenter editorPresenter textInputText equals: 'anotherNote'.
+	self assert: notesContentPresenter textInputText equals: 'anotherNote'.
 
 
 ]

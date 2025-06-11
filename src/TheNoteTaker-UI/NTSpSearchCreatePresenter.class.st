@@ -49,26 +49,32 @@ NTSpSearchCreatePresenter >> filteredNotesFor: aString [
 ]
 
 { #category : 'initialization' }
-NTSpSearchCreatePresenter >> initializePresenters [ 
+NTSpSearchCreatePresenter >> initializePresenters [
 
 	notesSearchCreateTextPresenter := self newTextInput
-		help: 'Create a note by just typing a name';
-		placeholder: 'Type note to search or create';
-		whenTextChangedDo: [ self updateNotesList ];	
-		whenSubmitDo: [ : newNoteName | self requestNewNoteNamed: newNoteName ];
-		yourself.
+		                                  help:
+			                                  'Create a note by just typing a name';
+		                                  placeholder:
+			                                  'Type note to search or create';
+		                                  whenTextChangedDo: [
+			                                  self updateNotesList ];
+		                                  whenSubmitDo: [ :newNoteName |
+			                                  self requestNewNoteNamed:
+					                                  newNoteName ];
+		                                  yourself.
 	notesSearchButtonPresenter := self newButton
-		icon: (self iconNamed: #smallFind);
-		addStyle: 'small';		
-		action: [ self updateNotesList ];		
-		help: 'Search note';
-		yourself.
+		                              icon: (self iconNamed: #smallFind);
+		                              addStyle: 'small';
+		                              action: [ self updateNotesList ];
+		                              help: 'Search note';
+		                              yourself.
 	noteSettingsButtonPresenter := self newButton
-		icon: (self iconNamed: #smallConfiguration);
-		addStyle: 'small';		
-		action: [ self openTNTSettings ];
-		help: 'Settings';
-		yourself.
+		                               icon:
+			                               (self iconNamed: #smallConfiguration);
+		                               addStyle: 'small';
+		                               action: [ self openTNTSettings ];
+		                               help: 'Settings';
+		                               yourself
 ]
 
 { #category : 'accessing' }
@@ -99,21 +105,18 @@ NTSpSearchCreatePresenter >> openTNTSettings [
 		open
 ]
 
-{ #category : 'callbacks' }
-NTSpSearchCreatePresenter >> requestNewNoteNamed: aString [ 
+{ #category : 'as yet unclassified' }
+NTSpSearchCreatePresenter >> requestNewNoteNamed: aString [
 
 	| newNote |
-	(self confirm: 'Do you want to create a new note named: ' , aString)
+	"(self confirm: 'Do you want to create a new note named: ' , aString)
 		ifFalse: [ ^ self ].
-	(self model isValidNoteName: aString) 
-		ifFalse: [ ^ self ].
-
+	(self model isValidNoteName: aString) ifFalse: [ ^ self ]."
 	newNote := self application addNoteNamed: aString.
 	self updateNotesList.
 	self notesList selectNote: newNote.
 
-	self editorPresenter takeKeyboardFocus.
-
+	self editorPresenter takeKeyboardFocus
 ]
 
 { #category : 'accessing - model' }

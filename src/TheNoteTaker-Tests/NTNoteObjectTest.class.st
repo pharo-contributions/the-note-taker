@@ -10,20 +10,82 @@ Class {
 }
 
 { #category : 'accessing' }
-NTNoteObjectTest >> generateMetaDataWithFileName: filename modificationDate: modificationDate [
+NTNoteObjectTest >> generateMetaDataWithCreationDate: creationDate modificationDate: modificationDate [
 
-^ '{
-"lastModificationDate" : "', modificationDate asDate yyyymmdd asString ,'",
-"author" : "toto for now",
-"title" : "',filename ,'"
-}'
+	| meta |
+	meta := MicMetaDataBlock new.
+	meta body: Dictionary new.
+	meta
+		atKey: 'creationDate' put: creationDate asString;
+		atKey: 'lastModificationDate'
+		put: modificationDate asString.
+
+	^ (MicTextualMicrodownExporter new visit: meta) contents
 ]
 
 { #category : 'running' }
 NTNoteObjectTest >> setUp [
 	
 	super setUp.
-	memoryFS := FileSystem memory / 'test.md'.
+	memoryFS := FileSystem memory workingDirectory.
+]
+
+{ #category : 'tests' }
+NTNoteObjectTest >> testContentsIsDirty [
+	
+	| noteFile note |
+	noteFile := memoryFS / '2024-06-12_newNote.md'. 
+	noteFile writeStreamDo: [ : stream | stream nextPutAll: 'This is just a new note' ].
+	
+	note := NTNoteObject newFromFileReference: noteFile.
+	self deny: note isDirty.
+	
+	note contents: 'Change the contents'.
+	self assert: note isDirty.
+	
+	note save.
+	self deny: note isDirty.
+]
+
+{ #category : 'tests' }
+NTNoteObjectTest >> testLoadNoteWithMetadata [
+
+	| note noteFile metadata |
+	noteFile := memoryFS / '2024-06-12_newNote.md'.
+	metadata := self
+		            generateMetaDataWithCreationDate:
+		            '2025-01-01' asDateAndTime
+		            modificationDate: '2024-01-01' asDateAndTime.
+	noteFile writeStreamDo: [ :stream |
+			stream nextPutAll: metadata;
+				nextPutAll: String crlf;
+				nextPutAll: String crlf;
+				nextPutAll: 'This is just a new note'].
+
+	note := NTNoteObject newFromFileReference: noteFile.
+
+	self assert: note exists.
+	self assert: note contents equals: 'This is just a new note'.
+	self assert: note fileName equals: '2024-06-12_newNote.md'.
+	self assert: note title equals: 'This is just a new note'.
+	self assert: note creationDate equals: '2025-01-01' asDateAndTime.
+	self assert: note modificationDate equals: '2024-01-01' asDateAndTime
+]
+
+{ #category : 'tests' }
+NTNoteObjectTest >> testLoadNoteWithoutMetadata [
+
+	| note noteFile |
+	
+	noteFile := memoryFS / '2024-06-12_newNote.md'. 
+	noteFile writeStreamDo: [ : stream | stream nextPutAll: 'This is just a new note' ].
+	
+	note := NTNoteObject newFromFileReference: noteFile.
+	
+	self assert: note exists.
+	self assert: note contents equals: 'This is just a new note'.
+	self assert: note fileName equals: '2024-06-12_newNote.md'.
+	self assert: note title equals: 'This is just a new note'.
 ]
 
 { #category : 'tests' }
@@ -75,12 +137,34 @@ NTNoteObjectTest >> testNoteModificationUpdatesModificationDate [
 	initialModificationDate := note modificationDate.
 
 	"Simulate some modification after a delay"
-	(Delay forSeconds: 1) wait.
+	(Delay forSeconds: 0.1) wait.
 	note contents: 'testMock Modified content'.
 
 	updatedModificationDate := note modificationDate.
 
 	self assert: updatedModificationDate > initialModificationDate
+]
+
+{ #category : 'tests' }
+NTNoteObjectTest >> testSaveExistingFileWithDifferentTitle [
+
+	| note modificationDate metadata finalContents fileName |
+	
+	note := NTNoteObject named: 'Test' contents: 'Ceci est un test'.
+	modificationDate := note modificationDate.
+	note folderReference: memoryFS.
+	note save.
+	fileName := note fileName.
+	note contents: 'I change the title'.
+	note save.
+	
+	self denyEmpty: note fileReference contents.
+	
+	metadata := self generateMetaDataWithCreationDate: note creationDate modificationDate: note modificationDate.
+	finalContents :=  metadata, String crlf, String crlf, 'I change the title'.
+	
+	self assert: note fileReference contents equals: finalContents.
+	self assert: note fileName equals: fileName.
 ]
 
 { #category : 'tests' }
@@ -90,13 +174,49 @@ NTNoteObjectTest >> testSaveNote [
 	
 	note := NTNoteObject named: 'Test' contents: 'Ceci est un test'.
 	modificationDate := note modificationDate.
-	note fileReference: memoryFS.
+	note folderReference: memoryFS.
 	note save.
 	
-	self denyEmpty: memoryFS contents.
+	self denyEmpty: note fileReference contents.
 	
-	metadata := self generateMetaDataWithFileName: 'Test' modificationDate: note modificationDate.
+	metadata := self generateMetaDataWithCreationDate: note creationDate modificationDate: note modificationDate.
 	finalContents :=  metadata, String crlf, String crlf, 'Ceci est un test'.
 	
-	self assert: memoryFS contents equals: finalContents
+	self assert: note fileReference contents equals: finalContents
+]
+
+{ #category : 'tests' }
+NTNoteObjectTest >> testSaveNoteLoadedWithoutMetadata [
+	
+	| note modificationDate metadata finalContents noteFile |
+	
+	noteFile := memoryFS / '2024-06-12_newNote.md'. 
+	noteFile writeStreamDo: [ : stream | stream nextPutAll: 'This is just a new note' ].
+	
+	note := NTNoteObject newFromFileReference: noteFile.
+	
+	modificationDate := note modificationDate.
+	note folderReference: memoryFS.
+	note save.
+	
+	self denyEmpty: note fileReference contents.
+	
+	metadata := self generateMetaDataWithCreationDate: note creationDate modificationDate: note modificationDate.
+	finalContents :=  metadata, String crlf, String crlf, 'This is just a new note'.
+	
+	self assert: note fileReference contents equals: finalContents
+]
+
+{ #category : 'tests' }
+NTNoteObjectTest >> testTitleIsFirstLineOfContents [
+
+	| note1 note2 note3 |
+	
+	note1 := NTNoteObject named: 'Test1' contents: 'test with only one line'.
+	note2 := NTNoteObject named: 'Test2' contents: 'test with two line', String crlf, 'Second Line'.
+	note3 := NTNoteObject named: 'Test3' contents: ''.	
+	
+	self assert: note1 title equals: 'test with only one line';
+		assert: note2 title equals: 'test with two line';
+		assert: note3 title equals: ''.
 ]

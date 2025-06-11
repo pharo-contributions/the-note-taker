@@ -27,6 +27,12 @@ NTEditorPresenter >> applicationTitle [
 	^ self application applicationTitle
 ]
 
+{ #category : 'actions' }
+NTEditorPresenter >> defaultInputPort [
+
+	^ SpModelPort newPresenter: self
+]
+
 { #category : 'layout' }
 NTEditorPresenter >> defaultLayout [
 
@@ -105,14 +111,9 @@ NTEditorPresenter >> mayLoseEdits [
 { #category : 'api' }
 NTEditorPresenter >> newNote: aNoteObject [
 
-	"self mdFile: (MDFile new title: aNoteObject title)."
-	self note: aNoteObject.
-	self window ifNotNil: [ self updateTitle ].
-	textInput text: self note contents.
-	self emptyRenderedText.
-	self renderDocument.
-	note title: self note title.
-	note contents: textInput text
+	note := aNoteObject.
+	self displayContents: aNoteObject.
+	self window ifNotNil: [self updateTitle].
 ]
 
 { #category : 'api' }
@@ -136,12 +137,9 @@ NTEditorPresenter >> note: aNTNoteObject [
 { #category : 'api' }
 NTEditorPresenter >> openNote: aNoteObject [
 
-	textInput text: aNoteObject contents.
-	self emptyRenderedText.
-	self window ifNotNil: [self updateTitle].
-	self renderDocument.
 	note := aNoteObject.
-	note contents: self textInputText.
+	self displayContents: aNoteObject.
+	self window ifNotNil: [self updateTitle].
 ]
 
 { #category : 'actions' }
@@ -166,6 +164,15 @@ NTEditorPresenter >> saveFile [
 	self note save.
 	isTextDirty := false.
 	self window ifNotNil: [ self updateTitle ]
+]
+
+{ #category : 'api' }
+NTEditorPresenter >> setModel: aNoteObject [ 
+	"Private - Set the receiver's content iterating recursively starting from aNode"
+	
+	"(self editorPresenter canOpenFile: aNoteObject)
+		ifTrue: [ aNoteObject openFromPresenter: self ]
+		ifFalse: [ aNoteObject newFromPresenter: self ]" 
 ]
 
 { #category : 'accessing' }
@@ -199,14 +206,14 @@ NTEditorPresenter >> textInputText: aString [
 NTEditorPresenter >> title [
 	"Answer a <String> representing the application name and selected note title"
 
-	^ String streamContents: [ : stream |
-		stream 
-			<< self applicationTitle;
-			<< self owner selectedNoteTitle ]
+	^ String streamContents: [ :stream |
+			  stream
+				  << self applicationTitle;
+				  << self owner selectedNoteTitle ]
 ]
 
 { #category : 'api' }
 NTEditorPresenter >> updateTitle [
 
-	self window title: self title
+	self window title: self note title
 ]
