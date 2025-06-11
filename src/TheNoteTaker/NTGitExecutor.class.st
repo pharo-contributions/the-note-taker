@@ -12,31 +12,42 @@ Class {
 { #category : 'adding' }
 NTGitExecutor >> add [
 
-	LibC runCommand: self gitMinusCString , self projectPathString , ' add ', self projectPathString , '/*'
+	LibC runCommand: self gitMinusCString , self projectPathString , ' add .'
 ]
 
 { #category : 'adding' }
 NTGitExecutor >> commit [
 
-	LibC runCommand: self gitCommitCommand
+	LibC runCommand: self gitMinusCString , self projectPathString , ' commit -m "saving"'
 
-]
-
-{ #category : 'adding' }
-NTGitExecutor >> gitCommitCommand [
-	"Answer a <String> with a Git command to commit the current notes to a local folder"
-	
-	^ String streamContents: [ : stream |
-		stream
-			<< self gitMinusCString;
-			<< self projectPathString;
-			<< 'commit -m "saving"' ]
 ]
 
 { #category : 'adding' }
 NTGitExecutor >> gitMinusCString [
 
 	^ 'git -C '
+]
+
+{ #category : 'accessing' }
+NTGitExecutor >> githubPathString [
+	"Answer a <String> with a local or remote path where notes will be committed"
+
+	^ self settingsClass githubPathString
+]
+
+{ #category : 'adding' }
+NTGitExecutor >> init [
+
+	LibC runCommand: self gitMinusCString , self projectPathString , ' init'.
+	LibC runCommand: self gitMinusCString , self projectPathString , ' add origin ' , self githubPathString 
+]
+
+{ #category : 'initialization' }
+NTGitExecutor >> initialize [
+
+	super initialize.
+	
+	(self projectPathString, '.git') asFileReference exists ifFalse: [ self init ]
 ]
 
 { #category : 'accessing' }
@@ -55,7 +66,7 @@ NTGitExecutor >> pull [
 { #category : 'adding' }
 NTGitExecutor >> push [
 
-	LibC runCommand: self gitMinusCString , self projectPathString , ' push'
+	LibC runCommand: self gitMinusCString , self projectPathString , ' push ' , self githubPathString, ' HEAD:main'.
 ]
 
 { #category : 'initialization' }
