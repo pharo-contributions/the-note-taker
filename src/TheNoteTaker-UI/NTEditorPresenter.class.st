@@ -99,7 +99,8 @@ NTEditorPresenter >> initializePresenters [
 		whenTextChangedDo: [
 				self renderDocument.
 				note ifNotNil: [ note contents: textInput text asString ] ];
-		bindKeyCombination: $s meta toAction: [ note save . self inform: 'Note ' , note fileReference fullName , ' saved' ]
+		bindKeyCombination: $s meta toAction: [ self saveFile . self inform: 'Note ' , note fileReference fullName , ' saved' ];
+		bindKeyCombination: $g meta toAction: [ self push . self inform: 'Folder push' ]
 ]
 
 { #category : 'testing' }
@@ -143,6 +144,12 @@ NTEditorPresenter >> openNote: aNoteObject [
 ]
 
 { #category : 'actions' }
+NTEditorPresenter >> push [
+
+	NTSpGitCommand new execute.
+]
+
+{ #category : 'actions' }
 NTEditorPresenter >> renderDocument [
 	"RENDER button is pressed: render input to output text"
 
@@ -160,7 +167,7 @@ NTEditorPresenter >> renderedText [
 
 { #category : 'actions' }
 NTEditorPresenter >> saveFile [
-
+	
 	self note save.
 	isTextDirty := false.
 	self window ifNotNil: [ self updateTitle ]
