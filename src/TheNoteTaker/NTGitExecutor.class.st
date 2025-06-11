@@ -66,7 +66,7 @@ NTGitExecutor >> pull [
 { #category : 'adding' }
 NTGitExecutor >> push [
 
-	LibC runCommand: self gitMinusCString , self projectPathString , ' push ' , self githubPathString, ' HEAD:main'.
+	LibC runCommand: self gitMinusCString , self projectPathString , ' push ' , self githubPathString, ' master'
 ]
 
 { #category : 'initialization' }
