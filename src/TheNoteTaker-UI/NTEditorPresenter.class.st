@@ -14,7 +14,8 @@ Class {
 		'composer',
 		'note',
 		'renderedText',
-		'isTextDirty'
+		'isTextDirty',
+		'worker'
 	],
 	#category : 'TheNoteTaker-UI-Manifest',
 	#package : 'TheNoteTaker-UI',
@@ -70,7 +71,8 @@ NTEditorPresenter >> emptyRenderedText [
 NTEditorPresenter >> initialize [ 
 
 	super initialize.
-	self noNote
+	self noNote.
+	worker := TKTLocalProcessTaskRunner new.
 ]
 
 { #category : 'initialization' }
@@ -83,7 +85,6 @@ NTEditorPresenter >> initializePresenters [
 	textInput
 		bindKeyCombination: Character space asKeyCombination | Character cr asKeyCombination 
 		toAction: [ :target :morph :event |
-				Transcript show: '#'.
 				self renderDocument.
 				event wasHandled: false ].
 			
@@ -158,11 +159,10 @@ NTEditorPresenter >> push [
 NTEditorPresenter >> renderDocument [
 	"RENDER button is pressed: render input to output text"
 
-	| document |
-	
-	document := Microdown parse: self textInputText copy.
-	text := composer visit: document.
-	renderedText text: text
+	worker schedule: [ | document |
+		document := Microdown parse: self textInputText.
+		text := composer visit: document.
+		renderedText text: text]
 ]
 
 { #category : 'accessing' }
