@@ -81,13 +81,17 @@ NTEditorPresenter >> initializePresenters [
 
 	textInput := self newText.
 	textInput
-		bindKeyCombination: (KMKeyCombinationChoice withShortcuts: {
-					 Character space asKeyCombination.
-					 Character cr asKeyCombination })
+		bindKeyCombination: Character space asKeyCombination | Character cr asKeyCombination 
 		toAction: [ :target :morph :event |
-				[ self renderDocument ] schedule.
+				Transcript show: '#'.
+				self renderDocument.
 				event wasHandled: false ].
-
+			
+	"		
+	textInput addShortcutWith: [ :action | action 
+        shortcutKey: Character space asKeyCombination | Character cr asKeyCombination;
+        action: [ self renderDocument ] ].
+   "
 	textInput eventHandler whenKeyDownDo: [ :anEvent |
 			isTextDirty := true.
 			anEvent wasHandled: false ].
@@ -97,10 +101,11 @@ NTEditorPresenter >> initializePresenters [
 		                yourself.
 	textInput
 		whenTextChangedDo: [
-				self renderDocument.
 				note ifNotNil: [ note contents: textInput text asString ] ];
-		bindKeyCombination: $s meta toAction: [ self saveFile . self inform: 'Note ' , note fileReference fullName , ' saved' ];
-		bindKeyCombination: $g meta toAction: [ self push . self inform: 'Folder push' ]
+		bindKeyCombination: $s meta 
+		toAction: [ self saveFile . self inform: 'Note ' , note fileReference fullName , ' saved' ];
+		bindKeyCombination: $g meta 
+		toAction: [ self push . self inform: 'Folder push' ]
 ]
 
 { #category : 'testing' }
@@ -154,7 +159,8 @@ NTEditorPresenter >> renderDocument [
 	"RENDER button is pressed: render input to output text"
 
 	| document |
-	document := Microdown parse: self textInputText.
+	
+	document := Microdown parse: self textInputText copy.
 	text := composer visit: document.
 	renderedText text: text
 ]

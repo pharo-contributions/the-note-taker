@@ -57,7 +57,7 @@ NTSettings class >> projectPathSettingsOn: aBuilder [
 NTSettings class >> projectPathString [
 	"Answer the preferred <String> where notes will be stored"
 
-	^ ProjectPathString
+	^ ProjectPathString ifNil:[ '/Users/ducasse/Workspace/FirstCircle/Writing/Working/researchnotes/faked' ]
 ]
 
 { #category : 'accessing' }
