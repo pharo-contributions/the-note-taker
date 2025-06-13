@@ -89,7 +89,11 @@ NTNoteObject >> exists [
 { #category : 'accessing' }
 NTNoteObject >> fileName [
 
-	^ fileName ifNil: [ self title ifNotEmpty: [ fileName := fileNamer newNameBasedOn:(NTISOFileNamer new newNameBasedOn: self title)]]
+	fileNamer date: creationDate.
+	^ fileName ifNil: [
+			  self title ifNotEmpty: [
+					  fileName := fileNamer newNameBasedOn:
+						              (NTFileNamer new newNameBasedOn: self title) ] ]
 ]
 
 { #category : 'accessing' }
