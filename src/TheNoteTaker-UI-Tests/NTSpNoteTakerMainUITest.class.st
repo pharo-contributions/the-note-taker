@@ -61,20 +61,21 @@ NTSpNoteTakerMainUITest >> testAddContent [
 ]
 
 { #category : 'tests' }
-NTSpNoteTakerMainUITest >> testAddNoteByItsContents [ 
-	
+NTSpNoteTakerMainUITest >> testAddNoteByItsContents [
+
 	| tempNote |
 	notesContentPresenter startNewFile.
 	notesContentPresenter textInputText: 'just a new note'.
-	
+
 	tempNote := notesContentPresenter note.
 	tempNote folderReference: memoryFS workingDirectory.
-	
+
 	notesContentPresenter saveFile.
-	
+
 	self assert: notesContentPresenter note exists.
-	self assert: (notesContentPresenter note fileReference basename includesSubstring: 'just a new').
-	
+	self assert:
+		(notesContentPresenter note fileReference basename
+			 includesSubstring: 'justanew')
 ]
 
 { #category : 'tests' }

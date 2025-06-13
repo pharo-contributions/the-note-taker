@@ -308,11 +308,10 @@ NTNoteObject >> threeWayCompareTo: aNTNoteObject [
 
 { #category : 'accessing' }
 NTNoteObject >> title [
-
-	| titleTemp |
-	titleTemp := title.
-	titleTemp ifNil: [ self generateTitle. titleTemp := title ].
-	^ titleTemp
+	
+	title ifNotNil: [ ^ title ].
+	self generateTitle.
+	^ title
 ]
 
 { #category : 'accessing' }
