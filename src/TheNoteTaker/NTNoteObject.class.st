@@ -229,8 +229,13 @@ NTNoteObject >> loadMetaData: aString [
 
 	| metaData |
 	metaData := (MicrodownParser parse: aString) metaDataElement.
-	self creationDate: (metaData at: 'creationDate') asDateAndTime.
-	self modificationDate: (metaData at: 'lastModificationDate') asDateAndTime
+	self creationDate:
+		(metaData at: 'creationDate' ifAbsent: DateAndTime now)
+			asDateAndTime.
+	self modificationDate:
+		(metaData at: 'lastModificationDate' ifAbsent: self creationDate)
+			asDateAndTime.
+	self tags: (metaData at: 'tags' ifAbsent: Set new)
 ]
 
 { #category : 'accessing' }
