@@ -36,7 +36,7 @@ NTSpRemoveNoteCommand >> execute [
 		 'Are you sure you want to remove the selected note(s)?') ifFalse: [
 		^ self ].
 	self selectedNotes do: [ :note |
-		note existsAsFile ifTrue: [ note title asFileReference ensureDelete ] ].
+		note exists ifTrue: [ note title asFileReference ensureDelete ] ].
 	self facade removeNotes: self selectedNotes.
 	self context updateRemovedNote
 ]
