@@ -44,6 +44,7 @@ NTSpImportFolderCommand >> executeWithDefaultFolder [
 
 	| folder |
 	folder := NTSettings projectPathString asFileReference.
+	folder exists ifFalse: [ ^ self ].
 	self processFolder: folder.
 	self context items: self facade notes
 ]
