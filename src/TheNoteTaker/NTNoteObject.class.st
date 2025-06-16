@@ -263,11 +263,9 @@ NTNoteObject >> printOn: aStream [
 ]
 
 { #category : 'accessing - tags' }
-NTNoteObject >> removeTag: aNTTag [ 
+NTNoteObject >> removeTag: aNTTag [
 
-	self tags 
-		remove: aNTTag 
-		ifAbsent: [ ].
+	self tags remove: aNTTag ifAbsent: [ ^ self ].
 	aNTTag removeNote: self
 ]
 

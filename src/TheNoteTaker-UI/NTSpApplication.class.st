@@ -62,7 +62,9 @@ NTSpApplication >> applicationTitle [
 NTSpApplication >> initialize [
 
 	super initialize.
-	noteTakerFacade := NTSingleton uniqueInstance
+	NTSingleton reset.
+	noteTakerFacade := NTSingleton uniqueInstance.
+	
 ]
 
 { #category : 'testing' }
