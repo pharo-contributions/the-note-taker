@@ -224,7 +224,7 @@ NTNoteObject >> loadFileContents: aString [
 { #category : 'loading' }
 NTNoteObject >> loadMetaData: aString [
 
-	| metaData |
+	| metaData tagsString sing |
 	metaData := (MicrodownParser parse: aString) metaDataElement.
 	self creationDate:
 		(metaData at: 'creationDate' ifAbsent: DateAndTime now)
@@ -232,7 +232,10 @@ NTNoteObject >> loadMetaData: aString [
 	self modificationDate:
 		(metaData at: 'lastModificationDate' ifAbsent: self creationDate)
 			asDateAndTime.
-	self tags: (metaData at: 'tags' ifAbsent: Set new)
+	tagsString := metaData at: 'tags' ifAbsent: [ ^ self ].
+	sing := NTSingleton uniqueInstance.
+	(tagsString substrings: ',') do: [ :each |
+		(sing tagNamed: each) addNote: self ]
 ]
 
 { #category : 'accessing' }
