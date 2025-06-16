@@ -27,7 +27,7 @@ NTSpAddTagCommand >> execute [
 		          title: 'tag name';
 		          label: 'Please provide the name of the tag';
 		          openModalWithParent: context window.
-
+	
 	tag := self facade tagNamed: answer.
 
 	self selectedNotes do: [ :note | tag addNote: note ]

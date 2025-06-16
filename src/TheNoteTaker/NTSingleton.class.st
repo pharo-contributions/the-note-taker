@@ -216,6 +216,15 @@ NTSingleton >> removeTagNamed: aString [
 ]
 
 { #category : 'accessing - tags' }
+NTSingleton >> tagNameMatching: aString [
+	"Answer the first <NTNoteObject> matching aString in its name"
+
+	| pattern |
+	pattern := '*' , aString , '*'.
+	^ self tags detect: [ :n | pattern match: n tagName ]
+]
+
+{ #category : 'accessing - tags' }
 NTSingleton >> tagNamed: aString [
 	"Answer the first <NTNoteObject> matching aString in its name"
 
@@ -233,4 +242,13 @@ NTSingleton >> tags [
 NTSingleton >> tags: aCollection [
 
 	tags := aCollection
+]
+
+{ #category : 'accessing - tags' }
+NTSingleton >> tagsNameMatching: aString [
+	"Answer a <Collection> with <NoteObject> objects whose title matched named aString"
+
+	| pattern |
+	pattern := '*' , aString , '*'.
+	^ self tags select: [ :n | pattern match: n tagName ]
 ]

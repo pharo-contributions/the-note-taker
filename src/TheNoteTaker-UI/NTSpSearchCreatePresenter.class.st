@@ -10,9 +10,9 @@ Class {
 	#superclass : 'SpPresenter',
 	#instVars : [
 		'notesSearchCreateTextPresenter',
-		'notesSearchButtonPresenter',
 		'model',
-		'noteSettingsButtonPresenter'
+		'noteSettingsButtonPresenter',
+		'tagsSearchCreateTextPresenter'
 	],
 	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
@@ -23,10 +23,10 @@ Class {
 NTSpSearchCreatePresenter >> defaultLayout [
 
 	^ SpBoxLayout newLeftToRight
-		add: notesSearchCreateTextPresenter;
-		add: notesSearchButtonPresenter expand: false;
-		add: noteSettingsButtonPresenter expand: false;
-		yourself
+		  add: notesSearchCreateTextPresenter;
+		  add: tagsSearchCreateTextPresenter;
+		  add: noteSettingsButtonPresenter expand: false;
+		  yourself
 ]
 
 { #category : 'accessing' }
@@ -48,6 +48,15 @@ NTSpSearchCreatePresenter >> filteredNotesFor: aString [
 	^ self model notesNameMatching: aString 
 ]
 
+{ #category : 'callbacks' }
+NTSpSearchCreatePresenter >> filteredTagsFor: aString withNotes: aNotesCollection [
+	"Answer a <Collection> of <NTNoteObject> whose names match aString"
+
+	| pattern |
+	pattern := '*' , aString , '*'.
+	^ aNotesCollection select: [ :n | (n tags select: [ :t | pattern match: t tagName ]) notEmpty]
+]
+
 { #category : 'initialization' }
 NTSpSearchCreatePresenter >> initializePresenters [
 
@@ -62,12 +71,13 @@ NTSpSearchCreatePresenter >> initializePresenters [
 			                                  self requestNewNoteNamed:
 					                                  newNoteName ];
 		                                  yourself.
-	notesSearchButtonPresenter := self newButton
-		                              icon: (self iconNamed: #smallFind);
-		                              addStyle: 'small';
-		                              action: [ self updateNotesList ];
-		                              help: 'Search note';
-		                              yourself.
+	tagsSearchCreateTextPresenter := self newTextInput
+		                                 help:
+			                                 'search a tag by just typing a name';
+		                                 placeholder: 'Type tag to search';
+		                                 whenTextChangedDo: [
+			                                 self updateNotesList ];
+		                                 yourself.
 	noteSettingsButtonPresenter := self newButton
 		                               icon:
 			                               (self iconNamed: #smallConfiguration);
@@ -133,7 +143,13 @@ NTSpSearchCreatePresenter >> updateNotesList [
 		                 ifEmpty: [ self notes ]
 		                 ifNotEmpty: [ :pattern |
 		                 self filteredNotesFor: pattern ].
+
+	filteredItems := tagsSearchCreateTextPresenter text
+		                 ifEmpty: [ filteredItems ]
+		                 ifNotEmpty: [ :pattern |
+		                 self filteredTagsFor: pattern withNotes: filteredItems ].
+
 	self notesList items: filteredItems.
-	filteredItems isNotEmpty
-		ifTrue: [ self notesList selectNote: filteredItems first ]
+	filteredItems isNotEmpty ifTrue: [
+		self notesList selectNote: filteredItems first ]
 ]
