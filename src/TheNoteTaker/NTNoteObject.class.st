@@ -155,9 +155,13 @@ NTNoteObject >> generateMetaDataElements [
 	meta body: Dictionary new.
 	meta
 		atKey: 'creationDate' put: self creationDate asString;
-		atKey: 'lastModificationDate' put: self modificationDate asString;
-		atKey: 'Tag' put: (self tags collect: [ :each | each tagName ]) asArray.
-	"atKey: 'author' put: 'toto for now';"
+		atKey: 'lastModificationDate' put: self modificationDate asString.
+	self tags ifNotEmpty: [
+			meta
+				atKey: 'tags'
+				put:
+				((self tags collect: [ :each | each tagName ]) asArray joinUsing:
+					 ',') ].
 
 	^ (MicTextualMicrodownExporter new visit: meta) contents
 ]

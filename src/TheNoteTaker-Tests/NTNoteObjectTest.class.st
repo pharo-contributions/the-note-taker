@@ -31,13 +31,9 @@ NTNoteObjectTest >> generateMetaDataTagLine: aTag [
 NTNoteObjectTest >> generateMetaDataTagsCollectionLine: aTagCollection [
 
 	| stream |
-	stream := WriteStream with: '"tags" : ['.
-	aTagCollection do: [ :each |
-			stream
-				nextPutAll: (self generateMetaDataTagLine: each);
-				nextPutAll: ',' ].
-	stream skip: -1.
-	stream nextPutAll: ']"'.
+	stream := WriteStream with: '"tags" : "'.
+	stream nextPutAll: ((aTagCollection collect: [ :each | each tagName ]) asArray joinUsing:','). 
+	stream nextPutAll: '"'.
 	^ stream contents
 ]
 
@@ -52,11 +48,11 @@ NTNoteObjectTest >> generateMetaDataWithCreationDate: creationDate modificationD
 
 	^ (MicTextualMicrodownExporter new visit: meta) contents"
 
-	^ '{' , String crlf
-	  , (self generateMetaDataModificationDateLine: modificationDate), ','
-	  , String crlf
+	^ '{' , String cr
+	  , (self generateMetaDataModificationDateLine: modificationDate)
+	  , ',' , String cr
 	  , (self generateMetaDataCreationDateLine: creationDate)
-	  , String crlf , '}'
+	  , String cr , '}'
 ]
 
 { #category : 'accessing' }
@@ -70,13 +66,13 @@ NTNoteObjectTest >> generateMetaDataWithCreationDate: creationDate modificationD
 
 	^ (MicTextualMicrodownExporter new visit: meta) contents"
 
-	^ '{' , String crlf
+	^ '{' , String cr
 	  , (self generateMetaDataModificationDateLine: modificationDate)
-	  , ',' , String crlf
-	  , (self generateMetaDataCreationDateLine: creationDate)
-	  , ',' , String crlf
+	  , ',' , String cr
+	  , (self generateMetaDataCreationDateLine: creationDate) , ','
+	  , String cr
 	  , (self generateMetaDataTagsCollectionLine: aTagCollection)
-	  , String crlf , '}'
+	  , String cr , '}'
 ]
 
 { #category : 'running' }
@@ -204,7 +200,10 @@ NTNoteObjectTest >> testLoadNoteWithAllMetadata [
 	self assert: note fileName equals: '2024-06-12_newNote.md'.
 	self assert: note title equals: 'This is just a new note'.
 	self assert: note creationDate equals: '2025-01-01' asDateAndTime.
-	self assert: note modificationDate equals: '2024-01-01' asDateAndTime
+	self assert: note modificationDate equals: '2024-01-01' asDateAndTime.
+
+	self skip. "Comment je teste les tags ? Comment je les crées en les important ? idée de singleton de Tag a regarder"
+	self assert: note tags notEmpty
 ]
 
 { #category : 'tests' }
@@ -310,7 +309,6 @@ NTNoteObjectTest >> testNoteModificationUpdatesModificationDate [
 NTNoteObjectTest >> testSaveExistingFileWithDifferentTitle [
 
 	| note modificationDate metadata finalContents fileName |
-	
 	note := NTNoteObject named: 'Test' contents: 'Ceci est un test'.
 	modificationDate := note modificationDate.
 	note folderReference: memoryFS.
@@ -318,52 +316,60 @@ NTNoteObjectTest >> testSaveExistingFileWithDifferentTitle [
 	fileName := note fileName.
 	note contents: 'I change the title'.
 	note save.
-	
+
 	self denyEmpty: note fileReference contents.
-	
-	metadata := self generateMetaDataWithCreationDate: note creationDate modificationDate: note modificationDate.
-	finalContents :=  metadata, String crlf, String crlf, 'I change the title'.
-	
+
+	metadata := self
+		            generateMetaDataWithCreationDate: note creationDate
+		            modificationDate: note modificationDate.
+	finalContents := metadata , String crlf , String crlf
+	                 , 'I change the title'.
+
 	self assert: note fileReference contents equals: finalContents.
-	self assert: note fileName equals: fileName.
+	self assert: note fileName equals: fileName
 ]
 
 { #category : 'tests' }
 NTNoteObjectTest >> testSaveNote [
-	
+
 	| note modificationDate metadata finalContents |
-	
 	note := NTNoteObject named: 'Test' contents: 'Ceci est un test'.
 	modificationDate := note modificationDate.
 	note folderReference: memoryFS.
 	note save.
-	
+
 	self denyEmpty: note fileReference contents.
-	
-	metadata := self generateMetaDataWithCreationDate: note creationDate modificationDate: note modificationDate.
-	finalContents :=  metadata, String crlf, String crlf, 'Ceci est un test'.
-	
+
+	metadata := self
+		            generateMetaDataWithCreationDate: note creationDate
+		            modificationDate: note modificationDate.
+	finalContents := metadata , String crlf , String crlf
+	                 , 'Ceci est un test'.
+
 	self assert: note fileReference contents equals: finalContents
 ]
 
 { #category : 'tests' }
 NTNoteObjectTest >> testSaveNoteLoadedWithoutMetadata [
-	
+
 	| note modificationDate metadata finalContents noteFile |
-	
-	noteFile := memoryFS / '2024-06-12_newNote.md'. 
-	noteFile writeStreamDo: [ : stream | stream nextPutAll: 'This is just a new note' ].
-	
+	noteFile := memoryFS / '2024-06-12_newNote.md'.
+	noteFile writeStreamDo: [ :stream |
+		stream nextPutAll: 'This is just a new note' ].
+
 	note := NTNoteObject newFromFileReference: noteFile.
-	
+
 	modificationDate := note modificationDate.
 	note folderReference: memoryFS.
 	note save.
-	
+
 	self denyEmpty: note fileReference contents.
-	
-	metadata := self generateMetaDataWithCreationDate: note creationDate modificationDate: note modificationDate.
-	finalContents :=  metadata, String crlf, String crlf, 'This is just a new note'.
-	
+
+	metadata := self
+		            generateMetaDataWithCreationDate: note creationDate
+		            modificationDate: note modificationDate.
+	finalContents := metadata , String crlf , String crlf
+	                 , 'This is just a new note'.
+
 	self assert: note fileReference contents equals: finalContents
 ]
