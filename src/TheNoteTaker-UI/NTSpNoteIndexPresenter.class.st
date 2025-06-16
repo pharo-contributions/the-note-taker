@@ -33,28 +33,26 @@ NTSpNoteIndexPresenter class >> buildNTContextualGroupWith: presenterInstance [
 NTSpNoteIndexPresenter class >> buildNoteTakerOperationsGroupWith: presenterInstance [
 
 	^ (CmCommandGroup named: 'NoteTakerMenu') asSpecGroup
-			register: ((NTSpAddNoteCommand
-			forSpecWithIconNamed: #add
-			shortcutKey: 'A' asShortcut) 
-				context: presenterInstance);
-				
-			register: ((NTSpImportNoteCommand
-			forSpecWithIconNamed: #into
-			shortcutKey: 'I' asShortcut) 
-				context: presenterInstance);
-			
-			register: ((NTSpImportFolderCommand
-			forSpecWithIconNamed: #into
-			shortcutKey: 'F' asShortcut) 
-				context: presenterInstance);
-				
-			register: ((NTSpRemoveNoteCommand
-			forSpecWithIconNamed: #delete
-			shortcutKey: 'D' asShortcut) 
-				context: presenterInstance);
-								
-		beDisplayedAsGroup;
-		yourself
+		  register: ((NTSpAddNoteCommand
+				    forSpecWithIconNamed: #add
+				    shortcutKey: 'A' asShortcut) context: presenterInstance);
+		  register: ((NTSpImportNoteCommand
+				    forSpecWithIconNamed: #into
+				    shortcutKey: 'I' asShortcut) context: presenterInstance);
+		  register: ((NTSpImportFolderCommand
+				    forSpecWithIconNamed: #into
+				    shortcutKey: 'F' asShortcut) context: presenterInstance);
+		  register: ((NTSpRemoveNoteCommand
+				    forSpecWithIconNamed: #delete
+				    shortcutKey: 'D' asShortcut) context: presenterInstance);
+		  register: ((NTSpAddTagCommand
+				    forSpecWithIconNamed: #add
+				    shortcutKey: 'T' asShortcut) context: presenterInstance);
+		  register: ((NTSpRemoveTagCommand
+				    forSpecWithIconNamed: #delete
+				    shortcutKey: 'D' asShortcut) context: presenterInstance);
+		  beDisplayedAsGroup;
+		  yourself
 ]
 
 { #category : 'layout' }
@@ -74,10 +72,9 @@ NTSpNoteIndexPresenter >> defaultOutputPort [
 { #category : 'private' }
 NTSpNoteIndexPresenter >> displayNoteTags: selectedNote [
 	"Answer a <String> to be displayed"
-	
-	^ selectedNote tags 
-		ifEmpty: [ '' ] 
-		ifNotEmpty: [ : tags | tags join: ',' ]
+
+	selectedNote tags ifEmpty: [ ^ '' ].
+	^ (selectedNote tags collect: [ :each | each tagName ]) asArray joinUsing: ','
 ]
 
 { #category : 'accessing' }
