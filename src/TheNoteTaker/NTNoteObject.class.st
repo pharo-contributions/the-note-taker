@@ -89,7 +89,7 @@ NTNoteObject >> exists [
 { #category : 'accessing' }
 NTNoteObject >> fileName [
 
-	fileNamer date: creationDate.
+	fileNamer date: creationDate asDate.
 	^ fileName ifNil: [
 			  self title ifNotEmpty: [
 					  fileName := fileNamer newNameBasedOn:
@@ -142,8 +142,9 @@ NTNoteObject >> folderReference: aFileReference [
 
 { #category : 'generate' }
 NTNoteObject >> generateDefaultFileReference [
-	
-	self folderReference: FileReference / (NTSettings projectPathString ) / 'notes'
+
+	self folderReference:
+		FileReference / NTSettings projectPathString
 ]
 
 { #category : 'generate' }
@@ -163,26 +164,14 @@ NTNoteObject >> generateMetaDataElements [
 
 { #category : 'generate' }
 NTNoteObject >> generateTitle [
+	"create a new title which corresponds to the first line of the contents"
 
-"create a new title which corresponds to the first word of the contents.
-	If the contents has more than three words, the title correponds to its first three words. "
-
-	"| nameOfNewNote collectionOfContents |
-	collectionOfContents := contents substrings.
-	nameOfNewNote := String streamContents: [ :stt |
-		(collectionOfContents size > 3
-			ifTrue: [ collectionOfContents copyFrom: 1 to: 3 ]
-			ifFalse: [ collectionOfContents ]) 
-				do: [ :each | stt nextPutAll: each ] ].
-			
-	self title: nameOfNewNote"
-	
-| nameOfNewNote collectionOfContents |
+	| nameOfNewNote collectionOfContents |
 	collectionOfContents := contents substrings: String crlf.
 	nameOfNewNote := String streamContents: [ :stt |
-		(collectionOfContents isNotEmpty
-			ifTrue: [ stt nextPutAll: collectionOfContents first ])].
-			
+			                 collectionOfContents isNotEmpty ifTrue: [
+				                 stt nextPutAll: collectionOfContents first ] ].
+
 	self title: nameOfNewNote
 ]
 
