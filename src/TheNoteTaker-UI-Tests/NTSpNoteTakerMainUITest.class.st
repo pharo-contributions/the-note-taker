@@ -9,7 +9,8 @@ Class {
 		'notesContentPresenter',
 		'memoryFS',
 		'note',
-		'noteFile'
+		'noteFile',
+		'previousNotesLocation'
 	],
 	#category : 'TheNoteTaker-UI-Tests',
 	#package : 'TheNoteTaker-UI-Tests'
@@ -21,6 +22,9 @@ NTSpNoteTakerMainUITest >> setUp [
 	| noteFileName |
 	super setUp. 
 	memoryFS := FileSystem memory. 
+	previousNotesLocation := NTSettings noteLocation.
+	
+	NTSettings noteLocationFileReference: memoryFS workingDirectory.
 	
 	app := NTSpApplication new.
 	presenter := app newPresenter: NTSpNoteTakerMainUI.
@@ -43,6 +47,7 @@ NTSpNoteTakerMainUITest >> tearDown [
 
 	notesTaker removeNotes: notesTaker notes.
 	noteFile ensureDelete.
+	NTSettings noteLocation: previousNotesLocation.
 	"notesContentPresenter editorPresenter note fileReference delete."
 	super tearDown.
 ]

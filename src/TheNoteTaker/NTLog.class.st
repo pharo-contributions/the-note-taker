@@ -16,7 +16,7 @@ NTLog class >> newDefault [
 
 	^ self
 		new
-		logFileReference: NTSettings projectPathString asFileReference / 'TheNoteTaker.log'
+		logFileReference: NTSettings noteLocation asFileReference / 'TheNoteTaker.log'
 ]
 
 { #category : 'instance creation' }

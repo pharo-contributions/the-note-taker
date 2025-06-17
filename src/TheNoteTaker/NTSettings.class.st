@@ -7,7 +7,7 @@ Class {
 	#superclass : 'Object',
 	#classVars : [
 		'GithubPathString',
-		'ProjectPathString'
+		'noteLocation'
 	],
 	#category : 'TheNoteTaker-Utilities',
 	#package : 'TheNoteTaker',
@@ -28,6 +28,27 @@ NTSettings class >> githubPathString: aString [
 ]
 
 { #category : 'accessing' }
+NTSettings class >> noteLocation [
+	"Answer the preferred <String> where notes will be stored"
+
+	^ noteLocation ifNil:[ '/Users/ducasse/Workspace/FirstCircle/Writing/Working/researchnotes/faked' ]
+]
+
+{ #category : 'accessing' }
+NTSettings class >> noteLocation: aString [
+	"Set the preferred fileReference where notes will be stored"
+
+	noteLocation := aString
+]
+
+{ #category : 'accessing' }
+NTSettings class >> noteLocationFileReference: aFileReference [
+	"Set the preferred fileReference where notes will be stored"
+
+	noteLocation := aFileReference asFileReference
+]
+
+{ #category : 'accessing' }
 NTSettings class >> projectPathSettingsOn: aBuilder [
 
 	<systemsettings>
@@ -37,7 +58,7 @@ NTSettings class >> projectPathSettingsOn: aBuilder [
 		description: 'All TNT related settings';
 		noOrdering;
 		with: [
-				(aBuilder setting: #projectPathString)
+				(aBuilder setting: #noteLocation)
 					label: 'Project Path';
 					ghostHelp:
 						'/Users/ducasse/Workspace/FirstCircle/Writing/Working/researchnotes';
@@ -51,18 +72,4 @@ NTSettings class >> projectPathSettingsOn: aBuilder [
 					default: 'git@github.com:moufort/noteTest.git';
 					description:
 						'Enter your github path where notes will be committed. It can be empty' ]
-]
-
-{ #category : 'accessing' }
-NTSettings class >> projectPathString [
-	"Answer the preferred <String> where notes will be stored"
-
-	^ ProjectPathString ifNil:[ '/Users/ducasse/Workspace/FirstCircle/Writing/Working/researchnotes/faked' ]
-]
-
-{ #category : 'accessing' }
-NTSettings class >> projectPathString: aString [
-	"Set the preferred <String> where notes will be stored"
-
-	ProjectPathString := aString
 ]
