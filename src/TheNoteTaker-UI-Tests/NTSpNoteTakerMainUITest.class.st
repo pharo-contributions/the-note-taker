@@ -143,6 +143,31 @@ NTSpNoteTakerMainUITest >> testNoteSearch [
 ]
 
 { #category : 'tests' }
+NTSpNoteTakerMainUITest >> testNoteWithTagSearch [
+
+	| toolbar result |
+	
+	(NTTag newNamed: 'test') addNote: (notesTaker addNoteNamed: 'newNote').
+	(NTTag newNamed: 'tag') addNote: (notesTaker addNoteNamed: 'anotherNote').
+	(NTTag newNamed: 'tag') addNote: (notesTaker addNoteNamed: 'thirdNote').
+	notesTaker notes.
+	
+	toolbar := presenter notesToolbarPresenter.
+	
+	result := toolbar filteredNotesFor: 'newNote'.
+	result := toolbar  filteredTagsFor: 'tag' withNotes: result.
+	self assert: result size equals: 0.
+	
+	result := toolbar filteredNotesFor: 'Note'.
+	result := toolbar  filteredTagsFor: 'tag' withNotes: result.
+	self assert: result size equals: 2.
+	
+	result := toolbar filteredNotesFor: ''.
+	result := toolbar  filteredTagsFor: 't' withNotes: result.
+	self assert: result size equals: 3
+]
+
+{ #category : 'tests' }
 NTSpNoteTakerMainUITest >> testRemoveNote [ 
 	
 	| sizeNotesBeforeAddNote |
@@ -163,4 +188,26 @@ NTSpNoteTakerMainUITest >> testSelectANote [
 	self assert: notesContentPresenter textInputText equals: 'anotherNote'.
 
 
+]
+
+{ #category : 'tests' }
+NTSpNoteTakerMainUITest >> testTagSearch [
+
+	| toolbar result |
+	
+	(NTTag newNamed: 'test') addNote: (notesTaker addNoteNamed: 'newNote').
+	(NTTag newNamed: 'tag') addNote: (notesTaker addNoteNamed: 'anotherNote').
+	(NTTag newNamed: 'tag') addNote: (notesTaker addNoteNamed: 'thirdNote').
+	notesTaker notes.
+	
+	toolbar := presenter notesToolbarPresenter.
+	
+	result := toolbar  filteredTagsFor: 'tag' withNotes: notesTaker notes.
+	self assert: result size equals: 2.
+	
+	result := toolbar filteredTagsFor: 't' withNotes: notesTaker notes.
+	self assert: result size equals: 3.
+	
+	result := toolbar filteredTagsFor: 'TATA' withNotes: notesTaker notes.
+	self assert: result size equals: 0
 ]
