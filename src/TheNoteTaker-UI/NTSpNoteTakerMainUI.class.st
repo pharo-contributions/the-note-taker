@@ -102,7 +102,7 @@ NTSpNoteTakerMainUI >> initialize [
 { #category : 'initialization' }
 NTSpNoteTakerMainUI >> initializeNotesContent [
 	
-	notesContentPresenter := (self instantiate: NTEditorPresenter on: self).
+	notesContentPresenter := (self instantiate: NTSpEditorPresenter on: self).
 	notesContentPresenter 
 		layout: notesContentPresenter defaultLayout;
 		emptyInputText;
@@ -270,10 +270,11 @@ NTSpNoteTakerMainUI >> statusBar [
 NTSpNoteTakerMainUI >> statusBarMessage [
 
 	| selectedNoteInfo |
-
 	selectedNoteInfo := self selectedNote
-		ifNil: [ '' ]
-		ifNotNil: [ (self application noteInformation: self selectedNote) size ].
+		                    ifNil: [ '' ]
+		                    ifNotNil: [
+		                    (self application noteInformation:
+			                     self selectedNote) size ].
 	^ '{1} note' format: { selectedNoteInfo asString }
 ]
 
