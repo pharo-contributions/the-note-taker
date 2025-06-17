@@ -1,3 +1,6 @@
+"
+Implements logic to remove a tag to selected note taking application.
+"
 Class {
 	#name : 'NTSpRemoveTagCommand',
 	#superclass : 'NTSpAbstractCommand',

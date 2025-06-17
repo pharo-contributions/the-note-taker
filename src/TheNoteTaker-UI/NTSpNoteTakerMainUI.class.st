@@ -10,8 +10,7 @@ Class {
 		'notesToolbarPresenter',
 		'notesIndexPresenter',
 		'notesContentPresenter',
-		'statusBar',
-		'selectionCount'
+		'statusBar'
 	],
 	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
@@ -33,14 +32,6 @@ NTSpNoteTakerMainUI >> connectPresenters [
 			(notesCollection isNil or: [ notesCollection isEmpty ])
 				ifFalse: [ self processSelectedNote: notesCollection ]
 				ifTrue: [ self nullNote ] ]
-]
-
-{ #category : 'accessing - status bar' }
-NTSpNoteTakerMainUI >> decreaseNotesCount [
-
-	selectionCount >= 1 ifFalse: [ ^ self ].
-	selectionCount := selectionCount - 1.
-	self updateStatusBar
 ]
 
 { #category : 'layout' }
@@ -77,13 +68,6 @@ NTSpNoteTakerMainUI >> hasSelectedNote [
 	^ notesIndexPresenter hasSelectedNote 
 ]
 
-{ #category : 'accessing - status bar' }
-NTSpNoteTakerMainUI >> increaseNotesCount [
-	
-	selectionCount := selectionCount + 1.
-	self updateStatusBar.
-]
-
 { #category : 'initialization' }
 NTSpNoteTakerMainUI >> initialExtentForWindow [
 
@@ -94,7 +78,6 @@ NTSpNoteTakerMainUI >> initialExtentForWindow [
 NTSpNoteTakerMainUI >> initialize [
 
 	super initialize.
-	selectionCount := 0.
 	statusBar pushMessage: self statusBarMessage.
 
 ]
@@ -199,12 +182,6 @@ NTSpNoteTakerMainUI >> open [
 	self centered
 ]
 
-{ #category : 'accessing - status bar' }
-NTSpNoteTakerMainUI >> popMessage [
-
-	statusBar popMessage
-]
-
 { #category : 'accessing' }
 NTSpNoteTakerMainUI >> processSelectedNote: aCollection [ 
 	"If we have more than one selection we just display an empty note in the contents presenter"
@@ -227,18 +204,6 @@ NTSpNoteTakerMainUI >> selectedNoteTitle [
 	"Answer the receiver's selected <NtNoteObject> title"
 	^ self notesIndexPresenter selectedNoteTitle
 	
-]
-
-{ #category : 'accessing' }
-NTSpNoteTakerMainUI >> selectionCount [
-
-	^ selectionCount
-]
-
-{ #category : 'accessing' }
-NTSpNoteTakerMainUI >> selectionCount: anObject [
-
-	selectionCount := anObject
 ]
 
 { #category : 'initialization' }
@@ -288,12 +253,6 @@ NTSpNoteTakerMainUI >> toolbarHeight [
 NTSpNoteTakerMainUI >> updateContents [
 
 	notesContentPresenter setModel: self nullNote
-]
-
-{ #category : 'accessing - status bar' }
-NTSpNoteTakerMainUI >> updateStatusBar [
-
-	statusBar pushMessage: self statusBarMessage.
 ]
 
 { #category : 'activation' }

@@ -1,3 +1,6 @@
+"
+Implements logic to add a tag to selected note taking application.
+"
 Class {
 	#name : 'NTSpAddTagCommand',
 	#superclass : 'NTSpAbstractCommand',

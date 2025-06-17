@@ -1,3 +1,6 @@
+"
+Represent the log file of folder open in TheNoteTaker
+"
 Class {
 	#name : 'NTLog',
 	#superclass : 'Object',
@@ -27,12 +30,6 @@ NTLog class >> newWithFolder: aFileReference [
 NTLog >> add: aNTNoteObjet tag: aNTTag [
 
 	self write: 'tag ', aNTTag tagName, ' has been add to the note ' , aNTNoteObjet fileName.
-]
-
-{ #category : 'actions' }
-NTLog >> change: aNTNoteObjet [
-
-	
 ]
 
 { #category : 'actions' }
