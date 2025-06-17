@@ -43,6 +43,7 @@ NTSpAddNoteCommand >> execute [
 	self context 
 		items: self facade notes;
 		selectNote: newNote.
+	self application log add: newNote 
 ]
 
 { #category : 'testing' }

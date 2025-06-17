@@ -30,5 +30,6 @@ NTSpRemoveTagCommand >> execute [
 
 	tag := self facade tagNamed: answer.
 
-	self selectedNotes do: [ :note | note removeTag: tag ]
+	self selectedNotes do: [ :note | note removeTag: tag.
+		self application log remove: note tag: tag ]
 ]

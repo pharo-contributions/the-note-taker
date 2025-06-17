@@ -36,6 +36,7 @@ NTSpImportFolderCommand >> execute [
 					openModal.
 	folder ifNil: [ ^ self ].
 	self processFolder: folder.
+	self application log: (NTLog newWithFolder: folder).
 	self context items: self facade notes
 ]
 
@@ -46,7 +47,8 @@ NTSpImportFolderCommand >> executeWithDefaultFolder [
 	folder := NTSettings projectPathString asFileReference.
 	folder exists ifFalse: [ ^ self ].
 	self processFolder: folder.
-	self context items: self facade notes
+	self context items: self facade notes.
+	self application log: (NTLog newWithFolder: folder).
 ]
 
 { #category : 'testing' }

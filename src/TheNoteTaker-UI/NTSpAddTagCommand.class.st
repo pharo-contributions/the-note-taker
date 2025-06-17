@@ -30,5 +30,6 @@ NTSpAddTagCommand >> execute [
 	
 	tag := self facade tagNamed: answer.
 
-	self selectedNotes do: [ :note | tag addNote: note ]
+	self selectedNotes do: [ :note | tag addNote: note.
+		self application log add: note tag: tag]
 ]
