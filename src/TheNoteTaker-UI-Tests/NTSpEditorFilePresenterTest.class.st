@@ -1,5 +1,5 @@
 Class {
-	#name : 'NTEditorFilePresenterTest',
+	#name : 'NTSpEditorFilePresenterTest',
 	#superclass : 'TestCase',
 	#instVars : [
 		'window',
@@ -13,13 +13,13 @@ Class {
 }
 
 { #category : 'running' }
-NTEditorFilePresenterTest >> mockTextObject: aString [ 
+NTSpEditorFilePresenterTest >> mockTextObject: aString [ 
 
 	^ SpTextPresenter new text: aString 
 ]
 
 { #category : 'running' }
-NTEditorFilePresenterTest >> setUp [
+NTSpEditorFilePresenterTest >> setUp [
 
 	| text |
 	super setUp.
@@ -34,14 +34,14 @@ NTEditorFilePresenterTest >> setUp [
 ]
 
 { #category : 'running' }
-NTEditorFilePresenterTest >> tearDown [
+NTSpEditorFilePresenterTest >> tearDown [
 
 	fileReference ensureDelete.
 	super tearDown
 ]
 
 { #category : 'tests' }
-NTEditorFilePresenterTest >> testCleanAction [
+NTSpEditorFilePresenterTest >> testCleanAction [
 
 	presenter emptyInputText.
 	self assert: presenter textInputText equals: ''.
@@ -49,20 +49,20 @@ NTEditorFilePresenterTest >> testCleanAction [
 ]
 
 { #category : 'tests' }
-NTEditorFilePresenterTest >> testGotCurrentFileWhenIsNotSpecify [
+NTSpEditorFilePresenterTest >> testGotCurrentFileWhenIsNotSpecify [
 
 	self assert: presenter mdFile class equals: MDFile
 ]
 
 { #category : 'tests' }
-NTEditorFilePresenterTest >> testGotCurrentFileWhenIsSpecify [
+NTSpEditorFilePresenterTest >> testGotCurrentFileWhenIsSpecify [
 
 	presenter mdFile: mdFile.
 	self assert: presenter mdFile class equals: MDFile
 ]
 
 { #category : 'running' }
-NTEditorFilePresenterTest >> testSaveWithExtension [
+NTSpEditorFilePresenterTest >> testSaveWithExtension [
 
 	| text textPresenter |
 	text := 'This is just a test'.
@@ -77,13 +77,13 @@ NTEditorFilePresenterTest >> testSaveWithExtension [
 ]
 
 { #category : 'tests' }
-NTEditorFilePresenterTest >> testTextInputTextIsNotSpecify [
+NTSpEditorFilePresenterTest >> testTextInputTextIsNotSpecify [
 	
 	self assert: presenter textInputText equals: '% Type your marked-up text here. Render it and see right the output generated as rich text', String cr, String cr, presenter exampleText
 ]
 
 { #category : 'tests' }
-NTEditorFilePresenterTest >> testTextInputTextIsSpecify [
+NTSpEditorFilePresenterTest >> testTextInputTextIsSpecify [
 	
 	presenter textInputText: 'test'.
 	self assert: presenter textInputText equals: 'test'
