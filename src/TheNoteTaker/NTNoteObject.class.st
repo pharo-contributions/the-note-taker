@@ -92,8 +92,8 @@ NTNoteObject >> fileName [
 	fileNamer date: creationDate asDate.
 	^ fileName ifNil: [
 			  self title ifNotEmpty: [
-					  fileName := fileNamer newNameBasedOn:
-						              (NTFileNamer new newNameBasedOn: self title) ] ]
+					  fileName := fileNamer newNameBasedOn: self title
+						              "(NTFileNamer new newNameBasedOn: self title)" ] ]
 ]
 
 { #category : 'accessing' }

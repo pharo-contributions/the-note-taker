@@ -22,7 +22,7 @@ NTISOFileNamer >> basicDecoratedName: aString [
 
 	| ymd |
 	ymd := self date yyyymmdd.
-	^ ymd , self separatorString , (self addExtensionIfNeeded: aString).
+	^ ymd , self separatorString , (self addExtensionIfNeeded:( super newNameBasedOn: aString)).
 ]
 
 { #category : 'naming' }
