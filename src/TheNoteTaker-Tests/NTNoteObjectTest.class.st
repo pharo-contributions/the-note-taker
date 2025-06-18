@@ -10,17 +10,69 @@ Class {
 }
 
 { #category : 'accessing' }
-NTNoteObjectTest >> generateMetaDataWithCreationDate: creationDate modificationDate: modificationDate [
+NTNoteObjectTest >> generateMetaDataCreationDateLine: creationDate [
+	
+	^ '"creationDate" : "',creationDate asString,'"'
+]
 
-	| meta |
+{ #category : 'accessing' }
+NTNoteObjectTest >> generateMetaDataModificationDateLine: modificationDate [
+	
+	^ '"lastModificationDate" : "',modificationDate asString,'"'
+]
+
+{ #category : 'accessing' }
+NTNoteObjectTest >> generateMetaDataTagLine: aTag [
+
+	^ '"name" : "' , aTag tagName , '"'
+]
+
+{ #category : 'accessing' }
+NTNoteObjectTest >> generateMetaDataTagsCollectionLine: aTagCollection [
+
+	| stream |
+	stream := WriteStream with: '"tags" : "'.
+	stream nextPutAll: ((aTagCollection collect: [ :each | each tagName ]) asArray joinUsing:','). 
+	stream nextPutAll: '"'.
+	^ stream contents
+]
+
+{ #category : 'accessing' }
+NTNoteObjectTest >> generateMetaDataWithCreationDate: creationDate modificationDate: modificationDate [
+	"| meta |
 	meta := MicMetaDataBlock new.
 	meta body: Dictionary new.
 	meta
 		atKey: 'creationDate' put: creationDate asString;
-		atKey: 'lastModificationDate'
-		put: modificationDate asString.
+		atKey: 'lastModificationDate' put: modificationDate asString.
 
-	^ (MicTextualMicrodownExporter new visit: meta) contents
+	^ (MicTextualMicrodownExporter new visit: meta) contents"
+
+	^ '{' , String cr
+	  , (self generateMetaDataModificationDateLine: modificationDate)
+	  , ',' , String cr
+	  , (self generateMetaDataCreationDateLine: creationDate)
+	  , String cr , '}'
+]
+
+{ #category : 'accessing' }
+NTNoteObjectTest >> generateMetaDataWithCreationDate: creationDate modificationDate: modificationDate tags: aTagCollection [
+	"| meta |
+	meta := MicMetaDataBlock new.
+	meta body: Dictionary new.
+	meta
+		atKey: 'creationDate' put: creationDate asString;
+		atKey: 'lastModificationDate' put: modificationDate asString.
+
+	^ (MicTextualMicrodownExporter new visit: meta) contents"
+
+	^ '{' , String cr
+	  , (self generateMetaDataModificationDateLine: modificationDate)
+	  , ',' , String cr
+	  , (self generateMetaDataCreationDateLine: creationDate) , ','
+	  , String cr
+	  , (self generateMetaDataTagsCollectionLine: aTagCollection)
+	  , String cr , '}'
 ]
 
 { #category : 'running' }
@@ -31,7 +83,81 @@ NTNoteObjectTest >> setUp [
 ]
 
 { #category : 'tests' }
-NTNoteObjectTest >> testContentsIsDirty [
+NTNoteObjectTest >> testFileName [
+
+	| note |
+	note := NTNoteObject named: 'Test'.
+	note creationDate: '2024-01-01' asDate.
+
+	self assert: note fileName equals: '2024-01-01_Test.md'.
+
+	note := NTNoteObject named: '[!Te@st}='.
+	note creationDate: '2024-01-01' asDate.
+
+	self assert: note fileName equals: '2024-01-01_Test.md'.
+	
+	note := NTNoteObject named: 'Test With Space'.
+	note creationDate: '2024-01-01' asDate.
+
+	self assert: note fileName equals: '2024-01-01_TestWithSpace.md'
+]
+
+{ #category : 'tests' }
+NTNoteObjectTest >> testGenerateMetaDataElementsWithTags [
+
+	| note creationDate modificationDate tag1 tag2|
+	note := NTNoteObject named: 'Test' contents: 'Ceci est un test'.
+	creationDate := '2025-01-01' asDateAndTime.
+	modificationDate := '2025-01-02' asDateAndTime.
+	note creationDate: creationDate.
+	note modificationDate: modificationDate.
+	
+	tag1 := NTTag newNamed: 'tag1'.
+	tag2 := NTTag newNamed: 'tag2'.
+	tag1 addNote: note.
+	tag2 addNote: note.
+
+	note folderReference: memoryFS.
+
+	self assert: note generateMetaDataElements equals: (self
+			 generateMetaDataWithCreationDate: creationDate
+			 modificationDate: modificationDate
+			tags: note tags)
+]
+
+{ #category : 'tests' }
+NTNoteObjectTest >> testGenerateMetaDataElementsWithoutTags [
+
+	| note creationDate modificationDate |
+	note := NTNoteObject named: 'Test' contents: 'Ceci est un test'.
+	creationDate := '2025-01-01' asDateAndTime.
+	modificationDate := '2025-01-02' asDateAndTime.
+	note creationDate: creationDate.
+	note modificationDate: modificationDate.
+
+	note folderReference: memoryFS.
+
+	self assert: note generateMetaDataElements equals: (self
+			 generateMetaDataWithCreationDate: creationDate
+			 modificationDate: modificationDate)
+]
+
+{ #category : 'tests' }
+NTNoteObjectTest >> testGenerateTitle [
+
+	| note1 note2 note3 |
+	
+	note1 := NTNoteObject named: 'Test1' contents: 'test with only one line'.
+	note2 := NTNoteObject named: 'Test2' contents: 'test with two line', String crlf, 'Second Line'.
+	note3 := NTNoteObject named: 'Test3' contents: ''.	
+	
+	self assert: note1 title equals: 'test with only one line';
+		assert: note2 title equals: 'test with two line';
+		assert: note3 title equals: ''.
+]
+
+{ #category : 'tests' }
+NTNoteObjectTest >> testIsDirty [
 	
 	| noteFile note |
 	noteFile := memoryFS / '2024-06-12_newNote.md'. 
@@ -48,7 +174,40 @@ NTNoteObjectTest >> testContentsIsDirty [
 ]
 
 { #category : 'tests' }
-NTNoteObjectTest >> testLoadNoteWithMetadata [
+NTNoteObjectTest >> testLoadNoteWithAllMetadata [
+
+	| note noteFile metadata tags |
+	noteFile := memoryFS / '2024-06-12_newNote.md'.
+	tags := OrderedCollection new.
+	tags add: (NTTag newNamed: 'tag1').
+	tags add: (NTTag newNamed: 'tag2').
+	metadata := self
+		            generateMetaDataWithCreationDate:
+		            '2025-01-01' asDateAndTime
+		            modificationDate: '2024-01-01' asDateAndTime
+		            tags: tags.
+	noteFile writeStreamDo: [ :stream |
+			stream
+				nextPutAll: metadata;
+				nextPutAll: String crlf;
+				nextPutAll: String crlf;
+				nextPutAll: 'This is just a new note' ].
+	
+	sing safeDo: [ :uniq|
+		note := NTNoteObject newFromFileReference: noteFile.
+
+		self assert: note exists.
+		self assert: note contents equals: 'This is just a new note'.
+		self assert: note fileName equals: '2024-06-12_newNote.md'.
+		self assert: note title equals: 'This is just a new note'.
+		self assert: note creationDate equals: '2025-01-01' asDateAndTime.
+		self assert: note modificationDate equals: '2024-01-01' asDateAndTime.
+		self assert: note tags notEmpty
+	] 
+]
+
+{ #category : 'tests' }
+NTNoteObjectTest >> testLoadNoteWithMetadataWithMissingTags [
 
 	| note noteFile metadata |
 	noteFile := memoryFS / '2024-06-12_newNote.md'.
@@ -57,10 +216,11 @@ NTNoteObjectTest >> testLoadNoteWithMetadata [
 		            '2025-01-01' asDateAndTime
 		            modificationDate: '2024-01-01' asDateAndTime.
 	noteFile writeStreamDo: [ :stream |
-			stream nextPutAll: metadata;
+			stream
+				nextPutAll: metadata;
 				nextPutAll: String crlf;
 				nextPutAll: String crlf;
-				nextPutAll: 'This is just a new note'].
+				nextPutAll: 'This is just a new note' ].
 
 	note := NTNoteObject newFromFileReference: noteFile.
 
@@ -70,6 +230,43 @@ NTNoteObjectTest >> testLoadNoteWithMetadata [
 	self assert: note title equals: 'This is just a new note'.
 	self assert: note creationDate equals: '2025-01-01' asDateAndTime.
 	self assert: note modificationDate equals: '2024-01-01' asDateAndTime
+]
+
+{ #category : 'tests' }
+NTNoteObjectTest >> testLoadNoteWithTagsMetadata [
+
+	| noteFile metadata tags orderedTags |
+	noteFile := memoryFS / '2024-06-12_newNote.md'.
+	tags := OrderedCollection new.
+	tags add: (NTTag newNamed: 'tag1').
+	tags add: (NTTag newNamed: 'tag2').
+	metadata := self
+		            generateMetaDataWithCreationDate:
+		            '2025-01-01' asDateAndTime
+		            modificationDate: '2024-01-01' asDateAndTime
+		            tags: tags.
+	noteFile writeStreamDo: [ :stream |
+			stream
+				nextPutAll: metadata;
+				nextPutAll: String crlf;
+				nextPutAll: String crlf;
+				nextPutAll: 'This is just a new note' ].
+
+	sing safeDo: [ :uniq |
+			| tag1 tag2 note |
+			note := NTNoteObject newFromFileReference: noteFile.
+			self assert: note tags notEmpty.
+			self assert: note tags size equals: 2.
+			orderedTags := note tags asSortedCollection: [:a :b | a tagName <= b tagName].
+			tag1 := orderedTags first.
+			tag2 := orderedTags second.
+			self assert: tag1 tagName equals: 'tag1'.
+			self assert: tag2 tagName equals: 'tag2'.
+
+			self assert: uniq tags notEmpty.
+			self assert: uniq tags size equals: 2.
+			self assert: uniq tags first equals: tag1.
+			self assert: uniq tags second equals: tag2 ]
 ]
 
 { #category : 'tests' }
@@ -149,7 +346,6 @@ NTNoteObjectTest >> testNoteModificationUpdatesModificationDate [
 NTNoteObjectTest >> testSaveExistingFileWithDifferentTitle [
 
 	| note modificationDate metadata finalContents fileName |
-	
 	note := NTNoteObject named: 'Test' contents: 'Ceci est un test'.
 	modificationDate := note modificationDate.
 	note folderReference: memoryFS.
@@ -157,66 +353,60 @@ NTNoteObjectTest >> testSaveExistingFileWithDifferentTitle [
 	fileName := note fileName.
 	note contents: 'I change the title'.
 	note save.
-	
+
 	self denyEmpty: note fileReference contents.
-	
-	metadata := self generateMetaDataWithCreationDate: note creationDate modificationDate: note modificationDate.
-	finalContents :=  metadata, String crlf, String crlf, 'I change the title'.
-	
+
+	metadata := self
+		            generateMetaDataWithCreationDate: note creationDate
+		            modificationDate: note modificationDate.
+	finalContents := metadata , String crlf , String crlf
+	                 , 'I change the title'.
+
 	self assert: note fileReference contents equals: finalContents.
-	self assert: note fileName equals: fileName.
+	self assert: note fileName equals: fileName
 ]
 
 { #category : 'tests' }
 NTNoteObjectTest >> testSaveNote [
-	
+
 	| note modificationDate metadata finalContents |
-	
 	note := NTNoteObject named: 'Test' contents: 'Ceci est un test'.
 	modificationDate := note modificationDate.
 	note folderReference: memoryFS.
 	note save.
-	
+
 	self denyEmpty: note fileReference contents.
-	
-	metadata := self generateMetaDataWithCreationDate: note creationDate modificationDate: note modificationDate.
-	finalContents :=  metadata, String crlf, String crlf, 'Ceci est un test'.
-	
+
+	metadata := self
+		            generateMetaDataWithCreationDate: note creationDate
+		            modificationDate: note modificationDate.
+	finalContents := metadata , String crlf , String crlf
+	                 , 'Ceci est un test'.
+
 	self assert: note fileReference contents equals: finalContents
 ]
 
 { #category : 'tests' }
 NTNoteObjectTest >> testSaveNoteLoadedWithoutMetadata [
-	
+
 	| note modificationDate metadata finalContents noteFile |
-	
-	noteFile := memoryFS / '2024-06-12_newNote.md'. 
-	noteFile writeStreamDo: [ : stream | stream nextPutAll: 'This is just a new note' ].
-	
+	noteFile := memoryFS / '2024-06-12_newNote.md'.
+	noteFile writeStreamDo: [ :stream |
+		stream nextPutAll: 'This is just a new note' ].
+
 	note := NTNoteObject newFromFileReference: noteFile.
-	
+
 	modificationDate := note modificationDate.
 	note folderReference: memoryFS.
 	note save.
-	
+
 	self denyEmpty: note fileReference contents.
-	
-	metadata := self generateMetaDataWithCreationDate: note creationDate modificationDate: note modificationDate.
-	finalContents :=  metadata, String crlf, String crlf, 'This is just a new note'.
-	
+
+	metadata := self
+		            generateMetaDataWithCreationDate: note creationDate
+		            modificationDate: note modificationDate.
+	finalContents := metadata , String crlf , String crlf
+	                 , 'This is just a new note'.
+
 	self assert: note fileReference contents equals: finalContents
-]
-
-{ #category : 'tests' }
-NTNoteObjectTest >> testTitleIsFirstLineOfContents [
-
-	| note1 note2 note3 |
-	
-	note1 := NTNoteObject named: 'Test1' contents: 'test with only one line'.
-	note2 := NTNoteObject named: 'Test2' contents: 'test with two line', String crlf, 'Second Line'.
-	note3 := NTNoteObject named: 'Test3' contents: ''.	
-	
-	self assert: note1 title equals: 'test with only one line';
-		assert: note2 title equals: 'test with two line';
-		assert: note3 title equals: ''.
 ]

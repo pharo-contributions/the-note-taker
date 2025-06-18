@@ -12,7 +12,8 @@ Class {
 	#name : 'NTSpApplication',
 	#superclass : 'SpApplication',
 	#instVars : [
-		'noteTakerFacade'
+		'noteTakerFacade',
+		'log'
 	],
 	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
@@ -62,7 +63,9 @@ NTSpApplication >> applicationTitle [
 NTSpApplication >> initialize [
 
 	super initialize.
-	noteTakerFacade := NTSingleton uniqueInstance
+	NTSingleton reset.
+	noteTakerFacade := NTSingleton uniqueInstance.
+	
 ]
 
 { #category : 'testing' }
@@ -70,6 +73,18 @@ NTSpApplication >> isValidNoteName: aString [
 	"Answer <true> if aString is a valid note title"
 	
 	^ self noteTaker isValidNoteName: aString
+]
+
+{ #category : 'accessing' }
+NTSpApplication >> log [
+
+	^ log
+]
+
+{ #category : 'accessing' }
+NTSpApplication >> log: aNTLog [
+
+	log := aNTLog
 ]
 
 { #category : 'accessig' }

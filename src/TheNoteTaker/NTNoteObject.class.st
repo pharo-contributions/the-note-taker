@@ -89,7 +89,11 @@ NTNoteObject >> exists [
 { #category : 'accessing' }
 NTNoteObject >> fileName [
 
-	^ fileName ifNil: [ self title ifNotEmpty: [ fileName := fileNamer newNameBasedOn: self title]]
+	fileNamer date: creationDate asDate.
+	^ fileName ifNil: [
+			  self title ifNotEmpty: [
+					  fileName := fileNamer newNameBasedOn: self title
+						              "(NTFileNamer new newNameBasedOn: self title)" ] ]
 ]
 
 { #category : 'accessing' }
@@ -138,8 +142,9 @@ NTNoteObject >> folderReference: aFileReference [
 
 { #category : 'generate' }
 NTNoteObject >> generateDefaultFileReference [
-	
-	self folderReference: FileReference / (NTSettings projectPathString ) / 'notes'
+
+	self folderReference:
+		FileReference / NTSettings noteLocation
 ]
 
 { #category : 'generate' }
@@ -149,36 +154,28 @@ NTNoteObject >> generateMetaDataElements [
 	meta := MicMetaDataBlock new.
 	meta body: Dictionary new.
 	meta
-		"atKey: 'author' put: 'toto for now';"
 		atKey: 'creationDate' put: self creationDate asString;
-		atKey: 'lastModificationDate'
-		put: self modificationDate asString.
+		atKey: 'lastModificationDate' put: self modificationDate asString.
+	self tags ifNotEmpty: [
+			meta
+				atKey: 'tags'
+				put:
+				((self tags collect: [ :each | each tagName ]) asArray joinUsing:
+					 ',') ].
 
 	^ (MicTextualMicrodownExporter new visit: meta) contents
 ]
 
 { #category : 'generate' }
 NTNoteObject >> generateTitle [
+	"create a new title which corresponds to the first line of the contents"
 
-"create a new title which corresponds to the first word of the contents.
-	If the contents has more than three words, the title correponds to its first three words. "
-
-	"| nameOfNewNote collectionOfContents |
-	collectionOfContents := contents substrings.
-	nameOfNewNote := String streamContents: [ :stt |
-		(collectionOfContents size > 3
-			ifTrue: [ collectionOfContents copyFrom: 1 to: 3 ]
-			ifFalse: [ collectionOfContents ]) 
-				do: [ :each | stt nextPutAll: each ] ].
-			
-	self title: nameOfNewNote"
-	
-| nameOfNewNote collectionOfContents |
+	| nameOfNewNote collectionOfContents |
 	collectionOfContents := contents substrings: String crlf.
 	nameOfNewNote := String streamContents: [ :stt |
-		(collectionOfContents isNotEmpty
-			ifTrue: [ stt nextPutAll: collectionOfContents first ])].
-			
+			                 collectionOfContents isNotEmpty ifTrue: [
+				                 stt nextPutAll: collectionOfContents first ] ].
+
 	self title: nameOfNewNote
 ]
 
@@ -227,10 +224,18 @@ NTNoteObject >> loadFileContents: aString [
 { #category : 'loading' }
 NTNoteObject >> loadMetaData: aString [
 
-	| metaData |
+	| metaData tagsString sing |
 	metaData := (MicrodownParser parse: aString) metaDataElement.
-	self creationDate: (metaData at: 'creationDate') asDateAndTime.
-	self modificationDate: (metaData at: 'lastModificationDate') asDateAndTime
+	self creationDate:
+		(metaData at: 'creationDate' ifAbsent: DateAndTime now)
+			asDateAndTime.
+	self modificationDate:
+		(metaData at: 'lastModificationDate' ifAbsent: self creationDate)
+			asDateAndTime.
+	tagsString := metaData at: 'tags' ifAbsent: [ ^ self ].
+	sing := NTSingleton uniqueInstance.
+	(tagsString substrings: ',') do: [ :each |
+		(sing tagNamed: each) addNote: self ]
 ]
 
 { #category : 'accessing' }
@@ -258,11 +263,9 @@ NTNoteObject >> printOn: aStream [
 ]
 
 { #category : 'accessing - tags' }
-NTNoteObject >> removeTag: aNTTag [ 
+NTNoteObject >> removeTag: aNTTag [
 
-	self tags 
-		remove: aNTTag 
-		ifAbsent: [ ].
+	self tags remove: aNTTag ifAbsent: [ ^ self ].
 	aNTTag removeNote: self
 ]
 
@@ -299,11 +302,10 @@ NTNoteObject >> threeWayCompareTo: aNTNoteObject [
 
 { #category : 'accessing' }
 NTNoteObject >> title [
-
-	| titleTemp |
-	titleTemp := title.
-	titleTemp ifNil: [ self generateTitle. titleTemp := title ].
-	^ titleTemp
+	
+	title ifNotNil: [ ^ title ].
+	self generateTitle.
+	^ title
 ]
 
 { #category : 'accessing' }

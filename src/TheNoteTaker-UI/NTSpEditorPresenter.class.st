@@ -7,14 +7,15 @@ Todo:
 - when typing at space we can render?
 "
 Class {
-	#name : 'NTEditorPresenter',
+	#name : 'NTSpEditorPresenter',
 	#superclass : 'SpApplicationWithToolbar',
 	#instVars : [
 		'textInput',
 		'composer',
 		'note',
 		'renderedText',
-		'isTextDirty'
+		'isTextDirty',
+		'worker'
 	],
 	#category : 'TheNoteTaker-UI-Manifest',
 	#package : 'TheNoteTaker-UI',
@@ -22,19 +23,19 @@ Class {
 }
 
 { #category : 'layout' }
-NTEditorPresenter >> applicationTitle [
+NTSpEditorPresenter >> applicationTitle [
 
 	^ self application applicationTitle
 ]
 
 { #category : 'actions' }
-NTEditorPresenter >> defaultInputPort [
+NTSpEditorPresenter >> defaultInputPort [
 
 	^ SpModelPort newPresenter: self
 ]
 
 { #category : 'layout' }
-NTEditorPresenter >> defaultLayout [
+NTSpEditorPresenter >> defaultLayout [
 
 	^ SpBoxLayout newTopToBottom
 		  add: (SpPanedLayout newLeftToRight
@@ -45,7 +46,7 @@ NTEditorPresenter >> defaultLayout [
 ]
 
 { #category : 'api' }
-NTEditorPresenter >> displayContents: aNoteObject [
+NTSpEditorPresenter >> displayContents: aNoteObject [
 
 	note := aNoteObject.
 	textInput text: aNoteObject contents asString.
@@ -53,7 +54,7 @@ NTEditorPresenter >> displayContents: aNoteObject [
 ]
 
 { #category : 'actions' }
-NTEditorPresenter >> emptyInputText [
+NTSpEditorPresenter >> emptyInputText [
 	"CLEAN button is pressed: erase both input and output text content"
 
 	self textInputText: ''.
@@ -61,20 +62,21 @@ NTEditorPresenter >> emptyInputText [
 ]
 
 { #category : 'actions' }
-NTEditorPresenter >> emptyRenderedText [
+NTSpEditorPresenter >> emptyRenderedText [
 
 	renderedText text: ''
 ]
 
 { #category : 'accessing' }
-NTEditorPresenter >> initialize [ 
+NTSpEditorPresenter >> initialize [ 
 
 	super initialize.
-	self noNote
+	self noNote.
+	worker := TKTLocalProcessTaskRunner new.
 ]
 
 { #category : 'initialization' }
-NTEditorPresenter >> initializePresenters [
+NTSpEditorPresenter >> initializePresenters [
 	"in initialize it is called after so defeat textInputText: logic"
 
 	composer := MicRichTextComposer new.
@@ -83,7 +85,6 @@ NTEditorPresenter >> initializePresenters [
 	textInput
 		bindKeyCombination: Character space asKeyCombination | Character cr asKeyCombination 
 		toAction: [ :target :morph :event |
-				Transcript show: '#'.
 				self renderDocument.
 				event wasHandled: false ].
 			
@@ -103,19 +104,19 @@ NTEditorPresenter >> initializePresenters [
 		whenTextChangedDo: [
 				note ifNotNil: [ note contents: textInput text asString ] ];
 		bindKeyCombination: $s meta 
-		toAction: [ self saveFile . self inform: 'Note ' , note fileReference fullName , ' saved' ];
+		toAction: [ self saveFile . self application log save: note ];
 		bindKeyCombination: $g meta 
 		toAction: [ self push . self inform: 'Folder push' ]
 ]
 
 { #category : 'testing' }
-NTEditorPresenter >> mayLoseEdits [
+NTSpEditorPresenter >> mayLoseEdits [
 
 	^ self textInputText isNotEmpty and: [ isTextDirty ]
 ]
 
 { #category : 'api' }
-NTEditorPresenter >> newNote: aNoteObject [
+NTSpEditorPresenter >> newNote: aNoteObject [
 
 	note := aNoteObject.
 	self displayContents: aNoteObject.
@@ -123,25 +124,25 @@ NTEditorPresenter >> newNote: aNoteObject [
 ]
 
 { #category : 'api' }
-NTEditorPresenter >> noNote [
+NTSpEditorPresenter >> noNote [
 
 	note := NTNoteObject new
 ]
 
 { #category : 'accessing' }
-NTEditorPresenter >> note [
+NTSpEditorPresenter >> note [
 
 	^ note ifNil: [ note := NTNoteObject new ]
 ]
 
 { #category : 'accessing' }
-NTEditorPresenter >> note: aNTNoteObject [
+NTSpEditorPresenter >> note: aNTNoteObject [
 
 	note := aNTNoteObject
 ]
 
 { #category : 'api' }
-NTEditorPresenter >> openNote: aNoteObject [
+NTSpEditorPresenter >> openNote: aNoteObject [
 
 	note := aNoteObject.
 	self displayContents: aNoteObject.
@@ -149,30 +150,29 @@ NTEditorPresenter >> openNote: aNoteObject [
 ]
 
 { #category : 'actions' }
-NTEditorPresenter >> push [
+NTSpEditorPresenter >> push [
 
 	NTSpGitCommand new execute.
 ]
 
 { #category : 'actions' }
-NTEditorPresenter >> renderDocument [
+NTSpEditorPresenter >> renderDocument [
 	"RENDER button is pressed: render input to output text"
 
-	| document |
-	
-	document := Microdown parse: self textInputText copy.
-	text := composer visit: document.
-	renderedText text: text
+	worker schedule: [ | document |
+		document := Microdown parse: self textInputText.
+		text := composer visit: document.
+		renderedText text: text]
 ]
 
 { #category : 'accessing' }
-NTEditorPresenter >> renderedText [
+NTSpEditorPresenter >> renderedText [
 
 	^ renderedText text
 ]
 
 { #category : 'actions' }
-NTEditorPresenter >> saveFile [
+NTSpEditorPresenter >> saveFile [
 	
 	self note save.
 	isTextDirty := false.
@@ -180,7 +180,7 @@ NTEditorPresenter >> saveFile [
 ]
 
 { #category : 'api' }
-NTEditorPresenter >> setModel: aNoteObject [ 
+NTSpEditorPresenter >> setModel: aNoteObject [ 
 	"Private - Set the receiver's content iterating recursively starting from aNode"
 	
 	"(self editorPresenter canOpenFile: aNoteObject)
@@ -189,7 +189,7 @@ NTEditorPresenter >> setModel: aNoteObject [
 ]
 
 { #category : 'accessing' }
-NTEditorPresenter >> startNewFile [
+NTSpEditorPresenter >> startNewFile [
 	"NEW button is pressed: reset tool"
 
 	self mayLoseEdits ifTrue: [ (self application confirm:
@@ -202,13 +202,13 @@ NTEditorPresenter >> startNewFile [
 ]
 
 { #category : 'accessing' }
-NTEditorPresenter >> textInputText [
+NTSpEditorPresenter >> textInputText [
 
 	^ textInput text
 ]
 
 { #category : 'accessing' }
-NTEditorPresenter >> textInputText: aString [
+NTSpEditorPresenter >> textInputText: aString [
 
 	textInput text: aString asString.
 	note contents: self textInputText.
@@ -216,7 +216,7 @@ NTEditorPresenter >> textInputText: aString [
 ]
 
 { #category : 'api' }
-NTEditorPresenter >> title [
+NTSpEditorPresenter >> title [
 	"Answer a <String> representing the application name and selected note title"
 
 	^ String streamContents: [ :stream |
@@ -226,7 +226,7 @@ NTEditorPresenter >> title [
 ]
 
 { #category : 'api' }
-NTEditorPresenter >> updateTitle [
+NTSpEditorPresenter >> updateTitle [
 
 	self window title: self note title
 ]
