@@ -25,14 +25,21 @@ NTSpRemoveTagCommand class >> defaultName [
 NTSpRemoveTagCommand >> execute [
 	"Request a title to create a new note"
 
-	| answer tag |
-	answer := self application newRequest
-		          title: 'tag name';
-		          label: 'Please provide the name of the tag';
-		          openModalWithParent: context window.
+	| tagList |
+	tagList := Set new.
+	self selectedNotes do: [ :notes | tagList addAll: notes tags ].
 
-	tag := self facade tagNamed: answer.
-
-	self selectedNotes do: [ :note | note removeTag: tag.
-		self application log remove: note tag: tag ]
+	self application newSelectMultiple
+		title: 'tag name';
+		items: (tagList asArray collect: [ :each | each tagName ]);
+		display: #asString;
+		onAccept: [ :dialog |
+				| selectedTags |
+				selectedTags := dialog presenter selectedItems collect: [ :each |
+						                self facade tagNamed: each ].
+				selectedTags do: [ :tag |
+							self selectedNotes do: [ :note |
+										note removeTag: tag.
+										self application log remove: note tag: tag ] ] ];
+		openModalWithParent: context window
 ]
