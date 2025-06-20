@@ -26,6 +26,6 @@ NTSpLogPresenter >> initializePresenters [
 	titleHolder := 'LOG'.
 
 	renderedText text:
-		(NTSettings noteLocation asFileReference / 'TheNoteTaker.log')
+		(NTSettings noteLocation / 'TheNoteTaker.log')
 			contents
 ]

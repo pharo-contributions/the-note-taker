@@ -14,9 +14,8 @@ Class {
 { #category : 'instance creation' }
 NTLog class >> newDefault [
 
-	^ self
-		new
-		logFileReference: NTSettings noteLocation asFileReference / 'TheNoteTaker.log'
+	^ self new logFileReference:
+		  NTSettings noteLocation / 'TheNoteTaker.log'
 ]
 
 { #category : 'instance creation' }

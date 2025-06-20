@@ -42,17 +42,9 @@ NTSettings class >> noteLocation: aString [
 ]
 
 { #category : 'accessing' }
-NTSettings class >> noteLocationFileReference: aFileReference [
-	"Set the preferred fileReference where notes will be stored"
-
-	noteLocation := aFileReference asFileReference
-]
-
-{ #category : 'accessing' }
 NTSettings class >> projectPathSettingsOn: aBuilder [
 
 	<systemsettings>
-	
 	(aBuilder group: #tnt)
 		label: 'The Note Taker';
 		description: 'All TNT related settings';
@@ -60,6 +52,7 @@ NTSettings class >> projectPathSettingsOn: aBuilder [
 		with: [
 				(aBuilder setting: #noteLocation)
 					label: 'Project Path';
+					type: #Directory;
 					ghostHelp:
 						'/Users/ducasse/Workspace/FirstCircle/Writing/Working/researchnotes';
 					default:
