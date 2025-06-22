@@ -44,11 +44,11 @@ NTSpImportFolderCommand >> execute [
 NTSpImportFolderCommand >> executeWithDefaultFolder [
 
 	| folder |
-	folder := NTSettings noteLocation asFileReference.
+	folder := NTSettings noteLocation.
 	folder exists ifFalse: [ ^ self ].
 	self processFolder: folder.
 	self context items: self facade notes.
-	self application log: (NTLog newWithFolder: folder).
+	self application log: (NTLog newWithFolder: folder)
 ]
 
 { #category : 'testing' }

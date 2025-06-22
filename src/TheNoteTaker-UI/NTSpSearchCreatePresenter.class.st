@@ -12,7 +12,8 @@ Class {
 		'notesSearchCreateTextPresenter',
 		'model',
 		'noteSettingsButtonPresenter',
-		'tagsSearchCreateTextPresenter'
+		'tagsSearchCreateTextPresenter',
+		'logButtonPresenter'
 	],
 	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
@@ -26,6 +27,7 @@ NTSpSearchCreatePresenter >> defaultLayout [
 		  add: notesSearchCreateTextPresenter;
 		  add: tagsSearchCreateTextPresenter;
 		  add: noteSettingsButtonPresenter expand: false;
+		  add: logButtonPresenter expand: false;
 		  yourself
 ]
 
@@ -84,7 +86,14 @@ NTSpSearchCreatePresenter >> initializePresenters [
 		                               addStyle: 'small';
 		                               action: [ self openTNTSettings ];
 		                               help: 'Settings';
-		                               yourself
+		                               yourself.
+	.
+	logButtonPresenter := self newButton
+		                      icon: (self iconNamed: #recentMessages);
+		                      addStyle: 'small';
+		                      action: [ self openLog ];
+		                      help: 'Settings';
+		                      yourself
 ]
 
 { #category : 'accessing' }
@@ -105,6 +114,12 @@ NTSpSearchCreatePresenter >> notesList [
 	"Answer the <NTSpNoteIndexPresenter> responsible to display the notes"
 
 	^ self owner notesIndexPresenter
+]
+
+{ #category : 'initialization' }
+NTSpSearchCreatePresenter >> openLog [
+
+	NTSpLogPresenter new open
 ]
 
 { #category : 'initialization' }

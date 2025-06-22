@@ -18,28 +18,27 @@ Class {
 
 { #category : 'running' }
 NTSpNoteTakerMainUITest >> setUp [
-	
+
 	| noteFileName |
-	super setUp. 
-	memoryFS := FileSystem memory. 
+	super setUp.
+	memoryFS := FileSystem memory.
 	previousNotesLocation := NTSettings noteLocation.
-	
-	NTSettings noteLocationFileReference: memoryFS workingDirectory.
-	
+
+	NTSettings noteLocation: memoryFS workingDirectory.
+
 	app := NTSpApplication new.
 	presenter := app newPresenter: NTSpNoteTakerMainUI.
 	notesIndexPresenter := presenter notesIndexPresenter.
 	notesTaker := presenter noteTaker.
 	notesContentPresenter := presenter notesContentPresenter.
 
-	noteFile := memoryFS workingDirectory / 'newNote.md'. 
-	noteFile writeStreamDo: [ : stream | stream nextPutAll: 'new note' ].
-	
-	noteFileName := (notesTaker addNoteFromFileReference: noteFile) fileName. 
+	noteFile := memoryFS workingDirectory / 'newNote.md'.
+	noteFile writeStreamDo: [ :stream | stream nextPutAll: 'new note' ].
+
+	noteFileName := (notesTaker addNoteFromFileReference: noteFile)
+		                fileName.
 	note := notesTaker noteNamed: noteFileName.
-	notesContentPresenter newNote: note.
-	
-	
+	notesContentPresenter newNote: note
 ]
 
 { #category : 'running' }

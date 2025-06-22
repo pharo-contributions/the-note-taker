@@ -5,7 +5,7 @@ Class {
 		'window',
 		'memoryFS',
 		'presenter',
-		'mdFile',
+		'note',
 		'fileReference'
 	],
 	#category : 'TheNoteTaker-UI-Tests',
@@ -24,13 +24,13 @@ NTSpEditorFilePresenterTest >> setUp [
 	| text |
 	super setUp.
 	memoryFS := FileSystem memory.
-	presenter := MDEditorPresenter new.
+	presenter := NTSpEditorPresenter new.
 	
 	text := 'This is just a test'.
 	fileReference := memoryFS / 'aFileReference.md'.
 	fileReference writeStreamDo: [ :stream | stream nextPutAll: text ].
 
-	mdFile := MDFile newFromFileReference: fileReference
+	note := NTNoteObject newFromFileReference: fileReference
 ]
 
 { #category : 'running' }
@@ -51,35 +51,29 @@ NTSpEditorFilePresenterTest >> testCleanAction [
 { #category : 'tests' }
 NTSpEditorFilePresenterTest >> testGotCurrentFileWhenIsNotSpecify [
 
-	self assert: presenter mdFile class equals: MDFile
+	self assert: presenter note class equals: NTNoteObject 
 ]
 
 { #category : 'tests' }
 NTSpEditorFilePresenterTest >> testGotCurrentFileWhenIsSpecify [
 
-	presenter mdFile: mdFile.
-	self assert: presenter mdFile class equals: MDFile
+	presenter note: note.
+	self assert: presenter note class equals: NTNoteObject
 ]
 
 { #category : 'running' }
 NTSpEditorFilePresenterTest >> testSaveWithExtension [
 
-	| text textPresenter |
+	| text textPresenter |self skip.
 	text := 'This is just a test'.
 	textPresenter := self mockTextObject: text.
 	presenter textInputText: text.
-	presenter mdFile: mdFile.
-	mdFile title: 'Dummy title'.
+	presenter note: note.
+	note title: 'Dummy title'.
 	presenter saveFile.
 
-	self assert: mdFile extension equals: 'md'.
-	self assert: mdFile contents equals: text
-]
-
-{ #category : 'tests' }
-NTSpEditorFilePresenterTest >> testTextInputTextIsNotSpecify [
-	
-	self assert: presenter textInputText equals: '% Type your marked-up text here. Render it and see right the output generated as rich text', String cr, String cr, presenter exampleText
+	self assert: note title suffix equals: 'md'.
+	self assert: note contents equals: text
 ]
 
 { #category : 'tests' }

@@ -34,16 +34,16 @@ NTSpAddNoteCommand >> execute [
 
 	| answer newNote |
 	answer := self application newRequest
-		title: 'Note title';
-		label: 'Please provide the name of the new note';
-		openModalWithParent: context window.
+		          title: 'Note title';
+		          label: 'Please provide the name of the new note';
+		          openModalWithParent: context window.
 
 	(self isValidNoteName: answer) ifFalse: [ ^ self ].
 	newNote := self addNoteNamed: answer.
-	self context 
+	self context
 		items: self facade notes;
 		selectNote: newNote.
-	self application log add: newNote 
+	self application log add: newNote
 ]
 
 { #category : 'testing' }

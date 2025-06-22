@@ -23,16 +23,19 @@ NTSpAddTagCommand class >> defaultName [
 
 { #category : 'executing' }
 NTSpAddTagCommand >> execute [
-	"Request a title to create a new note"
+	"execute"
 
-	| answer tag |
-	answer := self application newRequest
-		          title: 'tag name';
-		          label: 'Please provide the name of the tag';
-		          openModalWithParent: context window.
-	
-	tag := self facade tagNamed: answer.
-
-	self selectedNotes do: [ :note | tag addNote: note.
-		self application log add: note tag: tag]
+	(NTSpAddTagDialog newApplication: self application)
+		title: 'tag name';
+		items: (self facade tags asArray collect: [ :each | each tagName ]);
+		display: #asString;
+		onAccept: [ :dialog |
+				| selectedTags |
+				selectedTags := dialog presenter selectedItems collect: [ :each |
+						                self facade tagNamed: each ].
+				selectedTags do: [ :tag |
+							self selectedNotes do: [ :note |
+										tag addNote: note.
+										self application log add: note tag: tag ] ] ];
+		openModalWithParent: context window
 ]
