@@ -8,7 +8,7 @@ Todo:
 "
 Class {
 	#name : 'NTSpEditorPresenter',
-	#superclass : 'SpApplicationWithToolbar',
+	#superclass : 'SpPresenter',
 	#instVars : [
 		'textInput',
 		'composer',
@@ -163,7 +163,7 @@ NTSpEditorPresenter >> push [
 NTSpEditorPresenter >> renderDocument [
 	"RENDER button is pressed: render input to output text"
 
-	worker schedule: [ | document |
+	worker schedule: [ | document text |
 		document := Microdown parse: self textInputText.
 		text := composer visit: document.
 		renderedText text: text]
