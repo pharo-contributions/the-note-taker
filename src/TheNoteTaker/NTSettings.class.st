@@ -31,7 +31,7 @@ NTSettings class >> githubPathString: aString [
 NTSettings class >> noteLocation [
 	"Answer the preferred <String> where notes will be stored"
 
-	^ noteLocation ifNil:[ '/Users/ducasse/Workspace/FirstCircle/Writing/Working/researchnotes/faked' ]
+	^ noteLocation ifNil:[ '/Users/ducasse/Workspace/FirstCircle/Writing/Working/researchnotes/faked' asFileReference ]
 ]
 
 { #category : 'accessing' }

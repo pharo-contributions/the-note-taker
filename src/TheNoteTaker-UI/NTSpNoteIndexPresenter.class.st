@@ -108,10 +108,10 @@ NTSpNoteIndexPresenter >> hasSelectedNote [
 NTSpNoteIndexPresenter >> initializePresenters [
 
 	notesIndexPresenter := self newTable
-		                       beMultipleSelection;
+		                       beMultipleSelection; 
 		                       addColumn: (SpStringTableColumn new
 				                        title: 'Title';
-				                        sortFunction: #yourself ascending;
+				                        compareFunction: [ :e :f| e title > f title ];
 				                        evaluated: #title;
 				                        yourself);
 		                       addColumn: (SpStringTableColumn new
