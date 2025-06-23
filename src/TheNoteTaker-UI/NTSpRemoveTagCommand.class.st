@@ -41,5 +41,6 @@ NTSpRemoveTagCommand >> execute [
 							self selectedNotes do: [ :note |
 										note removeTag: tag.
 										self application log remove: note tag: tag ] ] ];
-		openModalWithParent: context window
+		openModalWithParent: context window.
+	self context refresh
 ]
