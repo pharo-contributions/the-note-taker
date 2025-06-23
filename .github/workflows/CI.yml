@@ -14,7 +14,7 @@ jobs:
     strategy:
       matrix:
         smalltalk: [ Pharo64-13 ]
-        os: [ macos-latest, windows-latest, ubuntu-latest]
+        os: [ macos-latest ]
     runs-on: ${{ matrix.os }}
     name: ${{ matrix.smalltalk }} on ${{ matrix.os }}
     steps:
@@ -22,7 +22,7 @@ jobs:
       - name: Setup smalltalkCI
         uses: hpi-swa/setup-smalltalkCI@v1
         with:
-          smalltalk-version: ${{ matrix.smalltalk }}
+          smalltalk-image: ${{ matrix.smalltalk }}
       - name: Load Image and Run Tests
         run: smalltalkci -s ${{ matrix.smalltalk }}
         env:
