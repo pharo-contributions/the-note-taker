@@ -31,12 +31,12 @@ NTSpImportFolderCommand >> addNoteFromFileReference: aFileReference [
 NTSpImportFolderCommand >> execute [
 
 	| folder |
-	folder := StOpenDirectoryPresenter new 
-					extent: 800 @800 ; 
-					openModal.
+	folder := StOpenDirectoryPresenter new
+		          extent: 800 @ 800;
+		          openModal.
 	folder ifNil: [ ^ self ].
 	self processFolder: folder.
-	self application log: (NTLog newWithFolder: folder).
+	self application log logFileReference: folder.
 	self context items: self facade notes
 ]
 
@@ -48,7 +48,6 @@ NTSpImportFolderCommand >> executeWithDefaultFolder [
 	folder exists ifFalse: [ ^ self ].
 	self processFolder: folder.
 	self context items: self facade notes.
-	self application log: (NTLog newWithFolder: folder)
 ]
 
 { #category : 'testing' }

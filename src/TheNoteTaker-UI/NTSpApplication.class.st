@@ -65,7 +65,7 @@ NTSpApplication >> initialize [
 	super initialize.
 	NTSingleton reset.
 	noteTakerFacade := NTSingleton uniqueInstance.
-	
+	log := NTLog newWithFolder: NTSettings noteLocation
 ]
 
 { #category : 'testing' }
@@ -116,12 +116,12 @@ NTSpApplication >> notes [
 { #category : 'running' }
 NTSpApplication >> start [
 
-	(NTSpNoteTakerMainUI newApplication: self) open
+	log noteTakerMain: (NTSpNoteTakerMainUI newApplication: self) open
 ]
 
 { #category : 'running' }
 NTSpApplication >> startFullScreen [
 	" Private - Open the main application window in full screen, intended for the release version "
 
-	(NTSpNoteTakerMainUI newApplication: self) asWorldWindow open.
+	(NTSpNoteTakerMainUI newApplication: self) asWorldWindow open
 ]
