@@ -37,6 +37,6 @@ NTSpRemoveNoteCommand >> execute [
 		^ self ].
 	self selectedNotes do: [ :note |
 			note exists ifTrue: [ note fileReference ensureDelete. self application log remove: note ] ].
-	self facade removeNotes: self selectedNotes.
+	self noteTakerContainer removeNotes: self selectedNotes.
 	self context updateRemovedNote
 ]

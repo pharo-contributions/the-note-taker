@@ -134,13 +134,13 @@ NTSpNoteTakerMainUI >> initializeWindow: aSpWindowPresenter [
 { #category : 'initialization' }
 NTSpNoteTakerMainUI >> model [
 	"Answer the receiver's <NTNoteFacade>"
-	^ self application noteTaker
+	^ self application noteTakerContainer
 ]
 
 { #category : 'accessing' }
-NTSpNoteTakerMainUI >> noteTaker [
+NTSpNoteTakerMainUI >> noteTakerContainer [
 
-	^ self application noteTaker
+	^ self application noteTakerContainer
 ]
 
 { #category : 'initialization' }

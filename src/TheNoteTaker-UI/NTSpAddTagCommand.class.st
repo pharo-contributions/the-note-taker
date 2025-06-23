@@ -27,15 +27,19 @@ NTSpAddTagCommand >> execute [
 
 	(NTSpAddTagDialog newApplication: self application)
 		title: 'tag name';
-		items: (self facade tags asArray collect: [ :each | each tagName ]);
+		items:
+			(self noteTakerContainer tags asArray collect: [ :each |
+					 each tagName ]);
 		display: #asString;
 		onAccept: [ :dialog |
 				| selectedTags |
 				selectedTags := dialog presenter selectedItems collect: [ :each |
-						                self facade tagNamed: each ].
+						                self noteTakerContainer tagNamed: each ].
 				selectedTags do: [ :tag |
 							self selectedNotes do: [ :note |
 										tag addNote: note.
 										self application log add: note tag: tag ] ] ];
-		openModalWithParent: context window
+		openModalWithParent: context window.
+		
+	self context refresh
 ]

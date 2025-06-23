@@ -83,11 +83,13 @@ NTSpEditorPresenter >> initializePresenters [
 
 	textInput := self newText.
 	textInput
-		bindKeyCombination: Character space asKeyCombination | Character cr asKeyCombination 
+		bindKeyCombination:
+		Character space asKeyCombination | Character cr asKeyCombination
 		toAction: [ :target :morph :event |
 				self renderDocument.
+				self owner notesIndexPresenter refresh.
 				event wasHandled: false ].
-			
+
 	"		
 	textInput addShortcutWith: [ :action | action 
         shortcutKey: Character space asKeyCombination | Character cr asKeyCombination;
@@ -102,11 +104,13 @@ NTSpEditorPresenter >> initializePresenters [
 		                yourself.
 	textInput
 		whenTextChangedDo: [
-				note ifNotNil: [ note contents: textInput text asString ] ];
-		bindKeyCombination: $s meta 
-		toAction: [ self saveFile . self application log save: note ];
-		bindKeyCombination: $g meta 
-		toAction: [ self push . self inform: 'Folder push' ]
+			note ifNotNil: [ note contents: textInput text asString ] ];
+		bindKeyCombination: $s meta toAction: [
+				self saveFile.
+				self application log save: note ];
+		bindKeyCombination: $g meta toAction: [
+				self push.
+				self inform: 'Folder push' ]
 ]
 
 { #category : 'testing' }

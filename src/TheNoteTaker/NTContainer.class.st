@@ -21,14 +21,14 @@ Note: It is recommended to use the `uniqueInstance` method to access the singlet
 
 "
 Class {
-	#name : 'NTSingleton',
+	#name : 'NTContainer',
 	#superclass : 'Object',
 	#instVars : [
 		'notes',
 		'tags'
 	],
 	#classVars : [
-		'UniqueInstance'
+		'Default'
 	],
 	#category : 'TheNoteTaker-Core',
 	#package : 'TheNoteTaker',
@@ -36,75 +36,62 @@ Class {
 }
 
 { #category : 'instance creation' }
-NTSingleton class >> new [
+NTContainer class >> default [
 
-	self error: 'Use #uniqueInstance'
+	^ Default ifNil: [ Default := self new ]
 ]
 
 { #category : 'class initialization' }
-NTSingleton class >> reset [
+NTContainer class >> reset [
+
 	<script>
-	
-	UniqueInstance := nil
-]
-
-{ #category : 'instance creation' }
-NTSingleton class >> safeDo: aBlock [
-
-	| current res |
-	[
-		current := self uniqueInstance.
-		self reset.
-		res := aBlock value: self uniqueInstance.
-		res ] ensure: [ UniqueInstance := current. res ]
-]
-
-{ #category : 'instance creation' }
-NTSingleton class >> uniqueInstance [
-
-	^ UniqueInstance
-		ifNil: [ UniqueInstance := self basicNew initialize ]
+	Default := nil
 ]
 
 { #category : 'adding - notes' }
-NTSingleton >> addNoteFromFileReference: aFileReference [
+NTContainer >> addNoteFromFileReference: aFileReference [
 	"Add a new note with title aString to the receiver's notes. Answer the receiver"
-	
-	^ self notes add: (
-		NTNoteObject 
-			newFromFileReference: aFileReference )
+
+	| newNote |
+	newNote := self notes add:
+		           (NTNoteObject newFromFileReference: aFileReference).
+	newNote tagsString ifNotNil: [
+			(newNote tagsString substrings: ',') do: [ :each |
+				(self tagNamed: each) addNote: newNote ] ].
+
+	^ newNote
 ]
 
 { #category : 'adding - notes' }
-NTSingleton >> addNoteNamed: aString [
+NTContainer >> addNoteNamed: aString [
 	"Add a new empty note with title aString to the receiver's notes. Answer the receiver"
 	
 	^ self notes add: ( NTNoteObject named: aString)
 ]
 
 { #category : 'adding - tags' }
-NTSingleton >> addTagNamed: aString [
+NTContainer >> addTagNamed: aString [
 	"Add a new empty note with title aString to the receiver's notes. Answer the receiver"
 
 	^ self tags add: (NTTag newNamed: aString)
 ]
 
 { #category : 'testing' }
-NTSingleton >> hasNoteNamed: aString [
+NTContainer >> hasNoteNamed: aString [
 	"Answer <true> if the receiver includes a note with title aString"
 
 	^ self notes anySatisfy: [ : note | note fileName = aString ]
 ]
 
 { #category : 'testing' }
-NTSingleton >> hasNotes [
+NTContainer >> hasNotes [
 	"Answer <true> if the receiver includes any note"
 	
 	^ self notes isNotEmpty
 ]
 
 { #category : 'initialization' }
-NTSingleton >> initialize [
+NTContainer >> initialize [
 
 	super initialize.
 	self notes: OrderedCollection new.
@@ -112,7 +99,7 @@ NTSingleton >> initialize [
 ]
 
 { #category : 'testing' }
-NTSingleton >> isValidNoteName: aString [ 
+NTContainer >> isValidNoteName: aString [ 
 	"Answer <true> if aString is a valid note title, i.e. 
 		Non-empty, and not already present"
 
@@ -123,7 +110,7 @@ NTSingleton >> isValidNoteName: aString [
 ]
 
 { #category : 'accessing - notes' }
-NTSingleton >> noteNameMatching: aString [
+NTContainer >> noteNameMatching: aString [
 	"Answer the first <NTNoteObject> matching aString in its name"
 
 	| pattern |
@@ -132,33 +119,33 @@ NTSingleton >> noteNameMatching: aString [
 ]
 
 { #category : 'accessing - notes' }
-NTSingleton >> noteNamed: aString [
+NTContainer >> noteNamed: aString [
 	"Answer the first <NTNoteObject> matching aString in its name"
 	
 	^ self notes detect: [ : n | n fileName = aString ]
 ]
 
 { #category : 'accessing - notes' }
-NTSingleton >> notes [
+NTContainer >> notes [
 	"Answer the receiver's <Collection> of <NTNoteObject>"
 
 	^ notes
 ]
 
 { #category : 'accessing - notes' }
-NTSingleton >> notes: aCollection [ 
+NTContainer >> notes: aCollection [ 
 	notes := aCollection
 ]
 
 { #category : 'accessing - notes' }
-NTSingleton >> notesCount [
+NTContainer >> notesCount [
 	"Answer an <Integer> representing how many notes the receiver includes"
 	
 	^ self notes size
 ]
 
 { #category : 'accessing - notes' }
-NTSingleton >> notesNameMatching: aString [
+NTContainer >> notesNameMatching: aString [
 	"Answer a <Collection> with <NoteObject> objects whose title matched named aString"
 
 	| pattern |
@@ -167,35 +154,35 @@ NTSingleton >> notesNameMatching: aString [
 ]
 
 { #category : 'accessing - notes' }
-NTSingleton >> notesNamed: aString [
+NTContainer >> notesNamed: aString [
 	"Answer a <Collection> with <NTNoteObject> objects named aString"
 	
 	^ self notes select: [ : n | n fileName = aString ]
 ]
 
 { #category : 'removing - notes' }
-NTSingleton >> removeNote: aNTNoteObject [
+NTContainer >> removeNote: aNTNoteObject [
 	"Remove the note aNTNoteObject from the receiver's notes. Answer the receiver"
 	
 	self notes remove: aNTNoteObject
 ]
 
 { #category : 'removing - notes' }
-NTSingleton >> removeNoteNamed: aString [
+NTContainer >> removeNoteNamed: aString [
 	"Remove the note with title aString in the receiver's notes. Answer the receiver"
 	
 	self removeNote: (self noteNamed: aString)
 ]
 
 { #category : 'removing - notes' }
-NTSingleton >> removeNotes: aCollectionOfNTNoteObject [
+NTContainer >> removeNotes: aCollectionOfNTNoteObject [
 	"Remove the note aNTNoteObject from the receiver's notes. Answer the receiver"
 	
 	self notes removeAll: aCollectionOfNTNoteObject
 ]
 
 { #category : 'removing - notes' }
-NTSingleton >> removeNotesSuchThat: aBlock [
+NTContainer >> removeNotesSuchThat: aBlock [
 
 	self notes copy do: [:each | 
 		(aBlock value: each) 
@@ -203,20 +190,20 @@ NTSingleton >> removeNotesSuchThat: aBlock [
 ]
 
 { #category : 'removing - tags' }
-NTSingleton >> removeTag: aNTTag [
+NTContainer >> removeTag: aNTTag [
 	"Remove the note aNTNoteObject from the receiver's notes. Answer the receiver"
 
 	self tags remove: aNTTag
 ]
 
 { #category : 'removing - tags' }
-NTSingleton >> removeTagNamed: aString [
+NTContainer >> removeTagNamed: aString [
 
 	self removeTag: (self tagNamed: aString)
 ]
 
 { #category : 'accessing - tags' }
-NTSingleton >> tagNameMatching: aString [
+NTContainer >> tagNameMatching: aString [
 	"Answer the first <NTNoteObject> matching aString in its name"
 
 	| pattern |
@@ -225,27 +212,27 @@ NTSingleton >> tagNameMatching: aString [
 ]
 
 { #category : 'accessing - tags' }
-NTSingleton >> tagNamed: aString [
+NTContainer >> tagNamed: aString [
 	"Answer the first <NTNoteObject> matching aString in its name"
 
 	^ self tags detect: [ :n | n tagName = aString ] ifNone: [ self addTagNamed: aString ]
 ]
 
 { #category : 'accessing - tags' }
-NTSingleton >> tags [
+NTContainer >> tags [
 	"Answer the receiver's <Collection> of <NTNoteObject>"
 
 	^ tags
 ]
 
 { #category : 'accessing - tags' }
-NTSingleton >> tags: aCollection [
+NTContainer >> tags: aCollection [
 
 	tags := aCollection
 ]
 
 { #category : 'accessing - tags' }
-NTSingleton >> tagsNameMatching: aString [
+NTContainer >> tagsNameMatching: aString [
 	"Answer a <Collection> with <NoteObject> objects whose title matched named aString"
 
 	| pattern |

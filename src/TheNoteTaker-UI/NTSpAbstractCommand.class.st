@@ -22,17 +22,17 @@ NTSpAbstractCommand >> applicationClass [
 	^ self application class
 ]
 
-{ #category : 'accessing' }
-NTSpAbstractCommand >> facade [
-
-	^ self application noteTaker
-]
-
 { #category : 'testing' }
 NTSpAbstractCommand >> hasSelectedNote [
 	"Answer <true> if the items index presenter has focus on a note"
 
 	^ self context hasSelectedNote
+]
+
+{ #category : 'accessing' }
+NTSpAbstractCommand >> noteTakerContainer [
+
+	^ self application noteTakerContainer
 ]
 
 { #category : 'accessing' }

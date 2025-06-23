@@ -25,7 +25,7 @@ NTSpAddNoteCommand class >> defaultName [
 NTSpAddNoteCommand >> addNoteNamed: aString [ 
 	"Answer a new <NTNoteObject> named aString"
 
-	^ self facade addNoteNamed: aString
+	^ self noteTakerContainer addNoteNamed: aString
 ]
 
 { #category : 'executing' }
@@ -41,7 +41,7 @@ NTSpAddNoteCommand >> execute [
 	(self isValidNoteName: answer) ifFalse: [ ^ self ].
 	newNote := self addNoteNamed: answer.
 	self context
-		items: self facade notes;
+		items: self noteTakerContainer notes;
 		selectNote: newNote.
 	self application log add: newNote
 ]

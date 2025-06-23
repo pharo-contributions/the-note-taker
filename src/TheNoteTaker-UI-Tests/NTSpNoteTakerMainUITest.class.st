@@ -29,7 +29,7 @@ NTSpNoteTakerMainUITest >> setUp [
 	app := NTSpApplication new.
 	presenter := app newPresenter: NTSpNoteTakerMainUI.
 	notesIndexPresenter := presenter notesIndexPresenter.
-	notesTaker := presenter noteTaker.
+	notesTaker := presenter noteTakerContainer.
 	notesContentPresenter := presenter notesContentPresenter.
 
 	noteFile := memoryFS workingDirectory / 'newNote.md'.

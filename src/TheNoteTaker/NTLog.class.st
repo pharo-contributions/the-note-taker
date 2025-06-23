@@ -5,7 +5,8 @@ Class {
 	#name : 'NTLog',
 	#superclass : 'Object',
 	#instVars : [
-		'logFileReference'
+		'logFileReference',
+		'noteTakerMain'
 	],
 	#category : 'TheNoteTaker',
 	#package : 'TheNoteTaker'
@@ -54,6 +55,12 @@ NTLog >> logFileReference: aFileReference [
 ]
 
 { #category : 'actions' }
+NTLog >> noteTakerMain: noteTakerMainUI [
+
+	noteTakerMain := noteTakerMainUI
+]
+
+{ #category : 'actions' }
 NTLog >> remove: aNTNoteObjet [
 
 	self write: 'file ', aNTNoteObjet fileName, ' has been deleted'.
@@ -73,13 +80,15 @@ NTLog >> save: aNTNoteObjet [
 
 { #category : 'actions' }
 NTLog >> write: aString [
-
 	"| stream |"
+
+	noteTakerMain statusBar pushMessage: aString.
 	logFileReference exists ifFalse: [ logFileReference ensureCreateFile ].
-	logFileReference writeStreamDo: [ :str | 
-		str setToEnd;
-		nextPutAll: DateAndTime now printString;
-		nextPutAll: ', ';
-		nextPutAll: aString;
-		nextPut: Character cr ]
+	logFileReference writeStreamDo: [ :str |
+			str
+				setToEnd;
+				nextPutAll: DateAndTime now printString;
+				nextPutAll: ', ';
+				nextPutAll: aString;
+				nextPut: Character cr ]
 ]

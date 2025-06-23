@@ -12,7 +12,8 @@ Class {
 		'contents',
 		'folderReference',
 		'fileNamer',
-		'fileName'
+		'fileName',
+		'tagsString'
 	],
 	#category : 'TheNoteTaker-Core',
 	#package : 'TheNoteTaker',
@@ -224,7 +225,7 @@ NTNoteObject >> loadFileContents: aString [
 { #category : 'loading' }
 NTNoteObject >> loadMetaData: aString [
 
-	| metaData tagsString sing |
+	| metaData |
 	metaData := (MicrodownParser parse: aString) metaDataElement.
 	self creationDate:
 		(metaData at: 'creationDate' ifAbsent: DateAndTime now)
@@ -232,10 +233,7 @@ NTNoteObject >> loadMetaData: aString [
 	self modificationDate:
 		(metaData at: 'lastModificationDate' ifAbsent: self creationDate)
 			asDateAndTime.
-	tagsString := metaData at: 'tags' ifAbsent: [ ^ self ].
-	sing := NTSingleton uniqueInstance.
-	(tagsString substrings: ',') do: [ :each |
-		(sing tagNamed: each) addNote: self ]
+	tagsString := metaData at: 'tags' ifAbsent: [ ^ self ]
 ]
 
 { #category : 'accessing' }
@@ -293,6 +291,12 @@ NTNoteObject >> tags [
 NTNoteObject >> tags: anObject [
 
 	tags := anObject
+]
+
+{ #category : 'accessing' }
+NTNoteObject >> tagsString [
+
+	^ tagsString 
 ]
 
 { #category : 'sorting' }
