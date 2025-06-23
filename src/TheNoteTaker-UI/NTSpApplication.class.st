@@ -12,7 +12,7 @@ Class {
 	#name : 'NTSpApplication',
 	#superclass : 'SpApplication',
 	#instVars : [
-		'noteTakerFacade',
+		'noteTakerContainer',
 		'log'
 	],
 	#category : 'TheNoteTaker-UI-Core',
@@ -63,8 +63,7 @@ NTSpApplication >> applicationTitle [
 NTSpApplication >> initialize [
 
 	super initialize.
-	NTSingleton reset.
-	noteTakerFacade := NTSingleton uniqueInstance.
+	noteTakerContainer := NTContainer new.
 	log := NTLog newWithFolder: NTSettings noteLocation
 ]
 
@@ -103,7 +102,7 @@ NTSpApplication >> noteNamed: aString [
 { #category : 'accessing' }
 NTSpApplication >> noteTaker [
 
-	^ noteTakerFacade
+	^ noteTakerContainer
 ]
 
 { #category : 'accessing' }

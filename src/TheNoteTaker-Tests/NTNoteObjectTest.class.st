@@ -192,18 +192,16 @@ NTNoteObjectTest >> testLoadNoteWithAllMetadata [
 				nextPutAll: String crlf;
 				nextPutAll: String crlf;
 				nextPutAll: 'This is just a new note' ].
-	
-	sing safeDo: [ :uniq|
-		note := NTNoteObject newFromFileReference: noteFile.
 
-		self assert: note exists.
-		self assert: note contents equals: 'This is just a new note'.
-		self assert: note fileName equals: '2024-06-12_newNote.md'.
-		self assert: note title equals: 'This is just a new note'.
-		self assert: note creationDate equals: '2025-01-01' asDateAndTime.
-		self assert: note modificationDate equals: '2024-01-01' asDateAndTime.
-		self assert: note tags notEmpty
-	] 
+	note := NTNoteObject newFromFileReference: noteFile.
+
+	self assert: note exists.
+	self assert: note contents equals: 'This is just a new note'.
+	self assert: note fileName equals: '2024-06-12_newNote.md'.
+	self assert: note title equals: 'This is just a new note'.
+	self assert: note creationDate equals: '2025-01-01' asDateAndTime.
+	self assert: note modificationDate equals: '2024-01-01' asDateAndTime.
+	self assert: note tagsString equals: 'tag1,tag2'
 ]
 
 { #category : 'tests' }
@@ -230,43 +228,6 @@ NTNoteObjectTest >> testLoadNoteWithMetadataWithMissingTags [
 	self assert: note title equals: 'This is just a new note'.
 	self assert: note creationDate equals: '2025-01-01' asDateAndTime.
 	self assert: note modificationDate equals: '2024-01-01' asDateAndTime
-]
-
-{ #category : 'tests' }
-NTNoteObjectTest >> testLoadNoteWithTagsMetadata [
-
-	| noteFile metadata tags orderedTags |
-	noteFile := memoryFS / '2024-06-12_newNote.md'.
-	tags := OrderedCollection new.
-	tags add: (NTTag newNamed: 'tag1').
-	tags add: (NTTag newNamed: 'tag2').
-	metadata := self
-		            generateMetaDataWithCreationDate:
-		            '2025-01-01' asDateAndTime
-		            modificationDate: '2024-01-01' asDateAndTime
-		            tags: tags.
-	noteFile writeStreamDo: [ :stream |
-			stream
-				nextPutAll: metadata;
-				nextPutAll: String crlf;
-				nextPutAll: String crlf;
-				nextPutAll: 'This is just a new note' ].
-
-	sing safeDo: [ :uniq |
-			| tag1 tag2 note |
-			note := NTNoteObject newFromFileReference: noteFile.
-			self assert: note tags notEmpty.
-			self assert: note tags size equals: 2.
-			orderedTags := note tags asSortedCollection: [:a :b | a tagName <= b tagName].
-			tag1 := orderedTags first.
-			tag2 := orderedTags second.
-			self assert: tag1 tagName equals: 'tag1'.
-			self assert: tag2 tagName equals: 'tag2'.
-
-			self assert: uniq tags notEmpty.
-			self assert: uniq tags size equals: 2.
-			self assert: uniq tags first equals: tag1.
-			self assert: uniq tags second equals: tag2 ]
 ]
 
 { #category : 'tests' }

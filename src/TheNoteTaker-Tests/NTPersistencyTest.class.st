@@ -37,12 +37,10 @@ NTPersistencyTest >> testCreateNoteDoesNotSerialize [
 { #category : 'running' }
 NTPersistencyTest >> testCreatingANoteDoesNotAddItToSingleton [
 
-	NTSingleton safeDo: [ :uniq |
 	| sampleNote |
-		self deny: uniq hasNotes. 
-		sampleNote := NTNoteObject new.
-		self deny: uniq hasNotes. 
-		]
+	self deny: noteTakerContainer hasNotes.
+	sampleNote := NTNoteObject new.
+	self deny: noteTakerContainer hasNotes
 ]
 
 { #category : 'running' }
