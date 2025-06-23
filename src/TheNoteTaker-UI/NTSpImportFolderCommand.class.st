@@ -47,7 +47,7 @@ NTSpImportFolderCommand >> executeWithDefaultFolder [
 	folder := NTSettings noteLocation.
 	folder exists ifFalse: [ ^ self ].
 	self processFolder: folder.
-	self context items: self facade notes.
+	self context items: self facade notes
 ]
 
 { #category : 'testing' }

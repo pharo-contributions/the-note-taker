@@ -53,11 +53,13 @@ NTContainer >> addNoteFromFileReference: aFileReference [
 	"Add a new note with title aString to the receiver's notes. Answer the receiver"
 
 	| newNote |
-	
 	newNote := self notes add:
 		           (NTNoteObject newFromFileReference: aFileReference).
-	(newNote tagsString substrings: ',') do: [ :each |
-		(self tagNamed: each) addNote: self ]
+	newNote tagsString ifNotNil: [
+			(newNote tagsString substrings: ',') do: [ :each |
+				(self tagNamed: each) addNote: self ] ].
+
+	^ newNote
 ]
 
 { #category : 'adding - notes' }
