@@ -50,7 +50,7 @@ NTSpApplication class >> openIt [
 NTSpApplication >> addNoteNamed: aString [ 
 	"Add a new empty note with title aString to the receiver's notes. Answer the receiver"
 	
-	^ self noteTaker addNoteNamed: aString trimBoth
+	^ self noteTakerContainer addNoteNamed: aString trimBoth
 ]
 
 { #category : 'private' }
@@ -71,7 +71,7 @@ NTSpApplication >> initialize [
 NTSpApplication >> isValidNoteName: aString [ 
 	"Answer <true> if aString is a valid note title"
 	
-	^ self noteTaker isValidNoteName: aString
+	^ self noteTakerContainer isValidNoteName: aString
 ]
 
 { #category : 'accessing' }
@@ -96,11 +96,11 @@ NTSpApplication >> noteInformation: aNtNodeModel [
 { #category : 'callbacks' }
 NTSpApplication >> noteNamed: aString [ 
 
-	^ self noteTaker noteNamed: aString
+	^ self noteTakerContainer noteNamed: aString
 ]
 
 { #category : 'accessing' }
-NTSpApplication >> noteTaker [
+NTSpApplication >> noteTakerContainer [
 
 	^ noteTakerContainer
 ]
@@ -109,7 +109,7 @@ NTSpApplication >> noteTaker [
 NTSpApplication >> notes [
 	"Answer the application's <Collection> of <NTNoteObject>"
 
-	^ self noteTaker notes
+	^ self noteTakerContainer notes
 ]
 
 { #category : 'running' }

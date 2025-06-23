@@ -57,7 +57,7 @@ NTContainer >> addNoteFromFileReference: aFileReference [
 		           (NTNoteObject newFromFileReference: aFileReference).
 	newNote tagsString ifNotNil: [
 			(newNote tagsString substrings: ',') do: [ :each |
-				(self tagNamed: each) addNote: self ] ].
+				(self tagNamed: each) addNote: newNote ] ].
 
 	^ newNote
 ]

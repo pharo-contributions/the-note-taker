@@ -12,7 +12,7 @@ Class {
 { #category : 'adding' }
 NTSpAddTagDialog >> addTagNamed: aString [
 
-	self application noteTaker tagNamed: aString.
+	self application noteTakerContainer tagNamed: aString.
 	searchTextPresenter text: ''.
 	selectedItems add: aString
 ]
@@ -30,7 +30,7 @@ NTSpAddTagDialog >> defaultLayout [
 NTSpAddTagDialog >> filteredTagsFor: aString [
 	"Answer a <Collection> of <NTNoteObject> whose names match aString"
 
-	^ (self application noteTaker tagsNameMatching: aString) collect: [ :each | each tagName ]
+	^ (self application noteTakerContainer tagsNameMatching: aString) collect: [ :each | each tagName ]
 ]
 
 { #category : 'initialization' }

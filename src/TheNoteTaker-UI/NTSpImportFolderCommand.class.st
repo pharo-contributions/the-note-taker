@@ -24,7 +24,7 @@ NTSpImportFolderCommand class >> defaultName [
 { #category : 'adding' }
 NTSpImportFolderCommand >> addNoteFromFileReference: aFileReference [
 
-	self facade addNoteFromFileReference: aFileReference
+	self noteTakerContainer addNoteFromFileReference: aFileReference
 ]
 
 { #category : 'executing' }
@@ -37,7 +37,7 @@ NTSpImportFolderCommand >> execute [
 	folder ifNil: [ ^ self ].
 	self processFolder: folder.
 	self application log logFileReference: folder.
-	self context items: self facade notes
+	self context items: self noteTakerContainer notes
 ]
 
 { #category : 'executing' }
@@ -47,7 +47,7 @@ NTSpImportFolderCommand >> executeWithDefaultFolder [
 	folder := NTSettings noteLocation.
 	folder exists ifFalse: [ ^ self ].
 	self processFolder: folder.
-	self context items: self facade notes
+	self context items: self noteTakerContainer notes
 ]
 
 { #category : 'testing' }

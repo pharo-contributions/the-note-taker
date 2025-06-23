@@ -24,7 +24,7 @@ NTSpImportNoteCommand class >> defaultName [
 { #category : 'adding' }
 NTSpImportNoteCommand >> addNoteFromFileReference: aString [
 
-	self facade addNoteFromFileReference: aString
+	self noteTakerContainer addNoteFromFileReference: aString
 ]
 
 { #category : 'executing' }
@@ -36,7 +36,7 @@ NTSpImportNoteCommand >> execute [
 						extensions: self validNoteExtensions;
 						yourself) openModal.
 	self processSelections: selections.
-	self context items: self facade notes.
+	self context items: self noteTakerContainer notes.
 	self context refresh. 
 ]
 
