@@ -17,16 +17,10 @@ Class {
 		'isTextDirty',
 		'worker'
 	],
-	#category : 'TheNoteTaker-UI-Manifest',
+	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
-	#tag : 'Manifest'
+	#tag : 'Core'
 }
-
-{ #category : 'layout' }
-NTSpEditorPresenter >> applicationTitle [
-
-	^ self application applicationTitle
-]
 
 { #category : 'actions' }
 NTSpEditorPresenter >> defaultInputPort [
@@ -183,15 +177,6 @@ NTSpEditorPresenter >> saveFile [
 	self window ifNotNil: [ self updateTitle ]
 ]
 
-{ #category : 'api' }
-NTSpEditorPresenter >> setModel: aNoteObject [ 
-	"Private - Set the receiver's content iterating recursively starting from aNode"
-	
-	"(self editorPresenter canOpenFile: aNoteObject)
-		ifTrue: [ aNoteObject openFromPresenter: self ]
-		ifFalse: [ aNoteObject newFromPresenter: self ]" 
-]
-
 { #category : 'accessing' }
 NTSpEditorPresenter >> startNewFile [
 	"NEW button is pressed: reset tool"
@@ -225,8 +210,8 @@ NTSpEditorPresenter >> title [
 
 	^ String streamContents: [ :stream |
 			  stream
-				  << self applicationTitle;
-				  << self owner selectedNoteTitle ]
+				  << self application applicationTitle;
+				  << note title ]
 ]
 
 { #category : 'api' }

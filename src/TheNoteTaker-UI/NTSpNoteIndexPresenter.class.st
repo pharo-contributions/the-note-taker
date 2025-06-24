@@ -63,28 +63,12 @@ NTSpNoteIndexPresenter >> defaultLayout [
 		yourself.
 ]
 
-{ #category : 'layout' }
-NTSpNoteIndexPresenter >> defaultOutputPort [
-	"self flags."
-
-	"method never use"
-
-	^ notesTable defaultOutputPort
-]
-
 { #category : 'private' }
 NTSpNoteIndexPresenter >> displayNoteTags: selectedNote [
 	"Answer a <String> to be displayed"
 
 	selectedNote tags ifEmpty: [ ^ '' ].
 	^ (selectedNote tags collect: [ :each | each tagName ]) asArray joinUsing: ','
-]
-
-{ #category : 'accessing' }
-NTSpNoteIndexPresenter >> editorPresenter [
-	"Answer the receiver's <NTMDEditorPresenter>"
-
-	^ self owner editorPresenter
 ]
 
 { #category : 'testing' }
@@ -163,24 +147,9 @@ NTSpNoteIndexPresenter >> selectedNote [
 ]
 
 { #category : 'accessing' }
-NTSpNoteIndexPresenter >> selectedNoteTitle [
-	"Answer a <String> representing the title of the currently selected note"
-	
-	^ self selectedNote 
-		ifNotNil: [ : n | n title ]
-		ifNil: [ String empty ]
-]
-
-{ #category : 'accessing' }
 NTSpNoteIndexPresenter >> selectedNotes [
 
 	^ notesTable selectedItems
-]
-
-{ #category : 'accessing - model' }
-NTSpNoteIndexPresenter >> setModelBeforeInitialization: aCollection [
-
-	notes := aCollection.
 ]
 
 { #category : 'callbacks' }

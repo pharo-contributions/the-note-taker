@@ -96,46 +96,15 @@ NTSpNoteTakerMainUI >> initialExtentForWindow [
 NTSpNoteTakerMainUI >> initialize [
 
 	super initialize.
-	statusBar pushMessage: self statusBarMessage.
-
-]
-
-{ #category : 'initialization' }
-NTSpNoteTakerMainUI >> initializeNotesContent [
-	
-	notesContentPresenter := (self instantiate: NTSpEditorPresenter on: self).
-	notesContentPresenter 
-		layout: notesContentPresenter defaultLayout;
-		emptyInputText;
-		emptyRenderedText
-]
-
-{ #category : 'initialization' }
-NTSpNoteTakerMainUI >> initializeNotesIndex [
-
-	notesIndexPresenter := self instantiate: NTSpNoteIndexPresenter on: self application notes.
-]
-
-{ #category : 'initialization' }
-NTSpNoteTakerMainUI >> initializeNotesToolbar [
-	"This is a search and creator toolbar"
-
-	notesToolbarPresenter := self instantiate: NTSpSearchCreatePresenter on: self model
+	statusBar pushMessage: 'note'
 ]
 
 { #category : 'initialization' }
 NTSpNoteTakerMainUI >> initializePresenters [
 
-	self
-		initializeNotesToolbar;
-		initializeNotesIndex;
-		initializeNotesContent;
-		initializeStatusbar
-]
-
-{ #category : 'initialization' }
-NTSpNoteTakerMainUI >> initializeStatusbar [
-
+	notesToolbarPresenter := self instantiate: NTSpSearchCreatePresenter.
+	notesIndexPresenter := self instantiate: NTSpNoteIndexPresenter.
+	notesContentPresenter := self instantiate: NTSpEditorPresenter.
 	statusBar := SpStatusBarPresenter new
 ]
 
@@ -145,14 +114,8 @@ NTSpNoteTakerMainUI >> initializeWindow: aSpWindowPresenter [
 	super initializeWindow: aSpWindowPresenter.
 
 	self setTitleTo: aSpWindowPresenter.
-	self setWindowIconTo: aSpWindowPresenter.
-	self setInitialExtentTo: aSpWindowPresenter
-]
-
-{ #category : 'initialization' }
-NTSpNoteTakerMainUI >> model [
-	"Answer the receiver's <NTNoteFacade>"
-	^ self application noteTakerContainer
+	aSpWindowPresenter windowIcon: (self iconNamed: #page).
+   aSpWindowPresenter initialExtent: self initialExtentForWindow.
 ]
 
 { #category : 'accessing' }
@@ -210,26 +173,6 @@ NTSpNoteTakerMainUI >> processSelectedNote: aCollection [
 
 ]
 
-{ #category : 'accessing' }
-NTSpNoteTakerMainUI >> selectedNote [
-	"Answer the receiver's selected <NtNoteModel>"
-
-	^ self notesIndexPresenter selectedNote
-]
-
-{ #category : 'accessing' }
-NTSpNoteTakerMainUI >> selectedNoteTitle [
-	"Answer the receiver's selected <NtNoteObject> title"
-	^ self notesIndexPresenter selectedNoteTitle
-	
-]
-
-{ #category : 'initialization' }
-NTSpNoteTakerMainUI >> setInitialExtentTo: aSpWindowPresenter [
-	
-	aSpWindowPresenter initialExtent: self initialExtentForWindow
-]
-
 { #category : 'initialization' }
 NTSpNoteTakerMainUI >> setTitleTo: aSpWindowPresenter [
 
@@ -240,25 +183,13 @@ NTSpNoteTakerMainUI >> setTitleTo: aSpWindowPresenter [
 { #category : 'initialization' }
 NTSpNoteTakerMainUI >> setWindowIconTo: aSpWindowPresenter [
 
-	aSpWindowPresenter	windowIcon: (self iconNamed: #page).
+	aSpWindowPresenter windowIcon: (self iconNamed: #page)
 ]
 
 { #category : 'accessing' }
 NTSpNoteTakerMainUI >> statusBar [
 
 	^ statusBar
-]
-
-{ #category : 'accessing - status bar' }
-NTSpNoteTakerMainUI >> statusBarMessage [
-
-	| selectedNoteInfo |
-	selectedNoteInfo := self selectedNote
-		                    ifNil: [ '' ]
-		                    ifNotNil: [
-		                    (self application noteInformation:
-			                     self selectedNote) size ].
-	^ '{1} note' format: { selectedNoteInfo asString }
 ]
 
 { #category : 'layout' }
@@ -270,7 +201,7 @@ NTSpNoteTakerMainUI >> toolbarHeight [
 { #category : 'event handling' }
 NTSpNoteTakerMainUI >> updateContents [
 
-	notesContentPresenter setModel: self nullNote
+	notesContentPresenter displayContents: self nullNote
 ]
 
 { #category : 'activation' }

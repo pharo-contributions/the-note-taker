@@ -27,26 +27,10 @@ Class {
 		'notes',
 		'tags'
 	],
-	#classVars : [
-		'Default'
-	],
 	#category : 'TheNoteTaker-Core',
 	#package : 'TheNoteTaker',
 	#tag : 'Core'
 }
-
-{ #category : 'instance creation' }
-NTContainer class >> default [
-
-	^ Default ifNil: [ Default := self new ]
-]
-
-{ #category : 'class initialization' }
-NTContainer class >> reset [
-
-	<script>
-	Default := nil
-]
 
 { #category : 'adding - notes' }
 NTContainer >> addNoteFromFileReference: aFileReference [

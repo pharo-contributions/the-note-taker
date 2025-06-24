@@ -4,9 +4,9 @@ Class {
 	#instVars : [
 		'renderedText'
 	],
-	#category : 'TheNoteTaker-UI-Manifest',
+	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
-	#tag : 'Manifest'
+	#tag : 'Core'
 }
 
 { #category : 'initialization' }
