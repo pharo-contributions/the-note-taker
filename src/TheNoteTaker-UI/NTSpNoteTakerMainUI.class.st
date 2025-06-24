@@ -25,20 +25,31 @@ NTSpNoteTakerMainUI >> applicationTitle [
 
 { #category : 'initialization' }
 NTSpNoteTakerMainUI >> connectPresenters [
-	"notesIndexPresenter
-		transmitTo: notesContentPresenter
-		transform: [ : notesCollection |
-			(notesCollection isNil or: [ notesCollection isEmpty ])
-				ifFalse: [ self processSelectedNote: notesCollection ]
-				ifTrue: [ self nullNote ] ]"
 
 	notesIndexPresenter notesTable whenSelectedItemChangedDo: [
 			:aSelectedNote |
-			aSelectedNote ifNil: [ ^ self ].
-			self displayNoteContents: aSelectedNote.
-			aSelectedNote exists
-				ifTrue: [ aSelectedNote openFromPresenter: self ]
-				ifFalse: [ aSelectedNote newFromPresenter: self ] ]
+			aSelectedNote ifNil: [ self editorPresenter noNote ] ifNotNil: [
+					self displayNoteContents: aSelectedNote.
+					aSelectedNote exists
+						ifTrue: [ aSelectedNote openFromPresenter: self ]
+						ifFalse: [ aSelectedNote newFromPresenter: self ] ] ].
+
+	notesToolbarPresenter notesSearchCreateTextPresenter
+		whenTextChangedDo: [
+				notesIndexPresenter updateNotesList:
+						(notesToolbarPresenter filterNotes:
+								 self noteTakerContainer notes) ];
+		whenSubmitDo: [ :newNoteName |
+				notesIndexPresenter updateNotesList: self noteTakerContainer notes.
+				notesIndexPresenter selectNote:
+						(self application addNoteNamed: newNoteName).
+				self editorPresenter takeKeyboardFocus.
+				notesToolbarPresenter emptySearchBar ].
+
+	notesToolbarPresenter tagsSearchCreateTextPresenter
+		whenTextChangedDo: [
+				notesIndexPresenter updateNotesList:
+					(notesToolbarPresenter filterNotes: self noteTakerContainer notes) ]
 ]
 
 { #category : 'layout' }
