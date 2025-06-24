@@ -62,11 +62,12 @@ NTSpEditorPresenter >> emptyRenderedText [
 ]
 
 { #category : 'accessing' }
-NTSpEditorPresenter >> initialize [ 
+NTSpEditorPresenter >> initialize [
 
 	super initialize.
 	self noNote.
-	worker := TKTLocalProcessTaskRunner new.
+	isTextDirty := false.
+	worker := TKTLocalProcessTaskRunner new
 ]
 
 { #category : 'initialization' }
