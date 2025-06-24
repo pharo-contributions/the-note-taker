@@ -25,13 +25,20 @@ NTSpNoteTakerMainUI >> applicationTitle [
 
 { #category : 'initialization' }
 NTSpNoteTakerMainUI >> connectPresenters [
-
-	notesIndexPresenter
+	"notesIndexPresenter
 		transmitTo: notesContentPresenter
 		transform: [ : notesCollection |
 			(notesCollection isNil or: [ notesCollection isEmpty ])
 				ifFalse: [ self processSelectedNote: notesCollection ]
-				ifTrue: [ self nullNote ] ]
+				ifTrue: [ self nullNote ] ]"
+
+	notesIndexPresenter notesTable whenSelectedItemChangedDo: [
+			:aSelectedNote |
+			aSelectedNote ifNil: [ ^ self ].
+			self displayNoteContents: aSelectedNote.
+			aSelectedNote exists
+				ifTrue: [ aSelectedNote openFromPresenter: self ]
+				ifFalse: [ aSelectedNote newFromPresenter: self ] ]
 ]
 
 { #category : 'layout' }

@@ -87,20 +87,6 @@ NTSpNoteIndexPresenter >> editorPresenter [
 	^ self owner editorPresenter
 ]
 
-{ #category : 'callbacks' }
-NTSpNoteIndexPresenter >> handleNoteChange: aSelectedNote [
-	"Private - We handle note change selection event only when the user is not creating a new file.
-	When a new file is created, a selection is made to highlight the new created file, it is not an opened note"
-
-	aSelectedNote ifNil: [ ^ self ].
-	self editorPresenter noNote.
-	self owner displayNoteContents: aSelectedNote.
-	aSelectedNote exists
-		ifTrue: [ aSelectedNote openFromPresenter: self ]
-		ifFalse: [ aSelectedNote newFromPresenter: self ]
-	
-]
-
 { #category : 'testing' }
 NTSpNoteIndexPresenter >> hasSelectedNote [
 
@@ -130,8 +116,6 @@ NTSpNoteIndexPresenter >> initializePresenters [
 					               :selectedNote |
 					               ZnUtils httpDate: selectedNote creationDate ];
 				               yourself);
-		              whenSelectionChangedDo: [ :selection |
-		              self handleNoteChange: selection selectedItem ];
 		              contextMenu: [
 				              (self rootCommandsGroup / 'NTSelContextualMenu')
 					              beRoot asMenuPresenter ];
