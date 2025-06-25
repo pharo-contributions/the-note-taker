@@ -41,7 +41,7 @@ NTSpNoteTakerMainUI >> connectPresenters [
 								 self noteTakerContainer notes) ];
 		whenSubmitDo: [ :newNoteName |
 				| newNote |
-				newNote := self application addNoteNamed: newNoteName.self halt.
+				newNote := self application addNoteNamed: newNoteName.
 				newNote folderReference: self application settings noteLocation.
 				notesIndexPresenter updateNotesList: self noteTakerContainer notes.
 				notesIndexPresenter notesTable unselectAll.

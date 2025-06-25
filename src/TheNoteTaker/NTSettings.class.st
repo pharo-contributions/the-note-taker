@@ -31,7 +31,8 @@ NTSettings class >> githubPathString: aString [
 NTSettings class >> noteLocation [
 	"Answer the preferred <String> where notes will be stored"
 
-	^ noteLocation ifNil:[ '/Users/ducasse/Workspace/FirstCircle/Writing/Working/researchnotes/faked' asFileReference ]
+	^ noteLocation ifNil: [
+			  FileSystem workingDirectory  ]
 ]
 
 { #category : 'accessing' }
@@ -55,8 +56,7 @@ NTSettings class >> projectPathSettingsOn: aBuilder [
 					type: #Directory;
 					ghostHelp:
 						'/Users/ducasse/Workspace/FirstCircle/Writing/Working/researchnotes';
-					default:
-						FileReference new workingDirectory;
+					default: FileSystem workingDirectory ;
 					description:
 						'Enter your local or remote path where notes will be committed. It can be empty'.
 				(aBuilder setting: #githubPathString)
