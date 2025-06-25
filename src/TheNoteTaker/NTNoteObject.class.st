@@ -144,8 +144,7 @@ NTNoteObject >> folderReference: aFileReference [
 { #category : 'generate' }
 NTNoteObject >> generateDefaultFileReference [
 
-	self folderReference:
-		FileReference / NTSettings noteLocation
+	self folderReference: FileSystem workingDirectory 
 ]
 
 { #category : 'generate' }

@@ -13,13 +13,6 @@ Class {
 }
 
 { #category : 'instance creation' }
-NTLog class >> newDefault [
-
-	^ self new logFileReference:
-		  NTSettings noteLocation / 'TheNoteTaker.log'
-]
-
-{ #category : 'instance creation' }
 NTLog class >> newWithFolder: aFileReference [
 
 	^ self new logFileReference:

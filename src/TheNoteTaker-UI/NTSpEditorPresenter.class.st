@@ -8,7 +8,7 @@ Todo:
 "
 Class {
 	#name : 'NTSpEditorPresenter',
-	#superclass : 'SpApplicationWithToolbar',
+	#superclass : 'SpPresenter',
 	#instVars : [
 		'textInput',
 		'composer',
@@ -17,16 +17,10 @@ Class {
 		'isTextDirty',
 		'worker'
 	],
-	#category : 'TheNoteTaker-UI-Manifest',
+	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
-	#tag : 'Manifest'
+	#tag : 'Core'
 }
-
-{ #category : 'layout' }
-NTSpEditorPresenter >> applicationTitle [
-
-	^ self application applicationTitle
-]
 
 { #category : 'actions' }
 NTSpEditorPresenter >> defaultInputPort [
@@ -68,11 +62,12 @@ NTSpEditorPresenter >> emptyRenderedText [
 ]
 
 { #category : 'accessing' }
-NTSpEditorPresenter >> initialize [ 
+NTSpEditorPresenter >> initialize [
 
 	super initialize.
 	self noNote.
-	worker := TKTLocalProcessTaskRunner new.
+	isTextDirty := false.
+	worker := TKTLocalProcessTaskRunner new
 ]
 
 { #category : 'initialization' }
@@ -163,7 +158,7 @@ NTSpEditorPresenter >> push [
 NTSpEditorPresenter >> renderDocument [
 	"RENDER button is pressed: render input to output text"
 
-	worker schedule: [ | document |
+	worker schedule: [ | document text |
 		document := Microdown parse: self textInputText.
 		text := composer visit: document.
 		renderedText text: text]
@@ -181,15 +176,6 @@ NTSpEditorPresenter >> saveFile [
 	self note save.
 	isTextDirty := false.
 	self window ifNotNil: [ self updateTitle ]
-]
-
-{ #category : 'api' }
-NTSpEditorPresenter >> setModel: aNoteObject [ 
-	"Private - Set the receiver's content iterating recursively starting from aNode"
-	
-	"(self editorPresenter canOpenFile: aNoteObject)
-		ifTrue: [ aNoteObject openFromPresenter: self ]
-		ifFalse: [ aNoteObject newFromPresenter: self ]" 
 ]
 
 { #category : 'accessing' }
@@ -225,8 +211,8 @@ NTSpEditorPresenter >> title [
 
 	^ String streamContents: [ :stream |
 			  stream
-				  << self applicationTitle;
-				  << self owner selectedNoteTitle ]
+				  << self application applicationTitle;
+				  << note title ]
 ]
 
 { #category : 'api' }

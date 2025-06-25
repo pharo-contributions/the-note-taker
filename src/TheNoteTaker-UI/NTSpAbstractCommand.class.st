@@ -49,13 +49,6 @@ NTSpAbstractCommand >> selectedNote [
 ]
 
 { #category : 'accessing' }
-NTSpAbstractCommand >> selectedNoteTitle [
-	"Answer the currently selected <NTObject> title <String>"
-	
-	^ self selectedNote title
-]
-
-{ #category : 'accessing' }
 NTSpAbstractCommand >> selectedNotes [
 	"Answer a <Collection> with the currently selected <NTObject>'s"
 	

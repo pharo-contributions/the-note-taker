@@ -4,9 +4,9 @@ Class {
 	#instVars : [
 		'renderedText'
 	],
-	#category : 'TheNoteTaker-UI-Manifest',
+	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
-	#tag : 'Manifest'
+	#tag : 'Core'
 }
 
 { #category : 'initialization' }
@@ -26,6 +26,5 @@ NTSpLogPresenter >> initializePresenters [
 	titleHolder := 'LOG'.
 
 	renderedText text:
-		(NTSettings noteLocation / 'TheNoteTaker.log')
-			contents
+		(self application settings noteLocation / 'TheNoteTaker.log') contents
 ]

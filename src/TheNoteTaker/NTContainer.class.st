@@ -27,26 +27,10 @@ Class {
 		'notes',
 		'tags'
 	],
-	#classVars : [
-		'Default'
-	],
 	#category : 'TheNoteTaker-Core',
 	#package : 'TheNoteTaker',
 	#tag : 'Core'
 }
-
-{ #category : 'instance creation' }
-NTContainer class >> default [
-
-	^ Default ifNil: [ Default := self new ]
-]
-
-{ #category : 'class initialization' }
-NTContainer class >> reset [
-
-	<script>
-	Default := nil
-]
 
 { #category : 'adding - notes' }
 NTContainer >> addNoteFromFileReference: aFileReference [
@@ -158,6 +142,15 @@ NTContainer >> notesNamed: aString [
 	"Answer a <Collection> with <NTNoteObject> objects named aString"
 	
 	^ self notes select: [ : n | n fileName = aString ]
+]
+
+{ #category : 'accessing - tags' }
+NTContainer >> notesTagsMatching: aString withNotes: aNotesCollection [
+
+	| pattern |
+	pattern := '*' , aString , '*'.
+	^ aNotesCollection select: [ :n |
+		  (n tags select: [ :t | pattern match: t tagName ]) notEmpty ]
 ]
 
 { #category : 'removing - notes' }

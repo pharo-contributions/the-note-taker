@@ -6,7 +6,7 @@ Class {
 	#name : 'NTSpNoteIndexPresenter',
 	#superclass : 'SpPresenter',
 	#instVars : [
-		'notesIndexPresenter',
+		'notesTable',
 		'notes'
 	],
 	#category : 'TheNoteTaker-UI-Core',
@@ -59,14 +59,8 @@ NTSpNoteIndexPresenter class >> buildNoteTakerOperationsGroupWith: presenterInst
 NTSpNoteIndexPresenter >> defaultLayout [
 
 	^ SpBoxLayout newTopToBottom 
-		add: notesIndexPresenter;
+		add: notesTable;
 		yourself.
-]
-
-{ #category : 'layout' }
-NTSpNoteIndexPresenter >> defaultOutputPort [
-
-	^ notesIndexPresenter defaultOutputPort
 ]
 
 { #category : 'private' }
@@ -77,66 +71,39 @@ NTSpNoteIndexPresenter >> displayNoteTags: selectedNote [
 	^ (selectedNote tags collect: [ :each | each tagName ]) asArray joinUsing: ','
 ]
 
-{ #category : 'accessing' }
-NTSpNoteIndexPresenter >> editorPresenter [
-	"Answer the receiver's <NTMDEditorPresenter>"
-
-	^ self owner editorPresenter
-]
-
-{ #category : 'callbacks' }
-NTSpNoteIndexPresenter >> handleNoteChange: aSelectedNote [
-	"Private - We handle note change selection event only when the user is not creating a new file.
-	When a new file is created, a selection is made to highlight the new created file, it is not an opened note"
-
-	aSelectedNote ifNil: [ ^ self ].
-	self editorPresenter noNote.
-	self owner displayNoteContents: aSelectedNote.
-	aSelectedNote exists
-		ifTrue: [ aSelectedNote openFromPresenter: self ]
-		ifFalse: [ aSelectedNote newFromPresenter: self ]
-	
-]
-
 { #category : 'testing' }
 NTSpNoteIndexPresenter >> hasSelectedNote [
 
-	^ notesIndexPresenter listSize ~= 0
+	^ notesTable listSize ~= 0
 ]
 
 { #category : 'initialization' }
 NTSpNoteIndexPresenter >> initializePresenters [
 
-	notesIndexPresenter := self newTable
-		                       beMultipleSelection; 
-		                       addColumn: (SpStringTableColumn new
-				                        title: 'Title';
-				                        compareFunction: [ :e :f| e title > f title ];
-				                        evaluated: #title;
-				                        yourself);
-		                       addColumn: (SpStringTableColumn new
-				                        title: 'Tags';
-				                        "sortFunction: #yourself ascending;"
-				                        evaluated: [ :selectedNote |
-					                        self displayNoteTags: selectedNote ];
-				                        yourself);
-		                       addColumn: (SpStringTableColumn new
-				                        title: 'Date';
-				                        width:
-					                        200
-					                        * self currentWorld displayScaleFactor;
-				                        "sortFunction: #yourself ascending;"
-				                        evaluated: [ :selectedNote |
-					                        ZnUtils httpDate:
-							                        selectedNote creationDate ];
-				                        yourself);
-		                       whenSelectionChangedDo: [ :selection |
-		                       self handleNoteChange: selection selectedItem ];
-		                       contextMenu: [
-				                       (self rootCommandsGroup
-				                        / 'NTSelContextualMenu') beRoot
-					                       asMenuPresenter ];
-		                       items: notes.
+	notesTable := self newTable
+		              beMultipleSelection;
+		              addColumn: (SpStringTableColumn new
+				               title: 'Title';
+				               compareFunction: [ :e :f | e title > f title ];
+				               evaluated: #title;
+				               yourself);
+		              addColumn: (SpStringTableColumn new
+				               title: 'Tags';
+				               "sortFunction: #yourself ascending;"evaluated: [
+					               :selectedNote |
+					               self displayNoteTags: selectedNote ];
+				               yourself);
+		              addColumn: (SpStringTableColumn new
+				               title: 'Date';
+				               width: 200 * self currentWorld displayScaleFactor;
+				               "sortFunction: #yourself ascending;"evaluated: [
+					               :selectedNote |
+					               ZnUtils httpDate: selectedNote creationDate ];
+				               yourself);
+		              contextMenu: [
+				              (self rootCommandsGroup / 'NTSelContextualMenu')
+					              beRoot asMenuPresenter ];
+		              items: notes.
 
 	(NTSpImportFolderCommand new context: self) executeWithDefaultFolder
 ]
@@ -145,60 +112,58 @@ NTSpNoteIndexPresenter >> initializePresenters [
 NTSpNoteIndexPresenter >> items [
 	"Answer a <Collection> of notes"
 
-	^ notesIndexPresenter items
+	^ notesTable items
 ]
 
 { #category : 'accessing' }
 NTSpNoteIndexPresenter >> items: aCollection [ 
 
-	notesIndexPresenter items: aCollection
+	notesTable items: aCollection
+]
+
+{ #category : 'accessing' }
+NTSpNoteIndexPresenter >> notesTable [
+
+	^ notesTable
 ]
 
 { #category : 'accessing' }
 NTSpNoteIndexPresenter >> refresh [
 	"Update the receievr's notes presenter"
 
-	notesIndexPresenter refresh.
+	notesTable refresh.
 ]
 
 { #category : 'accessing' }
 NTSpNoteIndexPresenter >> selectNote: aNTNoteObject [
 
-	notesIndexPresenter selectItem: aNTNoteObject
+	notesTable selectItem: aNTNoteObject
 ]
 
 { #category : 'accessing' }
 NTSpNoteIndexPresenter >> selectedNote [
 
-	^ notesIndexPresenter selectedItem
-]
-
-{ #category : 'accessing' }
-NTSpNoteIndexPresenter >> selectedNoteTitle [
-	"Answer a <String> representing the title of the currently selected note"
-	
-	^ self selectedNote 
-		ifNotNil: [ : n | n title ]
-		ifNil: [ String empty ]
+	^ notesTable selectedItem
 ]
 
 { #category : 'accessing' }
 NTSpNoteIndexPresenter >> selectedNotes [
 
-	^ notesIndexPresenter selectedItems
+	^ notesTable selectedItems
 ]
 
-{ #category : 'accessing - model' }
-NTSpNoteIndexPresenter >> setModelBeforeInitialization: aCollection [
+{ #category : 'callbacks' }
+NTSpNoteIndexPresenter >> updateNotesList: aNotesCollection [
 
-	notes := aCollection.
+	notesTable items: aNotesCollection.
+	"aNotesCollection isNotEmpty ifTrue: [ notesTable selectFirst ]"
 ]
 
 { #category : 'callbacks' }
 NTSpNoteIndexPresenter >> updateRemovedNote [
 
 	self refresh.
-	notesIndexPresenter selectionMode unselectAll.
+	notesTable selectionMode unselectAll.
 	self owner
 		updateWindowTitle;
 		updateContents.
