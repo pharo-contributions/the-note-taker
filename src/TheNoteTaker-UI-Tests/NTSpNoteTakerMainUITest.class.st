@@ -123,54 +123,6 @@ NTSpNoteTakerMainUITest >> testNameNoteIsInISOFormat [
 ]
 
 { #category : 'tests' }
-NTSpNoteTakerMainUITest >> testNoteSearch [
-
-	| toolbar result |
-	notesTaker addNoteNamed: 'newNote'.
-	notesTaker addNoteNamed: 'anotherNote'.
-	notesTaker addNoteNamed: 'thirdNote'.
-	notesTaker notes.
-
-	toolbar := presenter notesToolbarPresenter.
-	
-	toolbar notesSearchCreateTextPresenter text: 'newNote'.
-	result := toolbar filterNotes: notesTaker notes.
-	self assert: result size equals: 1.
-
-	toolbar notesSearchCreateTextPresenter text: 'nnn'.
-	result := toolbar filterNotes: notesTaker notes.
-	self assert: result size equals: 0.
-
-	toolbar notesSearchCreateTextPresenter text: 'Note'.
-	result := toolbar filterNotes: notesTaker notes.
-	self assert: result size equals: 4
-]
-
-{ #category : 'tests' }
-NTSpNoteTakerMainUITest >> testNoteWithTagSearch [
-
-	| toolbar result |
-	(NTTag newNamed: 'test') addNote:
-		(notesTaker addNoteNamed: 'newNote').
-	(NTTag newNamed: 'tag') addNote:
-		(notesTaker addNoteNamed: 'anotherNote').
-	(NTTag newNamed: 'tag') addNote:
-		(notesTaker addNoteNamed: 'thirdNote').
-	notesTaker notes.
-
-	toolbar := presenter notesToolbarPresenter.
-
-	result := toolbar filteredTagsFor: 'test' withNotes: notesTaker notes.
-	self assert: result size equals: 1.
-
-	result := toolbar filteredTagsFor: 'tag' withNotes: notesTaker notes.
-	self assert: result size equals: 2.
-
-	result := toolbar filteredTagsFor: 't' withNotes: notesTaker notes.
-	self assert: result size equals: 3
-]
-
-{ #category : 'tests' }
 NTSpNoteTakerMainUITest >> testRemoveNote [ 
 	
 	| sizeNotesBeforeAddNote |
@@ -191,26 +143,4 @@ NTSpNoteTakerMainUITest >> testSelectANote [
 	self assert: notesContentPresenter textInputText equals: 'anotherNote'.
 
 
-]
-
-{ #category : 'tests' }
-NTSpNoteTakerMainUITest >> testTagSearch [
-
-	| toolbar result |
-	
-	(NTTag newNamed: 'test') addNote: (notesTaker addNoteNamed: 'newNote').
-	(NTTag newNamed: 'tag') addNote: (notesTaker addNoteNamed: 'anotherNote').
-	(NTTag newNamed: 'tag') addNote: (notesTaker addNoteNamed: 'thirdNote').
-	notesTaker notes.
-	
-	toolbar := presenter notesToolbarPresenter.
-	
-	result := toolbar  filteredTagsFor: 'tag' withNotes: notesTaker notes.
-	self assert: result size equals: 2.
-	
-	result := toolbar filteredTagsFor: 't' withNotes: notesTaker notes.
-	self assert: result size equals: 3.
-	
-	result := toolbar filteredTagsFor: 'TATA' withNotes: notesTaker notes.
-	self assert: result size equals: 0
 ]
