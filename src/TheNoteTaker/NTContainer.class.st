@@ -144,6 +144,15 @@ NTContainer >> notesNamed: aString [
 	^ self notes select: [ : n | n fileName = aString ]
 ]
 
+{ #category : 'accessing - tags' }
+NTContainer >> notesTagsMatching: aString withNotes: aNotesCollection [
+
+	| pattern |
+	pattern := '*' , aString , '*'.
+	^ aNotesCollection select: [ :n |
+		  (n tags select: [ :t | pattern match: t tagName ]) notEmpty ]
+]
+
 { #category : 'removing - notes' }
 NTContainer >> removeNote: aNTNoteObject [
 	"Remove the note aNTNoteObject from the receiver's notes. Answer the receiver"

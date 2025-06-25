@@ -37,13 +37,13 @@ NTSpSearchCreatePresenter >> emptySearchBar [
 ]
 
 { #category : 'callbacks' }
-NTSpSearchCreatePresenter >> filterNotes: aNotesCollection [
+NTSpSearchCreatePresenter >> filter [
 
 	| filteredItems |
 	filteredItems := notesSearchCreateTextPresenter text
-		                 ifEmpty: [ aNotesCollection ]
-		                 ifNotEmpty: [ :pattern |
-		                 self application noteTakerContainer notesNameMatching: pattern ].
+		                 ifEmpty: [
+		                 self application noteTakerContainer notes ]
+		                 ifNotEmpty: [ :pattern | self filteredNotesFor: pattern ].
 
 	filteredItems := tagsSearchCreateTextPresenter text
 		                 ifEmpty: [ filteredItems ]
@@ -56,12 +56,18 @@ NTSpSearchCreatePresenter >> filterNotes: aNotesCollection [
 ]
 
 { #category : 'callbacks' }
+NTSpSearchCreatePresenter >> filteredNotesFor: aString [
+
+	^ self application noteTakerContainer notesNameMatching: aString
+]
+
+{ #category : 'callbacks' }
 NTSpSearchCreatePresenter >> filteredTagsFor: aString withNotes: aNotesCollection [
 	"Answer a <Collection> of <NTNoteObject> whose names match aString"
 
-	| pattern |
-	pattern := '*' , aString , '*'.
-	^ aNotesCollection select: [ :n | (n tags select: [ :t | pattern match: t tagName ]) notEmpty]
+	^ self application noteTakerContainer
+		  notesTagsMatching: aString
+		  withNotes: aNotesCollection
 ]
 
 { #category : 'initialization' }

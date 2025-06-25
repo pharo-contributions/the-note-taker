@@ -2,8 +2,6 @@ Class {
 	#name : 'NTSpSearchCreatePresenterTest',
 	#superclass : 'TestCase',
 	#instVars : [
-		'window',
-		'memoryFS',
 		'presenter',
 		'notesTaker'
 	],
@@ -17,16 +15,15 @@ NTSpSearchCreatePresenterTest >> setUp [
 	| app |
 	super setUp.
 	app := NTSpApplication new initialize.
-	memoryFS := FileSystem memory.
 	presenter := NTSpSearchCreatePresenter newApplication: app.
 	notesTaker := app noteTakerContainer.
-	
+
 	(NTTag newNamed: 'test') addNote:
 		(notesTaker addNoteNamed: 'newNote').
 	(NTTag newNamed: 'tag') addNote:
 		(notesTaker addNoteNamed: 'anotherNote').
 	(NTTag newNamed: 'tag') addNote:
-		(notesTaker addNoteNamed: 'thirdNote').
+		(notesTaker addNoteNamed: 'thirdNote')
 ]
 
 { #category : 'tests' }

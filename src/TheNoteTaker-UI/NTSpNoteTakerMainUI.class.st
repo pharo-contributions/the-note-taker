@@ -36,9 +36,7 @@ NTSpNoteTakerMainUI >> connectPresenters [
 
 	notesToolbarPresenter notesSearchCreateTextPresenter
 		whenTextChangedDo: [
-				notesIndexPresenter updateNotesList:
-						(notesToolbarPresenter filterNotes:
-								 self noteTakerContainer notes) ];
+			notesIndexPresenter updateNotesList: notesToolbarPresenter filter ];
 		whenSubmitDo: [ :newNoteName |
 				| newNote |
 				newNote := self application addNoteNamed: newNoteName.
@@ -51,8 +49,7 @@ NTSpNoteTakerMainUI >> connectPresenters [
 
 	notesToolbarPresenter tagsSearchCreateTextPresenter
 		whenTextChangedDo: [
-				notesIndexPresenter updateNotesList:
-					(notesToolbarPresenter filterNotes: self noteTakerContainer notes) ]
+		notesIndexPresenter updateNotesList: notesToolbarPresenter filter ]
 ]
 
 { #category : 'layout' }
@@ -105,7 +102,8 @@ NTSpNoteTakerMainUI >> initialize [
 { #category : 'initialization' }
 NTSpNoteTakerMainUI >> initializePresenters [
 
-	notesToolbarPresenter := self instantiate: NTSpSearchCreatePresenter.
+	notesToolbarPresenter := self
+		                         instantiate: NTSpSearchCreatePresenter.
 	notesIndexPresenter := self instantiate: NTSpNoteIndexPresenter.
 	notesContentPresenter := self instantiate: NTSpEditorPresenter.
 	statusBar := SpStatusBarPresenter new
