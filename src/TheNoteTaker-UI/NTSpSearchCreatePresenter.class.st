@@ -33,7 +33,7 @@ NTSpSearchCreatePresenter >> defaultLayout [
 { #category : 'callbacks' }
 NTSpSearchCreatePresenter >> emptySearchBar [
 
-	notesSearchCreateTextPresenter text: ''
+	notesSearchCreateTextPresenter clearContent
 ]
 
 { #category : 'callbacks' }

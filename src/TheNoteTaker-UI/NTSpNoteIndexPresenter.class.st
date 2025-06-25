@@ -156,8 +156,7 @@ NTSpNoteIndexPresenter >> selectedNotes [
 NTSpNoteIndexPresenter >> updateNotesList: aNotesCollection [
 
 	notesTable items: aNotesCollection.
-	aNotesCollection isNotEmpty ifTrue: [
-		notesTable selectFirst ]
+	"aNotesCollection isNotEmpty ifTrue: [ notesTable selectFirst ]"
 ]
 
 { #category : 'callbacks' }

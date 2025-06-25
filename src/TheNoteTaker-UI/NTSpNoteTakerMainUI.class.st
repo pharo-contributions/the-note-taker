@@ -40,9 +40,11 @@ NTSpNoteTakerMainUI >> connectPresenters [
 						(notesToolbarPresenter filterNotes:
 								 self noteTakerContainer notes) ];
 		whenSubmitDo: [ :newNoteName |
+				| newNote |
+				newNote := self application addNoteNamed: newNoteName.
 				notesIndexPresenter updateNotesList: self noteTakerContainer notes.
-				notesIndexPresenter selectNote:
-						(self application addNoteNamed: newNoteName).
+				notesIndexPresenter notesTable unselectAll.
+				notesIndexPresenter selectNote: newNote.
 				self editorPresenter takeKeyboardFocus.
 				notesToolbarPresenter emptySearchBar ].
 
@@ -200,8 +202,11 @@ NTSpNoteTakerMainUI >> toolbarHeight [
 
 { #category : 'event handling' }
 NTSpNoteTakerMainUI >> updateContents [
+	
+	notesContentPresenter note: self nullNote.
+	notesContentPresenter emptyInputText
 
-	notesContentPresenter displayContents: self nullNote
+	
 ]
 
 { #category : 'activation' }
