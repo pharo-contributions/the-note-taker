@@ -26,6 +26,5 @@ NTSpLogPresenter >> initializePresenters [
 	titleHolder := 'LOG'.
 
 	renderedText text:
-		(NTSettings noteLocation / 'TheNoteTaker.log')
-			contents
+		(self application settings noteLocation / 'TheNoteTaker.log') contents
 ]

@@ -44,7 +44,7 @@ NTSpImportFolderCommand >> execute [
 NTSpImportFolderCommand >> executeWithDefaultFolder [
 
 	| folder |
-	folder := NTSettings noteLocation.
+	folder := self application settings noteLocation.
 	folder exists ifFalse: [ ^ self ].
 	self processFolder: folder.
 	self context items: self noteTakerContainer notes

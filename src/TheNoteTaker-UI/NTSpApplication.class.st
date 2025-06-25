@@ -13,7 +13,8 @@ Class {
 	#superclass : 'SpApplication',
 	#instVars : [
 		'noteTakerContainer',
-		'log'
+		'log',
+		'settings'
 	],
 	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
@@ -64,7 +65,8 @@ NTSpApplication >> initialize [
 
 	super initialize.
 	noteTakerContainer := NTContainer new.
-	log := NTLog newWithFolder: NTSettings noteLocation
+	settings := NTSettings.
+	log := NTLog newWithFolder: settings noteLocation
 ]
 
 { #category : 'testing' }
@@ -110,6 +112,12 @@ NTSpApplication >> notes [
 	"Answer the application's <Collection> of <NTNoteObject>"
 
 	^ self noteTakerContainer notes
+]
+
+{ #category : 'running' }
+NTSpApplication >> settings [
+
+	^ settings
 ]
 
 { #category : 'running' }
