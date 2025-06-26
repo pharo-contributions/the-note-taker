@@ -25,15 +25,13 @@ NTSpGitCommand class >> defaultName [
 NTSpGitCommand >> add [
 
 	LibC runCommand:
-		self gitMinusCString , self projectPathString , ' add .'
+		self gitOnNoteFolder , ' add .'
 ]
 
 { #category : 'executing' }
 NTSpGitCommand >> commit [
 
-	LibC runCommand:
-		self gitMinusCString , self projectPathString
-		, ' commit -m "saving"'
+	LibC runCommand: self gitOnNoteFolder , ' commit -m "saving"'
 ]
 
 { #category : 'executing' }
@@ -46,9 +44,9 @@ NTSpGitCommand >> execute [
 ]
 
 { #category : 'executing' }
-NTSpGitCommand >> gitMinusCString [
+NTSpGitCommand >> gitOnNoteFolder [
 
-	^ 'git -C '
+	^ 'git -C ' , self projectPathString
 ]
 
 { #category : 'executing' }
@@ -61,11 +59,9 @@ NTSpGitCommand >> githubPathString [
 { #category : 'executing' }
 NTSpGitCommand >> init [
 
+	LibC runCommand: self gitOnNoteFolder , ' init'.
 	LibC runCommand:
-		self gitMinusCString , self projectPathString , ' init'.
-	LibC runCommand:
-		self gitMinusCString , self projectPathString , ' add origin '
-		, self githubPathString
+		self gitOnNoteFolder , ' add origin ' , self githubPathString
 ]
 
 { #category : 'executing' }
@@ -88,14 +84,14 @@ NTSpGitCommand >> projectPathString [
 NTSpGitCommand >> pull [
 
 	LibC runCommand:
-		self gitMinusCString , self projectPathString , ' pull'
+		self gitOnNoteFolder , ' pull'
 ]
 
 { #category : 'executing' }
 NTSpGitCommand >> push [
 
 	LibC runCommand:
-		self gitMinusCString , self projectPathString , ' push '
+		self gitOnNoteFolder , ' push '
 		, self githubPathString , ' master'
 ]
 
