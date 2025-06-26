@@ -37,6 +37,9 @@ NTSpGitCommand >> commit [
 { #category : 'executing' }
 NTSpGitCommand >> execute [
 
+	(self projectPathString , '.git') asFileReference exists ifFalse: [
+		self init ].
+
 	self
 		add;
 		commit;
@@ -61,16 +64,7 @@ NTSpGitCommand >> init [
 
 	LibC runCommand: self gitOnNoteFolder , ' init'.
 	LibC runCommand:
-		self gitOnNoteFolder , ' add origin ' , self githubPathString
-]
-
-{ #category : 'executing' }
-NTSpGitCommand >> initialize [
-
-	super initialize.
-
-	(self projectPathString , '.git') asFileReference exists ifFalse: [
-		self init ]
+		self gitOnNoteFolder , ' remote add origin ' , self githubPathString
 ]
 
 { #category : 'executing' }
@@ -90,9 +84,7 @@ NTSpGitCommand >> pull [
 { #category : 'executing' }
 NTSpGitCommand >> push [
 
-	LibC runCommand:
-		self gitOnNoteFolder , ' push '
-		, self githubPathString , ' master'
+	LibC runCommand: self gitOnNoteFolder , ' push -f origin master'
 ]
 
 { #category : 'executing' }

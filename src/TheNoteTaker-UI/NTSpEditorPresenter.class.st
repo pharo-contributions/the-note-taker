@@ -102,10 +102,7 @@ NTSpEditorPresenter >> initializePresenters [
 			note ifNotNil: [ note contents: textInput text asString ] ];
 		bindKeyCombination: $s meta toAction: [
 				self saveFile.
-				self application log save: note ];
-		bindKeyCombination: $g meta toAction: [
-				self push.
-				self inform: 'Folder push' ]
+				self application log save: note ]
 ]
 
 { #category : 'testing' }
@@ -146,12 +143,6 @@ NTSpEditorPresenter >> openNote: aNoteObject [
 	note := aNoteObject.
 	self displayContents: aNoteObject.
 	self window ifNotNil: [self updateTitle].
-]
-
-{ #category : 'actions' }
-NTSpEditorPresenter >> push [
-
-	NTSpGitCommand new execute.
 ]
 
 { #category : 'actions' }
