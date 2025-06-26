@@ -142,12 +142,6 @@ NTNoteObject >> folderReference: aFileReference [
 ]
 
 { #category : 'generate' }
-NTNoteObject >> generateDefaultFileReference [
-
-	self folderReference: FileSystem workingDirectory 
-]
-
-{ #category : 'generate' }
 NTNoteObject >> generateMetaDataElements [
 
 	| meta |
@@ -268,16 +262,16 @@ NTNoteObject >> removeTag: aNTTag [
 
 { #category : 'saving' }
 NTNoteObject >> save [
-	
-	folderReference ifNil: [ self generateDefaultFileReference ].
-	
-	self exists ifFalse: [ self fileReference ensureCreateFile ]	.
-	
-	self fileReference writeStreamDo: [ :str | 
-		str nextPutAll: self generateMetaDataElements.
-		str nextPutAll: String crlf.
-		str nextPutAll: String crlf.
-		str nextPutAll: contents ]
+
+	folderReference ifNil: [  folderReference := FileSystem workingDirectory ].
+
+	self exists ifFalse: [ self fileReference ensureCreateFile ].
+
+	self fileReference writeStreamDo: [ :str |
+			str nextPutAll: self generateMetaDataElements.
+			str nextPutAll: String crlf.
+			str nextPutAll: String crlf.
+			str nextPutAll: contents ]
 ]
 
 { #category : 'accessing - tags' }
