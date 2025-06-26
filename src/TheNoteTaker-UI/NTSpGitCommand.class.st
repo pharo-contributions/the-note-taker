@@ -22,10 +22,85 @@ NTSpGitCommand class >> defaultName [
 ]
 
 { #category : 'executing' }
-NTSpGitCommand >> execute [
-	
-	NTGitExecutor new add; commit; push
+NTSpGitCommand >> add [
 
-	
-	
+	LibC runCommand:
+		self gitMinusCString , self projectPathString , ' add .'
+]
+
+{ #category : 'executing' }
+NTSpGitCommand >> commit [
+
+	LibC runCommand:
+		self gitMinusCString , self projectPathString
+		, ' commit -m "saving"'
+]
+
+{ #category : 'executing' }
+NTSpGitCommand >> execute [
+
+	self
+		add;
+		commit;
+		push
+]
+
+{ #category : 'executing' }
+NTSpGitCommand >> gitMinusCString [
+
+	^ 'git -C '
+]
+
+{ #category : 'executing' }
+NTSpGitCommand >> githubPathString [
+	"Answer a <String> with a local or remote path where notes will be committed"
+
+	^ self settingsClass githubPathString
+]
+
+{ #category : 'executing' }
+NTSpGitCommand >> init [
+
+	LibC runCommand:
+		self gitMinusCString , self projectPathString , ' init'.
+	LibC runCommand:
+		self gitMinusCString , self projectPathString , ' add origin '
+		, self githubPathString
+]
+
+{ #category : 'executing' }
+NTSpGitCommand >> initialize [
+
+	super initialize.
+
+	(self projectPathString , '.git') asFileReference exists ifFalse: [
+		self init ]
+]
+
+{ #category : 'executing' }
+NTSpGitCommand >> projectPathString [
+	"Answer a <String> with a local or remote path where notes will be committed"
+
+	^ self settingsClass noteLocation fullName
+]
+
+{ #category : 'executing' }
+NTSpGitCommand >> pull [
+
+	LibC runCommand:
+		self gitMinusCString , self projectPathString , ' pull'
+]
+
+{ #category : 'executing' }
+NTSpGitCommand >> push [
+
+	LibC runCommand:
+		self gitMinusCString , self projectPathString , ' push '
+		, self githubPathString , ' master'
+]
+
+{ #category : 'executing' }
+NTSpGitCommand >> settingsClass [
+
+	^ self application settings
 ]

@@ -2,7 +2,6 @@ Class {
 	#name : 'NTSpEditorFilePresenterTest',
 	#superclass : 'TestCase',
 	#instVars : [
-		'window',
 		'memoryFS',
 		'presenter',
 		'note',
