@@ -18,9 +18,8 @@ BaselineOfTheNoteTaker >> baseline: spec [
 
 	<baseline>
 	spec for: #( common ) do: [ "self ical: spec."
-			Smalltalk os isWindows
-			ifTrue: [ self osWinSubprocess: spec ]
-			ifFalse: [ self osSubprocess: spec ].
+			self osWinSubprocess: spec.
+			self osSubprocess: spec.
 			self microdown: spec.
 			self applicationGenerator: spec.
 			self objcbridge: spec.
@@ -28,7 +27,7 @@ BaselineOfTheNoteTaker >> baseline: spec [
 			spec
 				package: 'TheNoteTaker' with: [ spec requires: #( Microdown ) ];
 				package: 'TheNoteTaker-UI'
-				with: [ spec requires: #( TheNoteTaker ) ];
+				with: [ spec requires: #( TheNoteTaker OSSubprocess  OSWinSubprocess) ];
 				package: 'TheNoteTaker-Release'
 				with: [ spec requires: #( ApplicationGenerator
 						   ObjCBridge ) ];
@@ -36,9 +35,8 @@ BaselineOfTheNoteTaker >> baseline: spec [
 				with: [ spec requires: #( TheNoteTaker ) ];
 				package: 'TheNoteTaker-UI-Tests'
 				with: [
-					spec requires: #( 'TheNoteTaker-Tests' 'TheNoteTaker-UI' ) ];
-				package: 'Iceberg-Git-Tool'.
-			
+					spec requires: #( 'TheNoteTaker-Tests' 'TheNoteTaker-UI' ) ].
+
 			spec
 				group: 'Core' with: #( 'TheNoteTaker' );
 				group: 'UI' with: #( 'TheNoteTaker-UI' );
