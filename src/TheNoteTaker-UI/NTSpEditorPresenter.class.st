@@ -60,7 +60,7 @@ NTSpEditorPresenter >> emptyRenderedText [
 	renderedText text: ''
 ]
 
-{ #category : 'accessing' }
+{ #category : 'initialization' }
 NTSpEditorPresenter >> initialize [
 
 	super initialize.

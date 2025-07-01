@@ -10,6 +10,16 @@ Class {
 }
 
 { #category : 'accessing' }
+NTNullNoteObject >> content: aString [
+]
+
+{ #category : 'accessing' }
+NTNullNoteObject >> contents: aString [
+
+	
+]
+
+{ #category : 'accessing' }
 NTNullNoteObject >> title [
 
 	^ ' '
