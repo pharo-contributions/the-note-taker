@@ -14,7 +14,6 @@ Class {
 		'composer',
 		'note',
 		'renderedText',
-		'isTextDirty',
 		'worker'
 	],
 	#category : 'TheNoteTaker-UI-Core',
@@ -66,7 +65,6 @@ NTSpEditorPresenter >> initialize [
 
 	super initialize.
 	self noNote.
-	isTextDirty := false.
 	worker := TKTLocalProcessTaskRunner new
 ]
 
@@ -85,15 +83,6 @@ NTSpEditorPresenter >> initializePresenters [
 				self owner notesIndexPresenter modelChanged.
 				event wasHandled: false ].
 
-	"		
-	textInput addShortcutWith: [ :action | action 
-        shortcutKey: Character space asKeyCombination | Character cr asKeyCombination;
-        action: [ self renderDocument ] ].
-   "
-	textInput eventHandler whenKeyDownDo: [ :anEvent |
-			isTextDirty := true.
-			anEvent wasHandled: false ].
-
 	renderedText := self newText
 		                beNotEditable;
 		                yourself.
@@ -108,7 +97,7 @@ NTSpEditorPresenter >> initializePresenters [
 { #category : 'testing' }
 NTSpEditorPresenter >> mayLoseEdits [
 
-	^ self textInputText isNotEmpty and: [ isTextDirty ]
+	^ self textInputText isNotEmpty and: [ note isDirty ]
 ]
 
 { #category : 'api' }
@@ -163,9 +152,8 @@ NTSpEditorPresenter >> renderedText [
 
 { #category : 'actions' }
 NTSpEditorPresenter >> saveFile [
-	
+
 	self note save.
-	isTextDirty := false.
 	self window ifNotNil: [ self updateTitle ]
 ]
 
@@ -193,7 +181,6 @@ NTSpEditorPresenter >> textInputText: aString [
 
 	textInput text: aString asString.
 	note contents: self textInputText.
-	isTextDirty := false
 ]
 
 { #category : 'api' }
