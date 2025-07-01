@@ -38,6 +38,7 @@ NTSpGitCommand >> commit [
 		executeCommand: self gitOnNoteFolder , ' commit -m "saving"'
 		onExit: [ :process :outString :errString |
 				process isSuccess ifTrue: [ ^ self ].
+				errString isEmpty ifTrue: [ ^ self ].
 				IceGenericError signal: errString ]
 ]
 
@@ -46,12 +47,12 @@ NTSpGitCommand >> execute [
 
 	(self projectPathString , '.git') asFileReference exists ifFalse: [
 		self init ].
-
+	
 	self
 		add;
 		commit;
-		pull;
-		merge;
+		"pull;
+		merge;"
 		push
 ]
 
@@ -138,7 +139,6 @@ NTSpGitCommand >> executeCommand: aString onExit: onExitBlock [
 
 	repoDirectory := location basename.
 	parent := location parent.
-	parent ensureCreateDirectory.
 
 	(OSPlatform current in: [ :aPlatform |
 		 aPlatform isMacOSX or: [ aPlatform isUnix ] ])
