@@ -82,7 +82,7 @@ NTSpEditorPresenter >> initializePresenters [
 		Character space asKeyCombination | Character cr asKeyCombination
 		toAction: [ :target :morph :event |
 				self renderDocument.
-				self owner notesIndexPresenter refresh.
+				self owner notesIndexPresenter modelChanged.
 				event wasHandled: false ].
 
 	"		

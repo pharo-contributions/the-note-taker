@@ -40,6 +40,6 @@ NTSpAddTagCommand >> execute [
 										tag addNote: note.
 										self application log add: note tag: tag ] ] ];
 		openModalWithParent: context window.
-		
-	self context refresh
+
+	self context modelChanged
 ]
