@@ -4,7 +4,7 @@ Presents a table with basic metadata information about saved notes in the system
 "
 Class {
 	#name : 'NTSpNoteIndexPresenter',
-	#superclass : 'SpPresenter',
+	#superclass : 'SpPresenterWithModel',
 	#instVars : [
 		'notesTable',
 		'notes'
@@ -124,17 +124,16 @@ NTSpNoteIndexPresenter >> items: aCollection [
 	notesTable items: aCollection
 ]
 
+{ #category : 'callbacks' }
+NTSpNoteIndexPresenter >> modelChanged [
+
+	notesTable refresh
+]
+
 { #category : 'accessing' }
 NTSpNoteIndexPresenter >> notesTable [
 
 	^ notesTable
-]
-
-{ #category : 'accessing' }
-NTSpNoteIndexPresenter >> refresh [
-	"Update the receievr's notes presenter"
-
-	notesTable refresh.
 ]
 
 { #category : 'accessing' }
@@ -165,9 +164,9 @@ NTSpNoteIndexPresenter >> updateNotesList: aNotesCollection [
 { #category : 'callbacks' }
 NTSpNoteIndexPresenter >> updateRemovedNote [
 
-	self refresh.
+	"self refresh."
 	notesTable selectionMode unselectAll.
 	self owner
 		updateWindowTitle;
-		updateContents.
+		updateContents
 ]

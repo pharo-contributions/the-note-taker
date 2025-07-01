@@ -32,12 +32,11 @@ NTSpImportNoteCommand >> execute [
 
 	| selections |
 	selections := (StOpenFilePresenter new
-						extent: 800 @800;
-						extensions: self validNoteExtensions;
-						yourself) openModal.
+		               extent: 800 @ 800;
+		               extensions: self validNoteExtensions;
+		               yourself) openModal.
 	self processSelections: selections.
-	self context items: self noteTakerContainer notes.
-	self context refresh. 
+	self context items: self noteTakerContainer notes
 ]
 
 { #category : 'testing' }

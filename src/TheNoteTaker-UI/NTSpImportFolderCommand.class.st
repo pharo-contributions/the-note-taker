@@ -61,11 +61,12 @@ NTSpImportFolderCommand >> isValidNoteName: aString [
 NTSpImportFolderCommand >> processFolder: aFileReference [
 
 	aFileReference allFiles
-		"this test should be grouped somewhere else!"
-		select: [ :fileRef |  (#('md' 'txt' 'text') includes: fileRef extension asLowercase )
-										ifTrue: [ self isValidNoteName: fileRef contents ]
-										ifFalse: [ false ]]
+		select: [ :fileRef |
+				(self validNoteExtensions includes: fileRef extension asLowercase)
+					ifTrue: [ self isValidNoteName: fileRef contents ]
+					ifFalse: [ false ] ]
 		thenDo: [ :fileRef | self addNoteFromFileReference: fileRef ]
+	"this test should be grouped somewhere else!"
 ]
 
 { #category : 'executing' }
@@ -81,9 +82,6 @@ NTSpImportFolderCommand >> processSelections: selections [
 { #category : 'executing' }
 NTSpImportFolderCommand >> validNoteExtensions [
 	"Answer a <Collection> of <String> each one specifying a valid file extension for a note"
-	
-	^ { 
-		'txt' .
-		'md' 
-		}
+
+	^ { 'txt'. 'md' .'text' }
 ]

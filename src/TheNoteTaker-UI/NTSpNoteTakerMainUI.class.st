@@ -102,9 +102,9 @@ NTSpNoteTakerMainUI >> initialize [
 { #category : 'initialization' }
 NTSpNoteTakerMainUI >> initializePresenters [
 
-	notesToolbarPresenter := self
-		                         instantiate: NTSpSearchCreatePresenter.
+	notesToolbarPresenter := self instantiate: NTSpSearchCreatePresenter.
 	notesIndexPresenter := self instantiate: NTSpNoteIndexPresenter.
+	notesIndexPresenter model: self noteTakerContainer.
 	notesContentPresenter := self instantiate: NTSpEditorPresenter.
 	statusBar := SpStatusBarPresenter new
 ]
