@@ -51,7 +51,7 @@ NTSpNoteIndexPresenter class >> buildNoteTakerOperationsGroupWith: presenterInst
 		  register: ((NTSpRemoveTagCommand
 				    forSpecWithIconNamed: #delete
 				    shortcutKey: 'D' asShortcut) context: presenterInstance);
-		  register: ((NTSpGitCommand 
+		  register: ((NTSpLibGitCommand
 				    forSpecWithIconNamed: #delete
 				    shortcutKey: 'G' asShortcut) context: presenterInstance);
 		  beDisplayedAsGroup;
