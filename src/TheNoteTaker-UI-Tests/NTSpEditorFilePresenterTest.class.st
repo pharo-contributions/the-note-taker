@@ -61,18 +61,33 @@ NTSpEditorFilePresenterTest >> testGotCurrentFileWhenIsSpecify [
 ]
 
 { #category : 'running' }
-NTSpEditorFilePresenterTest >> testSaveWithExtension [
+NTSpEditorFilePresenterTest >> testRenderedTextIsCorrectMicrodown [
 
-	| text textPresenter |self skip.
-	text := 'This is just a test'.
-	textPresenter := self mockTextObject: text.
-	presenter textInputText: text.
+	| text composer micText |
+	composer := MicRichTextComposer new.
+	text := 'This **is** just a __test__'.
+	micText := composer visit: (Microdown parse: text).
+
 	presenter note: note.
-	note title: 'Dummy title'.
+	presenter textInputText: text.
+
+	self assert: presenter renderedText equals: micText
+]
+
+{ #category : 'running' }
+NTSpEditorFilePresenterTest >> testSave [
+
+	| text |
+	text := 'This is just a test'.
+
+	presenter note: note.
+	presenter textInputText: text.
 	presenter saveFile.
 
-	self assert: note title suffix equals: 'md'.
-	self assert: note contents equals: text
+	self assert: note contents equals: text.
+	self assert: note exists.
+	"We use endsWith: due to metadata"
+	self assert: (note fileReference contents endsWith: text)
 ]
 
 { #category : 'tests' }
