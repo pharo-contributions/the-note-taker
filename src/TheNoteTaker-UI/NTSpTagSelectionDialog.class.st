@@ -1,5 +1,5 @@
 Class {
-	#name : 'NTSpAddTagDialog',
+	#name : 'NTSpTagSelectionDialog',
 	#superclass : 'SpSelectMultipleDialog',
 	#instVars : [
 		'searchTextPresenter'
@@ -10,7 +10,7 @@ Class {
 }
 
 { #category : 'adding' }
-NTSpAddTagDialog >> addTagNamed: aString [
+NTSpTagSelectionDialog >> addTagNamed: aString [
 
 	self application noteTakerContainer tagNamed: aString.
 	searchTextPresenter text: ''.
@@ -18,7 +18,7 @@ NTSpAddTagDialog >> addTagNamed: aString [
 ]
 
 { #category : 'adding' }
-NTSpAddTagDialog >> defaultLayout [
+NTSpTagSelectionDialog >> defaultLayout [
 
 	^ SpBoxLayout newTopToBottom
 		  add: searchTextPresenter expand: false;
@@ -27,14 +27,14 @@ NTSpAddTagDialog >> defaultLayout [
 ]
 
 { #category : 'adding' }
-NTSpAddTagDialog >> filteredTagsFor: aString [
+NTSpTagSelectionDialog >> filteredTagsFor: aString [
 	"Answer a <Collection> of <NTNoteObject> whose names match aString"
 
 	^ (self application noteTakerContainer tagsNameMatching: aString) collect: [ :each | each tagName ]
 ]
 
 { #category : 'initialization' }
-NTSpAddTagDialog >> initializePresenters [
+NTSpTagSelectionDialog >> initializePresenters [
 
 	super initializePresenters.
 
@@ -43,13 +43,14 @@ NTSpAddTagDialog >> initializePresenters [
 			                       'Search a tag by just typing a name. Create it if he doesn t exist';
 		                       placeholder: 'Type note to search or create';
 		                       whenTextChangedDo: [ self updateTagsList ];
-		                       whenSubmitDo: [ :newTagName |
-			                       self addTagNamed: newTagName ];
+		                       "whenSubmitDo: [ :newTagName |
+				                       searchTextPresenter text: ''.
+				                       selectedItems add: newTagName ];"
 		                       yourself
 ]
 
 { #category : 'adding' }
-NTSpAddTagDialog >> updateTagsList [
+NTSpTagSelectionDialog >> updateTagsList [
 
 	| filteredItems |
 	filteredItems := searchTextPresenter text

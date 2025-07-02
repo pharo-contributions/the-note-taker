@@ -29,7 +29,7 @@ NTSpRemoveTagCommand >> execute [
 	tagList := Set new.
 	self selectedNotes do: [ :notes | tagList addAll: notes tags ].
 
-	self application newSelectMultiple
+	(NTSpTagSelectionDialog newApplication: self application)
 		title: 'tag name';
 		items: (tagList asArray collect: [ :each | each tagName ]);
 		display: #asString;
