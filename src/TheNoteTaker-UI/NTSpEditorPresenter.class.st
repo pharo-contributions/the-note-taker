@@ -161,9 +161,9 @@ NTSpEditorPresenter >> saveFile [
 NTSpEditorPresenter >> startNewFile [
 	"NEW button is pressed: reset tool"
 
-	self mayLoseEdits ifTrue: [ (self application confirm:
+	"self mayLoseEdits ifTrue: [ (self application confirm:
 			 'You have unsaved edits. Do you want to proceed?')
-			ifFalse: [ ^ self ]  ].
+			ifFalse: [ ^ self ]  ]."
 
 	self emptyInputText.
 	note := NTNoteObject new.
