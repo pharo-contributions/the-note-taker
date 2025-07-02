@@ -41,11 +41,10 @@ NTSpNoteTakerMainUI >> connectPresenters [
 				| newNote |
 				newNote := self application addNoteNamed: newNoteName.
 				newNote folderReference: self application settings noteLocation.
-				notesIndexPresenter updateNotesList: self noteTakerContainer notes.
+				notesToolbarPresenter emptySearchBar.
 				notesIndexPresenter notesTable unselectAll.
 				notesIndexPresenter selectNote: newNote.
-				self editorPresenter takeKeyboardFocus.
-				notesToolbarPresenter emptySearchBar ].
+				self editorPresenter takeKeyboardFocus].
 
 	notesToolbarPresenter tagsSearchCreateTextPresenter
 		whenTextChangedDo: [
