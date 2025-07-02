@@ -28,11 +28,9 @@ NTSpNoteTakerMainUI >> connectPresenters [
 
 	notesIndexPresenter notesTable whenSelectedItemChangedDo: [
 			:aSelectedNote |
-			aSelectedNote ifNil: [ self editorPresenter noNote ] ifNotNil: [
-					self displayNoteContents: aSelectedNote.
-					aSelectedNote exists
-						ifTrue: [ aSelectedNote openFromPresenter: self ]
-						ifFalse: [ aSelectedNote newFromPresenter: self ] ] ].
+			aSelectedNote
+				ifNil: [ notesContentPresenter noNote ]
+				ifNotNil: [ notesContentPresenter note: aSelectedNote ] ].
 
 	notesToolbarPresenter notesSearchCreateTextPresenter
 		whenTextChangedDo: [
@@ -44,7 +42,7 @@ NTSpNoteTakerMainUI >> connectPresenters [
 				notesToolbarPresenter emptySearchBar.
 				notesIndexPresenter notesTable unselectAll.
 				notesIndexPresenter selectNote: newNote.
-				self editorPresenter takeKeyboardFocus].
+				notesContentPresenter takeKeyboardFocus ].
 
 	notesToolbarPresenter tagsSearchCreateTextPresenter
 		whenTextChangedDo: [
@@ -63,20 +61,6 @@ NTSpNoteTakerMainUI >> defaultLayout [
 			yourself);
 		add: statusBar height: self toolbarHeight;
 		yourself
-]
-
-{ #category : 'accessing - status bar' }
-NTSpNoteTakerMainUI >> displayNoteContents: aNoteObject [
-
-	notesContentPresenter displayContents: aNoteObject
-]
-
-{ #category : 'accessing' }
-NTSpNoteTakerMainUI >> editorPresenter [
-	"Answer the receiver's MicroDown editor presenter"
-
-	^ notesContentPresenter
-
 ]
 
 { #category : 'testing' }
@@ -149,13 +133,6 @@ NTSpNoteTakerMainUI >> notesToolbarPresenter [
 	^ notesToolbarPresenter 
 ]
 
-{ #category : 'accessing' }
-NTSpNoteTakerMainUI >> nullNote [
-
-	self updateWindowTitle.
-	^ NTNullNoteObject new
-]
-
 { #category : 'showing' }
 NTSpNoteTakerMainUI >> open [ 
 
@@ -164,13 +141,11 @@ NTSpNoteTakerMainUI >> open [
 ]
 
 { #category : 'accessing' }
-NTSpNoteTakerMainUI >> processSelectedNote: aCollection [ 
+NTSpNoteTakerMainUI >> processSelectedNote: aCollection [
 	"If we have more than one selection we just display an empty note in the contents presenter"
 
-	aCollection size > 1
-		ifTrue: [ ^ self nullNote ].
+	aCollection size > 1 ifTrue: [ ^ NTNullNoteObject new ].
 	^ aCollection anyOne
-
 ]
 
 { #category : 'initialization' }
@@ -200,11 +175,8 @@ NTSpNoteTakerMainUI >> toolbarHeight [
 
 { #category : 'event handling' }
 NTSpNoteTakerMainUI >> updateContents [
-	
-	notesContentPresenter note: self nullNote.
-	notesContentPresenter emptyInputText
 
-	
+	notesContentPresenter noNote
 ]
 
 { #category : 'activation' }

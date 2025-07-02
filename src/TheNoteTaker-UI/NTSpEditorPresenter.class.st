@@ -38,14 +38,6 @@ NTSpEditorPresenter >> defaultLayout [
 		  yourself
 ]
 
-{ #category : 'api' }
-NTSpEditorPresenter >> displayContents: aNoteObject [
-
-	note := aNoteObject.
-	textInput text: aNoteObject contents asString.
-	self renderDocument
-]
-
 { #category : 'actions' }
 NTSpEditorPresenter >> emptyInputText [
 	"CLEAN button is pressed: erase both input and output text content"
@@ -64,8 +56,8 @@ NTSpEditorPresenter >> emptyRenderedText [
 NTSpEditorPresenter >> initialize [
 
 	super initialize.
+	worker := TKTLocalProcessTaskRunner new.
 	self noNote.
-	worker := TKTLocalProcessTaskRunner new
 ]
 
 { #category : 'initialization' }
@@ -80,6 +72,7 @@ NTSpEditorPresenter >> initializePresenters [
 		Character space asKeyCombination | Character cr asKeyCombination
 		toAction: [ :target :morph :event |
 				self renderDocument.
+				self updateTitle.
 				self owner notesIndexPresenter modelChanged.
 				event wasHandled: false ].
 
@@ -87,8 +80,7 @@ NTSpEditorPresenter >> initializePresenters [
 		                beNotEditable;
 		                yourself.
 	textInput
-		whenTextChangedDo: [
-			note ifNotNil: [ note contents: textInput text asString ] ];
+		whenTextChangedDo: [ note contents: textInput text asString ];
 		bindKeyCombination: $s meta toAction: [
 				self saveFile.
 				self application log save: note ]
@@ -101,37 +93,29 @@ NTSpEditorPresenter >> mayLoseEdits [
 ]
 
 { #category : 'api' }
-NTSpEditorPresenter >> newNote: aNoteObject [
-
-	note := aNoteObject.
-	self displayContents: aNoteObject.
-	self window ifNotNil: [self updateTitle].
-]
-
-{ #category : 'api' }
 NTSpEditorPresenter >> noNote [
 
-	note := NTNoteObject new
+	self note: NTNoteObject new.
+	self emptyInputText.
 ]
 
 { #category : 'accessing' }
 NTSpEditorPresenter >> note [
 
-	^ note ifNil: [ note := NTNoteObject new ]
+	^ note ifNil: [ self noNote ]
 ]
 
 { #category : 'accessing' }
 NTSpEditorPresenter >> note: aNTNoteObject [
 
-	note := aNTNoteObject
-]
+	note := aNTNoteObject.
+	textInput text: aNTNoteObject contents asString.
+	self renderDocument.
+	self updateTitle
 
-{ #category : 'api' }
-NTSpEditorPresenter >> openNote: aNoteObject [
-
-	note := aNoteObject.
-	self displayContents: aNoteObject.
-	self window ifNotNil: [self updateTitle].
+	"self mayLoseEdits ifTrue: [ (self application confirm:
+			 'You have unsaved edits. Do you want to proceed?')
+			ifFalse: [ ^ self ]  ]."
 ]
 
 { #category : 'actions' }
@@ -154,20 +138,6 @@ NTSpEditorPresenter >> renderedText [
 NTSpEditorPresenter >> saveFile [
 
 	self note save.
-	self window ifNotNil: [ self updateTitle ]
-]
-
-{ #category : 'accessing' }
-NTSpEditorPresenter >> startNewFile [
-	"NEW button is pressed: reset tool"
-
-	"self mayLoseEdits ifTrue: [ (self application confirm:
-			 'You have unsaved edits. Do you want to proceed?')
-			ifFalse: [ ^ self ]  ]."
-
-	self emptyInputText.
-	note := NTNoteObject new.
-	self window ifNotNil: [ self updateTitle ]
 ]
 
 { #category : 'accessing' }
@@ -180,21 +150,10 @@ NTSpEditorPresenter >> textInputText [
 NTSpEditorPresenter >> textInputText: aString [
 
 	textInput text: aString asString.
-	note contents: self textInputText.
-]
-
-{ #category : 'api' }
-NTSpEditorPresenter >> title [
-	"Answer a <String> representing the application name and selected note title"
-
-	^ String streamContents: [ :stream |
-			  stream
-				  << self application applicationTitle;
-				  << note title ]
 ]
 
 { #category : 'api' }
 NTSpEditorPresenter >> updateTitle [
 
-	self window title: self note title
+	self window ifNotNil: [ self window title: self application applicationTitle, ' - ', note title ]
 ]
