@@ -121,12 +121,6 @@ NTSpNoteTakerMainUI >> notesIndexPresenter [
 ]
 
 { #category : 'initialization' }
-NTSpNoteTakerMainUI >> notesToolbar [
-
-	^ notesToolbarPresenter
-]
-
-{ #category : 'initialization' }
 NTSpNoteTakerMainUI >> notesToolbarPresenter [
 	"This is the getter of the notes toolbar"
 	
@@ -140,25 +134,11 @@ NTSpNoteTakerMainUI >> open [
 	self centered
 ]
 
-{ #category : 'accessing' }
-NTSpNoteTakerMainUI >> processSelectedNote: aCollection [
-	"If we have more than one selection we just display an empty note in the contents presenter"
-
-	aCollection size > 1 ifTrue: [ ^ NTNullNoteObject new ].
-	^ aCollection anyOne
-]
-
 { #category : 'initialization' }
 NTSpNoteTakerMainUI >> setTitleTo: aSpWindowPresenter [
 
 	aSpWindowPresenter title: self applicationTitle
 
-]
-
-{ #category : 'initialization' }
-NTSpNoteTakerMainUI >> setWindowIconTo: aSpWindowPresenter [
-
-	aSpWindowPresenter windowIcon: (self iconNamed: #page)
 ]
 
 { #category : 'accessing' }
