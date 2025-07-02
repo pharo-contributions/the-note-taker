@@ -40,7 +40,7 @@ NTSpNoteTakerMainUITest >> setUp [
 	noteFileName := (notesTaker addNoteFromFileReference: noteFile)
 		                fileName.
 	note := notesTaker noteNamed: noteFileName.
-	notesContentPresenter newNote: note
+	notesContentPresenter note: note
 ]
 
 { #category : 'running' }
@@ -70,7 +70,7 @@ NTSpNoteTakerMainUITest >> testAddContent [
 NTSpNoteTakerMainUITest >> testAddNoteByItsContents [
 
 	| tempNote |
-	notesContentPresenter startNewFile.
+   notesContentPresenter noNote.
 	notesContentPresenter textInputText: 'just a new note'.
 
 	tempNote := notesContentPresenter note.
@@ -138,9 +138,9 @@ NTSpNoteTakerMainUITest >> testSelectANote [
 	notesIndexPresenter selectNote: notesIndexPresenter items first.
 
 	notesIndexPresenter selectedNote contents: 'anotherNote'.
-	notesContentPresenter openNote: notesIndexPresenter selectedNote. 
-	
-	self assert: notesContentPresenter textInputText equals: 'anotherNote'.
+	notesContentPresenter note: notesIndexPresenter selectedNote.
 
-
+	self
+		assert: notesContentPresenter textInputText
+		equals: 'anotherNote'
 ]
