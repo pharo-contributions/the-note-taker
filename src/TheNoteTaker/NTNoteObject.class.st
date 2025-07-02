@@ -21,12 +21,16 @@ Class {
 }
 
 { #category : 'instance creation' }
-NTNoteObject class >> named: aString [ 
+NTNoteObject class >> named: aString [
 	"Answer a new instance of the receiver with title aString"
-	
-	^ self new
-		contents: aString;
-		yourself
+
+	| note |
+	note := self new.
+
+	^ note
+		  contents: aString;
+		  modificationDate: note creationDate;
+		  yourself
 ]
 
 { #category : 'instance creation' }
