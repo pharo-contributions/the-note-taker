@@ -37,30 +37,6 @@ NTSpSearchCreatePresenter >> emptySearchBar [
 	notesSearchCreateTextPresenter clearContent
 ]
 
-{ #category : 'accessing' }
-NTSpSearchCreatePresenter >> execute [
-	"Request a title to create a new note"
-
-	| tagList |
-	tagList := Set new.
-	self selectedNotes do: [ :notes | tagList addAll: notes tags ].
-
-	(NTSpTagSelectionDialog newApplication: self application)
-		title: 'tag name';
-		items: (tagList asArray collect: [ :each | each tagName ]);
-		display: #asString;
-		onAccept: [ :dialog |
-				| selectedTags |
-				selectedTags := dialog presenter selectedItems collect: [ :each |
-						                self noteTakerContainer tagNamed: each ].
-				selectedTags do: [ :tag |
-							self selectedNotes do: [ :note |
-										note removeTag: tag.
-										self application log remove: note tag: tag ] ] ];
-		openModalWithParent: owner window.
-	self context modelChanged
-]
-
 { #category : 'callbacks' }
 NTSpSearchCreatePresenter >> filter [
 
@@ -87,13 +63,10 @@ NTSpSearchCreatePresenter >> filteredNotesFor: aString [
 	^ self application noteTakerContainer notesNameMatching: aString
 ]
 
-{ #category : 'callbacks' }
-NTSpSearchCreatePresenter >> filteredTagsFor: aString withNotes: aNotesCollection [
-	"Answer a <Collection> of <NTNoteObject> whose names match aString"
+{ #category : 'initialization' }
+NTSpSearchCreatePresenter >> filteredTagsSelection [
 
-	^ self application noteTakerContainer
-		  notesTagsMatching: aString
-		  withNotes: aNotesCollection
+	^ filteredTagsSelection
 ]
 
 { #category : 'initialization' }
@@ -125,7 +98,7 @@ NTSpSearchCreatePresenter >> initializePresenters [
 		                      action: [ self openLog ];
 		                      help: 'Log';
 		                      yourself.
-	filteredTagsSelection := Array new
+	filteredTagsSelection := OrderedCollection new
 ]
 
 { #category : 'callbacks' }
