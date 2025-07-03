@@ -44,8 +44,8 @@ NTSpNoteTakerMainUI >> connectPresenters [
 				notesIndexPresenter selectNote: newNote.
 				notesContentPresenter takeKeyboardFocus ].
 
-	notesToolbarPresenter tagsSearchCreateTextPresenter
-		whenTextChangedDo: [
+	notesToolbarPresenter tagsSearchButtonPresenter
+		whenActivatedDo: [
 		notesIndexPresenter updateNotesList: notesToolbarPresenter filter ]
 ]
 

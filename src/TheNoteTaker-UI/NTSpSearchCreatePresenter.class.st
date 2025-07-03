@@ -11,8 +11,9 @@ Class {
 	#instVars : [
 		'notesSearchCreateTextPresenter',
 		'noteSettingsButtonPresenter',
-		'tagsSearchCreateTextPresenter',
-		'logButtonPresenter'
+		'tagsSearchButtonPresenter',
+		'logButtonPresenter',
+		'filteredTagsSelection'
 	],
 	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
@@ -24,7 +25,7 @@ NTSpSearchCreatePresenter >> defaultLayout [
 
 	^ SpBoxLayout newLeftToRight
 		  add: notesSearchCreateTextPresenter;
-		  add: tagsSearchCreateTextPresenter;
+		  add: tagsSearchButtonPresenter expand: false;
 		  add: noteSettingsButtonPresenter expand: false;
 		  add: logButtonPresenter expand: false;
 		  yourself
@@ -36,6 +37,30 @@ NTSpSearchCreatePresenter >> emptySearchBar [
 	notesSearchCreateTextPresenter clearContent
 ]
 
+{ #category : 'accessing' }
+NTSpSearchCreatePresenter >> execute [
+	"Request a title to create a new note"
+
+	| tagList |
+	tagList := Set new.
+	self selectedNotes do: [ :notes | tagList addAll: notes tags ].
+
+	(NTSpTagSelectionDialog newApplication: self application)
+		title: 'tag name';
+		items: (tagList asArray collect: [ :each | each tagName ]);
+		display: #asString;
+		onAccept: [ :dialog |
+				| selectedTags |
+				selectedTags := dialog presenter selectedItems collect: [ :each |
+						                self noteTakerContainer tagNamed: each ].
+				selectedTags do: [ :tag |
+							self selectedNotes do: [ :note |
+										note removeTag: tag.
+										self application log remove: note tag: tag ] ] ];
+		openModalWithParent: owner window.
+	self context modelChanged
+]
+
 { #category : 'callbacks' }
 NTSpSearchCreatePresenter >> filter [
 
@@ -43,14 +68,15 @@ NTSpSearchCreatePresenter >> filter [
 	filteredItems := notesSearchCreateTextPresenter text
 		                 ifEmpty: [
 		                 self application noteTakerContainer notes ]
-		                 ifNotEmpty: [ :pattern | self filteredNotesFor: pattern ].
+		                 ifNotEmpty: [ :pattern |
+		                 self filteredNotesFor: pattern ].
 
-	filteredItems := tagsSearchCreateTextPresenter text
+	filteredItems := filteredTagsSelection
 		                 ifEmpty: [ filteredItems ]
 		                 ifNotEmpty: [ :pattern |
-		                 self
-			                 filteredTagsFor: pattern
-			                 withNotes: filteredItems ].
+				                 self
+					                 notes: filteredItems
+					                 withTags: filteredTagsSelection ].
 
 	^ filteredItems
 ]
@@ -80,11 +106,12 @@ NTSpSearchCreatePresenter >> initializePresenters [
 			                                  'Type note to search or create';
 		                                  yourself.
 
-	tagsSearchCreateTextPresenter := self newTextInput
-		                                 help:
-			                                 'search a tag by just typing a name';
-		                                 placeholder: 'Type tag to search';
-		                                 yourself.
+	tagsSearchButtonPresenter := self newButton
+		                             icon: (self iconNamed: #recentMessages);
+		                             addStyle: 'small';
+		                             action: [ self openTagsSearcher ];
+		                             help: 'Tags searcher';
+		                             yourself.
 	noteSettingsButtonPresenter := self newButton
 		                               icon:
 			                               (self iconNamed: #smallConfiguration);
@@ -96,8 +123,26 @@ NTSpSearchCreatePresenter >> initializePresenters [
 		                      icon: (self iconNamed: #recentMessages);
 		                      addStyle: 'small';
 		                      action: [ self openLog ];
-		                      help: 'Settings';
-		                      yourself
+		                      help: 'Log';
+		                      yourself.
+	filteredTagsSelection := Array new
+]
+
+{ #category : 'callbacks' }
+NTSpSearchCreatePresenter >> notes: aNotesCollection withTags: aTagsCollection [
+	"Answer a <Collection> of <NTNoteObject> whose names match tags"
+
+	| filteredNotes |
+	filteredNotes := Set new.
+
+	aTagsCollection do: [ :tag |
+				| notesCollection |
+				 notesCollection := self application noteTakerContainer
+					 notesTagsMatching: tag tagName
+					 withNotes: aNotesCollection.
+					filteredNotes addAll: notesCollection ].
+				
+	^ filteredNotes asOrderedCollection
 ]
 
 { #category : 'accessing' }
@@ -120,8 +165,28 @@ NTSpSearchCreatePresenter >> openTNTSettings [
 		open
 ]
 
-{ #category : 'accessing' }
-NTSpSearchCreatePresenter >> tagsSearchCreateTextPresenter [
+{ #category : 'initialization' }
+NTSpSearchCreatePresenter >> openTagsSearcher [
 
-	^ tagsSearchCreateTextPresenter
+	| tagList |
+	tagList := Set new.
+	self owner notesIndexPresenter items do: [ :notes |
+		tagList addAll: notes tags ].
+
+	(NTSpTagSelectionDialog newApplication: self application)
+		title: 'tag name';
+		items: (tagList asArray collect: [ :each | each tagName ]);
+		display: #asString;
+		onAccept: [ :dialog |
+				filteredTagsSelection := dialog presenter selectedItems collect: [
+						                         :each |
+						                         self owner noteTakerContainer
+							                         tagNamed: each ] ];
+		openModalWithParent: owner window
+]
+
+{ #category : 'accessing' }
+NTSpSearchCreatePresenter >> tagsSearchButtonPresenter [
+
+	^ tagsSearchButtonPresenter
 ]
