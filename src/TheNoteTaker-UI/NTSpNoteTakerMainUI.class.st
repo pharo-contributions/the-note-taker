@@ -17,7 +17,7 @@ Class {
 	#tag : 'Core'
 }
 
-{ #category : 'initialization' }
+{ #category : 'accessing' }
 NTSpNoteTakerMainUI >> applicationTitle [
 
 	^ self application applicationTitle
@@ -108,7 +108,7 @@ NTSpNoteTakerMainUI >> noteTakerContainer [
 	^ self application noteTakerContainer
 ]
 
-{ #category : 'initialization' }
+{ #category : 'accessing' }
 NTSpNoteTakerMainUI >> notesContentPresenter [
 
 	^ notesContentPresenter 
@@ -120,7 +120,7 @@ NTSpNoteTakerMainUI >> notesIndexPresenter [
 	^ notesIndexPresenter
 ]
 
-{ #category : 'initialization' }
+{ #category : 'accessing' }
 NTSpNoteTakerMainUI >> notesToolbarPresenter [
 	"This is the getter of the notes toolbar"
 	
@@ -134,7 +134,7 @@ NTSpNoteTakerMainUI >> open [
 	self centered
 ]
 
-{ #category : 'initialization' }
+{ #category : 'setter' }
 NTSpNoteTakerMainUI >> setTitleTo: aSpWindowPresenter [
 
 	aSpWindowPresenter title: self applicationTitle

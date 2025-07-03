@@ -39,9 +39,6 @@ NTSpNoteIndexPresenter class >> buildNoteTakerOperationsGroupWith: presenterInst
 		  register: ((NTSpImportNoteCommand
 				    forSpecWithIconNamed: #into
 				    shortcutKey: 'I' asShortcut) context: presenterInstance);
-		  register: ((NTSpImportFolderCommand
-				    forSpecWithIconNamed: #into
-				    shortcutKey: 'F' asShortcut) context: presenterInstance);
 		  register: ((NTSpRemoveNoteCommand
 				    forSpecWithIconNamed: #delete
 				    shortcutKey: 'D' asShortcut) context: presenterInstance);
@@ -51,9 +48,6 @@ NTSpNoteIndexPresenter class >> buildNoteTakerOperationsGroupWith: presenterInst
 		  register: ((NTSpRemoveTagCommand
 				    forSpecWithIconNamed: #delete
 				    shortcutKey: 'D' asShortcut) context: presenterInstance);
-		  register: ((NTSpLibGitCommand
-				    forSpecWithIconNamed: #delete
-				    shortcutKey: 'G' asShortcut) context: presenterInstance);
 		  beDisplayedAsGroup;
 		  yourself
 ]
