@@ -50,6 +50,12 @@ NTSpTagSelectionDialog >> initializePresenters [
 ]
 
 { #category : 'adding' }
+NTSpTagSelectionDialog >> selectedItems: aTagNameCollection [
+
+	selectedItems addAll: aTagNameCollection
+]
+
+{ #category : 'adding' }
 NTSpTagSelectionDialog >> updateTagsList [
 
 	| filteredItems |

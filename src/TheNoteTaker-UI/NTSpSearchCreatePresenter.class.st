@@ -167,15 +167,16 @@ NTSpSearchCreatePresenter >> openTNTSettings [
 
 { #category : 'initialization' }
 NTSpSearchCreatePresenter >> openTagsSearcher [
-
-	| tagList |
-	tagList := Set new.
-	self owner notesIndexPresenter items do: [ :notes |
-		tagList addAll: notes tags ].
+	
+	|selectedItems|
+	
+	selectedItems := filteredTagsSelection collect: [ :tag | tag tagName ].
 
 	(NTSpTagSelectionDialog newApplication: self application)
 		title: 'tag name';
-		items: (tagList asArray collect: [ :each | each tagName ]);
+		items: (self application noteTakerContainer tags collect: [ :each |
+					 each tagName ]);
+		selectedItems: selectedItems;
 		display: #asString;
 		onAccept: [ :dialog |
 				filteredTagsSelection := dialog presenter selectedItems collect: [
