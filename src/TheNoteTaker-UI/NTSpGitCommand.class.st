@@ -51,8 +51,8 @@ NTSpGitCommand >> execute [
 	self
 		add;
 		commit;
-		"pull;
-		merge;"
+		pull;
+		"merge;"
 		push
 ]
 
@@ -322,7 +322,7 @@ NTSpGitCommand >> projectPathString [
 NTSpGitCommand >> pull [
 
 	self
-		executeCommand: self gitOnNoteFolder , ' pull'
+		executeCommand: self gitOnNoteFolder , ' pull --ff-only origin master'
 		onExit: [ :process :outString :errString |
 				process isSuccess ifTrue: [ ^ self ].
 				IceGenericError signal: errString ]
