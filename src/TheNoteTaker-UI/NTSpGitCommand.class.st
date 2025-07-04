@@ -57,81 +57,6 @@ NTSpGitCommand >> execute [
 ]
 
 { #category : 'executing' }
-NTSpGitCommand >> execute2 [
-
-	| repoDirectory parent succedded stdOut stdErr location |
-	
-	location := self projectPathString.
-	location exists ifTrue: [
-		IceCloneLocationAlreadyExists signalFor: location ].
-
-	repoDirectory := location basename.
-	parent := location parent.
-	parent ensureCreateDirectory.
-
-	(OSPlatform current in: [ :aPlatform |
-		 aPlatform isMacOSX or: [ aPlatform isUnix ] ])
-		ifTrue: [
-				self
-					executeUsingUnixSubProcessRepoDirectory: repoDirectory
-					parent: parent
-					onExit: [ :process :outString :errString |
-							succedded := process isSuccess.
-							stdOut := outString.
-							stdErr := errString ] ]
-		ifFalse: [
-				self
-					executeUsingWindowsSubProcessRepoDirectory: repoDirectory
-					parent: parent
-					onExit: [ :process :outString :errString |
-							succedded := process isSuccess.
-							stdOut := outString.
-							stdErr := errString ] ].
-
-	succedded ifFalse: [
-			location ensureDeleteAll.
-			(stdErr includesSubstring: 'Permission denied (publickey)')
-				ifTrue: [ IceAuthenticationError signal: stdErr ].
-			IceGenericError signal: stdErr ]
-]
-
-{ #category : 'executing' }
-NTSpGitCommand >> executeCommand: aString [
-
-	| repoDirectory parent succedded stdOut stdErr location |
-	location := self projectPath.
-
-	repoDirectory := location basename.
-	parent := location parent.
-	parent ensureCreateDirectory.
-
-	(OSPlatform current in: [ :aPlatform |
-		 aPlatform isMacOSX or: [ aPlatform isUnix ] ])
-		ifTrue: [
-				self
-					executeUsingUnixSubProcessRepoDirectory: repoDirectory
-					parent: parent
-					onExit: [ :process :outString :errString |
-							succedded := process isSuccess.
-							stdOut := outString.
-							stdErr := errString ] ]
-		ifFalse: [
-				self
-					executeUsingWindowsSubProcessRepoDirectory: repoDirectory
-					parent: parent
-					command: aString
-					onExit: [ :process :outString :errString |
-							succedded := process isSuccess.
-							stdOut := outString.
-							stdErr := errString ] ].
-
-	succedded ifTrue: [ ^ self ].
-	(stdErr includesSubstring: 'Permission denied (publickey)') ifTrue: [
-		IceAuthenticationError signal: stdErr ].
-	IceGenericError signal: stdErr
-]
-
-{ #category : 'executing' }
 NTSpGitCommand >> executeCommand: aString onExit: onExitBlock [
 
 	| repoDirectory parent location |
@@ -174,43 +99,6 @@ NTSpGitCommand >> executeUsingUnixSubProcessRepoDirectory: repoDirectory parent:
 	osUnixSubprocessClass new
 		command: '/usr/bin/git';
 		arguments: (aString splitOn: String space);
-		workingDirectory: parent fullName;
-		redirectStdout;
-		redirectStderr;
-		runAndWaitPollingEvery: 1000 milliSecond asDelay
-		doing: [ :process :stdStream :errStream |
-				outFullStream nextPutAll: stdStream upToEnd.
-				errFullStream nextPutAll: errStream upToEnd.
-				self updateJobStatus: errFullStream contents ]
-		onExitDo: [ :process :stdStream :errStream |
-				outFullStream nextPutAll: stdStream upToEnd.
-				errFullStream nextPutAll: errStream upToEnd.
-				onExitBlock
-					value: process
-					value: outFullStream contents
-					value: errFullStream contents ]
-]
-
-{ #category : 'executing' }
-NTSpGitCommand >> executeUsingUnixSubProcessRepoDirectory: repoDirectory parent: parent onExit: onExitBlock [
-
-	| outFullStream errFullStream osUnixSubprocessClass |
-	osUnixSubprocessClass := self class environment
-		                         at: #OSSUnixSubprocess
-		                         ifAbsent: [
-		                         self error:
-			                         'Missing OSSUnixSubprocess class' ].
-
-	outFullStream := WriteStream on: (String new: 10000).
-	errFullStream := WriteStream on: (String new: 10000).
-
-	osUnixSubprocessClass new
-		command: '/usr/bin/git';
-		arguments: {
-				'clone'.
-				'--progress'.
-				self githubPathString.
-				repoDirectory };
 		workingDirectory: parent fullName;
 		redirectStdout;
 		redirectStderr;
