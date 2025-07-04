@@ -15,12 +15,6 @@ NTBasicTest class >> resources [
 ]
 
 { #category : 'running' }
-NTBasicTest >> resource [
-
-	^ NTTestResource current
-]
-
-{ #category : 'running' }
 NTBasicTest >> setUp [
 
 	super setUp.

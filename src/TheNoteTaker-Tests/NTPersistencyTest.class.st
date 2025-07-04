@@ -1,19 +1,15 @@
 Class {
 	#name : 'NTPersistencyTest',
 	#superclass : 'NTBasicTest',
-	#instVars : [
-		'memoryRoot'
-	],
 	#category : 'TheNoteTaker-Tests-Core',
 	#package : 'TheNoteTaker-Tests',
 	#tag : 'Core'
 }
 
 { #category : 'running' }
-NTPersistencyTest >> setUp [
+NTPersistencyTest >> resource [
 
-	super setUp.
-	memoryRoot := FileSystem memory root.
+	^ NTTestResource current
 ]
 
 { #category : 'running' }

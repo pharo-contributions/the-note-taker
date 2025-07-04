@@ -1,6 +1,6 @@
 Class {
 	#name : 'NTTagTest',
-	#superclass : 'NTBasicTest',
+	#superclass : 'TestCase',
 	#category : 'TheNoteTaker-Tests-Core',
 	#package : 'TheNoteTaker-Tests',
 	#tag : 'Core'
@@ -94,9 +94,8 @@ NTTagTest >> testRenameTag [
 NTTagTest >> testTagNote [
 
 	| note noteTag |
-	
-	note := NTNoteObject named: self simplestNoteName.
-	
+	note := NTNoteObject named: 'testMock Note'.
+
 	noteTag := NTTag newNamed: 'music'.
 
 	self assertEmpty: note tags.
