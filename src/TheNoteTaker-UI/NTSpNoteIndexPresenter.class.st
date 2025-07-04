@@ -169,13 +169,6 @@ NTSpNoteIndexPresenter >> selectedNotes [
 ]
 
 { #category : 'callbacks' }
-NTSpNoteIndexPresenter >> updateNotesList: aNotesCollection [
-
-	notesTable items: aNotesCollection.
-	"aNotesCollection isNotEmpty ifTrue: [ notesTable selectFirst ]"
-]
-
-{ #category : 'callbacks' }
 NTSpNoteIndexPresenter >> updateRemovedNote [
 
 	"self refresh."

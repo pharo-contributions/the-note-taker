@@ -34,7 +34,7 @@ NTSpNoteTakerMainUI >> connectPresenters [
 
 	notesToolbarPresenter notesSearchCreateTextPresenter
 		whenTextChangedDo: [
-			notesIndexPresenter updateNotesList: notesToolbarPresenter filter ];
+			notesIndexPresenter items: notesToolbarPresenter filter ];
 		whenSubmitDo: [ :newNoteName |
 				| newNote |
 				newNote := self application addNoteNamed: newNoteName.
@@ -44,9 +44,8 @@ NTSpNoteTakerMainUI >> connectPresenters [
 				notesIndexPresenter selectNote: newNote.
 				notesContentPresenter takeKeyboardFocus ].
 
-	notesToolbarPresenter tagsSearchButtonPresenter
-		whenActivatedDo: [
-		notesIndexPresenter updateNotesList: notesToolbarPresenter filter ]
+	notesToolbarPresenter tagsSearchButtonPresenter whenActivatedDo: [
+		notesIndexPresenter items: notesToolbarPresenter filter ]
 ]
 
 { #category : 'layout' }
