@@ -86,6 +86,16 @@ NTSpEditorPresenter >> initializePresenters [
 				self application log save: note ]
 ]
 
+{ #category : 'layout' }
+NTSpEditorPresenter >> layoutWithoutRenderedText [
+
+	^ SpBoxLayout newTopToBottom
+		  add: (SpPanedLayout newLeftToRight
+				   add: textInput;
+				   yourself);
+		  yourself
+]
+
 { #category : 'testing' }
 NTSpEditorPresenter >> mayLoseEdits [
 
@@ -95,8 +105,12 @@ NTSpEditorPresenter >> mayLoseEdits [
 { #category : 'api' }
 NTSpEditorPresenter >> noNote [
 
-	self note: NTNoteObject new.
-	self emptyInputText.
+	| nt |
+	nt := NTNoteObject new.
+	"nt folderReference: self application settings noteLocation."
+	self note: nt.
+	
+	self emptyInputText
 ]
 
 { #category : 'accessing' }
@@ -109,6 +123,9 @@ NTSpEditorPresenter >> note [
 NTSpEditorPresenter >> note: aNTNoteObject [
 
 	note := aNTNoteObject.
+	"note fileReference extension = '.md'
+		ifTrue: [ self layout: self defaultLayout ]
+		ifFalse: [ self layout: self layoutWithoutRenderedText ]."
 	textInput text: aNTNoteObject contents asString.
 	self renderDocument.
 	self updateTitle
