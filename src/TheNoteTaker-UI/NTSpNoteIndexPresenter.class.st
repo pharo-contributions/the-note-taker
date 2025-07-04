@@ -6,8 +6,7 @@ Class {
 	#name : 'NTSpNoteIndexPresenter',
 	#superclass : 'SpPresenterWithModel',
 	#instVars : [
-		'notesTable',
-		'notes'
+		'notesTable'
 	],
 	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
@@ -53,12 +52,12 @@ NTSpNoteIndexPresenter class >> buildNoteTakerOperationsGroupWith: presenterInst
 ]
 
 { #category : 'initialization' }
-NTSpNoteIndexPresenter >> dateFormatter: object [
+NTSpNoteIndexPresenter >> dateFormatter: aDateAndTime [
 	"Answers a string formatting object as time stamp for HTTP1.1 (RFC 1123).
 	Eg. Sun, 06 Nov 1994 08:49:37 GMT"
 
 	| utc |
-	utc := object asDateAndTime asUTC.
+	utc := aDateAndTime asDateAndTime asUTC.
 	^ String streamContents: [ :stream |
 			  stream
 				  nextPutAll: utc dayOfWeekAbbreviation;
@@ -123,10 +122,7 @@ NTSpNoteIndexPresenter >> initializePresenters [
 				               yourself);
 		              contextMenu: [
 				              (self rootCommandsGroup / 'NTSelContextualMenu')
-					              beRoot asMenuPresenter ];
-		              items: notes.
-
-	(NTSpImportFolderCommand new context: self) executeWithDefaultFolder
+					              beRoot asMenuPresenter ].
 ]
 
 { #category : 'accessing' }
