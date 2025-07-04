@@ -171,8 +171,10 @@ NTNoteObject >> generateTitle [
 	| nameOfNewNote collectionOfContents |
 	collectionOfContents := contents substrings: String crlf.
 	nameOfNewNote := String streamContents: [ :stt |
-			                 collectionOfContents isNotEmpty ifTrue: [
-				                 stt nextPutAll: collectionOfContents first ] ].
+			                 collectionOfContents isNotEmpty
+				                 ifTrue: [
+				                 stt nextPutAll: collectionOfContents first ]
+				                 ifFalse: [ stt nextPutAll: 'unnamed' ] ].
 
 	self title: nameOfNewNote
 ]
