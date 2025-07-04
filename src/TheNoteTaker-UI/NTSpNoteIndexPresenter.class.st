@@ -52,6 +52,30 @@ NTSpNoteIndexPresenter class >> buildNoteTakerOperationsGroupWith: presenterInst
 		  yourself
 ]
 
+{ #category : 'initialization' }
+NTSpNoteIndexPresenter >> dateFormatter: object [
+	"Answers a string formatting object as time stamp for HTTP1.1 (RFC 1123).
+	Eg. Sun, 06 Nov 1994 08:49:37 GMT"
+
+	| utc |
+	utc := object asDateAndTime asUTC.
+	^ String streamContents: [ :stream |
+			  stream
+				  nextPutAll: utc dayOfWeekAbbreviation;
+				  nextPut: $,;
+				  space.
+			  stream nextPutAll:
+				  (utc dayOfMonth printStringLength: 2 padded: true).
+			  stream
+				  space;
+				  nextPutAll: utc monthAbbreviation;
+				  space.
+			  utc year printOn: stream.
+			  stream space.
+			  utc printHMSOn: stream.
+			  stream nextPutAll: ' GMT' ]
+]
+
 { #category : 'layout' }
 NTSpNoteIndexPresenter >> defaultLayout [
 
@@ -95,7 +119,7 @@ NTSpNoteIndexPresenter >> initializePresenters [
 				               width: 200 * self currentWorld displayScaleFactor;
 				               "sortFunction: #yourself ascending;"evaluated: [
 					               :selectedNote |
-					               ZnUtils httpDate: selectedNote creationDate ];
+					               self dateFormatter: selectedNote creationDate ];
 				               yourself);
 		              contextMenu: [
 				              (self rootCommandsGroup / 'NTSelContextualMenu')
