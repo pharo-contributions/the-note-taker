@@ -35,8 +35,6 @@ NTLog >> create: aNTNoteObjet [
 NTLog >> logFileReference [
 
 	^ logFileReference
-
-	
 ]
 
 { #category : 'accessing' }
