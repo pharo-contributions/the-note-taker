@@ -1,6 +1,6 @@
 Class {
 	#name : 'NTPersistencyTest',
-	#superclass : 'NTBasicTest',
+	#superclass : 'NTContainerTest',
 	#category : 'TheNoteTaker-Tests-Core',
 	#package : 'TheNoteTaker-Tests',
 	#tag : 'Core'
