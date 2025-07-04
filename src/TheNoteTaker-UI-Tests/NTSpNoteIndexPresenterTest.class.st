@@ -18,6 +18,18 @@ NTSpNoteIndexPresenterTest >> testAddNote [
 ]
 
 { #category : 'tests' }
+NTSpNoteIndexPresenterTest >> testDisplayTags [
+
+
+	| note1 |self skip.
+	note1 := NTNoteObject new.
+	note1 addTag: (NTTag newNamed: 'tag1').
+	note1 addTag: (NTTag newNamed: 'tag2').
+	note1 addTag: (NTTag newNamed: 'tag3').
+	self assert: (notesIndexPresenter displayNoteTags: note1) equals: 'tag1,tag2,tag3'
+]
+
+{ #category : 'tests' }
 NTSpNoteIndexPresenterTest >> testRemoveNote [
 
 	| sizeNotesBeforeAddNote |
