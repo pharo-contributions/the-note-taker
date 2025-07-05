@@ -10,7 +10,7 @@ BaselineOfTheNoteTaker >> applicationGenerator: spec [
 
 	spec
 		baseline: 'ApplicationGenerator'
-		with: [ spec repository: 'github://hernanmd/PharoApplicationGenerator:allow_dwnld_ui_vm/src' ]
+		with: [ spec repository: 'github://tesonep/PharoApplicationGenerator:master/src' ]
 ]
 
 { #category : 'baselines' }
