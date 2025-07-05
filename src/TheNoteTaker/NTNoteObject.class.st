@@ -21,12 +21,16 @@ Class {
 }
 
 { #category : 'instance creation' }
-NTNoteObject class >> named: aString [ 
+NTNoteObject class >> named: aString [
 	"Answer a new instance of the receiver with title aString"
-	
-	^ self new
-		contents: aString;
-		yourself
+
+	| note |
+	note := self new.
+
+	^ note
+		  contents: aString;
+		  modificationDate: note creationDate;
+		  yourself
 ]
 
 { #category : 'instance creation' }
@@ -142,12 +146,6 @@ NTNoteObject >> folderReference: aFileReference [
 ]
 
 { #category : 'generate' }
-NTNoteObject >> generateDefaultFileReference [
-
-	self folderReference: FileSystem workingDirectory 
-]
-
-{ #category : 'generate' }
 NTNoteObject >> generateMetaDataElements [
 
 	| meta |
@@ -173,8 +171,10 @@ NTNoteObject >> generateTitle [
 	| nameOfNewNote collectionOfContents |
 	collectionOfContents := contents substrings: String crlf.
 	nameOfNewNote := String streamContents: [ :stt |
-			                 collectionOfContents isNotEmpty ifTrue: [
-				                 stt nextPutAll: collectionOfContents first ] ].
+			                 collectionOfContents isNotEmpty
+				                 ifTrue: [
+				                 stt nextPutAll: collectionOfContents first ]
+				                 ifFalse: [ stt nextPutAll: 'unnamed' ] ].
 
 	self title: nameOfNewNote
 ]
@@ -268,16 +268,16 @@ NTNoteObject >> removeTag: aNTTag [
 
 { #category : 'saving' }
 NTNoteObject >> save [
-	
-	folderReference ifNil: [ self generateDefaultFileReference ].
-	
-	self exists ifFalse: [ self fileReference ensureCreateFile ]	.
-	
-	self fileReference writeStreamDo: [ :str | 
-		str nextPutAll: self generateMetaDataElements.
-		str nextPutAll: String crlf.
-		str nextPutAll: String crlf.
-		str nextPutAll: contents ]
+
+	folderReference ifNil: [  folderReference := FileSystem workingDirectory ].
+
+	self exists ifFalse: [ self fileReference ensureCreateFile ].
+
+	self fileReference writeStreamDo: [ :str |
+			str nextPutAll: self generateMetaDataElements.
+			str nextPutAll: String crlf.
+			str nextPutAll: String crlf.
+			str nextPutAll: contents ]
 ]
 
 { #category : 'accessing - tags' }

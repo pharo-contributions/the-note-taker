@@ -1,6 +1,6 @@
 Class {
 	#name : 'NTNoteObjectTest',
-	#superclass : 'NTBasicTest',
+	#superclass : 'TestCase',
 	#instVars : [
 		'memoryFS'
 	],
@@ -102,7 +102,7 @@ NTNoteObjectTest >> testFileName [
 	self assert: note fileName equals: '2024-01-01_TestWithSpace.md'
 ]
 
-{ #category : 'tests' }
+{ #category : 'tests -generate' }
 NTNoteObjectTest >> testGenerateMetaDataElementsWithTags [
 
 	| note creationDate modificationDate tag1 tag2|
@@ -125,7 +125,7 @@ NTNoteObjectTest >> testGenerateMetaDataElementsWithTags [
 			tags: note tags)
 ]
 
-{ #category : 'tests' }
+{ #category : 'tests -generate' }
 NTNoteObjectTest >> testGenerateMetaDataElementsWithoutTags [
 
 	| note creationDate modificationDate |
@@ -142,7 +142,7 @@ NTNoteObjectTest >> testGenerateMetaDataElementsWithoutTags [
 			 modificationDate: modificationDate)
 ]
 
-{ #category : 'tests' }
+{ #category : 'tests -generate' }
 NTNoteObjectTest >> testGenerateTitle [
 
 	| note1 note2 note3 |
@@ -153,7 +153,7 @@ NTNoteObjectTest >> testGenerateTitle [
 	
 	self assert: note1 title equals: 'test with only one line';
 		assert: note2 title equals: 'test with two line';
-		assert: note3 title equals: ''.
+		assert: note3 title equals: 'unnamed'.
 ]
 
 { #category : 'tests' }
@@ -173,7 +173,7 @@ NTNoteObjectTest >> testIsDirty [
 	self deny: note isDirty.
 ]
 
-{ #category : 'tests' }
+{ #category : 'tests - loading' }
 NTNoteObjectTest >> testLoadNoteWithAllMetadata [
 
 	| note noteFile metadata tags |
@@ -204,7 +204,7 @@ NTNoteObjectTest >> testLoadNoteWithAllMetadata [
 	self assert: note tagsString equals: 'tag1,tag2'
 ]
 
-{ #category : 'tests' }
+{ #category : 'tests - loading' }
 NTNoteObjectTest >> testLoadNoteWithMetadataWithMissingTags [
 
 	| note noteFile metadata |
@@ -230,7 +230,7 @@ NTNoteObjectTest >> testLoadNoteWithMetadataWithMissingTags [
 	self assert: note modificationDate equals: '2024-01-01' asDateAndTime
 ]
 
-{ #category : 'tests' }
+{ #category : 'tests - loading' }
 NTNoteObjectTest >> testLoadNoteWithoutMetadata [
 
 	| note noteFile |
@@ -251,7 +251,7 @@ NTNoteObjectTest >> testNoteCreationAndModificationDates [
 	"Test that creation and modification dates are correctly set for notes"
 
 	| noteName note creationDate modificationDate |
-	noteName := self simplestNoteName.
+	noteName := 'testMock Note'.
 
 	note := NTNoteObject named: noteName.
 	creationDate := note creationDate.
@@ -260,7 +260,6 @@ NTNoteObjectTest >> testNoteCreationAndModificationDates [
 	self assert: creationDate notNil.
 	self assert: modificationDate notNil.
 	self assert: creationDate equals: modificationDate
-
 ]
 
 { #category : 'tests' }
@@ -303,7 +302,7 @@ NTNoteObjectTest >> testNoteModificationUpdatesModificationDate [
 	self assert: updatedModificationDate > initialModificationDate
 ]
 
-{ #category : 'tests' }
+{ #category : 'tests - saving' }
 NTNoteObjectTest >> testSaveExistingFileWithDifferentTitle [
 
 	| note modificationDate metadata finalContents fileName |
@@ -327,7 +326,7 @@ NTNoteObjectTest >> testSaveExistingFileWithDifferentTitle [
 	self assert: note fileName equals: fileName
 ]
 
-{ #category : 'tests' }
+{ #category : 'tests - saving' }
 NTNoteObjectTest >> testSaveNote [
 
 	| note modificationDate metadata finalContents |
@@ -347,7 +346,7 @@ NTNoteObjectTest >> testSaveNote [
 	self assert: note fileReference contents equals: finalContents
 ]
 
-{ #category : 'tests' }
+{ #category : 'tests - saving' }
 NTNoteObjectTest >> testSaveNoteLoadedWithoutMetadata [
 
 	| note modificationDate metadata finalContents noteFile |

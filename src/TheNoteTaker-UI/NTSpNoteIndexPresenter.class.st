@@ -4,10 +4,9 @@ Presents a table with basic metadata information about saved notes in the system
 "
 Class {
 	#name : 'NTSpNoteIndexPresenter',
-	#superclass : 'SpPresenter',
+	#superclass : 'SpPresenterWithModel',
 	#instVars : [
-		'notesTable',
-		'notes'
+		'notesTable'
 	],
 	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
@@ -39,9 +38,6 @@ NTSpNoteIndexPresenter class >> buildNoteTakerOperationsGroupWith: presenterInst
 		  register: ((NTSpImportNoteCommand
 				    forSpecWithIconNamed: #into
 				    shortcutKey: 'I' asShortcut) context: presenterInstance);
-		  register: ((NTSpImportFolderCommand
-				    forSpecWithIconNamed: #into
-				    shortcutKey: 'F' asShortcut) context: presenterInstance);
 		  register: ((NTSpRemoveNoteCommand
 				    forSpecWithIconNamed: #delete
 				    shortcutKey: 'D' asShortcut) context: presenterInstance);
@@ -53,6 +49,30 @@ NTSpNoteIndexPresenter class >> buildNoteTakerOperationsGroupWith: presenterInst
 				    shortcutKey: 'D' asShortcut) context: presenterInstance);
 		  beDisplayedAsGroup;
 		  yourself
+]
+
+{ #category : 'initialization' }
+NTSpNoteIndexPresenter >> dateFormatter: aDateAndTime [
+	"Answers a string formatting object as time stamp for HTTP1.1 (RFC 1123).
+	Eg. Sun, 06 Nov 1994 08:49:37 GMT"
+
+	| utc |
+	utc := aDateAndTime asDateAndTime asUTC.
+	^ String streamContents: [ :stream |
+			  stream
+				  nextPutAll: utc dayOfWeekAbbreviation;
+				  nextPut: $,;
+				  space.
+			  stream nextPutAll:
+				  (utc dayOfMonth printStringLength: 2 padded: true).
+			  stream
+				  space;
+				  nextPutAll: utc monthAbbreviation;
+				  space.
+			  utc year printOn: stream.
+			  stream space.
+			  utc printHMSOn: stream.
+			  stream nextPutAll: ' GMT' ]
 ]
 
 { #category : 'layout' }
@@ -98,14 +118,11 @@ NTSpNoteIndexPresenter >> initializePresenters [
 				               width: 200 * self currentWorld displayScaleFactor;
 				               "sortFunction: #yourself ascending;"evaluated: [
 					               :selectedNote |
-					               ZnUtils httpDate: selectedNote creationDate ];
+					               self dateFormatter: selectedNote creationDate ];
 				               yourself);
 		              contextMenu: [
 				              (self rootCommandsGroup / 'NTSelContextualMenu')
-					              beRoot asMenuPresenter ];
-		              items: notes.
-
-	(NTSpImportFolderCommand new context: self) executeWithDefaultFolder
+					              beRoot asMenuPresenter ].
 ]
 
 { #category : 'accessing' }
@@ -121,17 +138,16 @@ NTSpNoteIndexPresenter >> items: aCollection [
 	notesTable items: aCollection
 ]
 
+{ #category : 'callbacks' }
+NTSpNoteIndexPresenter >> modelChanged [
+
+	notesTable refresh
+]
+
 { #category : 'accessing' }
 NTSpNoteIndexPresenter >> notesTable [
 
 	^ notesTable
-]
-
-{ #category : 'accessing' }
-NTSpNoteIndexPresenter >> refresh [
-	"Update the receievr's notes presenter"
-
-	notesTable refresh.
 ]
 
 { #category : 'accessing' }
@@ -153,18 +169,11 @@ NTSpNoteIndexPresenter >> selectedNotes [
 ]
 
 { #category : 'callbacks' }
-NTSpNoteIndexPresenter >> updateNotesList: aNotesCollection [
-
-	notesTable items: aNotesCollection.
-	"aNotesCollection isNotEmpty ifTrue: [ notesTable selectFirst ]"
-]
-
-{ #category : 'callbacks' }
 NTSpNoteIndexPresenter >> updateRemovedNote [
 
-	self refresh.
+	"self refresh."
 	notesTable selectionMode unselectAll.
 	self owner
 		updateWindowTitle;
-		updateContents.
+		updateContents
 ]

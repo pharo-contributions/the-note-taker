@@ -17,26 +17,34 @@ BaselineOfTheNoteTaker >> applicationGenerator: spec [
 BaselineOfTheNoteTaker >> baseline: spec [
 
 	<baseline>
-	spec for: #( common ) do: [
-		"self ical: spec."
-	
-		self microdown: spec.
-		self applicationGenerator: spec.
-		self objcbridge: spec.
-		self osSubProcess: spec.
-		spec postLoadDoIt: #'postload:package:'.
-		spec
-			package: 'TheNoteTaker' 	with: [ spec requires: #( Microdown ) ];
-			package: 'TheNoteTaker-UI' 	with: [ spec requires: #( TheNoteTaker ) ];
-			package: 'TheNoteTaker-Release' with: [ spec requires: #( ApplicationGenerator ObjCBridge ) ];
-			package: 'TheNoteTaker-Tests' with: [ spec requires: #( TheNoteTaker ) ];
-			package: 'TheNoteTaker-UI-Tests' with: [ spec requires: #( 'TheNoteTaker-Tests' 'TheNoteTaker-UI' ) ].
-		spec
-			group: 'Core' with: #( 'TheNoteTaker' );
-			group: 'UI' with: #( 'TheNoteTaker-UI' );
-			group: 'Tests' with: #( 'Core' 'TheNoteTaker-Tests' 'TheNoteTaker-UI-Tests' );
-			group: 'Release' with: #( 'Core' 'UI' 'ObjCBridge' 'TheNoteTaker-Release' );
-			group: 'default' with: #( 'Core' 'Tests' 'UI' ) ]
+	spec for: #( common ) do: [ "self ical: spec."
+			self osWinSubprocess: spec.
+			self osSubprocess: spec.
+			self microdown: spec.
+			self applicationGenerator: spec.
+			self objcbridge: spec.
+			spec postLoadDoIt: #postload:package:.
+			spec
+				package: 'TheNoteTaker' with: [ spec requires: #( Microdown ) ];
+				package: 'TheNoteTaker-UI'
+				with: [ spec requires: #( TheNoteTaker OSSubprocess  OSWinSubprocess) ];
+				package: 'TheNoteTaker-Release'
+				with: [ spec requires: #( ApplicationGenerator
+						   ObjCBridge ) ];
+				package: 'TheNoteTaker-Tests'
+				with: [ spec requires: #( TheNoteTaker ) ];
+				package: 'TheNoteTaker-UI-Tests'
+				with: [
+					spec requires: #( 'TheNoteTaker-Tests' 'TheNoteTaker-UI' ) ].
+
+			spec
+				group: 'Core' with: #( 'TheNoteTaker' );
+				group: 'UI' with: #( 'TheNoteTaker-UI' );
+				group: 'Tests'
+				with: #( 'Core' 'TheNoteTaker-Tests' 'TheNoteTaker-UI-Tests' );
+				group: 'Release'
+				with: #( 'Core' 'UI' 'ObjCBridge' 'TheNoteTaker-Release' );
+				group: 'default' with: #( 'Core' 'Tests' 'UI' ) ]
 ]
 
 { #category : 'baselines' }
@@ -73,12 +81,19 @@ BaselineOfTheNoteTaker >> objcbridge: spec [
 ]
 
 { #category : 'baselines' }
-BaselineOfTheNoteTaker >> osSubProcess: spec [
+BaselineOfTheNoteTaker >> osSubprocess: spec [
 
 	spec 
-		baseline: 'OSSubprocess' 
-		with: [ spec repository: 'github://pharo-contributions/OSSubprocess:v2.0.0/repository' ]
+		baseline: #OSSubprocess
+		with: [ spec repository: 'github://pharo-contributions/OSSubprocess:master/repository' ]
+]
 
+{ #category : 'baselines' }
+BaselineOfTheNoteTaker >> osWinSubprocess: spec [
+
+	spec 
+		baseline: #OSWinSubprocess
+		with: [ spec repository: 'github://pharo-contributions/OSWinSubprocess:master/src' ]
 ]
 
 { #category : 'baselines' }

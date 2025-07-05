@@ -14,7 +14,6 @@ Class {
 		'composer',
 		'note',
 		'renderedText',
-		'isTextDirty',
 		'worker'
 	],
 	#category : 'TheNoteTaker-UI-Core',
@@ -39,14 +38,6 @@ NTSpEditorPresenter >> defaultLayout [
 		  yourself
 ]
 
-{ #category : 'api' }
-NTSpEditorPresenter >> displayContents: aNoteObject [
-
-	note := aNoteObject.
-	textInput text: aNoteObject contents asString.
-	self renderDocument
-]
-
 { #category : 'actions' }
 NTSpEditorPresenter >> emptyInputText [
 	"CLEAN button is pressed: erase both input and output text content"
@@ -61,13 +52,12 @@ NTSpEditorPresenter >> emptyRenderedText [
 	renderedText text: ''
 ]
 
-{ #category : 'accessing' }
+{ #category : 'initialization' }
 NTSpEditorPresenter >> initialize [
 
 	super initialize.
+	worker := TKTLocalProcessTaskRunner new.
 	self noNote.
-	isTextDirty := false.
-	worker := TKTLocalProcessTaskRunner new
 ]
 
 { #category : 'initialization' }
@@ -82,76 +72,67 @@ NTSpEditorPresenter >> initializePresenters [
 		Character space asKeyCombination | Character cr asKeyCombination
 		toAction: [ :target :morph :event |
 				self renderDocument.
-				self owner notesIndexPresenter refresh.
+				self updateTitle.
+				self owner notesIndexPresenter modelChanged.
 				event wasHandled: false ].
-
-	"		
-	textInput addShortcutWith: [ :action | action 
-        shortcutKey: Character space asKeyCombination | Character cr asKeyCombination;
-        action: [ self renderDocument ] ].
-   "
-	textInput eventHandler whenKeyDownDo: [ :anEvent |
-			isTextDirty := true.
-			anEvent wasHandled: false ].
 
 	renderedText := self newText
 		                beNotEditable;
 		                yourself.
 	textInput
-		whenTextChangedDo: [
-			note ifNotNil: [ note contents: textInput text asString ] ];
+		whenTextChangedDo: [ note contents: textInput text asString ];
 		bindKeyCombination: $s meta toAction: [
 				self saveFile.
-				self application log save: note ];
-		bindKeyCombination: $g meta toAction: [
-				self push.
-				self inform: 'Folder push' ]
+				self application log save: note ]
+]
+
+{ #category : 'layout' }
+NTSpEditorPresenter >> layoutWithoutRenderedText [
+
+	^ SpBoxLayout newTopToBottom
+		  add: (SpPanedLayout newLeftToRight
+				   add: textInput;
+				   yourself);
+		  yourself
 ]
 
 { #category : 'testing' }
 NTSpEditorPresenter >> mayLoseEdits [
 
-	^ self textInputText isNotEmpty and: [ isTextDirty ]
-]
-
-{ #category : 'api' }
-NTSpEditorPresenter >> newNote: aNoteObject [
-
-	note := aNoteObject.
-	self displayContents: aNoteObject.
-	self window ifNotNil: [self updateTitle].
+	^ self textInputText isNotEmpty and: [ note isDirty ]
 ]
 
 { #category : 'api' }
 NTSpEditorPresenter >> noNote [
 
-	note := NTNoteObject new
+	| nt |
+	nt := NTNoteObject new.
+	"nt folderReference: self application settings noteLocation."
+	self note: nt.
+	
+	self emptyInputText
 ]
 
 { #category : 'accessing' }
 NTSpEditorPresenter >> note [
 
-	^ note ifNil: [ note := NTNoteObject new ]
+	^ note ifNil: [ self noNote ]
 ]
 
 { #category : 'accessing' }
 NTSpEditorPresenter >> note: aNTNoteObject [
 
-	note := aNTNoteObject
-]
+	note := aNTNoteObject.
+	"note fileReference extension = '.md'
+		ifTrue: [ self layout: self defaultLayout ]
+		ifFalse: [ self layout: self layoutWithoutRenderedText ]."
+	textInput text: aNTNoteObject contents asString.
+	self renderDocument.
+	self updateTitle
 
-{ #category : 'api' }
-NTSpEditorPresenter >> openNote: aNoteObject [
-
-	note := aNoteObject.
-	self displayContents: aNoteObject.
-	self window ifNotNil: [self updateTitle].
-]
-
-{ #category : 'actions' }
-NTSpEditorPresenter >> push [
-
-	NTSpGitCommand new execute.
+	"self mayLoseEdits ifTrue: [ (self application confirm:
+			 'You have unsaved edits. Do you want to proceed?')
+			ifFalse: [ ^ self ]  ]."
 ]
 
 { #category : 'actions' }
@@ -172,23 +153,8 @@ NTSpEditorPresenter >> renderedText [
 
 { #category : 'actions' }
 NTSpEditorPresenter >> saveFile [
-	
+
 	self note save.
-	isTextDirty := false.
-	self window ifNotNil: [ self updateTitle ]
-]
-
-{ #category : 'accessing' }
-NTSpEditorPresenter >> startNewFile [
-	"NEW button is pressed: reset tool"
-
-	self mayLoseEdits ifTrue: [ (self application confirm:
-			 'You have unsaved edits. Do you want to proceed?')
-			ifFalse: [ ^ self ]  ].
-
-	self emptyInputText.
-	note := NTNoteObject new.
-	self window ifNotNil: [ self updateTitle ]
 ]
 
 { #category : 'accessing' }
@@ -201,22 +167,10 @@ NTSpEditorPresenter >> textInputText [
 NTSpEditorPresenter >> textInputText: aString [
 
 	textInput text: aString asString.
-	note contents: self textInputText.
-	isTextDirty := false
-]
-
-{ #category : 'api' }
-NTSpEditorPresenter >> title [
-	"Answer a <String> representing the application name and selected note title"
-
-	^ String streamContents: [ :stream |
-			  stream
-				  << self application applicationTitle;
-				  << note title ]
 ]
 
 { #category : 'api' }
 NTSpEditorPresenter >> updateTitle [
 
-	self window title: self note title
+	self window ifNotNil: [ self window title: self application applicationTitle, ' - ', note title ]
 ]

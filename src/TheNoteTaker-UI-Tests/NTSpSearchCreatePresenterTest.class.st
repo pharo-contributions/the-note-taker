@@ -37,19 +37,20 @@ NTSpSearchCreatePresenterTest >> tearDown [
 NTSpSearchCreatePresenterTest >> testFilterWithNoteAndTag [
 
 	presenter notesSearchCreateTextPresenter text: ''.
-	presenter tagsSearchCreateTextPresenter text: ''.
 	self assert: presenter filter size equals: 3.
 
 	presenter notesSearchCreateTextPresenter text: 'th'.
-	presenter tagsSearchCreateTextPresenter text: 'test'.
+	presenter filteredTagsSelection add: (notesTaker tagNamed: 'test').
 	self assert: presenter filter size equals: 0.
+	presenter filteredTagsSelection removeAll.
 
 	presenter notesSearchCreateTextPresenter text: 'note'.
-	presenter tagsSearchCreateTextPresenter text: 'tag'.
+	presenter filteredTagsSelection add: (notesTaker tagNamed: 'tag').
 	self assert: presenter filter size equals: 2.
+	presenter filteredTagsSelection removeAll.
 
 	presenter notesSearchCreateTextPresenter text: 'ZZZ'.
-	presenter tagsSearchCreateTextPresenter text: 'tag'.
+	presenter filteredTagsSelection add: (notesTaker tagNamed: 'tag').
 	self assert: presenter filter size equals: 0
 ]
 
@@ -72,16 +73,17 @@ NTSpSearchCreatePresenterTest >> testFilterWithNoteAndWithoutTag [
 { #category : 'tests' }
 NTSpSearchCreatePresenterTest >> testFilterWithoutNoteAndWithTag [
 
-	presenter tagsSearchCreateTextPresenter text: ''.
 	self assert: presenter filter size equals: 3.
 
-	presenter tagsSearchCreateTextPresenter text: 'tag'.
+	presenter filteredTagsSelection add: (notesTaker tagNamed: 'tag').
 	self assert: presenter filter size equals: 2.
+	presenter filteredTagsSelection removeAll.
 
-	presenter tagsSearchCreateTextPresenter text: 't'.
+	presenter filteredTagsSelection add: (notesTaker tagNamed: 't').
 	self assert: presenter filter size equals: 3.
+	presenter filteredTagsSelection removeAll.
 
-	presenter tagsSearchCreateTextPresenter text: 'ZZZ'.
+	presenter filteredTagsSelection add: (notesTaker tagNamed: 'ZZZ').
 	self assert: presenter filter size equals: 0
 ]
 
@@ -104,18 +106,20 @@ NTSpSearchCreatePresenterTest >> testFilteredNotes [
 NTSpSearchCreatePresenterTest >> testFilteredtags [
 
 	| result |
-
 	result := presenter
-		          filteredTagsFor: 'tag'
-		          withNotes: notesTaker notes.
+		          notes: notesTaker notes
+		          withTags: (OrderedCollection new add: (notesTaker tagNamed: 'tag'); yourself).
 	self assert: result size equals: 2.
 
-	result := presenter filteredTagsFor: 't' withNotes: notesTaker notes.
+	result := presenter
+		          notes: notesTaker notes
+		          withTags: (OrderedCollection new add: (notesTaker tagNamed: 't'); yourself).
 	self assert: result size equals: 3.
 
 	result := presenter
-		          filteredTagsFor: 'TATA'
-		          withNotes: notesTaker notes.
+		          notes: notesTaker notes
+		          withTags:
+		          (OrderedCollection new add: (notesTaker tagNamed: 'TATA'); yourself).
 	self assert: result size equals: 0
 ]
 
@@ -123,17 +127,24 @@ NTSpSearchCreatePresenterTest >> testFilteredtags [
 NTSpSearchCreatePresenterTest >> testNoteWithTagSearch [
 
 	| result |
-
 	result := presenter
-		          filteredTagsFor: 'test'
-		          withNotes: notesTaker notes.
+		          notes: notesTaker notes
+		          withTags: (OrderedCollection new
+				           add: (notesTaker tagNamed: 'test');
+				           yourself).
 	self assert: result size equals: 1.
 
 	result := presenter
-		          filteredTagsFor: 'tag'
-		          withNotes: notesTaker notes.
+		          notes: notesTaker notes
+		          withTags: (OrderedCollection new
+				           add: (notesTaker tagNamed: 'tag');
+				           yourself).
 	self assert: result size equals: 2.
 
-	result := presenter filteredTagsFor: 't' withNotes: notesTaker notes.
+	result := presenter
+		          notes: notesTaker notes
+		          withTags: (OrderedCollection new
+				           add: (notesTaker tagNamed: 't');
+				           yourself).
 	self assert: result size equals: 3
 ]

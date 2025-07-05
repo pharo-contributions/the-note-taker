@@ -17,7 +17,7 @@ Class {
 	#tag : 'Core'
 }
 
-{ #category : 'initialization' }
+{ #category : 'accessing' }
 NTSpNoteTakerMainUI >> applicationTitle [
 
 	^ self application applicationTitle
@@ -28,28 +28,24 @@ NTSpNoteTakerMainUI >> connectPresenters [
 
 	notesIndexPresenter notesTable whenSelectedItemChangedDo: [
 			:aSelectedNote |
-			aSelectedNote ifNil: [ self editorPresenter noNote ] ifNotNil: [
-					self displayNoteContents: aSelectedNote.
-					aSelectedNote exists
-						ifTrue: [ aSelectedNote openFromPresenter: self ]
-						ifFalse: [ aSelectedNote newFromPresenter: self ] ] ].
+			aSelectedNote
+				ifNil: [ notesContentPresenter noNote ]
+				ifNotNil: [ notesContentPresenter note: aSelectedNote ] ].
 
 	notesToolbarPresenter notesSearchCreateTextPresenter
 		whenTextChangedDo: [
-			notesIndexPresenter updateNotesList: notesToolbarPresenter filter ];
+			notesIndexPresenter items: notesToolbarPresenter filter ];
 		whenSubmitDo: [ :newNoteName |
 				| newNote |
 				newNote := self application addNoteNamed: newNoteName.
 				newNote folderReference: self application settings noteLocation.
-				notesIndexPresenter updateNotesList: self noteTakerContainer notes.
+				notesToolbarPresenter emptySearchBar.
 				notesIndexPresenter notesTable unselectAll.
 				notesIndexPresenter selectNote: newNote.
-				self editorPresenter takeKeyboardFocus.
-				notesToolbarPresenter emptySearchBar ].
+				notesContentPresenter takeKeyboardFocus ].
 
-	notesToolbarPresenter tagsSearchCreateTextPresenter
-		whenTextChangedDo: [
-		notesIndexPresenter updateNotesList: notesToolbarPresenter filter ]
+	notesToolbarPresenter tagsSearchButtonPresenter whenActivatedDo: [
+		notesIndexPresenter items: notesToolbarPresenter filter ]
 ]
 
 { #category : 'layout' }
@@ -64,20 +60,6 @@ NTSpNoteTakerMainUI >> defaultLayout [
 			yourself);
 		add: statusBar height: self toolbarHeight;
 		yourself
-]
-
-{ #category : 'accessing - status bar' }
-NTSpNoteTakerMainUI >> displayNoteContents: aNoteObject [
-
-	notesContentPresenter displayContents: aNoteObject
-]
-
-{ #category : 'accessing' }
-NTSpNoteTakerMainUI >> editorPresenter [
-	"Answer the receiver's MicroDown editor presenter"
-
-	^ notesContentPresenter
-
 ]
 
 { #category : 'testing' }
@@ -102,9 +84,10 @@ NTSpNoteTakerMainUI >> initialize [
 { #category : 'initialization' }
 NTSpNoteTakerMainUI >> initializePresenters [
 
-	notesToolbarPresenter := self
-		                         instantiate: NTSpSearchCreatePresenter.
+	notesToolbarPresenter := self instantiate: NTSpSearchCreatePresenter.
 	notesIndexPresenter := self instantiate: NTSpNoteIndexPresenter.
+	notesIndexPresenter model: self noteTakerContainer.
+		(NTSpImportFolderCommand new context: notesIndexPresenter) executeWithDefaultFolder.
 	notesContentPresenter := self instantiate: NTSpEditorPresenter.
 	statusBar := SpStatusBarPresenter new
 ]
@@ -125,7 +108,7 @@ NTSpNoteTakerMainUI >> noteTakerContainer [
 	^ self application noteTakerContainer
 ]
 
-{ #category : 'initialization' }
+{ #category : 'accessing' }
 NTSpNoteTakerMainUI >> notesContentPresenter [
 
 	^ notesContentPresenter 
@@ -137,24 +120,11 @@ NTSpNoteTakerMainUI >> notesIndexPresenter [
 	^ notesIndexPresenter
 ]
 
-{ #category : 'initialization' }
-NTSpNoteTakerMainUI >> notesToolbar [
-
-	^ notesToolbarPresenter
-]
-
-{ #category : 'initialization' }
+{ #category : 'accessing' }
 NTSpNoteTakerMainUI >> notesToolbarPresenter [
 	"This is the getter of the notes toolbar"
 	
 	^ notesToolbarPresenter 
-]
-
-{ #category : 'accessing' }
-NTSpNoteTakerMainUI >> nullNote [
-
-	self updateWindowTitle.
-	^ NTNullNoteObject new
 ]
 
 { #category : 'showing' }
@@ -164,27 +134,11 @@ NTSpNoteTakerMainUI >> open [
 	self centered
 ]
 
-{ #category : 'accessing' }
-NTSpNoteTakerMainUI >> processSelectedNote: aCollection [ 
-	"If we have more than one selection we just display an empty note in the contents presenter"
-
-	aCollection size > 1
-		ifTrue: [ ^ self nullNote ].
-	^ aCollection anyOne
-
-]
-
-{ #category : 'initialization' }
+{ #category : 'setter' }
 NTSpNoteTakerMainUI >> setTitleTo: aSpWindowPresenter [
 
 	aSpWindowPresenter title: self applicationTitle
 
-]
-
-{ #category : 'initialization' }
-NTSpNoteTakerMainUI >> setWindowIconTo: aSpWindowPresenter [
-
-	aSpWindowPresenter windowIcon: (self iconNamed: #page)
 ]
 
 { #category : 'accessing' }
@@ -201,11 +155,8 @@ NTSpNoteTakerMainUI >> toolbarHeight [
 
 { #category : 'event handling' }
 NTSpNoteTakerMainUI >> updateContents [
-	
-	notesContentPresenter note: self nullNote.
-	notesContentPresenter emptyInputText
 
-	
+	notesContentPresenter noNote
 ]
 
 { #category : 'activation' }
