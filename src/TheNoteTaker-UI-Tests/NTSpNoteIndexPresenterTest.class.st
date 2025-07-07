@@ -11,7 +11,7 @@ NTSpNoteIndexPresenterTest >> testAddNote [
 	| sizeNotesBeforeAddNote |
 	sizeNotesBeforeAddNote := notesIndexPresenter items size.
 	noteContainer addNoteNamed: 'Test'.
-	notesIndexPresenter modelChanged.
+	
 	self
 		assert: notesIndexPresenter items size
 		equals: sizeNotesBeforeAddNote + 1

@@ -174,7 +174,6 @@ NTSpNoteIndexPresenter >> selectedNotes [
 { #category : 'callbacks' }
 NTSpNoteIndexPresenter >> updateRemovedNote [
 
-	"self refresh."
 	notesTable selectionMode unselectAll.
 	self owner
 		updateWindowTitle;
