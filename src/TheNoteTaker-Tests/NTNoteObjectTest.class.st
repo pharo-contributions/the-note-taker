@@ -82,6 +82,19 @@ NTNoteObjectTest >> setUp [
 	memoryFS := FileSystem memory workingDirectory.
 ]
 
+{ #category : 'tests - saving' }
+NTNoteObjectTest >> testAddTwoTagsWithSameName [
+
+	| tag1 tag2 note |
+	
+	tag1 := NTTag newNamed: 'tag'.
+	tag2 := NTTag newNamed: 'tag'.
+	
+	note := NTNoteObject new addTag: tag1; addTag: tag2.
+	
+	self assert: note tags size equals: 1
+]
+
 { #category : 'tests' }
 NTNoteObjectTest >> testFileName [
 
