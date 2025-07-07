@@ -27,10 +27,8 @@ NTSpNoteTakerMainUI >> applicationTitle [
 NTSpNoteTakerMainUI >> connectPresenters [
 
 	notesIndexPresenter notesTable whenSelectedItemChangedDo: [
-			:aSelectedNote |
-			aSelectedNote
-				ifNil: [ notesEditorPresenter noNote ]
-				ifNotNil: [ notesEditorPresenter note: aSelectedNote ] ].
+		:aSelectedNote | notesEditorPresenter note: aSelectedNote ].
+	" notesIndexPresenter transmitTo: notesEditorPresenter."
 
 	notesToolbarPresenter searchBarPresenter
 		whenTextChangedDo: [

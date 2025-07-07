@@ -122,7 +122,7 @@ NTSpEditorPresenter >> note [
 { #category : 'accessing' }
 NTSpEditorPresenter >> note: aNTNoteObject [
 
-	note := aNTNoteObject.
+	aNTNoteObject ifNil: [ self noNote ] ifNotNil: [ note := aNTNoteObject ].
 	"note fileReference extension = '.md'
 		ifTrue: [ self layout: self defaultLayout ]
 		ifFalse: [ self layout: self layoutWithoutRenderedText ]."
