@@ -38,6 +38,7 @@ NTSpAddTagCommand >> execute [
 				selectedTags do: [ :tag |
 							self selectedNotes do: [ :note |
 										tag addNote: note.
+										note save.
 										self application log add: note tag: tag ] ] ];
 		openModalWithParent: context window.
 
