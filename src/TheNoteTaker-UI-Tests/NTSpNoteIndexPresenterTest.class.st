@@ -21,7 +21,7 @@ NTSpNoteIndexPresenterTest >> testAddNote [
 NTSpNoteIndexPresenterTest >> testDisplayTags [
 
 
-	| note1 |self skip.
+	| note1 |
 	note1 := NTNoteObject new.
 	note1 addTag: (NTTag newNamed: 'tag1').
 	note1 addTag: (NTTag newNamed: 'tag2').

@@ -87,8 +87,11 @@ NTSpNoteIndexPresenter >> defaultLayout [
 NTSpNoteIndexPresenter >> displayNoteTags: selectedNote [
 	"Answer a <String> to be displayed"
 
+	| orderedTags |
 	selectedNote tags ifEmpty: [ ^ '' ].
-	^ (selectedNote tags collect: [ :each | each tagName ]) asArray joinUsing: ','
+	
+	orderedTags := selectedNote tags asOrderedCollection sorted: [:a :b | a tagName < b tagName].
+	^ (orderedTags collect: [ :each | each tagName ]) asArray joinUsing: ','
 ]
 
 { #category : 'testing' }
