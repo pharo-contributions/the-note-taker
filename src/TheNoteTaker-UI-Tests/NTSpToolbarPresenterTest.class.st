@@ -1,94 +1,94 @@
 Class {
-	#name : 'NTSpSearchCreatePresenterTest',
+	#name : 'NTSpToolbarPresenterTest',
 	#superclass : 'TestCase',
 	#instVars : [
 		'presenter',
-		'notesTaker'
+		'notesTakerContainer'
 	],
 	#category : 'TheNoteTaker-UI-Tests',
 	#package : 'TheNoteTaker-UI-Tests'
 }
 
 { #category : 'tests' }
-NTSpSearchCreatePresenterTest >> setUp [
+NTSpToolbarPresenterTest >> setUp [
 
 	| app |
 	super setUp.
 	app := NTSpApplication new initialize.
-	presenter := NTSpSearchCreatePresenter newApplication: app.
-	notesTaker := app noteTakerContainer.
+	presenter := NTSpToolBarPresenter newApplication: app.
+	notesTakerContainer := app noteTakerContainer.
 
 	(NTTag newNamed: 'test') addNote:
-		(notesTaker addNoteNamed: 'newNote').
+		(notesTakerContainer addNoteNamed: 'newNote').
 	(NTTag newNamed: 'tag') addNote:
-		(notesTaker addNoteNamed: 'anotherNote').
+		(notesTakerContainer addNoteNamed: 'anotherNote').
 	(NTTag newNamed: 'tag') addNote:
-		(notesTaker addNoteNamed: 'thirdNote')
+		(notesTakerContainer addNoteNamed: 'thirdNote')
 ]
 
 { #category : 'tests' }
-NTSpSearchCreatePresenterTest >> tearDown [
+NTSpToolbarPresenterTest >> tearDown [
 
 	presenter application closeAllWindows.
 	presenter delete
 ]
 
 { #category : 'tests' }
-NTSpSearchCreatePresenterTest >> testFilterWithNoteAndTag [
+NTSpToolbarPresenterTest >> testFilterWithNoteAndTag [
 
-	presenter notesSearchCreateTextPresenter text: ''.
+	presenter searchBarPresenter text: ''.
 	self assert: presenter filter size equals: 3.
 
-	presenter notesSearchCreateTextPresenter text: 'th'.
-	presenter filteredTagsSelection add: (notesTaker tagNamed: 'test').
+	presenter searchBarPresenter text: 'th'.
+	presenter filteredTagsSelection add: (notesTakerContainer tagNamed: 'test').
 	self assert: presenter filter size equals: 0.
 	presenter filteredTagsSelection removeAll.
 
-	presenter notesSearchCreateTextPresenter text: 'note'.
-	presenter filteredTagsSelection add: (notesTaker tagNamed: 'tag').
+	presenter searchBarPresenter text: 'note'.
+	presenter filteredTagsSelection add: (notesTakerContainer tagNamed: 'tag').
 	self assert: presenter filter size equals: 2.
 	presenter filteredTagsSelection removeAll.
 
-	presenter notesSearchCreateTextPresenter text: 'ZZZ'.
-	presenter filteredTagsSelection add: (notesTaker tagNamed: 'tag').
+	presenter searchBarPresenter text: 'ZZZ'.
+	presenter filteredTagsSelection add: (notesTakerContainer tagNamed: 'tag').
 	self assert: presenter filter size equals: 0
 ]
 
 { #category : 'tests' }
-NTSpSearchCreatePresenterTest >> testFilterWithNoteAndWithoutTag [
+NTSpToolbarPresenterTest >> testFilterWithNoteAndWithoutTag [
 
-	presenter notesSearchCreateTextPresenter text: ''.
+	presenter searchBarPresenter text: ''.
 	self assert: presenter filter size equals: 3.
 
-	presenter notesSearchCreateTextPresenter text: 'th'.
+	presenter searchBarPresenter text: 'th'.
 	self assert: presenter filter size equals: 2.
 
-	presenter notesSearchCreateTextPresenter text: 'note'.
+	presenter searchBarPresenter text: 'note'.
 	self assert: presenter filter size equals: 3.
 
-	presenter notesSearchCreateTextPresenter text: 'ZZZ'.
+	presenter searchBarPresenter text: 'ZZZ'.
 	self assert: presenter filter size equals: 0
 ]
 
 { #category : 'tests' }
-NTSpSearchCreatePresenterTest >> testFilterWithoutNoteAndWithTag [
+NTSpToolbarPresenterTest >> testFilterWithoutNoteAndWithTag [
 
 	self assert: presenter filter size equals: 3.
 
-	presenter filteredTagsSelection add: (notesTaker tagNamed: 'tag').
+	presenter filteredTagsSelection add: (notesTakerContainer tagNamed: 'tag').
 	self assert: presenter filter size equals: 2.
 	presenter filteredTagsSelection removeAll.
 
-	presenter filteredTagsSelection add: (notesTaker tagNamed: 't').
+	presenter filteredTagsSelection add: (notesTakerContainer tagNamed: 't').
 	self assert: presenter filter size equals: 3.
 	presenter filteredTagsSelection removeAll.
 
-	presenter filteredTagsSelection add: (notesTaker tagNamed: 'ZZZ').
+	presenter filteredTagsSelection add: (notesTakerContainer tagNamed: 'ZZZ').
 	self assert: presenter filter size equals: 0
 ]
 
 { #category : 'tests' }
-NTSpSearchCreatePresenterTest >> testFilteredNotes [
+NTSpToolbarPresenterTest >> testFilteredNotes [
 
 	| result |
 
@@ -103,48 +103,48 @@ NTSpSearchCreatePresenterTest >> testFilteredNotes [
 ]
 
 { #category : 'tests' }
-NTSpSearchCreatePresenterTest >> testFilteredtags [
+NTSpToolbarPresenterTest >> testFilteredtags [
 
 	| result |
 	result := presenter
-		          notes: notesTaker notes
-		          withTags: (OrderedCollection new add: (notesTaker tagNamed: 'tag'); yourself).
+		          notes: notesTakerContainer notes
+		          withTags: (OrderedCollection new add: (notesTakerContainer tagNamed: 'tag'); yourself).
 	self assert: result size equals: 2.
 
 	result := presenter
-		          notes: notesTaker notes
-		          withTags: (OrderedCollection new add: (notesTaker tagNamed: 't'); yourself).
+		          notes: notesTakerContainer notes
+		          withTags: (OrderedCollection new add: (notesTakerContainer tagNamed: 't'); yourself).
 	self assert: result size equals: 3.
 
 	result := presenter
-		          notes: notesTaker notes
+		          notes: notesTakerContainer notes
 		          withTags:
-		          (OrderedCollection new add: (notesTaker tagNamed: 'TATA'); yourself).
+		          (OrderedCollection new add: (notesTakerContainer tagNamed: 'TATA'); yourself).
 	self assert: result size equals: 0
 ]
 
 { #category : 'tests' }
-NTSpSearchCreatePresenterTest >> testNoteWithTagSearch [
+NTSpToolbarPresenterTest >> testNoteWithTagSearch [
 
 	| result |
 	result := presenter
-		          notes: notesTaker notes
+		          notes: notesTakerContainer notes
 		          withTags: (OrderedCollection new
-				           add: (notesTaker tagNamed: 'test');
+				           add: (notesTakerContainer tagNamed: 'test');
 				           yourself).
 	self assert: result size equals: 1.
 
 	result := presenter
-		          notes: notesTaker notes
+		          notes: notesTakerContainer notes
 		          withTags: (OrderedCollection new
-				           add: (notesTaker tagNamed: 'tag');
+				           add: (notesTakerContainer tagNamed: 'tag');
 				           yourself).
 	self assert: result size equals: 2.
 
 	result := presenter
-		          notes: notesTaker notes
+		          notes: notesTakerContainer notes
 		          withTags: (OrderedCollection new
-				           add: (notesTaker tagNamed: 't');
+				           add: (notesTakerContainer tagNamed: 't');
 				           yourself).
 	self assert: result size equals: 3
 ]

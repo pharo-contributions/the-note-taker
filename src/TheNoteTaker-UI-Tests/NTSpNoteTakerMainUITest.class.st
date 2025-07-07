@@ -20,7 +20,7 @@ NTSpNoteTakerMainUITest >> setUp [
 
 	presenter := app newPresenter: NTSpNoteTakerMainUI.
 	notesIndexPresenter := presenter notesIndexPresenter.
-	notesContentPresenter := presenter notesContentPresenter.
+	notesContentPresenter := presenter notesEditorPresenter.
 
 	noteFile := memoryFS workingDirectory / 'newNote.md'.
 	noteFile writeStreamDo: [ :stream | stream nextPutAll: 'new note' ].
