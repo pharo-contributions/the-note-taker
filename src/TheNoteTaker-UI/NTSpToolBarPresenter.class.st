@@ -187,7 +187,7 @@ NTSpToolBarPresenter >> notes: aNotesCollection withTags: aTagsCollection [
 { #category : 'opening' }
 NTSpToolBarPresenter >> openLog [
 
-	NTSpLogPresenter new open
+	 (NTSpLogPresenter newApplication: self application) open
 ]
 
 { #category : 'opening' }
