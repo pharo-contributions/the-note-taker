@@ -1,10 +1,6 @@
 Class {
 	#name : 'NTSpToolbarPresenterTest',
-	#superclass : 'TestCase',
-	#instVars : [
-		'presenter',
-		'notesTakerContainer'
-	],
+	#superclass : 'NTSpNoteTakerMainUITest',
 	#category : 'TheNoteTaker-UI-Tests',
 	#package : 'TheNoteTaker-UI-Tests'
 }
@@ -12,79 +8,68 @@ Class {
 { #category : 'tests' }
 NTSpToolbarPresenterTest >> setUp [
 
-	| app |
 	super setUp.
-	app := NTSpApplication new initialize.
-	presenter := NTSpToolBarPresenter newApplication: app.
-	notesTakerContainer := app noteTakerContainer.
 
 	(NTTag newNamed: 'test') addNote:
-		(notesTakerContainer addNoteNamed: 'newNote').
+		(noteContainer addNoteNamed: 'newNote').
 	(NTTag newNamed: 'tag') addNote:
-		(notesTakerContainer addNoteNamed: 'anotherNote').
+		(noteContainer addNoteNamed: 'anotherNote').
 	(NTTag newNamed: 'tag') addNote:
-		(notesTakerContainer addNoteNamed: 'thirdNote')
-]
-
-{ #category : 'tests' }
-NTSpToolbarPresenterTest >> tearDown [
-
-	presenter application closeAllWindows.
-	presenter delete
+		(noteContainer addNoteNamed: 'thirdNote')
 ]
 
 { #category : 'tests' }
 NTSpToolbarPresenterTest >> testFilterWithNoteAndTag [
 
-	presenter searchBarPresenter text: ''.
-	self assert: presenter filter size equals: 3.
+	notesToolbarPresenter searchBarPresenter text: ''.
+	self assert: notesToolbarPresenter filter size equals: 3.
 
-	presenter searchBarPresenter text: 'th'.
-	presenter filteredTagsSelection add: (notesTakerContainer tagNamed: 'test').
-	self assert: presenter filter size equals: 0.
-	presenter filteredTagsSelection removeAll.
+	notesToolbarPresenter searchBarPresenter text: 'th'.
+	notesToolbarPresenter filteredTagsSelection add: (noteContainer tagNamed: 'test').
+	self assert: notesToolbarPresenter filter size equals: 0.
+	notesToolbarPresenter filteredTagsSelection removeAll.
 
-	presenter searchBarPresenter text: 'note'.
-	presenter filteredTagsSelection add: (notesTakerContainer tagNamed: 'tag').
-	self assert: presenter filter size equals: 2.
-	presenter filteredTagsSelection removeAll.
+	notesToolbarPresenter searchBarPresenter text: 'note'.
+	notesToolbarPresenter filteredTagsSelection add: (noteContainer tagNamed: 'tag').
+	self assert: notesToolbarPresenter filter size equals: 2.
+	notesToolbarPresenter filteredTagsSelection removeAll.
 
-	presenter searchBarPresenter text: 'ZZZ'.
-	presenter filteredTagsSelection add: (notesTakerContainer tagNamed: 'tag').
-	self assert: presenter filter size equals: 0
+	notesToolbarPresenter searchBarPresenter text: 'ZZZ'.
+	notesToolbarPresenter filteredTagsSelection add: (noteContainer tagNamed: 'tag').
+	self assert: notesToolbarPresenter filter size equals: 0
 ]
 
 { #category : 'tests' }
 NTSpToolbarPresenterTest >> testFilterWithNoteAndWithoutTag [
 
-	presenter searchBarPresenter text: ''.
-	self assert: presenter filter size equals: 3.
+	notesToolbarPresenter searchBarPresenter text: ''.
+	self assert: notesToolbarPresenter filter size equals: 3.
 
-	presenter searchBarPresenter text: 'th'.
-	self assert: presenter filter size equals: 2.
+	notesToolbarPresenter searchBarPresenter text: 'th'.
+	self assert: notesToolbarPresenter filter size equals: 2.
 
-	presenter searchBarPresenter text: 'note'.
-	self assert: presenter filter size equals: 3.
+	notesToolbarPresenter searchBarPresenter text: 'note'.
+	self assert: notesToolbarPresenter filter size equals: 3.
 
-	presenter searchBarPresenter text: 'ZZZ'.
-	self assert: presenter filter size equals: 0
+	notesToolbarPresenter searchBarPresenter text: 'ZZZ'.
+	self assert: notesToolbarPresenter filter size equals: 0
 ]
 
 { #category : 'tests' }
 NTSpToolbarPresenterTest >> testFilterWithoutNoteAndWithTag [
 
-	self assert: presenter filter size equals: 3.
+	self assert: notesToolbarPresenter filter size equals: 3.
 
-	presenter filteredTagsSelection add: (notesTakerContainer tagNamed: 'tag').
-	self assert: presenter filter size equals: 2.
-	presenter filteredTagsSelection removeAll.
+	notesToolbarPresenter filteredTagsSelection add: (noteContainer tagNamed: 'tag').
+	self assert: notesToolbarPresenter filter size equals: 2.
+	notesToolbarPresenter filteredTagsSelection removeAll.
 
-	presenter filteredTagsSelection add: (notesTakerContainer tagNamed: 't').
-	self assert: presenter filter size equals: 3.
-	presenter filteredTagsSelection removeAll.
+	notesToolbarPresenter filteredTagsSelection add: (noteContainer tagNamed: 't').
+	self assert: notesToolbarPresenter filter size equals: 3.
+	notesToolbarPresenter filteredTagsSelection removeAll.
 
-	presenter filteredTagsSelection add: (notesTakerContainer tagNamed: 'ZZZ').
-	self assert: presenter filter size equals: 0
+	notesToolbarPresenter filteredTagsSelection add: (noteContainer tagNamed: 'ZZZ').
+	self assert: notesToolbarPresenter filter size equals: 0
 ]
 
 { #category : 'tests' }
@@ -92,13 +77,13 @@ NTSpToolbarPresenterTest >> testFilteredNotes [
 
 	| result |
 
-	result := presenter filteredNotesFor: 'newNote'.
+	result := notesToolbarPresenter filteredNotesFor: 'newNote'.
 	self assert: result size equals: 1.
 
-	result := presenter filteredNotesFor: 'nnn'.
+	result := notesToolbarPresenter filteredNotesFor: 'nnn'.
 	self assert: result size equals: 0.
 
-	result := presenter filteredNotesFor: 'Note'.
+	result := notesToolbarPresenter filteredNotesFor: 'Note'.
 	self assert: result size equals: 3
 ]
 
@@ -106,45 +91,83 @@ NTSpToolbarPresenterTest >> testFilteredNotes [
 NTSpToolbarPresenterTest >> testFilteredtags [
 
 	| result |
-	result := presenter
-		          notes: notesTakerContainer notes
-		          withTags: (OrderedCollection new add: (notesTakerContainer tagNamed: 'tag'); yourself).
+	result := notesToolbarPresenter
+		          notes: noteContainer notes
+		          withTags: (OrderedCollection new add: (noteContainer tagNamed: 'tag'); yourself).
 	self assert: result size equals: 2.
 
-	result := presenter
-		          notes: notesTakerContainer notes
-		          withTags: (OrderedCollection new add: (notesTakerContainer tagNamed: 't'); yourself).
+	result := notesToolbarPresenter
+		          notes: noteContainer notes
+		          withTags: (OrderedCollection new add: (noteContainer tagNamed: 't'); yourself).
 	self assert: result size equals: 3.
 
-	result := presenter
-		          notes: notesTakerContainer notes
+	result := notesToolbarPresenter
+		          notes: noteContainer notes
 		          withTags:
-		          (OrderedCollection new add: (notesTakerContainer tagNamed: 'TATA'); yourself).
+		          (OrderedCollection new add: (noteContainer tagNamed: 'TATA'); yourself).
 	self assert: result size equals: 0
+]
+
+{ #category : 'tests' }
+NTSpToolbarPresenterTest >> testImportFolderButtonOpenModalWindow [
+
+self skip.
+	SpWindowForceOpenNonModal during: [
+		notesToolbarPresenter importFolderButtonPresenter click ].
+
+	self assert: notesToolbarPresenter application windows size equals: 2
 ]
 
 { #category : 'tests' }
 NTSpToolbarPresenterTest >> testNoteWithTagSearch [
 
 	| result |
-	result := presenter
-		          notes: notesTakerContainer notes
+	result := notesToolbarPresenter
+		          notes: noteContainer notes
 		          withTags: (OrderedCollection new
-				           add: (notesTakerContainer tagNamed: 'test');
+				           add: (noteContainer tagNamed: 'test');
 				           yourself).
 	self assert: result size equals: 1.
 
-	result := presenter
-		          notes: notesTakerContainer notes
+	result := notesToolbarPresenter
+		          notes: noteContainer notes
 		          withTags: (OrderedCollection new
-				           add: (notesTakerContainer tagNamed: 'tag');
+				           add: (noteContainer tagNamed: 'tag');
 				           yourself).
 	self assert: result size equals: 2.
 
-	result := presenter
-		          notes: notesTakerContainer notes
+	result := notesToolbarPresenter
+		          notes: noteContainer notes
 		          withTags: (OrderedCollection new
-				           add: (notesTakerContainer tagNamed: 't');
+				           add: (noteContainer tagNamed: 't');
 				           yourself).
 	self assert: result size equals: 3
+]
+
+{ #category : 'tests' }
+NTSpToolbarPresenterTest >> testOpenLogButtonOpenModalWindow [
+
+	SpWindowForceOpenNonModal during: [
+		notesToolbarPresenter logButtonPresenter click ].
+	self currentWorld doOneCycle.
+
+	self assert: notesToolbarPresenter application windows size equals: 2
+]
+
+{ #category : 'tests' }
+NTSpToolbarPresenterTest >> testOpenTNTSettingsButtonOpenModalWindow [
+
+self skip.
+	SpWindowForceOpenNonModal during: [
+		notesToolbarPresenter noteSettingsButtonPresenter click ].
+
+	self assert: notesToolbarPresenter application windows size equals: 2
+]
+
+{ #category : 'tests' }
+NTSpToolbarPresenterTest >> testTagsSearchButtonOpenModalWindow [
+
+  SpWindowForceOpenNonModal during: [ notesToolbarPresenter tagsSearchButtonPresenter click ].
+	
+	self assert: notesToolbarPresenter application windows size equals: 2
 ]

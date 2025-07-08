@@ -3,6 +3,7 @@ Class {
 	#superclass : 'NTSpApplicationTest',
 	#instVars : [
 		'presenter',
+		'notesToolbarPresenter',
 		'notesIndexPresenter',
 		'notesContentPresenter',
 		'note',
@@ -19,16 +20,25 @@ NTSpNoteTakerMainUITest >> setUp [
 	super setUp.
 
 	presenter := app newPresenter: NTSpNoteTakerMainUI.
+	presenter open.
 	notesIndexPresenter := presenter notesIndexPresenter.
 	notesContentPresenter := presenter notesEditorPresenter.
+	notesToolbarPresenter := presenter notesToolbarPresenter.
 
 	noteFile := memoryFS workingDirectory / 'newNote.md'.
 	noteFile writeStreamDo: [ :stream | stream nextPutAll: 'new note' ].
 
-	noteFileName := (noteContainer addNoteFromFileReference: noteFile)
+	"noteFileName := (noteContainer addNoteFromFileReference: noteFile)
 		                fileName.
 	note := noteContainer noteNamed: noteFileName.
-	notesContentPresenter note: note
+	notesContentPresenter note: note"
+]
+
+{ #category : 'running' }
+NTSpNoteTakerMainUITest >> tearDown [
+
+	presenter application closeAllWindows.
+	presenter delete
 ]
 
 { #category : 'tests' }

@@ -23,6 +23,12 @@ Class {
 	#tag : 'Core'
 }
 
+{ #category : 'accessing' }
+NTSpToolBarPresenter >> cloneGitButtonPresenter [
+
+	^ cloneGitButtonPresenter
+]
+
 { #category : 'layout' }
 NTSpToolBarPresenter >> defaultLayout [
 
@@ -73,6 +79,18 @@ NTSpToolBarPresenter >> filteredNotesFor: aString [
 NTSpToolBarPresenter >> filteredTagsSelection [
 
 	^ filteredTagsSelection
+]
+
+{ #category : 'accessing' }
+NTSpToolBarPresenter >> gitSaveButtonPresenter [
+
+	^ gitSaveButtonPresenter
+]
+
+{ #category : 'accessing' }
+NTSpToolBarPresenter >> importFolderButtonPresenter [
+
+	^ importFolderButtonPresenter
 ]
 
 { #category : 'initialization' }
@@ -167,6 +185,18 @@ NTSpToolBarPresenter >> initializeTagSearchButton [
 		                             yourself.
 ]
 
+{ #category : 'accessing' }
+NTSpToolBarPresenter >> logButtonPresenter [
+
+	^ logButtonPresenter
+]
+
+{ #category : 'accessing' }
+NTSpToolBarPresenter >> noteSettingsButtonPresenter [
+
+	^ noteSettingsButtonPresenter
+]
+
 { #category : 'callbacks' }
 NTSpToolBarPresenter >> notes: aNotesCollection withTags: aTagsCollection [
 	"Answer a <Collection> of <NTNoteObject> whose names match tags"
@@ -187,7 +217,7 @@ NTSpToolBarPresenter >> notes: aNotesCollection withTags: aTagsCollection [
 { #category : 'opening' }
 NTSpToolBarPresenter >> openLog [
 
-	 (NTSpLogPresenter newApplication: self application) open
+	 (NTSpLogPresenter newApplication: self application) openModal 
 ]
 
 { #category : 'opening' }

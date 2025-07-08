@@ -21,10 +21,14 @@ NTSpLogPresenter >> defaultLayout [
 NTSpLogPresenter >> initializePresenters [
 	"in initialize it is called after so defeat textInputText: logic"
 
+	| logFile |
 	renderedText := self newText.
 
 	titleHolder := 'LOG'.
+	
+	logFile := (self application settings noteLocation / 'TheNoteTaker.log').
+	logFile exists ifFalse: [ logFile ensureCreateFile ].
 
 	renderedText text:
-		(self application settings noteLocation / 'TheNoteTaker.log') contents
+		logFile contents
 ]
