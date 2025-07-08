@@ -107,6 +107,11 @@ NTSpApplication >> noteTakerContainer [
 	^ noteTakerContainer
 ]
 
+{ #category : 'running' }
+NTSpApplication >> noteTakerMain [
+	^ log noteTakerMain 
+]
+
 { #category : 'accessing' }
 NTSpApplication >> notes [
 	"Answer the application's <Collection> of <NTNoteObject>"

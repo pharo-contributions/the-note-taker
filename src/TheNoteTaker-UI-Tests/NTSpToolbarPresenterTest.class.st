@@ -167,7 +167,9 @@ self skip.
 { #category : 'tests' }
 NTSpToolbarPresenterTest >> testTagsSearchButtonOpenModalWindow [
 
-  SpWindowForceOpenNonModal during: [ notesToolbarPresenter tagsSearchButtonPresenter click ].
-	
+	SpWindowForceOpenNonModal during: [
+		notesToolbarPresenter tagsSearchButtonPresenter click ].
+	self currentWorld doOneCycle.
+
 	self assert: notesToolbarPresenter application windows size equals: 2
 ]

@@ -46,6 +46,12 @@ NTLog >> logFileReference: aFileReference [
 ]
 
 { #category : 'actions' }
+NTLog >> noteTakerMain [
+
+	^ noteTakerMain
+]
+
+{ #category : 'actions' }
 NTLog >> noteTakerMain: noteTakerMainUI [
 
 	noteTakerMain := noteTakerMainUI
