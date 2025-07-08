@@ -30,6 +30,22 @@ NTSpNoteIndexPresenterTest >> testDisplayTags [
 ]
 
 { #category : 'tests' }
+NTSpNoteIndexPresenterTest >> testHasSelectedNotes [
+
+	| note1 |
+	
+	self
+		deny: notesIndexPresenter hasSelectedNote.
+		
+	note1 := noteContainer addNoteNamed: 'Test'.
+	
+	notesIndexPresenter selectNote: note1.
+	
+	self
+		assert: notesIndexPresenter hasSelectedNote
+]
+
+{ #category : 'tests' }
 NTSpNoteIndexPresenterTest >> testRemoveNote [
 
 	| sizeNotesBeforeAddNote |
@@ -39,4 +55,35 @@ NTSpNoteIndexPresenterTest >> testRemoveNote [
 	self
 		assert: notesIndexPresenter items size
 		equals: sizeNotesBeforeAddNote
+]
+
+{ #category : 'tests' }
+NTSpNoteIndexPresenterTest >> testSelectNote [
+
+	| note1 |
+	note1 := noteContainer addNoteNamed: 'Test'.
+	notesIndexPresenter selectNote: note1.
+	
+	self
+		assert: notesIndexPresenter selectedNote
+		equals: note1
+]
+
+{ #category : 'tests' }
+NTSpNoteIndexPresenterTest >> testSelectNotes [
+
+	| note1 note2 |
+	note1 := noteContainer addNoteNamed: 'Test'.
+	note2 := noteContainer addNoteNamed: 'Test'.
+	
+	notesIndexPresenter selectNote: note1.
+	notesIndexPresenter selectNote: note2.
+	
+	self
+		assert: notesIndexPresenter selectedNote
+		equals: note1.
+	
+	self
+		assert: notesIndexPresenter selectedNotes size
+		equals: 2
 ]
