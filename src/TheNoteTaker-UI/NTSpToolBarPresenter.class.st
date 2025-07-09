@@ -217,7 +217,8 @@ NTSpToolBarPresenter >> notes: aNotesCollection withTags: aTagsCollection [
 { #category : 'opening' }
 NTSpToolBarPresenter >> openLog [
 
-	 (NTSpLogPresenter newApplication: self application) openModal 
+	self application registerWindow: (NTSpLogPresenter openLogOfFolder:
+		 self application settings noteLocation) openModal
 ]
 
 { #category : 'opening' }

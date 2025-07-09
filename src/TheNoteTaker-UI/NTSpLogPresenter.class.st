@@ -9,6 +9,18 @@ Class {
 	#tag : 'Core'
 }
 
+{ #category : 'instance creation' }
+NTSpLogPresenter class >> openLogOfFolder: aFileReference [
+
+	^ self new openLog: aFileReference / 'TheNoteTaker.log'
+]
+
+{ #category : 'initialization' }
+NTSpLogPresenter >> contents [
+
+	^ renderedText text
+]
+
 { #category : 'initialization' }
 NTSpLogPresenter >> defaultLayout [
 
@@ -21,14 +33,15 @@ NTSpLogPresenter >> defaultLayout [
 NTSpLogPresenter >> initializePresenters [
 	"in initialize it is called after so defeat textInputText: logic"
 
-	| logFile |
 	renderedText := self newText.
 
-	titleHolder := 'LOG'.
-	
-	logFile := (self application settings noteLocation / 'TheNoteTaker.log').
-	logFile exists ifFalse: [ logFile ensureCreateFile ].
+	titleHolder := 'LOG'
+]
 
-	renderedText text:
-		logFile contents
+{ #category : 'initialization' }
+NTSpLogPresenter >> openLog: aFileReference [
+
+	aFileReference exists ifFalse: [ aFileReference ensureCreateFile ].
+
+	renderedText text: aFileReference contents
 ]
