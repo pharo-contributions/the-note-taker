@@ -223,10 +223,10 @@ NTSpToolBarPresenter >> openLog [
 
 { #category : 'opening' }
 NTSpToolBarPresenter >> openTNTSettings [
-	
-	SettingBrowser new
-		rootNodes: (SettingBrowser currentTree nodeNamed: #tnt) allChildren;
-		open
+
+	self application registerWindow: (SettingBrowser new
+	rootNodes: (SettingBrowser currentTree nodeNamed: #tnt) allChildren;
+	open)
 ]
 
 { #category : 'opening' }
