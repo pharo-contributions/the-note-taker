@@ -111,11 +111,11 @@ NTSpToolbarPresenterTest >> testFilteredtags [
 { #category : 'tests' }
 NTSpToolbarPresenterTest >> testImportFolderButtonOpenModalWindow [
 
-self skip.
-	SpWindowForceOpenNonModal during: [
+	self skip.
+	"SpWindowForceOpenNonModal during: [
 		notesToolbarPresenter importFolderButtonPresenter click ].
 
-	self assert: notesToolbarPresenter application windows size equals: 2
+	self assert: notesToolbarPresenter application windows size equals: 2"
 ]
 
 { #category : 'tests' }
