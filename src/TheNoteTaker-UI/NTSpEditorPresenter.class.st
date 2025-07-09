@@ -126,7 +126,7 @@ NTSpEditorPresenter >> note: aNTNoteObject [
 	"note fileReference extension = '.md'
 		ifTrue: [ self layout: self defaultLayout ]
 		ifFalse: [ self layout: self layoutWithoutRenderedText ]."
-	textInput text: aNTNoteObject contents asString.
+	textInput text: note contents asString.
 	self renderDocument.
 	self updateTitle
 
