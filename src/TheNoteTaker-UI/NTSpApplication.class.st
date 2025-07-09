@@ -14,7 +14,8 @@ Class {
 	#instVars : [
 		'noteTakerContainer',
 		'log',
-		'settings'
+		'settings',
+		'noteTakerMain'
 	],
 	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
@@ -109,7 +110,8 @@ NTSpApplication >> noteTakerContainer [
 
 { #category : 'running' }
 NTSpApplication >> noteTakerMain [
-	^ log noteTakerMain 
+
+	^ noteTakerMain
 ]
 
 { #category : 'accessing' }
@@ -128,7 +130,7 @@ NTSpApplication >> settings [
 { #category : 'running' }
 NTSpApplication >> start [
 
-	log noteTakerMain: (NTSpNoteTakerMainUI newApplication: self) open
+	noteTakerMain := (NTSpNoteTakerMainUI newApplication: self) open
 ]
 
 { #category : 'running' }

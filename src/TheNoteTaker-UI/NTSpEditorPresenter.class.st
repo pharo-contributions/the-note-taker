@@ -83,7 +83,7 @@ NTSpEditorPresenter >> initializePresenters [
 		whenTextChangedDo: [ note contents: textInput text asString ];
 		bindKeyCombination: $s meta toAction: [
 				self saveFile.
-				self application log save: note ]
+				self owner statusBar pushMessage: (self application log save: note) ]
 ]
 
 { #category : 'layout' }

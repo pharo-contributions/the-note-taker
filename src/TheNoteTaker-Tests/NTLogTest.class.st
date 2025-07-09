@@ -18,8 +18,6 @@ NTLogTest >> setUp [
 	super setUp.
 	memory := FileSystem memory workingDirectory.
 	log := NTLog newWithFolder: memory.
-	log noteTakerMain:
-		(NTSpNoteTakerMainUI newApplication: NTSpApplication new).
 	note := NTNoteObject named: 'noteTest'.
 	tag := NTTag newNamed: 'tagTest'
 ]
@@ -41,16 +39,16 @@ NTLogTest >> testWrite [
 { #category : 'running' }
 NTLogTest >> testWriteAddTag [
 
-	log add: note tag: tag.
-	self assert:
-		((memory / 'TheNoteTaker.log') contents endsWith: 'tag ' , tag tagName , ' has been add to the note '
-		, note fileName , String cr)
+	self assert: (log add: note tag: tag) equals: 'tag ', tag tagName, ' has been add to the note ', note fileName.
+	self assert: ((memory / 'TheNoteTaker.log') contents endsWith:
+			 'tag ' , tag tagName , ' has been add to the note '
+			 , note fileName , String cr)
 ]
 
 { #category : 'running' }
 NTLogTest >> testWriteCreate [
 
-	log create: note.
+	self assert: (log create: note) equals: 'file ' , note fileName , ' has been created'.
 	self assert: ((memory / 'TheNoteTaker.log') contents endsWith:
 			 'file ' , note fileName , ' has been created' , String cr)
 ]
@@ -72,7 +70,7 @@ NTLogTest >> testWriteMultipleLine [
 { #category : 'running' }
 NTLogTest >> testWriteRemove [
 
-	log remove: note.
+	self assert: (log remove: note) equals: 'file ' , note fileName , ' has been deleted'.
 	self assert: ((memory / 'TheNoteTaker.log') contents endsWith:
 			 'file ' , note fileName , ' has been deleted' , String cr)
 ]
@@ -80,7 +78,9 @@ NTLogTest >> testWriteRemove [
 { #category : 'running' }
 NTLogTest >> testWriteRemoveTag [
 
-	log remove: note tag: tag.
+	self
+		assert: (log remove: note tag: tag)
+		equals: 'tag ' , tag tagName , ' has been removed to the note ' , note fileName.
 	self assert: ((memory / 'TheNoteTaker.log') contents endsWith:
 			 'tag ' , tag tagName , ' has been removed to the note '
 			 , note fileName , String cr)
@@ -89,7 +89,7 @@ NTLogTest >> testWriteRemoveTag [
 { #category : 'running' }
 NTLogTest >> testWriteSave [
 
-	log save: note.
-	self assert:
-		((memory / 'TheNoteTaker.log') contents endsWith: 'file ' , note fileName , ' has been saved' , String cr)
+	self assert: (log save: note) equals: 'file ', note fileName, ' has been saved'.
+	self assert: ((memory / 'TheNoteTaker.log') contents endsWith:
+			 'file ' , note fileName , ' has been saved' , String cr)
 ]

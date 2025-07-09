@@ -43,7 +43,7 @@ NTSpAddNoteCommand >> execute [
 	self context
 		items: self noteTakerContainer notes;
 		selectNote: newNote.
-	self application log add: newNote
+	self context owner statusBar pushMessage: (self application log add: newNote)
 ]
 
 { #category : 'testing' }
