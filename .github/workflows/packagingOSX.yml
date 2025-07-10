@@ -25,6 +25,7 @@ jobs:
 
       - name: Create Package
         run: |
+          chmod 700 ./buildOSX.sh
           ./buildOSX.sh
 
       - name: Continuous Release
