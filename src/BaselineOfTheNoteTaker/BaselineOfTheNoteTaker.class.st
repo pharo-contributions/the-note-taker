@@ -27,7 +27,7 @@ BaselineOfTheNoteTaker >> baseline: spec [
 			spec
 				package: 'TheNoteTaker' with: [ spec requires: #( Microdown ) ];
 				package: 'TheNoteTaker-UI'
-				with: [ spec requires: #( TheNoteTaker OSSubprocess  OSWinSubprocess) ];
+				with: [ spec requires: #( TheNoteTaker OSSubprocess  OSWinSubprocess ApplicationGenerator) ];
 				package: 'TheNoteTaker-Release'
 				with: [ spec requires: #( ApplicationGenerator
 						   ObjCBridge ) ];
