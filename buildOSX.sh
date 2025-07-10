@@ -23,7 +23,7 @@ else
 	    load"
 fi
 
-./pharo TNT.image eval "SpApplication generateOSXPackage"
+./pharo TNT.image eval "NTSpApplication generateOSXPackage"
 
 cd build
 chmod +x build.sh
