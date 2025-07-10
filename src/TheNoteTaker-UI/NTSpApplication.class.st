@@ -53,6 +53,23 @@ NTSpApplication class >> default: aPharoLauncherApplication [
 ]
 
 { #category : 'private' }
+NTSpApplication class >> generateOSXPackage [
+
+	AppGeneratorOSXGenerator new
+		properties: {
+			#AppName -> 'TheNoteTaker'.
+			#InfoString -> 'First version of The Note Taker application'.
+			#BundleIdentifier -> 'org.pharo.TheNoteTaker'.
+			#ShortVersion -> '1.0.0'.
+			#DisplayName -> 'TheNoteTaker'.
+			#CommandLineHandler -> 'TheNoteTaker'.
+			#CompanyName -> 'Pharo Consortium'
+		} asDictionary;
+		outputDirectory: FileLocator workingDirectory / 'build';
+		generate
+]
+
+{ #category : 'private' }
 NTSpApplication class >> isDeployed [
 	^ IsDeployed ifNil: [ IsDeployed := false ]
 ]
