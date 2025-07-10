@@ -4,26 +4,10 @@ set -x
 set -e
 
 wget -O -  get.pharo.org/64/130+vm | bash
-./pharo Pharo.image save TNT
 
-if [ ! -z "$GITHUB_WORKSPACE" ] 
-then
-	./pharo TNT.image eval --save "Metacello new 
-	    baseline:'TheNoteTaker'; 
-	    repository: 'gitlocal://$GITHUB_WORKSPACE/src';
-		onUpgradeUseLoaded;
-		onConflictUseLoaded;
-	    load"
-else
-	./pharo TNT.image eval --save "Metacello new
-	    baseline:'TheNoteTaker';
-	    repository: 'github://moufort/the-note-taker/src';
-		onUpgradeUseLoaded;
-		onConflictUseLoaded;
-	    load"
-fi
+./pharo Pharo.image metacello install github://hernanmd/the-note-taker/src BaselineOfTheNoteTaker --groups=Release;
 
-./pharo TNT.image eval "NTSpApplication generateOSXPackage"
+./pharo Pharo.image eval "NTCommandLineHandler generateApplication";
 
 cd build
 chmod +x build.sh
