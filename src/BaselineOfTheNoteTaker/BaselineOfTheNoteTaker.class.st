@@ -48,22 +48,6 @@ BaselineOfTheNoteTaker >> baseline: spec [
 ]
 
 { #category : 'baselines' }
-BaselineOfTheNoteTaker >> ical: spec [
-
-	spec
-		baseline: 'ICal'
-		with: [ spec repository: 'github://Ducasse/Infhub/src' ]
-]
-
-{ #category : 'baselines' }
-BaselineOfTheNoteTaker >> microEd: spec [
-
-	spec
-		baseline: 'MicroEd'
-		with: [ spec repository: 'github://pillar-markup/MicroEd/src' ]
-]
-
-{ #category : 'baselines' }
 BaselineOfTheNoteTaker >> microdown: spec [
 
 	spec
@@ -105,13 +89,4 @@ BaselineOfTheNoteTaker >> postload: loader package: packageSpec [
 	
 	((Process allInstances select: [ :p | p priority = 70 ]) select: [ :e | '*OSSub*' match: e name ]) 
 		ifNotEmpty: [ : processArray | processArray first terminate ]
-]
-
-{ #category : 'baselines' }
-BaselineOfTheNoteTaker >> processWrapper: spec [ 
-
-	spec configuration: 'ProcessWrapper' with: [
-		spec
-			versionString: '1.2';
-			repository: 'http://smalltalkhub.com/mc/hernan/ProcessWrapper/main' ]
 ]
