@@ -14,6 +14,7 @@ Class {
 { #category : 'instance creation' }
 NTLog class >> newWithFolder: aFileReference [
 
+    aFileReference ifEmpty: [ ^ self new ].
 	^ self new logFileReference:
 		aFileReference / 'TheNoteTaker.log'
 ]

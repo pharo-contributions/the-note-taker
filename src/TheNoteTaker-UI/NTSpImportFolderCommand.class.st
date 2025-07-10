@@ -35,7 +35,7 @@ NTSpImportFolderCommand >> execute [
 		          extent: 800 @ 800;
 		          openModal.
 	folder ifNil: [ ^ self ].
-	self processFolder: folder.
+	self processFolder: folder first.
 	self application log logFileReference: folder.
 	self context items: self noteTakerContainer notes
 ]
@@ -44,7 +44,7 @@ NTSpImportFolderCommand >> execute [
 NTSpImportFolderCommand >> executeWithDefaultFolder [
 
 	| folder |
-	folder := self application settings noteLocation.
+	folder := self application settings noteLocation.self halt.
 	folder exists ifFalse: [ ^ self ].
 	self processFolder: folder.
 	self context items: self noteTakerContainer notes

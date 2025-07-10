@@ -56,7 +56,7 @@ NTSettings class >> projectPathSettingsOn: aBuilder [
 					type: #Directory;
 					ghostHelp:
 						'/Users/ducasse/Workspace/FirstCircle/Writing/Working/researchnotes';
-					default: FileSystem workingDirectory ;
+					"default: FileLocator home asFileReference ;"
 					description:
 						'Enter your local or remote path where notes will be committed. It can be empty'.
 				(aBuilder setting: #githubPathString)

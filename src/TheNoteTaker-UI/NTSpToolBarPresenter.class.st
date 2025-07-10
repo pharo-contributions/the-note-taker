@@ -126,7 +126,7 @@ NTSpToolBarPresenter >> initializeImportFolder [
 		                               addStyle: 'small';
 		                               action: [
 				                               NTSpImportFolderCommand new
-					                               context: self owner;
+					                               context: self owner notesIndexPresenter ;
 					                               execute ];
 		                               help: 'Import a new folder';
 		                               yourself
