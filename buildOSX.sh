@@ -13,7 +13,7 @@ then
 	    repository: 'gitlocal://$GITHUB_WORKSPACE/src';
 		onUpgradeUseLoaded;
 		onConflictUseLoaded;
-	    load'"
+	    load"
 else
 	./pharo TNT.image eval --save "Metacello new
 	    baseline:'TheNoteTaker';
