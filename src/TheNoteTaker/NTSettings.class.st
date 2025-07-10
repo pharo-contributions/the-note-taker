@@ -32,7 +32,7 @@ NTSettings class >> noteLocation [
 	"Answer the preferred <String> where notes will be stored"
 
 	^ noteLocation ifNil: [
-			  FileSystem workingDirectory  ]
+			  (FileLocator preferences / 'noteTaker') asFileReference ensureCreateDirectory  ]
 ]
 
 { #category : 'accessing' }
