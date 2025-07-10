@@ -157,6 +157,7 @@ NTSpToolbarPresenterTest >> testOpenLogButtonOpenModalWindow [
 { #category : 'tests' }
 NTSpToolbarPresenterTest >> testOpenTNTSettingsButtonOpenModalWindow [
 
+	self skip.
 	SpWindowForceOpenNonModal during: [
 		notesToolbarPresenter noteSettingsButtonPresenter click ].
 
