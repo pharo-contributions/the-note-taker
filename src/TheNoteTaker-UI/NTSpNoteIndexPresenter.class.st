@@ -32,9 +32,6 @@ NTSpNoteIndexPresenter class >> buildNTContextualGroupWith: presenterInstance [
 NTSpNoteIndexPresenter class >> buildNoteTakerOperationsGroupWith: presenterInstance [
 
 	^ (CmCommandGroup named: 'NoteTakerMenu') asSpecGroup
-		  register: ((NTSpAddNoteCommand
-				    forSpecWithIconNamed: #add
-				    shortcutKey: 'A' asShortcut) context: presenterInstance);
 		  register: ((NTSpImportNoteCommand
 				    forSpecWithIconNamed: #into
 				    shortcutKey: 'I' asShortcut) context: presenterInstance);
