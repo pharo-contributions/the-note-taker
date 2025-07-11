@@ -81,7 +81,7 @@ NTSpNoteTakerMainUI >> initialize [
 NTSpNoteTakerMainUI >> initializePresenters [
 
 	notesToolbarPresenter := self instantiate: NTSpToolBarPresenter.
-	notesIndexPresenter model: self noteTakerContainer.
+	notesToolbarPresenter setModel: self noteTakerContainer.
 	
 	notesIndexPresenter := self instantiate: NTSpNoteIndexPresenter.
 	notesIndexPresenter model: self noteTakerContainer notes.
@@ -156,7 +156,7 @@ NTSpNoteTakerMainUI >> toolbarHeight [
 { #category : 'event handling' }
 NTSpNoteTakerMainUI >> updateContents [
 
-	notesEditorPresenter noNote
+	notesEditorPresenter newEmptyNote
 ]
 
 { #category : 'activation' }

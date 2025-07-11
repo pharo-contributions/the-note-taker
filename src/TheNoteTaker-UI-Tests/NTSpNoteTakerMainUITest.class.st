@@ -105,7 +105,7 @@ NTSpNoteTakerMainUITest >> testAddContent [
 NTSpNoteTakerMainUITest >> testAddNoteByItsContents [
 
 	| tempNote |
-	editorPresenter noNote.
+	editorPresenter newEmptyNote.
 	editorPresenter textInputText: 'just a new note'.
 
 	tempNote := editorPresenter model.

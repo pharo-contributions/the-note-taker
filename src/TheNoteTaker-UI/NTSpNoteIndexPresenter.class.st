@@ -177,7 +177,7 @@ NTSpNoteIndexPresenter >> selectedNotes [
 { #category : 'callbacks' }
 NTSpNoteIndexPresenter >> updateRemovedNote [
 
-	notesTable selectionMode unselectAll.
+	self modelChanged.
 	self owner
 		updateWindowTitle;
 		updateContents

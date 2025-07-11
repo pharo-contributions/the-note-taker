@@ -57,7 +57,7 @@ NTSpEditorPresenter >> initialize [
 
 	super initialize.
 	worker := TKTLocalProcessTaskRunner new.
-	self noNote.
+	self newEmptyNote.
 ]
 
 { #category : 'initialization' }
@@ -106,17 +106,17 @@ NTSpEditorPresenter >> mayLoseEdits [
 { #category : 'accessing' }
 NTSpEditorPresenter >> model [
 
-	^ model ifNil: [ self noNote ]
+	^ model ifNil: [ self newEmptyNote ]
 ]
 
 { #category : 'api' }
-NTSpEditorPresenter >> noNote [
+NTSpEditorPresenter >> newEmptyNote [
 
 	| nt |
 	nt := NTNoteObject new.
-	"nt folderReference: self application settings noteLocation."
+	nt folderReference: self application settings noteLocation.
 	self setModel: nt.
-	
+
 	self emptyInputText
 ]
 
@@ -146,7 +146,7 @@ NTSpEditorPresenter >> saveFile [
 NTSpEditorPresenter >> setModel: aNTNoteObject [
 
 	aNTNoteObject
-		ifNil: [ self noNote ]
+		ifNil: [ self newEmptyNote ]
 		ifNotNil: [ model := aNTNoteObject ].
 	"note fileReference extension = '.md'
 		ifTrue: [ self layout: self defaultLayout ]
