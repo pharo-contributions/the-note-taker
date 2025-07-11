@@ -3,45 +3,79 @@ Class {
 	#superclass : 'NTSpApplicationTest',
 	#instVars : [
 		'presenter',
-		'notesToolbarPresenter',
-		'notesIndexPresenter',
-		'notesContentPresenter',
-		'note',
-		'noteFile'
+		'editorPresenter',
+		'indexPresenter',
+		'toolbarPresenter'
 	],
 	#category : 'TheNoteTaker-UI-Tests',
 	#package : 'TheNoteTaker-UI-Tests'
 }
 
 { #category : 'running' }
-NTSpNoteTakerMainUITest >> notesIndexPresenter [
+NTSpNoteTakerMainUITest >> generateNoteAndTags [
 
-	^ presenter notesIndexPresenter
+	| note1 note2 note3 tag1 tag2 tag3 |
+	note1 := noteContainer addNoteNamed: 'note1'.
+	note2 := noteContainer addNoteNamed: 'note2'.
+	note3 := noteContainer addNoteNamed: 'note3'.
+	
+	tag1 := noteContainer addTagNamed: 'tag1'.
+	tag2 := noteContainer addTagNamed: 'tag2'.
+	tag3 := noteContainer addTagNamed: 'tag3'.
+	
+	note1 addTag: tag1.
+	note1 addTag: tag3.
+	note2 addTag: tag2.
 ]
 
-{ #category : 'running' }
-NTSpNoteTakerMainUITest >> notesToolbarPresenter [
-	^ presenter notesToolbarPresenter
+{ #category : 'accessing' }
+NTSpNoteTakerMainUITest >> getNote1 [
+
+	^ noteContainer noteTitled: 'note1'
+]
+
+{ #category : 'accessing' }
+NTSpNoteTakerMainUITest >> getNote2 [
+
+	^ noteContainer noteTitled: 'note2'
+]
+
+{ #category : 'accessing' }
+NTSpNoteTakerMainUITest >> getNote3 [
+
+	^ noteContainer noteTitled: 'note3'
+]
+
+{ #category : 'accessing' }
+NTSpNoteTakerMainUITest >> getTag1 [
+
+	^ noteContainer tagNamed: 'tag1'
+]
+
+{ #category : 'accessing' }
+NTSpNoteTakerMainUITest >> getTag2 [
+
+	^ noteContainer tagNamed: 'tag2'
+]
+
+{ #category : 'accessing' }
+NTSpNoteTakerMainUITest >> getTag3 [
+
+	^ noteContainer tagNamed: 'tag3'
 ]
 
 { #category : 'running' }
 NTSpNoteTakerMainUITest >> setUp [
 
-	| noteFileName |
 	super setUp.
 
 	app start.
 	presenter := app noteTakerMain.
-	notesIndexPresenter := presenter notesIndexPresenter.
-	notesContentPresenter := presenter notesEditorPresenter.
-	notesToolbarPresenter := presenter notesToolbarPresenter.
+	indexPresenter := presenter notesIndexPresenter.
+	editorPresenter := presenter notesEditorPresenter.
+	toolbarPresenter := presenter notesToolbarPresenter.
 
-	noteFile := memoryFS workingDirectory / 'newNote.md'.
-	noteFile writeStreamDo: [ :stream | "noteFileName := (noteContainer addNoteFromFileReference: noteFile)
-		                fileName.
-	note := noteContainer noteNamed: noteFileName.
-	notesContentPresenter note: note"
-		stream nextPutAll: 'new note' ]
+	self generateNoteAndTags
 ]
 
 { #category : 'running' }
@@ -54,18 +88,15 @@ NTSpNoteTakerMainUITest >> tearDown [
 { #category : 'tests' }
 NTSpNoteTakerMainUITest >> testAddContent [
 
-	| tempNote noteFileName |
-	
-	noteFileName := (noteContainer addNoteFromFileReference: noteFile)
-		                fileName.
-	note := noteContainer noteNamed: noteFileName.
-	notesContentPresenter note: note.
-	
-	notesContentPresenter textInputText: 'It''s just a test'.
+	| tempNote note |
+	note := self getNote1.
+	editorPresenter note: note.
 
-	tempNote := notesContentPresenter note.
+	editorPresenter textInputText: 'It''s just a test'.
+
+	tempNote := editorPresenter note.
 	tempNote folderReference: memoryFS workingDirectory.
-	notesContentPresenter saveFile.
+	editorPresenter saveFile.
 
 	self assert: note contents equals: 'It''s just a test'
 ]
@@ -74,17 +105,17 @@ NTSpNoteTakerMainUITest >> testAddContent [
 NTSpNoteTakerMainUITest >> testAddNoteByItsContents [
 
 	| tempNote |
-   notesContentPresenter noNote.
-	notesContentPresenter textInputText: 'just a new note'.
+	editorPresenter noNote.
+	editorPresenter textInputText: 'just a new note'.
 
-	tempNote := notesContentPresenter note.
+	tempNote := editorPresenter note.
 	tempNote folderReference: memoryFS workingDirectory.
 
-	notesContentPresenter saveFile.
+	editorPresenter saveFile.
 
-	self assert: notesContentPresenter note exists.
+	self assert: editorPresenter note exists.
 	self assert:
-		(notesContentPresenter note fileReference basename
+		(editorPresenter note fileReference basename
 			 includesSubstring: 'justanew')
 ]
 
@@ -92,73 +123,73 @@ NTSpNoteTakerMainUITest >> testAddNoteByItsContents [
 NTSpNoteTakerMainUITest >> testAddNoteByItsName [
 
 	| sizeNotesBeforeAddNote |
-	sizeNotesBeforeAddNote := notesIndexPresenter items size.
+	sizeNotesBeforeAddNote := indexPresenter items size.
 	noteContainer addNoteNamed: 'note1'.
 	self
-		assert: notesIndexPresenter items size
+		assert: indexPresenter items size
 		equals: sizeNotesBeforeAddNote + 1
 ]
 
 { #category : 'tests' }
 NTSpNoteTakerMainUITest >> testAddTagSaveNote [
 
-	| tag newNote |
-	note := noteContainer addNoteNamed: 'Test'.
+	| tag newNote note |
+	note := self getNote3.
 	note folderReference: memoryFS workingDirectory.
-	tag := noteContainer addTagNamed: 'tag'.
-	notesIndexPresenter selectNote: note.
+	tag := self getTag1.
+	indexPresenter selectNote: note.
 
 	SpWindowSimulateOpenModal
 		value: [ :aDialogPresenter |
-				aDialogPresenter presenter selectedItems: #( tag ).
+				aDialogPresenter presenter selectedItems: #( tag1 ).
 				aDialogPresenter presenter accept ]
 		during: [
 				NTSpAddTagCommand new
-					context: notesIndexPresenter;
+					context: indexPresenter;
 					execute ].
 	newNote := NTNoteObject newFromFileReference: note fileReference.
-	self assert: newNote tagsString equals: 'tag'
+	self assert: newNote tagsString equals: tag tagName
 ]
 
 { #category : 'tests' }
 NTSpNoteTakerMainUITest >> testAddTagToMultipleNotes [
 
-	| tag note1 note2 |
-	note1 := noteContainer addNoteNamed: 'note1'.
-	note2 := noteContainer addNoteNamed: 'note2'.
-	tag := noteContainer addTagNamed: 'tag'.
-	notesIndexPresenter selectNote: note1.
-	notesIndexPresenter selectNote: note2.
+	| tag note3 note2 |
+	note2 := self getNote2.
+	note3 := self getNote3.
+	tag := self getTag1.
+	indexPresenter selectNote: note3.
+	indexPresenter selectNote: note2.
 
 	SpWindowSimulateOpenModal
 		value: [ :aDialogPresenter |
-				aDialogPresenter presenter selectedItems: #( tag ).
+				aDialogPresenter presenter selectedItems: #( tag1 ).
 				aDialogPresenter presenter accept ]
 		during: [
 				NTSpAddTagCommand new
-					context: notesIndexPresenter;
+					context: indexPresenter;
 					execute ].
 
 	self assert: tag notes size equals: 2.
-	self assert: (note1 tags includes: tag).
+	self assert: (note3 tags includes: tag).
 	self assert: (note2 tags includes: tag)
 ]
 
 { #category : 'tests' }
 NTSpNoteTakerMainUITest >> testAddTagToSingleNote [
 
-	| tag |
-	note := noteContainer addNoteNamed: 'Test'.
-	tag := noteContainer addTagNamed: 'tag'.
-	notesIndexPresenter selectNote: note.
+	| tag note |
+	note := self getNote3.
+	tag := self getTag1.
+	indexPresenter selectNote: note.
 
 	SpWindowSimulateOpenModal
 		value: [ :aDialogPresenter |
-				aDialogPresenter presenter selectedItems: #( tag ).
+				aDialogPresenter presenter selectedItems: #( tag1 ).
 				aDialogPresenter presenter accept ]
 		during: [
 				NTSpAddTagCommand new
-					context: notesIndexPresenter;
+					context: indexPresenter;
 					execute ].
 
 	self assert: note tags size equals: 1.
@@ -169,53 +200,46 @@ NTSpNoteTakerMainUITest >> testAddTagToSingleNote [
 NTSpNoteTakerMainUITest >> testCreateANoteSelectIt [
 
 	self skip.
-	self notesToolbarPresenter searchBarPresenter type: 'createNote'.
-	self notesToolbarPresenter searchBarPresenter typeByChar: String cr.
+	toolbarPresenter searchBarPresenter type: 'createNote'.
+	toolbarPresenter searchBarPresenter typeByChar: String cr.
 
 	self
-		assert: self notesIndexPresenter selectedNote
+		assert: indexPresenter selectedNote
 		equals: (noteContainer noteNamed: 'createNote')
 ]
 
 { #category : 'tests' }
 NTSpNoteTakerMainUITest >> testFilterNotesWithToolbarSetIndexItems [
 
-	noteContainer addNoteNamed: 'note'.
-	noteContainer addNoteNamed: 'Test'.
-	noteContainer addNoteNamed: 'note2'.
+	self assert: indexPresenter items size equals: 3.
 
-	self assert: notesIndexPresenter items size equals: 3.
-	
-	notesToolbarPresenter searchBarPresenter type: 'note'.
-	self assert: notesIndexPresenter items size equals: 2
+	toolbarPresenter searchBarPresenter type: 'note1'.
+	self assert: indexPresenter items size equals: 1
 ]
 
 { #category : 'tests' }
 NTSpNoteTakerMainUITest >> testIndexSelectNoteSendItToEditor [
 
-	note := noteContainer addNoteNamed: 'Test'.
-	notesIndexPresenter selectNote: note.
-	
-	self assert: notesContentPresenter note equals: note
+	| note |
+	note := self getNote1.
+	indexPresenter selectNote: note.
+
+	self assert: editorPresenter note equals: note
 ]
 
 { #category : 'tests' }
 NTSpNoteTakerMainUITest >> testNameNoteIsInISOFormat [
-	" add new note in the note taker, its contents and save it"
 
-	| date tempNote noteFileName |
-	
-	noteFileName := (noteContainer addNoteFromFileReference: noteFile)
-		                fileName.
-	note := noteContainer noteNamed: noteFileName.
-	notesContentPresenter note: note.
-	
+	| date tempNote note |
+	note := self getNote1.
+	editorPresenter note: note.
+
 	date := DateAndTime now asDate yyyymmdd.
 
-	tempNote := notesContentPresenter note.
+	tempNote := editorPresenter note.
 	tempNote folderReference: memoryFS workingDirectory.
 
-	notesContentPresenter saveFile.
+	editorPresenter saveFile.
 
 	self assert: (note fileName beginsWith: date)
 ]
@@ -223,36 +247,34 @@ NTSpNoteTakerMainUITest >> testNameNoteIsInISOFormat [
 { #category : 'tests' }
 NTSpNoteTakerMainUITest >> testRemoveTagSaveNote [
 
-	| tag newNote |
-	note := noteContainer addNoteNamed: 'Test'.
+	| tag newNote note |
+	note := self getNote2.
 	note folderReference: memoryFS workingDirectory.
-	tag := noteContainer addTagNamed: 'tag'.
-	note addTag: tag.
-	notesIndexPresenter selectNote: note.
+	tag := self getTag2.
+	indexPresenter selectNote: note.
 
 	SpWindowSimulateOpenModal
 		value: [ :aDialogPresenter |
-				aDialogPresenter presenter selectedItems: #( tag ).
+				aDialogPresenter presenter selectedItems: #( tag2 ).
 				aDialogPresenter presenter accept ]
 		during: [
 				NTSpRemoveTagCommand new
-					context: notesIndexPresenter;
+					context: indexPresenter;
 					execute ].
 	newNote := NTNoteObject newFromFileReference: note fileReference.
-	self assert: newNote tags size equals: 0
+	self assert: newNote tagsString isNil
 ]
 
 { #category : 'tests' }
 NTSpNoteTakerMainUITest >> testRemoveTagToMultipleNotes [
 
-	| tag note1 note2 |
-	note1 := noteContainer addNoteNamed: 'note1'.
-	note2 := noteContainer addNoteNamed: 'note2'.
-	tag := noteContainer addTagNamed: 'tag'.
-	note1 addTag: tag.
-	note2 addTag: tag.
-	notesIndexPresenter selectNote: note1.
-	notesIndexPresenter selectNote: note2.
+	| tag note3 note2 |
+	note3 := self getNote3.
+	note2 := self getNote2.
+	tag := self getTag2.
+	note3 addTag: tag.
+	indexPresenter selectNote: note3.
+	indexPresenter selectNote: note2.
 
 	SpWindowSimulateOpenModal
 		value: [ :aDialogPresenter |
@@ -260,7 +282,7 @@ NTSpNoteTakerMainUITest >> testRemoveTagToMultipleNotes [
 				aDialogPresenter presenter accept ]
 		during: [
 				NTSpRemoveTagCommand new
-					context: notesIndexPresenter;
+					context: indexPresenter;
 					execute ].
 
 	self assert: tag notes size equals: 0
@@ -269,34 +291,29 @@ NTSpNoteTakerMainUITest >> testRemoveTagToMultipleNotes [
 { #category : 'tests' }
 NTSpNoteTakerMainUITest >> testRemoveTagToSingleNote [
 
-	| tag |
-	note := noteContainer addNoteNamed: 'Test'.
-	tag := noteContainer addTagNamed: 'tag'.
-	note addTag: tag.
-	notesIndexPresenter selectNote: note.
+	| tag note |
+	note := self getNote2.
+	tag := self getTag2.
+	indexPresenter selectNote: note.
 
 	SpWindowSimulateOpenModal
 		value: [ :aDialogPresenter |
-				aDialogPresenter presenter selectedItems: #( tag ).
+				aDialogPresenter presenter selectedItems: #( tag2 ).
 				aDialogPresenter presenter accept ]
 		during: [
 				NTSpRemoveTagCommand new
-					context: notesIndexPresenter;
+					context: indexPresenter;
 					execute ].
 
-	self assert: note tags size equals: 0.
+	self assert: note tags size equals: 0
 ]
 
 { #category : 'tests' }
 NTSpNoteTakerMainUITest >> testSelectANote [
 
-	noteContainer addNoteNamed: 'anotherNote'.
-	notesIndexPresenter selectNote: notesIndexPresenter items first.
-
-	notesIndexPresenter selectedNote contents: 'anotherNote'.
-	notesContentPresenter note: notesIndexPresenter selectedNote.
+	indexPresenter selectNote: self getNote1.
 
 	self
-		assert: notesContentPresenter textInputText
-		equals: 'anotherNote'
+		assert: editorPresenter textInputText
+		equals: self getNote1 contents
 ]
