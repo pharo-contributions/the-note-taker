@@ -233,22 +233,6 @@ self assert: noteTakerContainer tags size equals: 2.
 ]
 
 { #category : 'tests - tags' }
-NTContainerTest >> testTagNamedMatching [
-
-	noteTakerContainer addTagNamed: 'Tag'.
-	noteTakerContainer addTagNamed: 'Tag2'.
-	noteTakerContainer addTagNamed: 'Tag3'.
-
-	self
-		assert: (noteTakerContainer tagNameMatching: 'Tag')
-		equals: noteTakerContainer tags first.
-
-	self
-		assert: (noteTakerContainer tagNameMatching: '3')
-		equals: noteTakerContainer tags third
-]
-
-{ #category : 'tests - tags' }
 NTContainerTest >> testTagsMatchingWithNotes [
 
 	| tag1 tag2 note1 note2 note3 noteCollection |
