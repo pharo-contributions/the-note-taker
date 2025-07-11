@@ -17,7 +17,7 @@ BaselineOfTheNoteTaker >> applicationGenerator: spec [
 BaselineOfTheNoteTaker >> baseline: spec [
 
 	<baseline>
-	spec for: #( common ) do: [ "self ical: spec."
+	spec for: #( common ) do: [
 			self osWinSubprocess: spec.
 			self osSubprocess: spec.
 			self microdown: spec.
@@ -27,7 +27,8 @@ BaselineOfTheNoteTaker >> baseline: spec [
 			spec
 				package: 'TheNoteTaker' with: [ spec requires: #( Microdown ) ];
 				package: 'TheNoteTaker-UI'
-				with: [ spec requires: #( TheNoteTaker OSSubprocess  OSWinSubprocess ApplicationGenerator ObjCBridge) ];
+				with: [
+					spec requires: #( TheNoteTaker OSSubprocess OSWinSubprocess ) ];
 				package: 'TheNoteTaker-Release'
 				with: [ spec requires: #( ApplicationGenerator
 						   ObjCBridge ) ];
@@ -43,7 +44,7 @@ BaselineOfTheNoteTaker >> baseline: spec [
 				group: 'Tests'
 				with: #( 'Core' 'TheNoteTaker-Tests' 'TheNoteTaker-UI-Tests' );
 				group: 'Release'
-				with: #( 'Core' 'UI' 'ObjCBridge' 'TheNoteTaker-Release' );
+				with: #( 'Core' 'UI' 'TheNoteTaker-Release' );
 				group: 'default' with: #( 'Core' 'Tests' 'UI' ) ]
 ]
 
