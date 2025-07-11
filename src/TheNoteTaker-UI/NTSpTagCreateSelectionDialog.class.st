@@ -22,8 +22,6 @@ NTSpTagCreateSelectionDialog >> initializePresenters [
 	searchTextPresenter
 		help:
 			'Search a tag by just typing a name. Create it if he doesn t exist';
-		placeholder: 'Type note to search or create'.
-
-	searchTextPresenter whenSubmitDo: [ :newTagName |
-		self addTagNamed: newTagName ]
+		placeholder: 'Type note to search or create';
+		whenSubmitDo: [ :newTagName | self addTagNamed: newTagName ]
 ]
