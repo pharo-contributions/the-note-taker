@@ -12,7 +12,7 @@ Class {
 	#instVars : [
 		'textInput',
 		'composer',
-		'note',
+		'model',
 		'renderedText',
 		'worker'
 	],
@@ -80,10 +80,11 @@ NTSpEditorPresenter >> initializePresenters [
 		                beNotEditable;
 		                yourself.
 	textInput
-		whenTextChangedDo: [ note contents: textInput text asString ];
+		whenTextChangedDo: [ model contents: textInput text asString ];
 		bindKeyCombination: $s meta toAction: [
 				self saveFile.
-				self owner statusBar pushMessage: (self application log save: note) ]
+				self owner statusBar pushMessage:
+						(self application log save: model) ]
 ]
 
 { #category : 'layout' }
@@ -99,7 +100,13 @@ NTSpEditorPresenter >> layoutWithoutRenderedText [
 { #category : 'testing' }
 NTSpEditorPresenter >> mayLoseEdits [
 
-	^ self textInputText isNotEmpty and: [ note isDirty ]
+	^ self textInputText isNotEmpty and: [ model isDirty ]
+]
+
+{ #category : 'accessing' }
+NTSpEditorPresenter >> model [
+
+	^ model ifNil: [ self noNote ]
 ]
 
 { #category : 'api' }
@@ -108,31 +115,9 @@ NTSpEditorPresenter >> noNote [
 	| nt |
 	nt := NTNoteObject new.
 	"nt folderReference: self application settings noteLocation."
-	self note: nt.
+	self setModel: nt.
 	
 	self emptyInputText
-]
-
-{ #category : 'accessing' }
-NTSpEditorPresenter >> note [
-
-	^ note ifNil: [ self noNote ]
-]
-
-{ #category : 'accessing' }
-NTSpEditorPresenter >> note: aNTNoteObject [
-
-	aNTNoteObject ifNil: [ self noNote ] ifNotNil: [ note := aNTNoteObject ].
-	"note fileReference extension = '.md'
-		ifTrue: [ self layout: self defaultLayout ]
-		ifFalse: [ self layout: self layoutWithoutRenderedText ]."
-	textInput text: note contents asString.
-	self renderDocument.
-	self updateTitle
-
-	"self mayLoseEdits ifTrue: [ (self application confirm:
-			 'You have unsaved edits. Do you want to proceed?')
-			ifFalse: [ ^ self ]  ]."
 ]
 
 { #category : 'actions' }
@@ -154,7 +139,25 @@ NTSpEditorPresenter >> renderedText [
 { #category : 'actions' }
 NTSpEditorPresenter >> saveFile [
 
-	self note save.
+	self model save.
+]
+
+{ #category : 'accessing' }
+NTSpEditorPresenter >> setModel: aNTNoteObject [
+
+	aNTNoteObject
+		ifNil: [ self noNote ]
+		ifNotNil: [ model := aNTNoteObject ].
+	"note fileReference extension = '.md'
+		ifTrue: [ self layout: self defaultLayout ]
+		ifFalse: [ self layout: self layoutWithoutRenderedText ]."
+	textInput text: model contents asString.
+	self renderDocument.
+	self updateTitle
+
+	"self mayLoseEdits ifTrue: [ (self application confirm:
+			 'You have unsaved edits. Do you want to proceed?')
+			ifFalse: [ ^ self ]  ]."
 ]
 
 { #category : 'accessing' }
@@ -172,5 +175,7 @@ NTSpEditorPresenter >> textInputText: aString [
 { #category : 'api' }
 NTSpEditorPresenter >> updateTitle [
 
-	self window ifNotNil: [ self window title: self application applicationTitle, ' - ', note title ]
+	self window ifNotNil: [
+			self window title:
+				self application applicationTitle , ' - ' , model title ]
 ]

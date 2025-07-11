@@ -90,11 +90,11 @@ NTSpNoteTakerMainUITest >> testAddContent [
 
 	| tempNote note |
 	note := self getNote1.
-	editorPresenter note: note.
+	editorPresenter setModel: note.
 
 	editorPresenter textInputText: 'It''s just a test'.
 
-	tempNote := editorPresenter note.
+	tempNote := editorPresenter model.
 	tempNote folderReference: memoryFS workingDirectory.
 	editorPresenter saveFile.
 
@@ -108,15 +108,15 @@ NTSpNoteTakerMainUITest >> testAddNoteByItsContents [
 	editorPresenter noNote.
 	editorPresenter textInputText: 'just a new note'.
 
-	tempNote := editorPresenter note.
+	tempNote := editorPresenter model.
 	tempNote folderReference: memoryFS workingDirectory.
 
 	editorPresenter saveFile.
 
-	self assert: editorPresenter note exists.
+	self assert: editorPresenter model exists.
 	self assert:
-		(editorPresenter note fileReference basename
-			 includesSubstring: 'justanew')
+		(editorPresenter model fileReference basename includesSubstring:
+			 'justanew')
 ]
 
 { #category : 'tests' }
@@ -224,7 +224,7 @@ NTSpNoteTakerMainUITest >> testIndexSelectNoteSendItToEditor [
 	note := self getNote1.
 	indexPresenter selectNote: note.
 
-	self assert: editorPresenter note equals: note
+	self assert: editorPresenter model equals: note
 ]
 
 { #category : 'tests' }
@@ -232,11 +232,11 @@ NTSpNoteTakerMainUITest >> testNameNoteIsInISOFormat [
 
 	| date tempNote note |
 	note := self getNote1.
-	editorPresenter note: note.
+	editorPresenter setModel: note.
 
 	date := DateAndTime now asDate yyyymmdd.
 
-	tempNote := editorPresenter note.
+	tempNote := editorPresenter model.
 	tempNote folderReference: memoryFS workingDirectory.
 
 	editorPresenter saveFile.
