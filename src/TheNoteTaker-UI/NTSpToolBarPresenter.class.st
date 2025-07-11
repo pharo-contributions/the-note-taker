@@ -36,7 +36,7 @@ NTSpToolBarPresenter >> defaultLayout [
 		  add: searchBarPresenter;
 		  add: tagsSearchButtonPresenter expand: false;
 		  add: gitSaveButtonPresenter expand: false;
-		  add: cloneGitButtonPresenter expand: false;
+		  "add: cloneGitButtonPresenter expand: false;"
 		  add: importFolderButtonPresenter expand: false;
 		  add: noteSettingsButtonPresenter expand: false;
 		  add: logButtonPresenter expand: false;
@@ -159,14 +159,12 @@ NTSpToolBarPresenter >> initializeNoteSettingsButton [
 NTSpToolBarPresenter >> initializePresenters [
 
 	searchBarPresenter := self newTextInput
-		                                  help:
-			                                  'Create a note by just typing a name';
-		                                  placeholder:
-			                                  'Type note to search or create';
-		                                  yourself.
+		                      help: 'Create a note by just typing a name';
+		                      placeholder: 'Type note to search or create';
+		                      yourself.
 	self initializeTagSearchButton.
 	self initializeImportFolder.
-	self initializeCloneGitFolder.
+	"self initializeCloneGitFolder."
 	self initializeGitSave.
 	self initializeNoteSettingsButton.
 	self initializeLogButton.
