@@ -80,6 +80,12 @@ NTSpNoteIndexPresenter >> defaultLayout [
 		yourself.
 ]
 
+{ #category : 'layout' }
+NTSpNoteIndexPresenter >> defaultOutputPort [
+
+	^ SpDropListSelectionPort newPresenter: self
+]
+
 { #category : 'private' }
 NTSpNoteIndexPresenter >> displayNoteTags: selectedNote [
 	"Answer a <String> to be displayed"
@@ -175,4 +181,10 @@ NTSpNoteIndexPresenter >> updateRemovedNote [
 	self owner
 		updateWindowTitle;
 		updateContents
+]
+
+{ #category : 'callbacks' }
+NTSpNoteIndexPresenter >> whenSelectionChangedDo: aBlock [
+
+	notesTable whenSelectionChangedDo: aBlock
 ]

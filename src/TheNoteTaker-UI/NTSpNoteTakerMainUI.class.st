@@ -26,9 +26,7 @@ NTSpNoteTakerMainUI >> applicationTitle [
 { #category : 'initialization' }
 NTSpNoteTakerMainUI >> connectPresenters [
 
-	notesIndexPresenter notesTable whenSelectedItemChangedDo: [
-		:aSelectedNote | notesEditorPresenter note: aSelectedNote ].
-	" notesIndexPresenter transmitTo: notesEditorPresenter."
+	notesIndexPresenter transmitTo: notesEditorPresenter.
 
 	notesToolbarPresenter searchBarPresenter
 		whenTextChangedDo: [
