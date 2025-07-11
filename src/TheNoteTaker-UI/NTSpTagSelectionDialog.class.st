@@ -10,14 +10,6 @@ Class {
 }
 
 { #category : 'adding' }
-NTSpTagSelectionDialog >> addTagNamed: aString [
-
-	self application noteTakerContainer tagNamed: aString.
-	searchTextPresenter text: ''.
-	selectedItems add: aString
-]
-
-{ #category : 'adding' }
 NTSpTagSelectionDialog >> defaultLayout [
 
 	^ SpBoxLayout newTopToBottom
@@ -39,13 +31,10 @@ NTSpTagSelectionDialog >> initializePresenters [
 	super initializePresenters.
 
 	searchTextPresenter := self newTextInput
-		                       help:
-			                       'Search a tag by just typing a name. Create it if he doesn t exist';
-		                       placeholder: 'Type note to search or create';
-		                       whenTextChangedDo: [ self updateTagsList ];
-		                       "whenSubmitDo: [ :newTagName |
-				                       searchTextPresenter text: ''.
-				                       selectedItems add: newTagName ];"
+		                       help: 'Search a tag by just typing a name.';
+		                       placeholder: 'Type note to search';
+		                       whenTextChangedDo: [ :text |
+			                       self items: (self filteredTagsFor: text) ];
 		                       yourself
 ]
 
@@ -53,16 +42,4 @@ NTSpTagSelectionDialog >> initializePresenters [
 NTSpTagSelectionDialog >> selectedItems: aTagNameCollection [
 
 	selectedItems addAll: aTagNameCollection
-]
-
-{ #category : 'adding' }
-NTSpTagSelectionDialog >> updateTagsList [
-
-	| filteredItems |
-	filteredItems := searchTextPresenter text
-		                 ifEmpty: [ self filteredTagsFor: '' ]
-		                 ifNotEmpty: [ :pattern |
-		                 self filteredTagsFor: pattern ].
-
-	self items: filteredItems.
 ]
