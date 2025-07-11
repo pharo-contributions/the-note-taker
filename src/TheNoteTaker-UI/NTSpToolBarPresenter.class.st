@@ -55,16 +55,16 @@ NTSpToolBarPresenter >> filter [
 	| filteredItems |
 	filteredItems := searchBarPresenter text
 		                 ifEmpty: [
-		                 self application noteTakerContainer notes ]
+		                 self noteTakerContainer notes ]
 		                 ifNotEmpty: [ :pattern |
 		                 self filteredNotesFor: pattern ].
 
 	filteredItems := filteredTagsSelection
 		                 ifEmpty: [ filteredItems ]
 		                 ifNotEmpty: [ :pattern |
-				                 self
-					                 notes: filteredItems
-					                 withTags: filteredTagsSelection ].
+			                 self
+				                 notes: filteredItems
+				                 withTags: filteredTagsSelection ].
 
 	^ filteredItems
 ]
@@ -72,7 +72,7 @@ NTSpToolBarPresenter >> filter [
 { #category : 'callbacks' }
 NTSpToolBarPresenter >> filteredNotesFor: aString [
 
-	^ self application noteTakerContainer notesNameMatching: aString
+	^ self noteTakerContainer notesTitleMatching: aString
 ]
 
 { #category : 'accessing' }
@@ -197,21 +197,17 @@ NTSpToolBarPresenter >> noteSettingsButtonPresenter [
 	^ noteSettingsButtonPresenter
 ]
 
+{ #category : 'accessing' }
+NTSpToolBarPresenter >> noteTakerContainer [
+
+	^ self application noteTakerContainer
+]
+
 { #category : 'callbacks' }
 NTSpToolBarPresenter >> notes: aNotesCollection withTags: aTagsCollection [
 	"Answer a <Collection> of <NTNoteObject> whose names match tags"
 
-	| filteredNotes |
-	filteredNotes := Set new.
-
-	aTagsCollection do: [ :tag |
-				| notesCollection |
-				 notesCollection := self application noteTakerContainer
-					 notesTagsMatching: tag tagName
-					 withNotes: aNotesCollection.
-					filteredNotes addAll: notesCollection ].
-				
-	^ filteredNotes asOrderedCollection
+	^ self noteTakerContainer notes: aNotesCollection withTags: aTagsCollection 
 ]
 
 { #category : 'opening' }
@@ -231,21 +227,20 @@ NTSpToolBarPresenter >> openTNTSettings [
 
 { #category : 'opening' }
 NTSpToolBarPresenter >> openTagsSearcher [
-	
-	|selectedItems|
-	
+
+	| selectedItems |
 	selectedItems := filteredTagsSelection collect: [ :tag | tag tagName ].
 
 	(NTSpTagSelectionDialog newApplication: self application)
 		title: 'tag name';
-		items: (self application noteTakerContainer tags collect: [ :each |
+		items: (self noteTakerContainer tags collect: [ :each |
 					 each tagName ]);
 		selectedItems: selectedItems;
 		display: #asString;
 		onAccept: [ :dialog |
 				filteredTagsSelection := dialog presenter selectedItems collect: [
 						                         :each |
-						                         self owner noteTakerContainer
+						                         self noteTakerContainer
 							                         tagNamed: each ] ];
 		openModalWithParent: owner window
 ]

@@ -124,13 +124,6 @@ NTSpToolbarPresenterTest >> testNoteWithTagSearch [
 				           add: self getTag1;
 				           yourself).
 	self assert: result size equals: 1.
-
-	result := toolbarPresenter
-		          notes: noteContainer notes
-		          withTags: (OrderedCollection new
-				           add: (noteContainer tagNamed: 't');
-				           yourself).
-	self assert: result size equals: 2
 ]
 
 { #category : 'tests' }

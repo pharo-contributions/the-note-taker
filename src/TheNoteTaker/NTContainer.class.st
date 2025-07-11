@@ -137,6 +137,23 @@ NTContainer >> notes: aCollection [
 	notes := aCollection
 ]
 
+{ #category : 'accessing - tags' }
+NTContainer >> notes: aNotesCollection withTag: aTag [
+
+	^ aNotesCollection select: [ :n | n tags includes: aTag ]
+]
+
+{ #category : 'accessing - tags' }
+NTContainer >> notes: aNotesCollection withTags: aTagsCollection [
+	
+	| noteCollection |
+	
+	noteCollection := aNotesCollection.
+	aTagsCollection do: [ :tag | noteCollection := self notes: noteCollection withTag: tag ]. 
+
+	^ noteCollection	
+]
+
 { #category : 'accessing - notes' }
 NTContainer >> notesCount [
 	"Answer an <Integer> representing how many notes the receiver includes"
