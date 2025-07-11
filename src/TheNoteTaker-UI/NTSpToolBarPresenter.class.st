@@ -16,7 +16,8 @@ Class {
 		'cloneGitButtonPresenter',
 		'gitSaveButtonPresenter',
 		'importFolderButtonPresenter',
-		'filteredTagsSelection'
+		'filteredTagsSelection',
+		'model'
 	],
 	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
@@ -54,8 +55,7 @@ NTSpToolBarPresenter >> filter [
 
 	| filteredItems |
 	filteredItems := searchBarPresenter text
-		                 ifEmpty: [
-		                 self noteTakerContainer notes ]
+		                 ifEmpty: [ model notes ]
 		                 ifNotEmpty: [ :pattern |
 		                 self filteredNotesFor: pattern ].
 
@@ -72,7 +72,7 @@ NTSpToolBarPresenter >> filter [
 { #category : 'callbacks' }
 NTSpToolBarPresenter >> filteredNotesFor: aString [
 
-	^ self noteTakerContainer notesTitleMatching: aString
+	^ model notesTitleMatching: aString
 ]
 
 { #category : 'accessing' }
@@ -189,23 +189,25 @@ NTSpToolBarPresenter >> logButtonPresenter [
 	^ logButtonPresenter
 ]
 
+{ #category : 'initialization' }
+NTSpToolBarPresenter >> model [
+
+	^ model
+]
+
 { #category : 'accessing' }
 NTSpToolBarPresenter >> noteSettingsButtonPresenter [
 
 	^ noteSettingsButtonPresenter
 ]
 
-{ #category : 'accessing' }
-NTSpToolBarPresenter >> noteTakerContainer [
-
-	^ self application noteTakerContainer
-]
-
 { #category : 'callbacks' }
 NTSpToolBarPresenter >> notes: aNotesCollection withTags: aTagsCollection [
 	"Answer a <Collection> of <NTNoteObject> whose names match tags"
 
-	^ self noteTakerContainer notes: aNotesCollection withTags: aTagsCollection 
+	^ model
+		  notes: aNotesCollection
+		  withTags: aTagsCollection
 ]
 
 { #category : 'opening' }
@@ -247,6 +249,12 @@ NTSpToolBarPresenter >> openTagsSearcher [
 NTSpToolBarPresenter >> searchBarPresenter [
 
 	^ searchBarPresenter
+]
+
+{ #category : 'initialization' }
+NTSpToolBarPresenter >> setModel: aModel [
+
+	model := aModel
 ]
 
 { #category : 'accessing' }
