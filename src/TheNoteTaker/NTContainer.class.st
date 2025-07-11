@@ -94,28 +94,10 @@ NTContainer >> isValidNoteName: aString [
 ]
 
 { #category : 'accessing - notes' }
-NTContainer >> noteNameMatching: aString [
-	"Answer the first <NTNoteObject> matching aString in its name"
-
-	| pattern |
-	pattern := '*', aString, '*'.
-	^ self notes detect: [ :n | pattern match: n fileName ]
-]
-
-{ #category : 'accessing - notes' }
 NTContainer >> noteNamed: aString [
 	"Answer the first <NTNoteObject> matching aString in its name"
 	
 	^ self notes detect: [ : n | n fileName = aString ]
-]
-
-{ #category : 'accessing - notes' }
-NTContainer >> noteTitleMatching: aString [
-	"Answer the first <NTNoteObject> matching aString in its name"
-
-	| pattern |
-	pattern := '*' , aString , '*'.
-	^ self notes detect: [ :n | pattern match: n title ]
 ]
 
 { #category : 'accessing - notes' }
@@ -162,44 +144,12 @@ NTContainer >> notesCount [
 ]
 
 { #category : 'accessing - notes' }
-NTContainer >> notesNameMatching: aString [
-	"Answer a <Collection> with <NoteObject> objects whose title matched named aString"
-
-	| pattern |
-	pattern := '*' , aString , '*'.
-	^ self notes select: [ :n | pattern match: n title ]
-]
-
-{ #category : 'accessing - notes' }
-NTContainer >> notesNamed: aString [
-	"Answer a <Collection> with <NTNoteObject> objects named aString"
-	
-	^ self notes select: [ : n | n fileName = aString ]
-]
-
-{ #category : 'accessing - tags' }
-NTContainer >> notesTagsMatching: aString withNotes: aNotesCollection [
-
-	| pattern |
-	pattern := '*' , aString , '*'.
-	^ aNotesCollection select: [ :n |
-		  (n tags select: [ :t | pattern match: t tagName ]) notEmpty ]
-]
-
-{ #category : 'accessing - notes' }
 NTContainer >> notesTitleMatching: aString [
 	"Answer a <Collection> with <NoteObject> objects whose title matched named aString"
 
 	| pattern |
 	pattern := '*' , aString , '*'.
 	^ self notes select: [ :n | pattern match: n title ]
-]
-
-{ #category : 'accessing - notes' }
-NTContainer >> notesTitled: aString [
-	"Answer a <Collection> with <NTNoteObject> objects named aString"
-
-	^ self notes select: [ :n | n title = aString ]
 ]
 
 { #category : 'removing - notes' }
@@ -242,15 +192,6 @@ NTContainer >> removeTag: aNTTag [
 NTContainer >> removeTagNamed: aString [
 
 	self removeTag: (self tagNamed: aString)
-]
-
-{ #category : 'accessing - tags' }
-NTContainer >> tagNameMatching: aString [
-	"Answer the first <NTNoteObject> matching aString in its name"
-
-	| pattern |
-	pattern := '*' , aString , '*'.
-	^ self tags detect: [ :n | pattern match: n tagName ]
 ]
 
 { #category : 'accessing - tags' }
