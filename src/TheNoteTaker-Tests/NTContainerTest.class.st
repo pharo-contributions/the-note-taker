@@ -261,22 +261,35 @@ NTContainerTest >> testTagsMatchingWithNotes [
 	note2 addTag: tag1.
 	note3 := NTNoteObject named: 'note3'.
 	note3 addTag: tag2.
-	
-	noteCollection := OrderedCollection new add: note1; add: note2; add: note3; yourself.
+
+	noteCollection := OrderedCollection new
+		                  add: note1;
+		                  add: note2;
+		                  add: note3;
+		                  yourself.
 
 	self
-		assert: (noteTakerContainer notesTagsMatching: tag1 tagName
-				                   withNotes: noteCollection ) size
+		assert: (noteTakerContainer
+				 notes: noteCollection
+				 withTags: (OrderedCollection new
+						  add: tag1;
+						  yourself)) size
 		equals: 2.
 
 	self
-		assert: (noteTakerContainer notesTagsMatching: tag2 tagName
-				                   withNotes: noteCollection ) size
+		assert: (noteTakerContainer
+				 notes: noteCollection
+				 withTags: (OrderedCollection new
+						  add: tag2;
+						  yourself)) size
 		equals: 1.
-		
-self
-		assert: (noteTakerContainer notesTagsMatching: 'Truc'
-				                   withNotes: noteCollection ) size
+
+	self
+		assert: (noteTakerContainer
+				 notes: noteCollection
+				 withTags: (OrderedCollection new
+						  add: (NTTag newNamed: 'Test');
+						  yourself)) size
 		equals: 0
 ]
 
