@@ -38,30 +38,27 @@ NTCommandLineHandler class >> generateApplication [
 { #category : 'activation' }
 NTCommandLineHandler >> activate [
 
-	AppGeneratorSupport errorHandler: AppGeneratorSDLMessageErrorHandler new.
+	AppGeneratorSupport errorHandler:
+		AppGeneratorSDLMessageErrorHandler new.
 	OSWindowDriver current startUp: true.
 
 	OSPlatform current isMacOSX
-		ifTrue: [ | main |
-			main := CocoaMenu new.
-			main	title: 'MainMenu'; "Only informative"
-				addSubmenu: 'Application' with: [ :m |
-					m
-						addItemWithTitle: 'Quit'
-						action: [ Smalltalk snapshot: false andQuit: true ]
-						shortcut: 'q';
-						
-						addItemWithTitle: 'Restart'
-						action: [ NTSpApplication new start ]
-						shortcut: 's' ];
-				addSubmenu: 'Help' with: [ :m |
-					m
-						addItemWithTitle: 'Show Help'
-						action: [ self inform: 'Help' ]
-						shortcut: '' ].
-			main setAsMainMenu.
-			NTSpApplication new startFullScreen ]
-		ifFalse: [ self inform: 'Not OSX' ].
-
-
+		ifTrue: [
+				| main |
+				main := CocoaMenu new.
+				main
+					title: 'MainMenu';
+					"Only informative"addSubmenu: 'Application' with: [ :m |
+							m
+								addItemWithTitle: 'Quit'
+								action: [ Smalltalk snapshot: false andQuit: true ]
+								shortcut: 'q'];
+					addSubmenu: 'Help' with: [ :m |
+						m
+							addItemWithTitle: 'Show Help'
+							action: [ self inform: 'Help' ]
+							shortcut: '' ].
+				main setAsMainMenu.
+				NTSpApplication new startFullScreen ]
+		ifFalse: [ self inform: 'Not OSX' ]
 ]
