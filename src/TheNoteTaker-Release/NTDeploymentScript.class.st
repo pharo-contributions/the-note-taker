@@ -12,9 +12,8 @@ Class {
 		'DefaultDebuggerRank',
 		'Save'
 	],
-	#category : 'TheNoteTaker-UI-Core',
-	#package : 'TheNoteTaker-UI',
-	#tag : 'Core'
+	#category : 'TheNoteTaker-Release',
+	#package : 'TheNoteTaker-Release'
 }
 
 { #category : 'as yet unclassified' }
