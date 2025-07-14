@@ -10,6 +10,24 @@ Class {
 }
 
 { #category : 'adding' }
+NTSpTagSelectionDialog >> addTagNamed: aString [
+
+	self application noteTakerContainer tagNamed: aString.
+	searchTextPresenter text: ''.
+	selectedItems add: aString
+]
+
+{ #category : 'initialization' }
+NTSpTagSelectionDialog >> allowTagCreation [
+
+	searchTextPresenter
+		help:
+			'Search a tag by just typing a name. Create it if he doesn t exist';
+		placeholder: 'Type note to search or create';
+		whenSubmitDo: [ :newTagName | self addTagNamed: newTagName ]
+]
+
+{ #category : 'adding' }
 NTSpTagSelectionDialog >> defaultLayout [
 
 	^ SpBoxLayout newTopToBottom
