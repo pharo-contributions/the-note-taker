@@ -232,16 +232,16 @@ NTSpToolBarPresenter >> openTagsSearcher [
 	selectedItems := filteredTagsSelection collect: [ :tag | tag tagName ].
 
 	(NTSpTagSelectionDialog newApplication: self application)
+		allowTagCreation;
 		title: 'tag name';
-		items: (self noteTakerContainer tags collect: [ :each |
-					 each tagName ]);
+		items:
+			(model tags collect: [ :each | each tagName ]);
 		selectedItems: selectedItems;
 		display: #asString;
 		onAccept: [ :dialog |
 				filteredTagsSelection := dialog presenter selectedItems collect: [
 						                         :each |
-						                         self noteTakerContainer
-							                         tagNamed: each ] ];
+						                         model tagNamed: each ] ];
 		openModalWithParent: owner window
 ]
 
