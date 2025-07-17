@@ -26,7 +26,7 @@ NTSpNoteTakerMainUI >> applicationTitle [
 { #category : 'initialization' }
 NTSpNoteTakerMainUI >> connectPresenters [
 
-	notesIndexPresenter transmitTo: notesEditorPresenter transform: [ :aNotePresenter | aNotePresenter ifNotNil: [ aNotePresenter model ]].
+	notesIndexPresenter transmitTo: notesEditorPresenter transform: [ :aNotePresenter | aNotePresenter ifNotNil: [ aNotePresenter note ]].
 
 	notesToolbarPresenter searchBarPresenter
 		whenTextChangedDo: [

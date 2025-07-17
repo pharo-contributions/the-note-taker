@@ -48,30 +48,6 @@ NTSpNoteIndexPresenter2 class >> buildNoteTakerOperationsGroupWith: presenterIns
 		  yourself
 ]
 
-{ #category : 'initialization' }
-NTSpNoteIndexPresenter2 >> dateFormatter: aDateAndTime [
-	"Answers a string formatting object as time stamp for HTTP1.1 (RFC 1123).
-	Eg. Sun, 06 Nov 1994 08:49:37 GMT"
-
-	| utc |
-	utc := aDateAndTime asDateAndTime asUTC.
-	^ String streamContents: [ :stream |
-			  stream
-				  nextPutAll: utc dayOfWeekAbbreviation;
-				  nextPut: $,;
-				  space.
-			  stream nextPutAll:
-				  (utc dayOfMonth printStringLength: 2 padded: true).
-			  stream
-				  space;
-				  nextPutAll: utc monthAbbreviation;
-				  space.
-			  utc year printOn: stream.
-			  stream space.
-			  utc printHMSOn: stream.
-			  stream nextPutAll: ' GMT' ]
-]
-
 { #category : 'layout' }
 NTSpNoteIndexPresenter2 >> defaultLayout [
 
@@ -84,17 +60,6 @@ NTSpNoteIndexPresenter2 >> defaultLayout [
 NTSpNoteIndexPresenter2 >> defaultOutputPort [
 
 	^ SpDropListSelectionPort newPresenter: self
-]
-
-{ #category : 'private' }
-NTSpNoteIndexPresenter2 >> displayNoteTags: selectedNote [
-	"Answer a <String> to be displayed"
-
-	| orderedTags |
-	selectedNote tags ifEmpty: [ ^ '' ].
-	
-	orderedTags := selectedNote tags asOrderedCollection sorted: [:a :b | a tagName < b tagName].
-	^ (orderedTags collect: [ :each | each tagName ]) asArray joinUsing: ','
 ]
 
 { #category : 'testing' }
@@ -125,7 +90,7 @@ NTSpNoteIndexPresenter2 >> items: aCollection [
 
 	notesTable items: aCollection.
 	
-	notesTable presenters: (aCollection collect: [ :each | NTNotePresenter new model: each])
+	notesTable presenters: (aCollection collect: [ :each | NTNotePresenter new note: each])
 ]
 
 { #category : 'callbacks' }
@@ -149,13 +114,13 @@ NTSpNoteIndexPresenter2 >> selectNote: aNTNoteObject [
 { #category : 'accessing' }
 NTSpNoteIndexPresenter2 >> selectedNote [
 
-	^ notesTable selectedItem
+	^ notesTable selectedItem note
 ]
 
 { #category : 'accessing' }
 NTSpNoteIndexPresenter2 >> selectedNotes [
 
-	^ notesTable selectedItems
+	^ notesTable selectedItems collect: [ :each | each note ]
 ]
 
 { #category : 'callbacks' }
