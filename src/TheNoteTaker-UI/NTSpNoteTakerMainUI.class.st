@@ -26,7 +26,7 @@ NTSpNoteTakerMainUI >> applicationTitle [
 { #category : 'initialization' }
 NTSpNoteTakerMainUI >> connectPresenters [
 
-	notesIndexPresenter transmitTo: notesEditorPresenter.
+	notesIndexPresenter transmitTo: notesEditorPresenter transform: [ :aNotePresenter | aNotePresenter ifNotNil: [ aNotePresenter model ]].
 
 	notesToolbarPresenter searchBarPresenter
 		whenTextChangedDo: [
@@ -83,7 +83,7 @@ NTSpNoteTakerMainUI >> initializePresenters [
 	notesToolbarPresenter := self instantiate: NTSpToolBarPresenter.
 	notesToolbarPresenter setModel: self noteTakerContainer.
 	
-	notesIndexPresenter := self instantiate: NTSpNoteIndexPresenter.
+	notesIndexPresenter := self instantiate: NTSpNoteIndexPresenter2.
 	notesIndexPresenter model: self noteTakerContainer notes.
 	(NTSpImportFolderCommand new context: notesIndexPresenter)
 		executeWithDefaultFolder.
