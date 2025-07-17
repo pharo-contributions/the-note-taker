@@ -36,7 +36,7 @@ NTSpImportFolderCommand >> execute [
 		          openModal.
 	folder ifNil: [ ^ self ].
 	self processFolder: folder first.
-	self application log logFileReference: folder.
+	self application log logFileReference: folder first.
 	self context items: self noteTakerContainer notes
 ]
 
