@@ -14,7 +14,11 @@ Class {
 		'composer',
 		'model',
 		'renderedText',
+		'isRenderedButton',
 		'worker'
+	],
+	#classVars : [
+		'isRenderedEnable'
 	],
 	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
@@ -30,11 +34,17 @@ NTSpEditorPresenter >> defaultInputPort [
 { #category : 'layout' }
 NTSpEditorPresenter >> defaultLayout [
 
-	^ SpBoxLayout newTopToBottom
-		  add: (SpPanedLayout newLeftToRight
-				   add: textInput;
-				   add: renderedText;
-				   yourself);
+	| panedLayout |
+	panedLayout := self isRenderedEnable
+		               ifTrue: [ self layoutWitRenderedText ]
+		               ifFalse: [ self layoutWithoutRenderedText ].
+
+	^ SpOverlayLayout new
+		  child: panedLayout;
+		  addOverlay: isRenderedButton withConstraints: [ :constraints |
+				  constraints
+					  vAlignStart;
+					  hAlignEnd ];
 		  yourself
 ]
 
@@ -66,12 +76,15 @@ NTSpEditorPresenter >> initializePresenters [
 
 	composer := MicRichTextComposer new.
 
+	isRenderedButton := self newButton action: [
+		                    self isRenderedButtonClick ].
+
 	textInput := self newText.
 	textInput
 		bindKeyCombination:
 		Character space asKeyCombination | Character cr asKeyCombination
 		toAction: [ :target :morph :event |
-				self renderDocument.
+				isRenderedEnable ifTrue: [ self renderDocument ].
 				self updateTitle.
 				"self owner notesIndexPresenter modelChanged."
 				event wasHandled: false ].
@@ -87,13 +100,38 @@ NTSpEditorPresenter >> initializePresenters [
 						(self application log save: model) ]
 ]
 
+{ #category : 'accessing' }
+NTSpEditorPresenter >> isRenderedButton [
+]
+
+{ #category : 'actions' }
+NTSpEditorPresenter >> isRenderedButtonClick [
+
+	isRenderedEnable := isRenderedEnable not.
+	layout := self defaultLayout
+]
+
+{ #category : 'accessing' }
+NTSpEditorPresenter >> isRenderedEnable [
+
+	isRenderedEnable ifNil: [ isRenderedEnable := true ].
+	^ isRenderedEnable
+]
+
+{ #category : 'layout' }
+NTSpEditorPresenter >> layoutWitRenderedText [
+
+	^ SpPanedLayout newLeftToRight
+		  add: textInput;
+		  add: renderedText;
+		  yourself
+]
+
 { #category : 'layout' }
 NTSpEditorPresenter >> layoutWithoutRenderedText [
 
 	^ SpBoxLayout newTopToBottom
-		  add: (SpPanedLayout newLeftToRight
-				   add: textInput;
-				   yourself);
+		  add: textInput;
 		  yourself
 ]
 
@@ -148,10 +186,8 @@ NTSpEditorPresenter >> setModel: aNTNoteObject [
 	aNTNoteObject
 		ifNil: [ self newEmptyNote ]
 		ifNotNil: [ model := aNTNoteObject ].
-	"note fileReference extension = '.md'
-		ifTrue: [ self layout: self defaultLayout ]
-		ifFalse: [ self layout: self layoutWithoutRenderedText ]."
-	textInput text: model contents asString.
+		
+	self textInputText: model contents asString.
 	self renderDocument.
 	self updateTitle
 
