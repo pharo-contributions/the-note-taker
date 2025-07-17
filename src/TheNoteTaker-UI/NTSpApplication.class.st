@@ -14,7 +14,12 @@ Class {
 	#instVars : [
 		'noteTakerContainer',
 		'log',
-		'settings'
+		'settings',
+		'noteTakerMain'
+	],
+	#classVars : [
+		'Default',
+		'IsDeployed'
 	],
 	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
@@ -28,6 +33,31 @@ NTSpApplication class >> applicationTitle [
 ]
 
 { #category : 'private' }
+NTSpApplication class >> beDeployed [
+	IsDeployed := true
+]
+
+{ #category : 'private' }
+NTSpApplication class >> beUndeployed [
+	IsDeployed := false
+]
+
+{ #category : 'private' }
+NTSpApplication class >> default [
+	^ Default ifNil: [ Default := self new ]
+]
+
+{ #category : 'private' }
+NTSpApplication class >> default: aPharoLauncherApplication [
+	Default := aPharoLauncherApplication
+]
+
+{ #category : 'private' }
+NTSpApplication class >> isDeployed [
+	^ IsDeployed ifNil: [ IsDeployed := false ]
+]
+
+{ #category : 'private' }
 NTSpApplication class >> menuNoteTakersOn: aBuilder [
 	<worldMenu>
 
@@ -38,6 +68,13 @@ NTSpApplication class >> menuNoteTakersOn: aBuilder [
 		action: [ NTSpApplication new run ];
 		help: 'The Note Taker';
 		order: 630
+]
+
+{ #category : 'private' }
+NTSpApplication class >> openFull [ 
+	<script>
+	
+	^ self new startFullScreen 
 ]
 
 { #category : 'private' }
@@ -107,6 +144,12 @@ NTSpApplication >> noteTakerContainer [
 	^ noteTakerContainer
 ]
 
+{ #category : 'running' }
+NTSpApplication >> noteTakerMain [
+
+	^ noteTakerMain
+]
+
 { #category : 'accessing' }
 NTSpApplication >> notes [
 	"Answer the application's <Collection> of <NTNoteObject>"
@@ -123,7 +166,7 @@ NTSpApplication >> settings [
 { #category : 'running' }
 NTSpApplication >> start [
 
-	log noteTakerMain: (NTSpNoteTakerMainUI newApplication: self) open
+	noteTakerMain := (NTSpNoteTakerMainUI newApplication: self) open
 ]
 
 { #category : 'running' }

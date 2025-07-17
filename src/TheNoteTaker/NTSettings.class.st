@@ -32,7 +32,7 @@ NTSettings class >> noteLocation [
 	"Answer the preferred <String> where notes will be stored"
 
 	^ noteLocation ifNil: [
-			  FileSystem workingDirectory  ]
+			  (FileLocator preferences / 'noteTaker') asFileReference ensureCreateDirectory  ]
 ]
 
 { #category : 'accessing' }
@@ -56,7 +56,7 @@ NTSettings class >> projectPathSettingsOn: aBuilder [
 					type: #Directory;
 					ghostHelp:
 						'/Users/ducasse/Workspace/FirstCircle/Writing/Working/researchnotes';
-					default: FileSystem workingDirectory ;
+					default: (FileLocator preferences / 'noteTaker') asFileReference ensureCreateDirectory;
 					description:
 						'Enter your local or remote path where notes will be committed. It can be empty'.
 				(aBuilder setting: #githubPathString)

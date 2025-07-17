@@ -25,7 +25,8 @@ NTSpAddTagCommand class >> defaultName [
 NTSpAddTagCommand >> execute [
 	"execute"
 
-	(NTSpTagCreateSelectionDialog newApplication: self application)
+	(NTSpTagSelectionDialog newApplication: self application)
+		allowTagCreation;
 		title: 'tag name';
 		items:
 			(self noteTakerContainer tags asArray collect: [ :each |
@@ -38,7 +39,8 @@ NTSpAddTagCommand >> execute [
 				selectedTags do: [ :tag |
 							self selectedNotes do: [ :note |
 										tag addNote: note.
-										self application log add: note tag: tag ] ] ];
+										note save.
+										self context owner statusBar pushMessage: (self application log add: note tag: tag) ] ] ];
 		openModalWithParent: context window.
 
 	self context modelChanged

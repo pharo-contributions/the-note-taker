@@ -32,9 +32,6 @@ NTSpNoteIndexPresenter class >> buildNTContextualGroupWith: presenterInstance [
 NTSpNoteIndexPresenter class >> buildNoteTakerOperationsGroupWith: presenterInstance [
 
 	^ (CmCommandGroup named: 'NoteTakerMenu') asSpecGroup
-		  register: ((NTSpAddNoteCommand
-				    forSpecWithIconNamed: #add
-				    shortcutKey: 'A' asShortcut) context: presenterInstance);
 		  register: ((NTSpImportNoteCommand
 				    forSpecWithIconNamed: #into
 				    shortcutKey: 'I' asShortcut) context: presenterInstance);
@@ -83,12 +80,21 @@ NTSpNoteIndexPresenter >> defaultLayout [
 		yourself.
 ]
 
+{ #category : 'layout' }
+NTSpNoteIndexPresenter >> defaultOutputPort [
+
+	^ SpDropListSelectionPort newPresenter: self
+]
+
 { #category : 'private' }
 NTSpNoteIndexPresenter >> displayNoteTags: selectedNote [
 	"Answer a <String> to be displayed"
 
+	| orderedTags |
 	selectedNote tags ifEmpty: [ ^ '' ].
-	^ (selectedNote tags collect: [ :each | each tagName ]) asArray joinUsing: ','
+	
+	orderedTags := selectedNote tags asOrderedCollection sorted: [:a :b | a tagName < b tagName].
+	^ (orderedTags collect: [ :each | each tagName ]) asArray joinUsing: ','
 ]
 
 { #category : 'testing' }
@@ -171,9 +177,14 @@ NTSpNoteIndexPresenter >> selectedNotes [
 { #category : 'callbacks' }
 NTSpNoteIndexPresenter >> updateRemovedNote [
 
-	"self refresh."
-	notesTable selectionMode unselectAll.
+	self modelChanged.
 	self owner
 		updateWindowTitle;
 		updateContents
+]
+
+{ #category : 'callbacks' }
+NTSpNoteIndexPresenter >> whenSelectionChangedDo: aBlock [
+
+	notesTable whenSelectionChangedDo: aBlock
 ]

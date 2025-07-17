@@ -50,14 +50,14 @@ NTSpEditorFilePresenterTest >> testCleanAction [
 { #category : 'tests' }
 NTSpEditorFilePresenterTest >> testGotCurrentFileWhenIsNotSpecify [
 
-	self assert: presenter note class equals: NTNoteObject 
+	self assert: presenter model class equals: NTNoteObject
 ]
 
 { #category : 'tests' }
 NTSpEditorFilePresenterTest >> testGotCurrentFileWhenIsSpecify [
 
-	presenter note: note.
-	self assert: presenter note class equals: NTNoteObject
+	presenter setModel: note.
+	self assert: presenter model class equals: NTNoteObject
 ]
 
 { #category : 'running' }
@@ -68,7 +68,7 @@ NTSpEditorFilePresenterTest >> testRenderedTextIsCorrectMicrodown [
 	text := 'This **is** just a __test__'.
 	micText := composer visit: (Microdown parse: text).
 
-	presenter note: note.
+	presenter setModel: note.
 	presenter textInputText: text.
 
 	self assert: presenter renderedText equals: micText
@@ -80,7 +80,7 @@ NTSpEditorFilePresenterTest >> testSave [
 	| text |
 	text := 'This is just a test'.
 
-	presenter note: note.
+	presenter setModel: note.
 	presenter textInputText: text.
 	presenter saveFile.
 

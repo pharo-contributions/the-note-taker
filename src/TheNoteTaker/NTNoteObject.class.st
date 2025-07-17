@@ -56,7 +56,7 @@ NTNoteObject class >> newFromFileReference: aFileReference [
 { #category : 'accessing - tags' }
 NTNoteObject >> addTag: aNTTag [ 
 
-	self tags add: aNTTag
+	self tags detect: [ :tag | tag tagName = aNTTag tagName ] ifNone: [ self tags add: aNTTag ]
 ]
 
 { #category : 'accessing' }
@@ -271,7 +271,7 @@ NTNoteObject >> save [
 
 	folderReference ifNil: [  folderReference := FileSystem workingDirectory ].
 
-	self exists ifFalse: [ self fileReference ensureCreateFile ].
+	self exists ifTrue: [ self fileReference delete ].
 
 	self fileReference writeStreamDo: [ :str |
 			str nextPutAll: self generateMetaDataElements.

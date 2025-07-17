@@ -12,9 +12,13 @@ Class {
 	#instVars : [
 		'textInput',
 		'composer',
-		'note',
+		'model',
 		'renderedText',
+		'isRenderedButton',
 		'worker'
+	],
+	#classVars : [
+		'isRenderedEnable'
 	],
 	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
@@ -30,11 +34,17 @@ NTSpEditorPresenter >> defaultInputPort [
 { #category : 'layout' }
 NTSpEditorPresenter >> defaultLayout [
 
-	^ SpBoxLayout newTopToBottom
-		  add: (SpPanedLayout newLeftToRight
-				   add: textInput;
-				   add: renderedText;
-				   yourself);
+	| panedLayout |
+	panedLayout := self isRenderedEnable
+		               ifTrue: [ self layoutWitRenderedText ]
+		               ifFalse: [ self layoutWithoutRenderedText ].
+
+	^ SpOverlayLayout new
+		  child: panedLayout;
+		  addOverlay: isRenderedButton withConstraints: [ :constraints |
+				  constraints
+					  vAlignStart;
+					  hAlignEnd ];
 		  yourself
 ]
 
@@ -57,7 +67,7 @@ NTSpEditorPresenter >> initialize [
 
 	super initialize.
 	worker := TKTLocalProcessTaskRunner new.
-	self noNote.
+	self newEmptyNote.
 ]
 
 { #category : 'initialization' }
@@ -66,73 +76,86 @@ NTSpEditorPresenter >> initializePresenters [
 
 	composer := MicRichTextComposer new.
 
+	isRenderedButton := self newButton action: [
+		                    self isRenderedButtonClick ].
+
 	textInput := self newText.
 	textInput
 		bindKeyCombination:
 		Character space asKeyCombination | Character cr asKeyCombination
 		toAction: [ :target :morph :event |
-				self renderDocument.
+				isRenderedEnable ifTrue: [ self renderDocument ].
 				self updateTitle.
-				self owner notesIndexPresenter modelChanged.
+				"self owner notesIndexPresenter modelChanged."
 				event wasHandled: false ].
 
 	renderedText := self newText
 		                beNotEditable;
 		                yourself.
 	textInput
-		whenTextChangedDo: [ note contents: textInput text asString ];
+		whenTextChangedDo: [ model contents: textInput text asString ];
 		bindKeyCombination: $s meta toAction: [
 				self saveFile.
-				self application log save: note ]
+				self owner statusBar pushMessage:
+						(self application log save: model) ]
+]
+
+{ #category : 'accessing' }
+NTSpEditorPresenter >> isRenderedButton [
+]
+
+{ #category : 'actions' }
+NTSpEditorPresenter >> isRenderedButtonClick [
+
+	isRenderedEnable := isRenderedEnable not.
+	layout := self defaultLayout
+]
+
+{ #category : 'accessing' }
+NTSpEditorPresenter >> isRenderedEnable [
+
+	isRenderedEnable ifNil: [ isRenderedEnable := true ].
+	^ isRenderedEnable
+]
+
+{ #category : 'layout' }
+NTSpEditorPresenter >> layoutWitRenderedText [
+
+	^ SpPanedLayout newLeftToRight
+		  add: textInput;
+		  add: renderedText;
+		  yourself
 ]
 
 { #category : 'layout' }
 NTSpEditorPresenter >> layoutWithoutRenderedText [
 
 	^ SpBoxLayout newTopToBottom
-		  add: (SpPanedLayout newLeftToRight
-				   add: textInput;
-				   yourself);
+		  add: textInput;
 		  yourself
 ]
 
 { #category : 'testing' }
 NTSpEditorPresenter >> mayLoseEdits [
 
-	^ self textInputText isNotEmpty and: [ note isDirty ]
+	^ self textInputText isNotEmpty and: [ model isDirty ]
+]
+
+{ #category : 'accessing' }
+NTSpEditorPresenter >> model [
+
+	^ model ifNil: [ self newEmptyNote ]
 ]
 
 { #category : 'api' }
-NTSpEditorPresenter >> noNote [
+NTSpEditorPresenter >> newEmptyNote [
 
 	| nt |
 	nt := NTNoteObject new.
-	"nt folderReference: self application settings noteLocation."
-	self note: nt.
-	
+	nt folderReference: self application settings noteLocation.
+	self setModel: nt.
+
 	self emptyInputText
-]
-
-{ #category : 'accessing' }
-NTSpEditorPresenter >> note [
-
-	^ note ifNil: [ self noNote ]
-]
-
-{ #category : 'accessing' }
-NTSpEditorPresenter >> note: aNTNoteObject [
-
-	note := aNTNoteObject.
-	"note fileReference extension = '.md'
-		ifTrue: [ self layout: self defaultLayout ]
-		ifFalse: [ self layout: self layoutWithoutRenderedText ]."
-	textInput text: aNTNoteObject contents asString.
-	self renderDocument.
-	self updateTitle
-
-	"self mayLoseEdits ifTrue: [ (self application confirm:
-			 'You have unsaved edits. Do you want to proceed?')
-			ifFalse: [ ^ self ]  ]."
 ]
 
 { #category : 'actions' }
@@ -154,7 +177,23 @@ NTSpEditorPresenter >> renderedText [
 { #category : 'actions' }
 NTSpEditorPresenter >> saveFile [
 
-	self note save.
+	self model save.
+]
+
+{ #category : 'accessing' }
+NTSpEditorPresenter >> setModel: aNTNoteObject [
+
+	aNTNoteObject
+		ifNil: [ self newEmptyNote ]
+		ifNotNil: [ model := aNTNoteObject ].
+		
+	self textInputText: model contents asString.
+	self renderDocument.
+	self updateTitle
+
+	"self mayLoseEdits ifTrue: [ (self application confirm:
+			 'You have unsaved edits. Do you want to proceed?')
+			ifFalse: [ ^ self ]  ]."
 ]
 
 { #category : 'accessing' }
@@ -172,5 +211,7 @@ NTSpEditorPresenter >> textInputText: aString [
 { #category : 'api' }
 NTSpEditorPresenter >> updateTitle [
 
-	self window ifNotNil: [ self window title: self application applicationTitle, ' - ', note title ]
+	self window ifNotNil: [
+			self window title:
+				self application applicationTitle , ' - ' , model title ]
 ]

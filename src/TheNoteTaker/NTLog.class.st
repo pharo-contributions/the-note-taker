@@ -5,8 +5,7 @@ Class {
 	#name : 'NTLog',
 	#superclass : 'Object',
 	#instVars : [
-		'logFileReference',
-		'noteTakerMain'
+		'logFileReference'
 	],
 	#category : 'TheNoteTaker',
 	#package : 'TheNoteTaker'
@@ -22,13 +21,14 @@ NTLog class >> newWithFolder: aFileReference [
 { #category : 'actions' }
 NTLog >> add: aNTNoteObjet tag: aNTTag [
 
-	self write: 'tag ', aNTTag tagName, ' has been add to the note ' , aNTNoteObjet fileName.
+	^self write: 'tag ' , aNTTag tagName , ' has been add to the note '
+		, aNTNoteObjet fileName
 ]
 
 { #category : 'actions' }
 NTLog >> create: aNTNoteObjet [
 
-	self write: 'file ', aNTNoteObjet fileName, ' has been created'.
+	^ self write: 'file ' , aNTNoteObjet fileName , ' has been created'
 ]
 
 { #category : 'accessing' }
@@ -46,34 +46,28 @@ NTLog >> logFileReference: aFileReference [
 ]
 
 { #category : 'actions' }
-NTLog >> noteTakerMain: noteTakerMainUI [
-
-	noteTakerMain := noteTakerMainUI
-]
-
-{ #category : 'actions' }
 NTLog >> remove: aNTNoteObjet [
 
-	self write: 'file ', aNTNoteObjet fileName, ' has been deleted'.
+	^ self write: 'file ' , aNTNoteObjet fileName , ' has been deleted'
 ]
 
 { #category : 'actions' }
 NTLog >> remove: aNTNoteObjet tag: aNTTag [
 
-	self write: 'tag ', aNTTag tagName, ' has been removed to the note ' , aNTNoteObjet fileName.
+	^ self write:
+		'tag ' , aNTTag tagName , ' has been removed to the note '
+		, aNTNoteObjet fileName
 ]
 
 { #category : 'actions' }
 NTLog >> save: aNTNoteObjet [
 
-	self write: 'file ', aNTNoteObjet fileName, ' has been saved'.
+	^ self write: 'file ' , aNTNoteObjet fileName , ' has been saved'
 ]
 
 { #category : 'actions' }
 NTLog >> write: aString [
-	"| stream |"
 
-	noteTakerMain statusBar pushMessage: aString.
 	logFileReference exists ifFalse: [ logFileReference ensureCreateFile ].
 	logFileReference writeStreamDo: [ :str |
 			str
@@ -81,5 +75,6 @@ NTLog >> write: aString [
 				nextPutAll: DateAndTime now printString;
 				nextPutAll: ', ';
 				nextPutAll: aString;
-				nextPut: Character cr ]
+				nextPut: Character cr ].
+	^ aString
 ]

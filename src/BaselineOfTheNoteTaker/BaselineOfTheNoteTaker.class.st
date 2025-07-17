@@ -10,14 +10,14 @@ BaselineOfTheNoteTaker >> applicationGenerator: spec [
 
 	spec
 		baseline: 'ApplicationGenerator'
-		with: [ spec repository: 'github://hernanmd/PharoApplicationGenerator:allow_dwnld_ui_vm/src' ]
+		with: [ spec repository: 'github://tesonep/PharoApplicationGenerator:master/src' ]
 ]
 
 { #category : 'baselines' }
 BaselineOfTheNoteTaker >> baseline: spec [
 
 	<baseline>
-	spec for: #( common ) do: [ "self ical: spec."
+	spec for: #( common ) do: [
 			self osWinSubprocess: spec.
 			self osSubprocess: spec.
 			self microdown: spec.
@@ -27,7 +27,8 @@ BaselineOfTheNoteTaker >> baseline: spec [
 			spec
 				package: 'TheNoteTaker' with: [ spec requires: #( Microdown ) ];
 				package: 'TheNoteTaker-UI'
-				with: [ spec requires: #( TheNoteTaker OSSubprocess  OSWinSubprocess) ];
+				with: [
+					spec requires: #( TheNoteTaker OSSubprocess OSWinSubprocess ) ];
 				package: 'TheNoteTaker-Release'
 				with: [ spec requires: #( ApplicationGenerator
 						   ObjCBridge ) ];
@@ -43,24 +44,8 @@ BaselineOfTheNoteTaker >> baseline: spec [
 				group: 'Tests'
 				with: #( 'Core' 'TheNoteTaker-Tests' 'TheNoteTaker-UI-Tests' );
 				group: 'Release'
-				with: #( 'Core' 'UI' 'ObjCBridge' 'TheNoteTaker-Release' );
+				with: #( 'Core' 'UI' 'TheNoteTaker-Release' );
 				group: 'default' with: #( 'Core' 'Tests' 'UI' ) ]
-]
-
-{ #category : 'baselines' }
-BaselineOfTheNoteTaker >> ical: spec [
-
-	spec
-		baseline: 'ICal'
-		with: [ spec repository: 'github://Ducasse/Infhub/src' ]
-]
-
-{ #category : 'baselines' }
-BaselineOfTheNoteTaker >> microEd: spec [
-
-	spec
-		baseline: 'MicroEd'
-		with: [ spec repository: 'github://pillar-markup/MicroEd/src' ]
 ]
 
 { #category : 'baselines' }
@@ -105,13 +90,4 @@ BaselineOfTheNoteTaker >> postload: loader package: packageSpec [
 	
 	((Process allInstances select: [ :p | p priority = 70 ]) select: [ :e | '*OSSub*' match: e name ]) 
 		ifNotEmpty: [ : processArray | processArray first terminate ]
-]
-
-{ #category : 'baselines' }
-BaselineOfTheNoteTaker >> processWrapper: spec [ 
-
-	spec configuration: 'ProcessWrapper' with: [
-		spec
-			versionString: '1.2';
-			repository: 'http://smalltalkhub.com/mc/hernan/ProcessWrapper/main' ]
 ]

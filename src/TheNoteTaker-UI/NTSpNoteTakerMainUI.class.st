@@ -9,7 +9,7 @@ Class {
 	#instVars : [
 		'notesToolbarPresenter',
 		'notesIndexPresenter',
-		'notesContentPresenter',
+		'notesEditorPresenter',
 		'statusBar'
 	],
 	#category : 'TheNoteTaker-UI-Core',
@@ -26,13 +26,9 @@ NTSpNoteTakerMainUI >> applicationTitle [
 { #category : 'initialization' }
 NTSpNoteTakerMainUI >> connectPresenters [
 
-	notesIndexPresenter notesTable whenSelectedItemChangedDo: [
-			:aSelectedNote |
-			aSelectedNote
-				ifNil: [ notesContentPresenter noNote ]
-				ifNotNil: [ notesContentPresenter note: aSelectedNote ] ].
+	notesIndexPresenter transmitTo: notesEditorPresenter transform: [ :aNotePresenter | aNotePresenter ifNotNil: [ aNotePresenter note ]].
 
-	notesToolbarPresenter notesSearchCreateTextPresenter
+	notesToolbarPresenter searchBarPresenter
 		whenTextChangedDo: [
 			notesIndexPresenter items: notesToolbarPresenter filter ];
 		whenSubmitDo: [ :newNoteName |
@@ -42,7 +38,7 @@ NTSpNoteTakerMainUI >> connectPresenters [
 				notesToolbarPresenter emptySearchBar.
 				notesIndexPresenter notesTable unselectAll.
 				notesIndexPresenter selectNote: newNote.
-				notesContentPresenter takeKeyboardFocus ].
+				notesEditorPresenter takeKeyboardFocus ].
 
 	notesToolbarPresenter tagsSearchButtonPresenter whenActivatedDo: [
 		notesIndexPresenter items: notesToolbarPresenter filter ]
@@ -53,10 +49,10 @@ NTSpNoteTakerMainUI >> defaultLayout [
 
 	^ SpBoxLayout newTopToBottom
 		add: notesToolbarPresenter height: self toolbarHeight;
-		add: (SpPanedLayout newTopToBottom
-			positionOfSlider: 35 percent;
+		add: (SpPanedLayout newLeftToRight
+			positionOfSlider: 20 percent;
 			add: notesIndexPresenter;
-			add: notesContentPresenter;
+			add: notesEditorPresenter;
 			yourself);
 		add: statusBar height: self toolbarHeight;
 		yourself
@@ -84,11 +80,15 @@ NTSpNoteTakerMainUI >> initialize [
 { #category : 'initialization' }
 NTSpNoteTakerMainUI >> initializePresenters [
 
-	notesToolbarPresenter := self instantiate: NTSpSearchCreatePresenter.
-	notesIndexPresenter := self instantiate: NTSpNoteIndexPresenter.
-	notesIndexPresenter model: self noteTakerContainer.
-		(NTSpImportFolderCommand new context: notesIndexPresenter) executeWithDefaultFolder.
-	notesContentPresenter := self instantiate: NTSpEditorPresenter.
+	notesToolbarPresenter := self instantiate: NTSpToolBarPresenter.
+	notesToolbarPresenter setModel: self noteTakerContainer.
+	
+	notesIndexPresenter := self instantiate: NTSpNoteIndexPresenter2.
+	notesIndexPresenter model: self noteTakerContainer notes.
+	(NTSpImportFolderCommand new context: notesIndexPresenter)
+		executeWithDefaultFolder.
+		
+	notesEditorPresenter := self instantiate: NTSpEditorPresenter.
 	statusBar := SpStatusBarPresenter new
 ]
 
@@ -109,9 +109,9 @@ NTSpNoteTakerMainUI >> noteTakerContainer [
 ]
 
 { #category : 'accessing' }
-NTSpNoteTakerMainUI >> notesContentPresenter [
+NTSpNoteTakerMainUI >> notesEditorPresenter [
 
-	^ notesContentPresenter 
+	^ notesEditorPresenter
 ]
 
 { #category : 'accessing' }
@@ -156,7 +156,7 @@ NTSpNoteTakerMainUI >> toolbarHeight [
 { #category : 'event handling' }
 NTSpNoteTakerMainUI >> updateContents [
 
-	notesContentPresenter noNote
+	notesEditorPresenter newEmptyNote
 ]
 
 { #category : 'activation' }
