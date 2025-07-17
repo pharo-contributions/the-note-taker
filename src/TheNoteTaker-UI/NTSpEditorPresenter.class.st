@@ -73,7 +73,7 @@ NTSpEditorPresenter >> initializePresenters [
 		toAction: [ :target :morph :event |
 				self renderDocument.
 				self updateTitle.
-				self owner notesIndexPresenter modelChanged.
+				"self owner notesIndexPresenter modelChanged."
 				event wasHandled: false ].
 
 	renderedText := self newText

@@ -82,7 +82,7 @@ NTSpNoteIndexPresenter2 >> initializePresenters [
 NTSpNoteIndexPresenter2 >> items [
 	"Answer a <Collection> of notes"
 
-	^ notesTable items
+	^ notesTable items collect: [ :each | each note ]
 ]
 
 { #category : 'accessing' }
@@ -96,7 +96,7 @@ NTSpNoteIndexPresenter2 >> items: aCollection [
 { #category : 'callbacks' }
 NTSpNoteIndexPresenter2 >> modelChanged [
 
-	notesTable refresh
+	self items: self items
 ]
 
 { #category : 'accessing' }
