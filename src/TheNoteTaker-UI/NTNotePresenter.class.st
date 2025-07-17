@@ -1,9 +1,6 @@
 Class {
 	#name : 'NTNotePresenter',
-	#superclass : 'SpPresenter',
-	#instVars : [
-		'note'
-	],
+	#superclass : 'SpPresenterWithModel',
 	#category : 'TheNoteTaker-UI',
 	#package : 'TheNoteTaker-UI'
 }
@@ -12,8 +9,8 @@ Class {
 NTNotePresenter >> defaultLayout [
 
 	^ SpBoxLayout newTopToBottom
-		  add: note title;
-		  add: note creationDate asDate asString;
+		  add: self note title;
+		  add: self note creationDate asDate asString;
 		  add: self displayNoteTags;
 		  yourself
 ]
@@ -23,27 +20,32 @@ NTNotePresenter >> displayNoteTags [
 	"Answer a <String> to be displayed"
 
 	| orderedTags |
-	note tags ifEmpty: [ ^ '' ].
+	self note tags ifEmpty: [ ^ '' ].
 	
-	orderedTags := note tags asOrderedCollection sorted: [:a :b | a tagName < b tagName].
+	orderedTags := self note tags asOrderedCollection sorted: [:a :b | a tagName < b tagName].
 	^ (orderedTags collect: [ :each | each tagName ]) asArray joinUsing: ','
 ]
 
 { #category : 'layout' }
 NTNotePresenter >> initializePresenter [ 
 
-	note := NTNoteObject new
+	self note: NTNoteObject new
+]
+
+{ #category : 'layout' }
+NTNotePresenter >> modelChanged [
+
+	layout := self defaultLayout
 ]
 
 { #category : 'layout' }
 NTNotePresenter >> note [
 
-	^ note
+	^ self model
 ]
 
 { #category : 'layout' }
 NTNotePresenter >> note: aNTNoteObject [ 
 
-	note := aNTNoteObject.
-	layout := self defaultLayout
+	self setModel: aNTNoteObject.
 ]
