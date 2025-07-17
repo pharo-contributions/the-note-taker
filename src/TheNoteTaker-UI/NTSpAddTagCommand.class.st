@@ -25,7 +25,8 @@ NTSpAddTagCommand class >> defaultName [
 NTSpAddTagCommand >> execute [
 	"execute"
 
-	(NTSpTagCreateSelectionDialog newApplication: self application)
+	(NTSpTagSelectionDialog newApplication: self application)
+		allowTagCreation;
 		title: 'tag name';
 		items:
 			(self noteTakerContainer tags asArray collect: [ :each |
