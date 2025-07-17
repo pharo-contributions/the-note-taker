@@ -49,8 +49,8 @@ NTSpNoteTakerMainUI >> defaultLayout [
 
 	^ SpBoxLayout newTopToBottom
 		add: notesToolbarPresenter height: self toolbarHeight;
-		add: (SpPanedLayout newTopToBottom
-			positionOfSlider: 35 percent;
+		add: (SpPanedLayout newLeftToRight
+			positionOfSlider: 20 percent;
 			add: notesIndexPresenter;
 			add: notesEditorPresenter;
 			yourself);
