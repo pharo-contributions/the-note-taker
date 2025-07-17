@@ -271,7 +271,7 @@ NTNoteObject >> save [
 
 	folderReference ifNil: [  folderReference := FileSystem workingDirectory ].
 
-	self exists ifFalse: [ self fileReference ensureCreateFile ].
+	self exists ifTrue: [ self fileReference delete ].
 
 	self fileReference writeStreamDo: [ :str |
 			str nextPutAll: self generateMetaDataElements.
