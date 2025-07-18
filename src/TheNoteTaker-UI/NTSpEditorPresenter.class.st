@@ -53,12 +53,6 @@ NTSpEditorPresenter >> emptyInputText [
 	"CLEAN button is pressed: erase both input and output text content"
 
 	self textInputText: ''.
-	self emptyRenderedText
-]
-
-{ #category : 'actions' }
-NTSpEditorPresenter >> emptyRenderedText [
-
 	renderedText text: ''
 ]
 
@@ -98,10 +92,6 @@ NTSpEditorPresenter >> initializePresenters [
 				self saveFile.
 				self owner statusBar pushMessage:
 						(self application log save: model) ]
-]
-
-{ #category : 'accessing' }
-NTSpEditorPresenter >> isRenderedButton [
 ]
 
 { #category : 'actions' }
