@@ -6,7 +6,7 @@ Class {
 	#name : 'NTSpNoteIndexPresenter2',
 	#superclass : 'SpPresenterWithModel',
 	#instVars : [
-		'notesTable'
+		'componentList'
 	],
 	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
@@ -51,9 +51,9 @@ NTSpNoteIndexPresenter2 class >> buildNoteTakerOperationsGroupWith: presenterIns
 { #category : 'layout' }
 NTSpNoteIndexPresenter2 >> defaultLayout [
 
-	^ SpBoxLayout newTopToBottom 
-		add: notesTable;
-		yourself.
+	^ SpBoxLayout newTopToBottom
+		  add: componentList;
+		  yourself
 ]
 
 { #category : 'layout' }
@@ -65,15 +65,15 @@ NTSpNoteIndexPresenter2 >> defaultOutputPort [
 { #category : 'testing' }
 NTSpNoteIndexPresenter2 >> hasSelectedNote [
 
-	^ notesTable listSize ~= 0
+	^ componentList listSize ~= 0
 ]
 
 { #category : 'initialization' }
 NTSpNoteIndexPresenter2 >> initializePresenters [
 
-	notesTable := self instantiate: SpComponentListPresenter.
+	componentList := self instantiate: SpComponentListPresenter.
 
-	notesTable contextMenu: [
+	componentList contextMenu: [
 			(self rootCommandsGroup / 'NTSelContextualMenu') beRoot
 				asMenuPresenter ]
 ]
@@ -82,15 +82,16 @@ NTSpNoteIndexPresenter2 >> initializePresenters [
 NTSpNoteIndexPresenter2 >> items [
 	"Answer a <Collection> of notes"
 
-	^ notesTable items collect: [ :each | each note ]
+	^ componentList items collect: [ :each | each note ]
 ]
 
 { #category : 'accessing' }
-NTSpNoteIndexPresenter2 >> items: aCollection [ 
+NTSpNoteIndexPresenter2 >> items: aCollection [
 
-	notesTable items: aCollection.
-	
-	notesTable presenters: (aCollection collect: [ :each | NTNotePresenter new note: each])
+	componentList items: aCollection.
+
+	componentList presenters:
+		(aCollection collect: [ :each | NTNotePresenter new note: each ])
 ]
 
 { #category : 'callbacks' }
@@ -102,25 +103,26 @@ NTSpNoteIndexPresenter2 >> modelChanged [
 { #category : 'accessing' }
 NTSpNoteIndexPresenter2 >> notesTable [
 
-	^ notesTable
+	^ componentList
 ]
 
 { #category : 'accessing' }
 NTSpNoteIndexPresenter2 >> selectNote: aNTNoteObject [
 
-	notesTable selectItem: aNTNoteObject
+	componentList selectItem: aNTNoteObject
 ]
 
 { #category : 'accessing' }
 NTSpNoteIndexPresenter2 >> selectedNote [
 
-	^ notesTable selectedItem note
+	^ componentList selectedItem ifNotNil: [ :notePresenter |
+		  notePresenter note ]
 ]
 
 { #category : 'accessing' }
 NTSpNoteIndexPresenter2 >> selectedNotes [
 
-	^ notesTable selectedItems collect: [ :each | each note ]
+	^ componentList selectedItems collect: [ :each | each note ]
 ]
 
 { #category : 'callbacks' }
@@ -135,5 +137,5 @@ NTSpNoteIndexPresenter2 >> updateRemovedNote [
 { #category : 'callbacks' }
 NTSpNoteIndexPresenter2 >> whenSelectionChangedDo: aBlock [
 
-	notesTable whenSelectionChangedDo: aBlock
+	componentList whenSelectionChangedDo: aBlock
 ]
