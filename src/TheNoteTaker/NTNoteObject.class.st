@@ -154,12 +154,7 @@ NTNoteObject >> generateMetaDataElements [
 	meta
 		atKey: 'creationDate' put: self creationDate asString;
 		atKey: 'lastModificationDate' put: self modificationDate asString.
-	self tags ifNotEmpty: [
-			meta
-				atKey: 'tags'
-				put:
-				((self tags collect: [ :each | each tagName ]) asArray joinUsing:
-					 ',') ].
+	self tags ifNotEmpty: [ meta atKey: 'tags' put: self tagsNameString ].
 
 	^ (MicTextualMicrodownExporter new visit: meta) contents
 ]
@@ -290,6 +285,18 @@ NTNoteObject >> tags [
 NTNoteObject >> tags: anObject [
 
 	tags := anObject
+]
+
+{ #category : 'accessing - tags' }
+NTNoteObject >> tagsNameString [
+	"Answer a <String> to be displayed"
+
+	| tagsNameList |
+	self tags ifEmpty: [ ^ '' ].
+
+	tagsNameList := self tags collect: [ :each | each tagName ].
+	^ (tagsNameList asOrderedCollection sorted: [ :a :b | a < b ])
+		  joinUsing: ','
 ]
 
 { #category : 'accessing' }
