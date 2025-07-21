@@ -83,7 +83,7 @@ NTSpNoteTakerMainUI >> initializePresenters [
 	notesToolbarPresenter := self instantiate: NTSpToolBarPresenter.
 	notesToolbarPresenter setModel: self noteTakerContainer.
 	
-	notesIndexPresenter := self instantiate: NTSpNoteIndexPresenter2.
+	notesIndexPresenter := self instantiate: NTSpNoteIndexPresenter.
 	notesIndexPresenter model: self noteTakerContainer notes.
 	(NTSpImportFolderCommand new context: notesIndexPresenter)
 		executeWithDefaultFolder.
