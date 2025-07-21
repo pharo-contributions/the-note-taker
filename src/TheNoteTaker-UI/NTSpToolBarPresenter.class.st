@@ -9,15 +9,11 @@ Class {
 	#name : 'NTSpToolBarPresenter',
 	#superclass : 'SpPresenter',
 	#instVars : [
-		'searchBarPresenter',
 		'noteSettingsButtonPresenter',
-		'tagsSearchButtonPresenter',
 		'logButtonPresenter',
 		'cloneGitButtonPresenter',
 		'gitSaveButtonPresenter',
-		'importFolderButtonPresenter',
-		'filteredTagsSelection',
-		'model'
+		'importFolderButtonPresenter'
 	],
 	#classVars : [
 		'GitEnable'
@@ -65,43 +61,6 @@ NTSpToolBarPresenter >> cloneGitButtonPresenter [
 NTSpToolBarPresenter >> defaultLayout [
 
 	GitEnable ifTrue: [ ^ self layoutWithGitButton ] ifFalse: [ ^ self layoutWithoutGitButton ]
-]
-
-{ #category : 'callbacks' }
-NTSpToolBarPresenter >> emptySearchBar [
-
-	searchBarPresenter clearContent
-]
-
-{ #category : 'callbacks' }
-NTSpToolBarPresenter >> filter [
-
-	| filteredItems |
-	filteredItems := searchBarPresenter text
-		                 ifEmpty: [ model notes ]
-		                 ifNotEmpty: [ :pattern |
-		                 self filteredNotesFor: pattern ].
-
-	filteredItems := filteredTagsSelection
-		                 ifEmpty: [ filteredItems ]
-		                 ifNotEmpty: [ :pattern |
-			                 self
-				                 notes: filteredItems
-				                 withTags: filteredTagsSelection ].
-
-	^ filteredItems
-]
-
-{ #category : 'callbacks' }
-NTSpToolBarPresenter >> filteredNotesFor: aString [
-
-	^ model notesTitleMatching: aString
-]
-
-{ #category : 'accessing' }
-NTSpToolBarPresenter >> filteredTagsSelection [
-
-	^ filteredTagsSelection
 ]
 
 { #category : 'accessing' }
@@ -181,40 +140,21 @@ NTSpToolBarPresenter >> initializeNoteSettingsButton [
 { #category : 'initialization' }
 NTSpToolBarPresenter >> initializePresenters [
 
-	searchBarPresenter := self newTextInput
-		                      help: 'Create a note by just typing a name';
-		                      placeholder: 'Type note to search or create';
-		                      yourself.
-	self initializeTagSearchButton.
 	self initializeImportFolder.
 	"self initializeCloneGitFolder."
 	self initializeGitSave.
 	self initializeNoteSettingsButton.
 	self initializeLogButton.
-
-	filteredTagsSelection := OrderedCollection new
-]
-
-{ #category : 'initialization' }
-NTSpToolBarPresenter >> initializeTagSearchButton [
-
-	tagsSearchButtonPresenter := self newButton
-		                             icon: (self iconNamed: #recentMessages);
-		                             addStyle: 'small';
-		                             action: [ self openTagsSearcher ];
-		                             help: 'Tags searcher';
-		                             yourself.
 ]
 
 { #category : 'layout' }
 NTSpToolBarPresenter >> layoutWithGitButton [
 
 	^ SpBoxLayout newLeftToRight
-		  add: searchBarPresenter;
-		  add: tagsSearchButtonPresenter expand: false;
 		  add: gitSaveButtonPresenter expand: false;
-		  "add: cloneGitButtonPresenter expand: false;"
-		  add: importFolderButtonPresenter expand: false;
+		  "add: cloneGitButtonPresenter expand: false;"add:
+			  importFolderButtonPresenter
+		  expand: false;
 		  add: noteSettingsButtonPresenter expand: false;
 		  add: logButtonPresenter expand: false;
 		  yourself
@@ -224,8 +164,6 @@ NTSpToolBarPresenter >> layoutWithGitButton [
 NTSpToolBarPresenter >> layoutWithoutGitButton [
 
 	^ SpBoxLayout newLeftToRight
-		  add: searchBarPresenter;
-		  add: tagsSearchButtonPresenter expand: false;
 		  add: importFolderButtonPresenter expand: false;
 		  add: noteSettingsButtonPresenter expand: false;
 		  add: logButtonPresenter expand: false;
@@ -238,25 +176,10 @@ NTSpToolBarPresenter >> logButtonPresenter [
 	^ logButtonPresenter
 ]
 
-{ #category : 'initialization' }
-NTSpToolBarPresenter >> model [
-
-	^ model
-]
-
 { #category : 'accessing' }
 NTSpToolBarPresenter >> noteSettingsButtonPresenter [
 
 	^ noteSettingsButtonPresenter
-]
-
-{ #category : 'callbacks' }
-NTSpToolBarPresenter >> notes: aNotesCollection withTags: aTagsCollection [
-	"Answer a <Collection> of <NTNoteObject> whose names match tags"
-
-	^ model
-		  notes: aNotesCollection
-		  withTags: aTagsCollection
 ]
 
 { #category : 'opening' }
@@ -272,42 +195,4 @@ NTSpToolBarPresenter >> openTNTSettings [
 	self application registerWindow: (SettingBrowser new
 	rootNodes: (SettingBrowser currentTree nodeNamed: #tnt) allChildren;
 	open)
-]
-
-{ #category : 'opening' }
-NTSpToolBarPresenter >> openTagsSearcher [
-
-	| selectedItems |
-	selectedItems := filteredTagsSelection collect: [ :tag | tag tagName ].
-
-	(NTSpTagSelectionDialog newApplication: self application)
-		allowTagCreation;
-		title: 'tag name';
-		items:
-			(model tags collect: [ :each | each tagName ]);
-		selectedItems: selectedItems;
-		display: #asString;
-		onAccept: [ :dialog |
-				filteredTagsSelection := dialog presenter selectedItems collect: [
-						                         :each |
-						                         model tagNamed: each ] ];
-		openModalWithParent: owner window
-]
-
-{ #category : 'accessing' }
-NTSpToolBarPresenter >> searchBarPresenter [
-
-	^ searchBarPresenter
-]
-
-{ #category : 'initialization' }
-NTSpToolBarPresenter >> setModel: aModel [
-
-	model := aModel
-]
-
-{ #category : 'accessing' }
-NTSpToolBarPresenter >> tagsSearchButtonPresenter [
-
-	^ tagsSearchButtonPresenter
 ]

@@ -169,7 +169,7 @@ NTSpNoteIndexPresenter >> items: aCollection [
 { #category : 'callbacks' }
 NTSpNoteIndexPresenter >> modelChanged [
 
-	self items: self model notes
+	self model ifNotNil: [self items: self model notes]
 ]
 
 { #category : 'callbacks' }
