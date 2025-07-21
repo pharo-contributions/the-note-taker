@@ -6,7 +6,10 @@ Class {
 	#name : 'NTSpNoteIndexPresenter',
 	#superclass : 'SpPresenterWithModel',
 	#instVars : [
-		'componentList'
+		'componentList',
+		'searchBar',
+		'tagsFilterButton',
+		'filteredTagsSelection'
 	],
 	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
@@ -48,10 +51,32 @@ NTSpNoteIndexPresenter class >> buildNoteTakerOperationsGroupWith: presenterInst
 		  yourself
 ]
 
+{ #category : 'callbacks' }
+NTSpNoteIndexPresenter >> connectPresenters [
+
+	searchBar
+		whenTextChangedDo: [ self items: self filter ];
+		whenSubmitDo: [ :newNoteName |
+				| newNote |
+				newNote := self model addNoteNamed: newNoteName.
+				newNote folderReference: self application settings noteLocation.
+				self updatePresenter.
+				self emptySearchBar.
+				self selectNote: newNote
+				"notesEditorPresenter takeKeyboardFocus" ].
+
+	tagsFilterButton whenActivatedDo: [ self items: self filter ]
+]
+
 { #category : 'layout' }
 NTSpNoteIndexPresenter >> defaultLayout [
 
 	^ SpBoxLayout newTopToBottom
+		  add: (SpBoxLayout newLeftToRight
+				   add: searchBar;
+				   add: tagsFilterButton expand: false;
+				   yourself)
+		  expand: false;
 		  add: componentList;
 		  yourself
 ]
@@ -62,6 +87,37 @@ NTSpNoteIndexPresenter >> defaultOutputPort [
 	^ SpDropListSelectionPort newPresenter: self
 ]
 
+{ #category : 'initialization' }
+NTSpNoteIndexPresenter >> emptySearchBar [
+
+	searchBar clearContent
+]
+
+{ #category : 'callbacks' }
+NTSpNoteIndexPresenter >> filter [
+
+	| filteredItems |
+	filteredItems := searchBar text
+		                 ifEmpty: [ self model notes ]
+		                 ifNotEmpty: [ :pattern |
+		                 self filteredNotesFor: pattern ].
+
+	filteredItems := filteredTagsSelection
+		                 ifEmpty: [ filteredItems ]
+		                 ifNotEmpty: [ :pattern |
+			                 self
+				                 notes: filteredItems
+				                 withTags: filteredTagsSelection ].
+
+	^ filteredItems
+]
+
+{ #category : 'callbacks' }
+NTSpNoteIndexPresenter >> filteredNotesFor: aString [
+
+	^ self model notesTitleMatching: aString
+]
+
 { #category : 'testing' }
 NTSpNoteIndexPresenter >> hasSelectedNote [
 
@@ -70,6 +126,20 @@ NTSpNoteIndexPresenter >> hasSelectedNote [
 
 { #category : 'initialization' }
 NTSpNoteIndexPresenter >> initializePresenters [
+
+	searchBar := self newTextInput
+		             help: 'Create a note by just typing a name';
+		             placeholder: 'Type note to search or create';
+		             yourself.
+
+	tagsFilterButton := self newButton
+		                    icon: (self iconNamed: #recentMessages);
+		                    addStyle: 'small';
+		                    action: [ self openTagsSearcher ];
+		                    help: 'Tags searcher';
+		                    yourself.
+
+	filteredTagsSelection := OrderedCollection new.
 
 	componentList := self instantiate: SpComponentListPresenter.
 	componentList beMultipleSelection.
@@ -88,8 +158,9 @@ NTSpNoteIndexPresenter >> items [
 
 { #category : 'accessing' }
 NTSpNoteIndexPresenter >> items: aCollection [
-
 	"componentList items: aCollection."
+	
+	aCollection ifNil: [ ^ self ].
 
 	componentList presenters:
 		(aCollection collect: [ :each | NTNotePresenter new note: each ])
@@ -98,13 +169,38 @@ NTSpNoteIndexPresenter >> items: aCollection [
 { #category : 'callbacks' }
 NTSpNoteIndexPresenter >> modelChanged [
 
-	self items: owner noteTakerContainer notes
+	self items: self model notes
+]
+
+{ #category : 'callbacks' }
+NTSpNoteIndexPresenter >> notes: aNotesCollection withTags: aTagsCollection [
+	"Answer a <Collection> of <NTNoteObject> whose names match tags"
+
+	^ self model notes: aNotesCollection withTags: aTagsCollection
 ]
 
 { #category : 'accessing' }
 NTSpNoteIndexPresenter >> notesTable [
 
 	^ componentList
+]
+
+{ #category : 'callbacks' }
+NTSpNoteIndexPresenter >> openTagsSearcher [
+
+	| selectedItems |
+	selectedItems := filteredTagsSelection collect: [ :tag | tag tagName ].
+
+	(NTSpTagSelectionDialog newApplication: self application)
+		allowTagCreation;
+		title: 'tag name';
+		items: (self model tags collect: [ :each | each tagName ]);
+		selectedItems: selectedItems;
+		display: #asString;
+		onAccept: [ :dialog |
+				filteredTagsSelection := dialog presenter selectedItems collect: [
+						                         :each | self model tagNamed: each ] ];
+		openModalWithParent: owner window
 ]
 
 { #category : 'accessing' }

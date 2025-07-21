@@ -26,22 +26,10 @@ NTSpNoteTakerMainUI >> applicationTitle [
 { #category : 'initialization' }
 NTSpNoteTakerMainUI >> connectPresenters [
 
-	notesIndexPresenter transmitTo: notesEditorPresenter transform: [ :aNotePresenter | aNotePresenter ifNotNil: [ aNotePresenter note ]].
-
-	notesToolbarPresenter searchBarPresenter
-		whenTextChangedDo: [
-			notesIndexPresenter items: notesToolbarPresenter filter ];
-		whenSubmitDo: [ :newNoteName |
-				| newNote |
-				newNote := self application addNoteNamed: newNoteName.
-				newNote folderReference: self application settings noteLocation.
-				notesToolbarPresenter emptySearchBar.
-				notesIndexPresenter notesTable unselectAll.
-				notesIndexPresenter selectNote: newNote.
-				notesEditorPresenter takeKeyboardFocus ].
-
-	notesToolbarPresenter tagsSearchButtonPresenter whenActivatedDo: [
-		notesIndexPresenter items: notesToolbarPresenter filter ]
+	notesIndexPresenter
+		transmitTo: notesEditorPresenter
+		transform: [ :aNotePresenter |
+		aNotePresenter ifNotNil: [ aNotePresenter note ] ]
 ]
 
 { #category : 'layout' }
@@ -84,7 +72,7 @@ NTSpNoteTakerMainUI >> initializePresenters [
 	notesToolbarPresenter setModel: self noteTakerContainer.
 
 	notesIndexPresenter := self instantiate: NTSpNoteIndexPresenter.
-	notesIndexPresenter model: self noteTakerContainer notes.
+	notesIndexPresenter model: self noteTakerContainer.
 	(NTSpImportFolderCommand new context: notesIndexPresenter)
 		executeWithDefaultFolder.
 
