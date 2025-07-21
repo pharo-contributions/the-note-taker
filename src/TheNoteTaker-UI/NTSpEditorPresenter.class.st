@@ -130,9 +130,7 @@ NTSpEditorPresenter >> initializePresenters [
 	textInput
 		whenTextChangedDo: [ model contents: textInput text asString ];
 		bindKeyCombination: $s meta toAction: [
-				self saveFile.
-				self owner statusBar pushMessage:
-						(self application log save: model) ]
+				self saveFile. ]
 ]
 
 { #category : 'actions' }
@@ -209,6 +207,7 @@ NTSpEditorPresenter >> renderedText [
 NTSpEditorPresenter >> saveFile [
 
 	self model save.
+	self owner statusBar pushMessage: (self application log save: model)
 ]
 
 { #category : 'accessing' }
