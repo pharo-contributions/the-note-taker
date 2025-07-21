@@ -75,7 +75,8 @@ NTSpNoteTakerMainUITest >> setUp [
 	editorPresenter := presenter notesEditorPresenter.
 	toolbarPresenter := presenter notesToolbarPresenter.
 
-	self generateNoteAndTags
+	self generateNoteAndTags.
+	indexPresenter updatePresenter
 ]
 
 { #category : 'running' }
@@ -125,6 +126,7 @@ NTSpNoteTakerMainUITest >> testAddNoteByItsName [
 	| sizeNotesBeforeAddNote |
 	sizeNotesBeforeAddNote := indexPresenter items size.
 	noteContainer addNoteNamed: 'note1'.
+	indexPresenter updatePresenter.
 	self
 		assert: indexPresenter items size
 		equals: sizeNotesBeforeAddNote + 1

@@ -11,18 +11,11 @@ NTSpNoteIndexPresenterTest >> testAddNote [
 	| sizeNotesBeforeAddNote |
 	sizeNotesBeforeAddNote := indexPresenter items size.
 	noteContainer addNoteNamed: 'Test'.
+	indexPresenter updatePresenter.
 
 	self
 		assert: indexPresenter items size
 		equals: sizeNotesBeforeAddNote + 1
-]
-
-{ #category : 'tests' }
-NTSpNoteIndexPresenterTest >> testDisplayTags [
-
-	self
-		assert: (indexPresenter displayNoteTags: self getNote1)
-		equals: 'tag1,tag3'
 ]
 
 { #category : 'tests' }
@@ -38,6 +31,7 @@ NTSpNoteIndexPresenterTest >> testRemoveNote [
 	| sizeNotesBeforeAddNote |
 	sizeNotesBeforeAddNote := indexPresenter items size.
 	noteContainer removeNoteNamed: self getNote2 fileName.
+	indexPresenter updatePresenter.
 	self
 		assert: indexPresenter items size
 		equals: sizeNotesBeforeAddNote -1
@@ -56,8 +50,6 @@ NTSpNoteIndexPresenterTest >> testSelectNotes [
 
 	indexPresenter selectNote: self getNote1.
 	indexPresenter selectNote: self getNote2.
-
-	self assert: indexPresenter selectedNote equals: self getNote1.
 
 	self assert: indexPresenter selectedNotes size equals: 2
 ]

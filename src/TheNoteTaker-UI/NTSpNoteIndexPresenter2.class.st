@@ -72,6 +72,7 @@ NTSpNoteIndexPresenter2 >> hasSelectedNote [
 NTSpNoteIndexPresenter2 >> initializePresenters [
 
 	componentList := self instantiate: SpComponentListPresenter.
+	componentList beMultipleSelection.
 
 	componentList contextMenu: [
 			(self rootCommandsGroup / 'NTSelContextualMenu') beRoot
@@ -88,7 +89,7 @@ NTSpNoteIndexPresenter2 >> items [
 { #category : 'accessing' }
 NTSpNoteIndexPresenter2 >> items: aCollection [
 
-	componentList items: aCollection.
+	"componentList items: aCollection."
 
 	componentList presenters:
 		(aCollection collect: [ :each | NTNotePresenter new note: each ])
@@ -97,7 +98,7 @@ NTSpNoteIndexPresenter2 >> items: aCollection [
 { #category : 'callbacks' }
 NTSpNoteIndexPresenter2 >> modelChanged [
 
-	self items: self items
+	self items: owner noteTakerContainer notes
 ]
 
 { #category : 'accessing' }
@@ -109,7 +110,8 @@ NTSpNoteIndexPresenter2 >> notesTable [
 { #category : 'accessing' }
 NTSpNoteIndexPresenter2 >> selectNote: aNTNoteObject [
 
-	componentList selectItem: aNTNoteObject
+	componentList selectItem:
+		(componentList items detect: [ :each | each note = aNTNoteObject ])
 ]
 
 { #category : 'accessing' }
