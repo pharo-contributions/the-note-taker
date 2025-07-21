@@ -19,10 +19,41 @@ Class {
 		'filteredTagsSelection',
 		'model'
 	],
+	#classVars : [
+		'GitEnable'
+	],
 	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
 	#tag : 'Core'
 }
+
+{ #category : 'settings' }
+NTSpToolBarPresenter class >> GitEnable [
+
+	^ GitEnable
+]
+
+{ #category : 'settings' }
+NTSpToolBarPresenter class >> GitEnable: aBoolean [
+
+	GitEnable := aBoolean 
+]
+
+{ #category : 'settings' }
+NTSpToolBarPresenter class >> settingsOn: aBuilder [
+
+	<systemsettings>
+	<pharoLauncherSettings>
+	(aBuilder setting: #GitEnable)
+		parent: #tnt;
+		target: self;
+		default: false;
+		order: 60;
+		label: 'enable git command';
+		description:
+			'When enabled, show git command button.
+When disabled, hide git command button. '
+]
 
 { #category : 'accessing' }
 NTSpToolBarPresenter >> cloneGitButtonPresenter [
@@ -33,15 +64,7 @@ NTSpToolBarPresenter >> cloneGitButtonPresenter [
 { #category : 'layout' }
 NTSpToolBarPresenter >> defaultLayout [
 
-	^ SpBoxLayout newLeftToRight
-		  add: searchBarPresenter;
-		  add: tagsSearchButtonPresenter expand: false;
-		  add: gitSaveButtonPresenter expand: false;
-		  "add: cloneGitButtonPresenter expand: false;"
-		  add: importFolderButtonPresenter expand: false;
-		  add: noteSettingsButtonPresenter expand: false;
-		  add: logButtonPresenter expand: false;
-		  yourself
+	GitEnable ifTrue: [ ^ self layoutWithGitButton ] ifFalse: [ ^ self layoutWithoutGitButton ]
 ]
 
 { #category : 'callbacks' }
@@ -181,6 +204,32 @@ NTSpToolBarPresenter >> initializeTagSearchButton [
 		                             action: [ self openTagsSearcher ];
 		                             help: 'Tags searcher';
 		                             yourself.
+]
+
+{ #category : 'layout' }
+NTSpToolBarPresenter >> layoutWithGitButton [
+
+	^ SpBoxLayout newLeftToRight
+		  add: searchBarPresenter;
+		  add: tagsSearchButtonPresenter expand: false;
+		  add: gitSaveButtonPresenter expand: false;
+		  "add: cloneGitButtonPresenter expand: false;"
+		  add: importFolderButtonPresenter expand: false;
+		  add: noteSettingsButtonPresenter expand: false;
+		  add: logButtonPresenter expand: false;
+		  yourself
+]
+
+{ #category : 'layout' }
+NTSpToolBarPresenter >> layoutWithoutGitButton [
+
+	^ SpBoxLayout newLeftToRight
+		  add: searchBarPresenter;
+		  add: tagsSearchButtonPresenter expand: false;
+		  add: importFolderButtonPresenter expand: false;
+		  add: noteSettingsButtonPresenter expand: false;
+		  add: logButtonPresenter expand: false;
+		  yourself
 ]
 
 { #category : 'accessing' }
