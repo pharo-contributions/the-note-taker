@@ -12,10 +12,25 @@ Class {
 		'notesEditorPresenter',
 		'statusBar'
 	],
+	#classVars : [
+		'GitEnable'
+	],
 	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
 	#tag : 'Core'
 }
+
+{ #category : 'commands' }
+NTSpNoteTakerMainUI class >> GitEnable [
+
+	^ GitEnable ifNil: [GitEnable := false] 
+]
+
+{ #category : 'commands' }
+NTSpNoteTakerMainUI class >> GitEnable: aBoolean [
+
+	GitEnable := aBoolean
+]
 
 { #category : 'nil' }
 NTSpNoteTakerMainUI class >> buildCommandsGroupWith: presenterInstance forRoot: rootCommandGroup [
@@ -27,14 +42,34 @@ NTSpNoteTakerMainUI class >> buildCommandsGroupWith: presenterInstance forRoot: 
 { #category : 'commands' }
 NTSpNoteTakerMainUI class >> buildNTContextualGroupWith: presenterInstance [
 
-	^ (CmCommandGroup named: 'Toolbar') asSpecGroup
-		  beRoot;
-		  register:
-			  (NTSpImportFolderCommand forSpec context: presenterInstance);
-		  register: (NTSpGitCommand forSpec context: presenterInstance);
+	| commandGroup |
+	commandGroup := (CmCommandGroup named: 'Toolbar') asSpecGroup
+		                beRoot;
+		                register:
+			                (NTSpImportFolderCommand forSpec context:
+					                 presenterInstance);
+		                yourself.
+	GitEnable ifTrue: [
+			commandGroup register:
+				(NTSpGitCommand forSpec context: presenterInstance) ].
+	^ commandGroup
 		  register: (NTSpLogCommand forSpec context: presenterInstance);
-		register: (NTSpSettingsCommand forSpec context: presenterInstance);
-		  yourself
+		  register: (NTSpSettingsCommand forSpec context: presenterInstance)
+]
+
+{ #category : 'commands' }
+NTSpNoteTakerMainUI class >> settingsOn: aBuilder [
+
+	<systemsettings>
+	<pharoLauncherSettings>
+	(aBuilder setting: #GitEnable)
+		parent: #tnt;
+		target: self;
+		default: false;
+		order: 60;
+		label: 'enable git command';
+		description: 'When enabled, show git command button.
+When disabled, hide git command button. '
 ]
 
 { #category : 'accessing' }
