@@ -17,6 +17,26 @@ Class {
 	#tag : 'Core'
 }
 
+{ #category : 'nil' }
+NTSpNoteTakerMainUI class >> buildCommandsGroupWith: presenterInstance forRoot: rootCommandGroup [
+
+	rootCommandGroup register:
+		(self buildNTContextualGroupWith: presenterInstance)
+]
+
+{ #category : 'commands' }
+NTSpNoteTakerMainUI class >> buildNTContextualGroupWith: presenterInstance [
+
+	^ (CmCommandGroup named: 'Toolbar') asSpecGroup
+		  beRoot;
+		  register:
+			  (NTSpImportFolderCommand forSpec context: presenterInstance);
+		  register: (NTSpGitCommand forSpec context: presenterInstance);
+		  register: (NTSpLogCommand forSpec context: presenterInstance);
+		register: (NTSpSettingsCommand forSpec context: presenterInstance);
+		  yourself
+]
+
 { #category : 'accessing' }
 NTSpNoteTakerMainUI >> applicationTitle [
 
@@ -68,8 +88,7 @@ NTSpNoteTakerMainUI >> initialize [
 { #category : 'initialization' }
 NTSpNoteTakerMainUI >> initializePresenters [
 
-	notesToolbarPresenter := self instantiate: NTSpToolBarPresenter.
-	notesToolbarPresenter setModel: self noteTakerContainer.
+	notesToolbarPresenter := self newToolbar fillWith: self rootCommandsGroup / 'Toolbar'.
 
 	notesIndexPresenter := self instantiate: NTSpNoteIndexPresenter.
 	notesIndexPresenter model: self noteTakerContainer.
