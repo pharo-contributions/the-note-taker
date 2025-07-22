@@ -6,7 +6,8 @@ Class {
 		'noteContainer',
 		'previousNotesLocation',
 		'settings',
-		'memoryFS'
+		'memoryFS',
+		'ressources'
 	],
 	#category : 'TheNoteTaker-UI-Tests',
 	#package : 'TheNoteTaker-UI-Tests'
@@ -16,7 +17,7 @@ Class {
 NTSpApplicationTest >> setUp [
 
 	super setUp.
-	
+
 	settings := NTSettings.
 	previousNotesLocation := settings noteLocation.
 
@@ -25,6 +26,7 @@ NTSpApplicationTest >> setUp [
 
 	app := NTSpApplication new.
 	noteContainer := app noteTakerContainer.
+	ressources := NTUITestResource new
 ]
 
 { #category : 'running' }

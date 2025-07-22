@@ -1,13 +1,8 @@
 Class {
 	#name : 'NTSpNoteIndexPresenterTest2',
-	#superclass : 'TestCase',
+	#superclass : 'NTSpApplicationTest',
 	#instVars : [
-		'indexPresenter',
-		'noteContainer',
-		'ressources',
-		'settings',
-		'previousNotesLocation',
-		'app'
+		'indexPresenter'
 	],
 	#category : 'TheNoteTaker-UI-Tests',
 	#package : 'TheNoteTaker-UI-Tests'
@@ -18,17 +13,10 @@ NTSpNoteIndexPresenterTest2 >> setUp [
 
 	super setUp.
 
-	settings := NTSettings.
-	previousNotesLocation := settings noteLocation.
-
-	app := NTSpApplication new.
-	noteContainer := app noteTakerContainer.
 	indexPresenter := NTSpNoteIndexPresenter newApplication: app.
 
-	ressources := NTUITestResource new generateNoteAndTagsTo:
-		              noteContainer.
-
 	indexPresenter model: noteContainer.
+	ressources generateNoteAndTagsTo: noteContainer.
 	indexPresenter updatePresenter
 ]
 
