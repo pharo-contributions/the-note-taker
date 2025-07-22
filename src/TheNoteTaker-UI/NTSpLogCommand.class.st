@@ -6,6 +6,18 @@ Class {
 	#tag : 'Commands'
 }
 
+{ #category : 'default' }
+NTSpLogCommand class >> defaultDescription [
+
+	^ 'Open a log browser'
+]
+
+{ #category : 'default' }
+NTSpLogCommand class >> defaultName [
+
+	^ 'Open log'
+]
+
 { #category : 'executing' }
 NTSpLogCommand >> asSpecCommand [
 

@@ -6,6 +6,18 @@ Class {
 	#tag : 'Commands'
 }
 
+{ #category : 'default' }
+NTSpSettingsCommand class >> defaultDescription [
+
+	^ 'Open a Settings Browser'
+]
+
+{ #category : 'default' }
+NTSpSettingsCommand class >> defaultName [
+
+	^ 'Open settings'
+]
+
 { #category : 'converting' }
 NTSpSettingsCommand >> asSpecCommand [
 
