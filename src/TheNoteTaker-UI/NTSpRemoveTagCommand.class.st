@@ -21,6 +21,15 @@ NTSpRemoveTagCommand class >> defaultName [
 	^ 'Remove Tag'
 ]
 
+{ #category : 'converting' }
+NTSpRemoveTagCommand >> asSpecCommand [
+
+	^ super asSpecCommand
+		  iconName: #delete;
+		  shortcutKey: $D meta;
+		  yourself
+]
+
 { #category : 'executing' }
 NTSpRemoveTagCommand >> execute [
 	"Request a title to create a new note"

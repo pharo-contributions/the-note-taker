@@ -32,6 +32,15 @@ NTSpGitCommand >> add [
 ]
 
 { #category : 'executing' }
+NTSpGitCommand >> asSpecCommand [
+
+	^ super asSpecCommand
+		  iconName: #delete;
+		  shortcutKey: $T meta;
+		  yourself
+]
+
+{ #category : 'executing' }
 NTSpGitCommand >> commit [
 
 	self

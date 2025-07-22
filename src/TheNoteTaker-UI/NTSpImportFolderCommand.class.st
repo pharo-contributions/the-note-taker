@@ -27,6 +27,15 @@ NTSpImportFolderCommand >> addNoteFromFileReference: aFileReference [
 	self noteTakerContainer addNoteFromFileReference: aFileReference
 ]
 
+{ #category : 'converting' }
+NTSpImportFolderCommand >> asSpecCommand [
+
+	^ super asSpecCommand
+		  iconName: #into;
+		  shortcutKey: $T meta;
+		  yourself
+]
+
 { #category : 'executing' }
 NTSpImportFolderCommand >> execute [
 

@@ -22,6 +22,15 @@ NTSpAddTagCommand class >> defaultName [
 ]
 
 { #category : 'executing' }
+NTSpAddTagCommand >> asSpecCommand [
+
+	^ super asSpecCommand
+		  iconName: #add;
+		  shortcutKey: $T meta;
+		  yourself
+]
+
+{ #category : 'executing' }
 NTSpAddTagCommand >> execute [
 	"execute"
 

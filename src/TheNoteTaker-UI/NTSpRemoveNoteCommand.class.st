@@ -22,6 +22,15 @@ NTSpRemoveNoteCommand class >> defaultName [
 	^ 'Remove Note(s)'
 ]
 
+{ #category : 'converting' }
+NTSpRemoveNoteCommand >> asSpecCommand [
+
+	^ super asSpecCommand
+		  iconName: #delete;
+		  shortcutKey: $D meta;
+		  yourself
+]
+
 { #category : 'testing' }
 NTSpRemoveNoteCommand >> canBeExecuted [ 
 
