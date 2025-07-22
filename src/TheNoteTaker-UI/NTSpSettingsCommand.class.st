@@ -1,0 +1,25 @@
+Class {
+	#name : 'NTSpSettingsCommand',
+	#superclass : 'NTSpAbstractCommand',
+	#category : 'TheNoteTaker-UI-Commands',
+	#package : 'TheNoteTaker-UI',
+	#tag : 'Commands'
+}
+
+{ #category : 'converting' }
+NTSpSettingsCommand >> asSpecCommand [
+
+	^ super asSpecCommand
+		  iconName: #smallConfiguration;
+		  shortcutKey: $P meta;
+		  yourself
+]
+
+{ #category : 'converting' }
+NTSpSettingsCommand >> execute [
+
+	self application registerWindow: (SettingBrowser new
+			 rootNodes:
+				 (SettingBrowser currentTree nodeNamed: #tnt) allChildren;
+			 open)
+]
