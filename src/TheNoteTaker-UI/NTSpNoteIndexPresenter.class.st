@@ -35,18 +35,13 @@ NTSpNoteIndexPresenter class >> buildNTContextualGroupWith: presenterInstance [
 NTSpNoteIndexPresenter class >> buildNoteTakerOperationsGroupWith: presenterInstance [
 
 	^ (CmCommandGroup named: 'NoteTakerMenu') asSpecGroup
-		  register: ((NTSpImportNoteCommand
-				    forSpecWithIconNamed: #into
-				    shortcutKey: 'I' asShortcut) context: presenterInstance);
-		  register: ((NTSpRemoveNoteCommand
-				    forSpecWithIconNamed: #delete
-				    shortcutKey: 'D' asShortcut) context: presenterInstance);
-		  register: ((NTSpAddTagCommand
-				    forSpecWithIconNamed: #add
-				    shortcutKey: 'T' asShortcut) context: presenterInstance);
-		  register: ((NTSpRemoveTagCommand
-				    forSpecWithIconNamed: #delete
-				    shortcutKey: 'D' asShortcut) context: presenterInstance);
+		  register:
+			  (NTSpImportNoteCommand forSpec context: presenterInstance);
+		  register:
+			  (NTSpRemoveNoteCommand forSpec context: presenterInstance);
+		  register: (NTSpAddTagCommand forSpec context: presenterInstance);
+		  register:
+			  (NTSpRemoveTagCommand forSpec context: presenterInstance);
 		  beDisplayedAsGroup;
 		  yourself
 ]
