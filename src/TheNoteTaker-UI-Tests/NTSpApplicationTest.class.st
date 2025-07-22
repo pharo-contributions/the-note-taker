@@ -33,7 +33,8 @@ NTSpApplicationTest >> setUp [
 NTSpApplicationTest >> tearDown [
 
 	settings noteLocation: previousNotesLocation.
-	
+	app closeAllWindows.
+
 	super tearDown
 ]
 
