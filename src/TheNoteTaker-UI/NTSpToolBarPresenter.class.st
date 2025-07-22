@@ -115,17 +115,6 @@ NTSpToolBarPresenter >> initializeImportFolder [
 ]
 
 { #category : 'initialization' }
-NTSpToolBarPresenter >> initializeLogButton [
-
-	logButtonPresenter := self newButton
-		                      icon: (self iconNamed: #recentMessages);
-		                      addStyle: 'small';
-		                      action: [ self openLog ];
-		                      help: 'Log';
-		                      yourself
-]
-
-{ #category : 'initialization' }
 NTSpToolBarPresenter >> initializeNoteSettingsButton [
 
 	noteSettingsButtonPresenter := self newButton
@@ -171,22 +160,9 @@ NTSpToolBarPresenter >> layoutWithoutGitButton [
 ]
 
 { #category : 'accessing' }
-NTSpToolBarPresenter >> logButtonPresenter [
-
-	^ logButtonPresenter
-]
-
-{ #category : 'accessing' }
 NTSpToolBarPresenter >> noteSettingsButtonPresenter [
 
 	^ noteSettingsButtonPresenter
-]
-
-{ #category : 'opening' }
-NTSpToolBarPresenter >> openLog [
-
-	self application registerWindow: (NTSpLogPresenter openLogOfFolder:
-		 self application settings noteLocation) openModal
 ]
 
 { #category : 'opening' }
