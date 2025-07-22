@@ -1,3 +1,6 @@
+"
+I represent a NTNoteObject.
+"
 Class {
 	#name : 'NTNotePresenter',
 	#superclass : 'SpPresenterWithModel',

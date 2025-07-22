@@ -1,3 +1,6 @@
+"
+Command for open a Settings Browser with TheNoteTaker options.
+"
 Class {
 	#name : 'NTSpSettingsCommand',
 	#superclass : 'NTSpAbstractCommand',

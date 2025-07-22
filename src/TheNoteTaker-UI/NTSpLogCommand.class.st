@@ -1,3 +1,6 @@
+"
+Open a Log presenter windows with all change of the open note directory.
+"
 Class {
 	#name : 'NTSpLogCommand',
 	#superclass : 'NTSpAbstractCommand',
