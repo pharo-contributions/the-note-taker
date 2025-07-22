@@ -228,3 +228,9 @@ NTSpNoteIndexPresenter >> tagsFilterButton [
 
 	^ tagsFilterButton
 ]
+
+{ #category : 'callbacks' }
+NTSpNoteIndexPresenter >> whenSelectionChangedDo: aBlock [
+
+	componentList whenSelectionChangedDo: aBlock
+]
