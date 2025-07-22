@@ -1,12 +1,17 @@
 Class {
 	#name : 'NTSpCommandTest',
-	#superclass : 'NTSpApplicationTest',
+	#superclass : 'NTSpTestCase',
 	#instVars : [
 		'indexPresenter'
 	],
 	#category : 'TheNoteTaker-UI-Tests',
 	#package : 'TheNoteTaker-UI-Tests'
 }
+
+{ #category : 'testing' }
+NTSpCommandTest class >> isAbstract [ 
+	^ self = NTSpCommandTest 
+]
 
 { #category : 'running' }
 NTSpCommandTest >> setUp [

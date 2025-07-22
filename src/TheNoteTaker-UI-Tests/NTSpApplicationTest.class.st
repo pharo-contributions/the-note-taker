@@ -1,47 +1,14 @@
 Class {
 	#name : 'NTSpApplicationTest',
-	#superclass : 'TestCase',
-	#instVars : [
-		'app',
-		'noteContainer',
-		'previousNotesLocation',
-		'settings',
-		'memoryFS',
-		'ressources'
-	],
+	#superclass : 'NTSpTestCase',
 	#category : 'TheNoteTaker-UI-Tests',
 	#package : 'TheNoteTaker-UI-Tests'
 }
 
-{ #category : 'running' }
-NTSpApplicationTest >> setUp [
-
-	super setUp.
-
-	settings := NTSettings.
-	previousNotesLocation := settings noteLocation.
-
-	memoryFS := FileSystem memory.
-	settings noteLocation: memoryFS workingDirectory.
-
-	app := NTSpApplication new.
-	noteContainer := app noteTakerContainer.
-	ressources := NTUITestResource new
-]
-
-{ #category : 'running' }
-NTSpApplicationTest >> tearDown [
-
-	settings noteLocation: previousNotesLocation.
-	app closeAllWindows.
-
-	super tearDown
-]
-
 { #category : 'tests' }
 NTSpApplicationTest >> testAddNoteByName [
 
-	self assert: noteContainer notes size equals: 0.
+	self assertEmpty: noteContainer notes.
 
 	app addNoteNamed: 'test'.
 

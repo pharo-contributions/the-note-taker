@@ -1,6 +1,6 @@
 Class {
 	#name : 'NTSpNoteIndexPresenterTest',
-	#superclass : 'NTSpApplicationTest',
+	#superclass : 'NTSpTestCase',
 	#instVars : [
 		'indexPresenter'
 	],

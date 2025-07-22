@@ -1,6 +1,6 @@
 Class {
 	#name : 'NTSpNoteTakerMainUITest',
-	#superclass : 'NTSpApplicationTest',
+	#superclass : 'NTSpTestCase',
 	#instVars : [
 		'presenter',
 		'editorPresenter',

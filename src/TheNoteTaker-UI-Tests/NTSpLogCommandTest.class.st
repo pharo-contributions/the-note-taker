@@ -35,20 +35,17 @@ NTSpLogCommandTest >> testCreateFileLogWhenDontExist [
 { #category : 'tests' }
 NTSpLogCommandTest >> testOpenFileLog [
 
-	| logReference contents|
-	self skip.
+	| logReference contents |
+
 	logReference := memoryFS workingDirectory / 'TheNoteTaker.log'.
 	logReference writeStreamDo: [ :stream |
 		stream nextPutAll: 'Log Test' ].
 
-	
-SpWindowSimulateOpenModal
-    value: [ :aDialogPresenter |
-        contents := aDialogPresenter presenter text]
-    during: [
-        logCommand execute ].
 
-	self
-		assert: contents
-		equals: logReference contents.
+	SpWindowSimulateOpenModal
+		value: [ :aDialogPresenter |
+		contents := aDialogPresenter presenter text ]
+		during: [ logCommand execute ].
+
+	self assert: contents equals: logReference contents
 ]

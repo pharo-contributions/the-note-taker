@@ -16,16 +16,6 @@ NTSpToolbarPresenterTest >> testImportFolderButtonOpenModalWindow [
 ]
 
 { #category : 'tests' }
-NTSpToolbarPresenterTest >> testOpenLogButtonOpenModalWindow [
-self skip.
-	SpWindowForceOpenNonModal during: [
-		toolbarPresenter logButtonPresenter click ].
-	self currentWorld doOneCycle.
-
-	self assert: toolbarPresenter application windows size equals: 2
-]
-
-{ #category : 'tests' }
 NTSpToolbarPresenterTest >> testOpenTNTSettingsButtonOpenModalWindow [
 
 	self skip.

@@ -1,6 +1,6 @@
 Class {
 	#name : 'NTSpEditorFilePresenterTest',
-	#superclass : 'NTSpApplicationTest',
+	#superclass : 'NTSpTestCase',
 	#instVars : [
 		'note',
 		'fileReference',
