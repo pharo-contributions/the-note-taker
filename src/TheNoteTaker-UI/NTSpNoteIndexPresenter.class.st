@@ -113,6 +113,12 @@ NTSpNoteIndexPresenter >> filteredNotesFor: aString [
 	^ self model notesTitleMatching: aString
 ]
 
+{ #category : 'callbacks' }
+NTSpNoteIndexPresenter >> filteredTagsSelection [
+
+	^ filteredTagsSelection
+]
+
 { #category : 'testing' }
 NTSpNoteIndexPresenter >> hasSelectedNote [
 
@@ -195,7 +201,13 @@ NTSpNoteIndexPresenter >> openTagsSearcher [
 		onAccept: [ :dialog |
 				filteredTagsSelection := dialog presenter selectedItems collect: [
 						                         :each | self model tagNamed: each ] ];
-		openModalWithParent: owner window
+		openModalWithParent: self window
+]
+
+{ #category : 'callbacks' }
+NTSpNoteIndexPresenter >> searchBar [
+
+	^ searchBar
 ]
 
 { #category : 'accessing' }
@@ -216,6 +228,12 @@ NTSpNoteIndexPresenter >> selectedNote [
 NTSpNoteIndexPresenter >> selectedNotes [
 
 	^ componentList selectedItems collect: [ :each | each note ]
+]
+
+{ #category : 'callbacks' }
+NTSpNoteIndexPresenter >> tagsFilterButton [
+
+	^ tagsFilterButton
 ]
 
 { #category : 'callbacks' }
