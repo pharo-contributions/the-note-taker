@@ -1,8 +1,9 @@
 Class {
 	#name : 'NTNotePresenter',
 	#superclass : 'SpPresenterWithModel',
-	#category : 'TheNoteTaker-UI',
-	#package : 'TheNoteTaker-UI'
+	#category : 'TheNoteTaker-UI-Core',
+	#package : 'TheNoteTaker-UI',
+	#tag : 'Core'
 }
 
 { #category : 'layout' }
