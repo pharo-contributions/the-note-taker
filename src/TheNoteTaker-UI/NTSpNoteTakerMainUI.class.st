@@ -85,6 +85,7 @@ NTSpNoteTakerMainUI >> connectPresenters [
 		transmitTo: notesEditorPresenter
 		transform: [ :aNotePresenter |
 		aNotePresenter ifNotNil: [ aNotePresenter note ] ]
+		postTransmission: [ notesEditorPresenter takeKeyboardFocus ]
 ]
 
 { #category : 'layout' }

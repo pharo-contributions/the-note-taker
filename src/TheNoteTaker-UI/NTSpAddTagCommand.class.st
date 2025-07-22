@@ -49,8 +49,9 @@ NTSpAddTagCommand >> execute [
 							self selectedNotes do: [ :note |
 										tag addNote: note.
 										note save.
-										self context owner statusBar pushMessage: (self application log add: note tag: tag) ] ] ];
+										self context owner statusBar pushMessage:
+												(self application log add: note tag: tag) ] ] ];
 		openModalWithParent: context window.
 
-	self context modelChanged
+	self context updatePresenter
 ]

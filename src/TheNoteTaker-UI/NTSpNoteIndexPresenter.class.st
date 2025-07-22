@@ -46,7 +46,7 @@ NTSpNoteIndexPresenter class >> buildNoteTakerOperationsGroupWith: presenterInst
 		  yourself
 ]
 
-{ #category : 'callbacks' }
+{ #category : 'initialization' }
 NTSpNoteIndexPresenter >> connectPresenters [
 
 	searchBar
@@ -57,8 +57,7 @@ NTSpNoteIndexPresenter >> connectPresenters [
 				newNote folderReference: self application settings noteLocation.
 				self updatePresenter.
 				self emptySearchBar.
-				self selectNote: newNote
-				"notesEditorPresenter takeKeyboardFocus" ].
+				self selectNote: newNote ].
 
 	tagsFilterButton whenActivatedDo: [ self items: self filter ]
 ]
@@ -82,13 +81,13 @@ NTSpNoteIndexPresenter >> defaultOutputPort [
 	^ SpDropListSelectionPort newPresenter: self
 ]
 
-{ #category : 'initialization' }
+{ #category : 'callbacks' }
 NTSpNoteIndexPresenter >> emptySearchBar [
 
 	searchBar clearContent
 ]
 
-{ #category : 'callbacks' }
+{ #category : 'filtering' }
 NTSpNoteIndexPresenter >> filter [
 
 	| filteredItems |
@@ -107,13 +106,13 @@ NTSpNoteIndexPresenter >> filter [
 	^ filteredItems
 ]
 
-{ #category : 'callbacks' }
+{ #category : 'filtering' }
 NTSpNoteIndexPresenter >> filteredNotesFor: aString [
 
 	^ self model notesTitleMatching: aString
 ]
 
-{ #category : 'callbacks' }
+{ #category : 'filtering' }
 NTSpNoteIndexPresenter >> filteredTagsSelection [
 
 	^ filteredTagsSelection
@@ -167,7 +166,7 @@ NTSpNoteIndexPresenter >> items: aCollection [
 		(aCollection collect: [ :each | NTNotePresenter new note: each ])
 ]
 
-{ #category : 'callbacks' }
+{ #category : 'initialization' }
 NTSpNoteIndexPresenter >> modelChanged [
 
 	self model ifNotNil: [self items: self model notes]
@@ -180,13 +179,7 @@ NTSpNoteIndexPresenter >> notes: aNotesCollection withTags: aTagsCollection [
 	^ self model notes: aNotesCollection withTags: aTagsCollection
 ]
 
-{ #category : 'accessing' }
-NTSpNoteIndexPresenter >> notesTable [
-
-	^ componentList
-]
-
-{ #category : 'callbacks' }
+{ #category : 'opening' }
 NTSpNoteIndexPresenter >> openTagsSearcher [
 
 	| selectedItems |
@@ -204,7 +197,7 @@ NTSpNoteIndexPresenter >> openTagsSearcher [
 		openModalWithParent: self window
 ]
 
-{ #category : 'callbacks' }
+{ #category : 'accessing' }
 NTSpNoteIndexPresenter >> searchBar [
 
 	^ searchBar
@@ -230,23 +223,8 @@ NTSpNoteIndexPresenter >> selectedNotes [
 	^ componentList selectedItems collect: [ :each | each note ]
 ]
 
-{ #category : 'callbacks' }
+{ #category : 'accessing' }
 NTSpNoteIndexPresenter >> tagsFilterButton [
 
 	^ tagsFilterButton
-]
-
-{ #category : 'callbacks' }
-NTSpNoteIndexPresenter >> updateRemovedNote [
-
-	self modelChanged.
-	self owner
-		updateWindowTitle;
-		updateContents
-]
-
-{ #category : 'callbacks' }
-NTSpNoteIndexPresenter >> whenSelectionChangedDo: aBlock [
-
-	componentList whenSelectionChangedDo: aBlock
 ]

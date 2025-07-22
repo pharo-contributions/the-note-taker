@@ -50,7 +50,8 @@ NTSpRemoveTagCommand >> execute [
 							self selectedNotes do: [ :note |
 										note removeTag: tag.
 										note save.
-										self context owner statusBar pushMessage: (self application log remove: note tag: tag) ] ] ];
+										self context owner statusBar pushMessage:
+												(self application log remove: note tag: tag) ] ] ];
 		openModalWithParent: context window.
-	self context modelChanged
+	self context updatePresenter
 ]
