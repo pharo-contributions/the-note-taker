@@ -41,13 +41,14 @@ NTSpRemoveNoteCommand >> canBeExecuted [
 NTSpRemoveNoteCommand >> execute [
 	"Request a title to delete the selected note"
 
-	(self confirm:
+	(self context confirm:
 		 'Are you sure you want to remove the selected note(s)?') ifFalse: [
 		^ self ].
 	self selectedNotes do: [ :note |
 			note exists ifTrue: [
 					note fileReference ensureDelete.
-					self context owner statusBar pushMessage: (self application log remove: note) ] ].
+					self context owner statusBar pushMessage:
+						(self application log remove: note) ] ].
 	self noteTakerContainer removeNotes: self selectedNotes.
 	self context items: self noteTakerContainer notes
 ]
