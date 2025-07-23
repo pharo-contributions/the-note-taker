@@ -39,13 +39,12 @@ NTSpImportFolderCommand >> asSpecCommand [
 { #category : 'executing' }
 NTSpImportFolderCommand >> execute [
 
-	| folder |
-	folder := StOpenDirectoryPresenter new
+	| selections |
+	selections := StOpenDirectoryPresenter new
 		          extent: 800 @ 800;
 		          openModal.
-	folder ifNil: [ ^ self ].
-	self processFolder: folder first.
-	self application log logFileReference: folder first.
+	selections ifNil: [ ^ self ].
+	selections do: [ :each | self processFolder: each ].
 	self context items: self noteTakerContainer notes
 ]
 
