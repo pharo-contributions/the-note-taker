@@ -10,7 +10,7 @@ NTSpLogCommandTest >> setUp [
 
 	super setUp.
 
-	command := NTSpLogCommand new context: indexPresenter
+	command := NTSpLogCommand new context: mainPresenter
 ]
 
 { #category : 'tests' }

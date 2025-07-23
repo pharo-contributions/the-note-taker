@@ -23,12 +23,10 @@ NTSpEditorFilePresenterTest >> setUp [
 	super setUp.
 
 	text := 'This is just a test'.
-	memoryFS := FileSystem memory.
 	fileReference := memoryFS / 'aFileReference.md'.
 	fileReference writeStreamDo: [ :stream | stream nextPutAll: text ].
 
-	app := NTSpApplication new.
-	editorPresenter := NTSpEditorPresenter newApplication: app.
+	editorPresenter := (NTSpNoteTakerMainUI newApplication: app) notesEditorPresenter.
 
 	note := NTNoteObject newFromFileReference: fileReference
 ]
@@ -79,7 +77,8 @@ NTSpEditorFilePresenterTest >> testRenderedTextIsCorrectMicrodown [
 { #category : 'running' }
 NTSpEditorFilePresenterTest >> testSave [
 
-	| text |self skip.
+	| text |
+	
 	text := 'This is just a test'.
 
 	editorPresenter setModel: note.
