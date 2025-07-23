@@ -49,7 +49,7 @@ NTSpNoteTakerMainUI class >> buildNTContextualGroupWith: presenterInstance [
 			                (NTSpImportFolderCommand forSpec context:
 					                 presenterInstance);
 		                yourself.
-	GitEnable ifTrue: [
+	self GitEnable ifTrue: [
 			commandGroup register:
 				(NTSpGitCommand forSpec context: presenterInstance) ].
 	^ commandGroup
