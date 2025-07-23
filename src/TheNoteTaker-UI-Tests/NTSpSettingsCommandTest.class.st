@@ -16,9 +16,7 @@ NTSpSettingsCommandTest >> setUp [
 { #category : 'tests' }
 NTSpSettingsCommandTest >> testOpenTNTSettings [
 
-	self skip.
-	SpWindowForceOpenNonModal during: [
-		command execute ].
+	SpWindowForceOpenNonModal during: [ command execute ].
 
 	self assert: app windows size equals: 1
 ]
