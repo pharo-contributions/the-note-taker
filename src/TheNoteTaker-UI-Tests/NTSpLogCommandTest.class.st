@@ -1,9 +1,6 @@
 Class {
 	#name : 'NTSpLogCommandTest',
 	#superclass : 'NTSpCommandTest',
-	#instVars : [
-		'logCommand'
-	],
 	#category : 'TheNoteTaker-UI-Tests',
 	#package : 'TheNoteTaker-UI-Tests'
 }
@@ -13,18 +10,16 @@ NTSpLogCommandTest >> setUp [
 
 	super setUp.
 
-	logCommand := NTSpLogCommand new context: indexPresenter
+	command := NTSpLogCommand new context: indexPresenter
 ]
 
 { #category : 'tests' }
 NTSpLogCommandTest >> testCreateFileLogWhenDontExist [
 
 	| logReference |
-	
 	logReference := memoryFS workingDirectory / 'TheNoteTaker.log'.
-	
-	SpWindowForceOpenNonModal during: [
-		logCommand execute].
+
+	SpWindowForceOpenNonModal during: [ command execute ].
 	self currentWorld doOneCycle.
 
 	self assert: app windows size equals: 1.
@@ -36,7 +31,6 @@ NTSpLogCommandTest >> testCreateFileLogWhenDontExist [
 NTSpLogCommandTest >> testOpenFileLog [
 
 	| logReference contents |
-
 	logReference := memoryFS workingDirectory / 'TheNoteTaker.log'.
 	logReference writeStreamDo: [ :stream |
 		stream nextPutAll: 'Log Test' ].
@@ -45,7 +39,7 @@ NTSpLogCommandTest >> testOpenFileLog [
 	SpWindowSimulateOpenModal
 		value: [ :aDialogPresenter |
 		contents := aDialogPresenter presenter text ]
-		during: [ logCommand execute ].
+		during: [ command execute ].
 
 	self assert: contents equals: logReference contents
 ]
