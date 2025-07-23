@@ -367,3 +367,26 @@ NTNoteObjectTest >> testSaveNoteLoadedWithoutMetadata [
 
 	self assert: note fileReference contents equals: finalContents
 ]
+
+{ #category : 'tests - saving' }
+NTNoteObjectTest >> testSaveNoteWithLessContents [
+
+	| note modificationDate metadata finalContents |
+	note := NTNoteObject named: 'Test' contents: 'Ceci est un test'.
+	modificationDate := note modificationDate.
+	note folderReference: memoryFS.
+	note save.
+	
+	note contents: 'Ceci'.
+	note save.
+
+	self denyEmpty: note fileReference contents.
+
+	metadata := self
+		            generateMetaDataWithCreationDate: note creationDate
+		            modificationDate: note modificationDate.
+	finalContents := metadata , String crlf , String crlf
+	                 , 'Ceci'.
+
+	self assert: note fileReference contents equals: finalContents
+]
