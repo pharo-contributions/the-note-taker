@@ -78,16 +78,6 @@ NTSpImportFolderCommand >> processFolder: aFileReference [
 ]
 
 { #category : 'executing' }
-NTSpImportFolderCommand >> processSelections: selections [
-
-	selections isEmptyOrNil
-		ifTrue: [ ^ self ].
-	selections
-		select: [ : selection | self isValidNoteName: selection asFileReference contents ]
-		thenDo: [ : selection | self addNoteFromFileReference: selection asFileReference ]
-]
-
-{ #category : 'executing' }
 NTSpImportFolderCommand >> validNoteExtensions [
 	"Answer a <Collection> of <String> each one specifying a valid file extension for a note"
 

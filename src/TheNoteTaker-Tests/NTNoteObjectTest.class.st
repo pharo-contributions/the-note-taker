@@ -39,32 +39,16 @@ NTNoteObjectTest >> generateMetaDataTagsCollectionLine: aTagCollection [
 
 { #category : 'accessing' }
 NTNoteObjectTest >> generateMetaDataWithCreationDate: creationDate modificationDate: modificationDate [
-	"| meta |
-	meta := MicMetaDataBlock new.
-	meta body: Dictionary new.
-	meta
-		atKey: 'creationDate' put: creationDate asString;
-		atKey: 'lastModificationDate' put: modificationDate asString.
-
-	^ (MicTextualMicrodownExporter new visit: meta) contents"
 
 	^ '{' , String cr
 	  , (self generateMetaDataModificationDateLine: modificationDate)
 	  , ',' , String cr
-	  , (self generateMetaDataCreationDateLine: creationDate)
-	  , String cr , '}'
+	  , (self generateMetaDataCreationDateLine: creationDate) , String cr
+	  , '}'
 ]
 
 { #category : 'accessing' }
 NTNoteObjectTest >> generateMetaDataWithCreationDate: creationDate modificationDate: modificationDate tags: aTagCollection [
-	"| meta |
-	meta := MicMetaDataBlock new.
-	meta body: Dictionary new.
-	meta
-		atKey: 'creationDate' put: creationDate asString;
-		atKey: 'lastModificationDate' put: modificationDate asString.
-
-	^ (MicTextualMicrodownExporter new visit: meta) contents"
 
 	^ '{' , String cr
 	  , (self generateMetaDataModificationDateLine: modificationDate)
