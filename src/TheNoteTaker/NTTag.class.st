@@ -52,7 +52,7 @@ NTTag >> initialize [
 
 	super initialize.
 	self tagId: UUID new asString36.
-	self notes: OrderedCollection new.
+	self notes: Set new
 ]
 
 { #category : 'accessing' }
