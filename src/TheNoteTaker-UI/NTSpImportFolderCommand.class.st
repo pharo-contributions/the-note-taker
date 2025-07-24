@@ -71,7 +71,7 @@ NTSpImportFolderCommand >> processFolder: aFileReference [
 	aFileReference allFiles
 		select: [ :fileRef |
 				(self validNoteExtensions includes: fileRef extension asLowercase)
-					ifTrue: [ self isValidNoteName: fileRef contents ]
+					ifTrue: [ "self isValidNoteName: fileRef contents"true ]
 					ifFalse: [ false ] ]
 		thenDo: [ :fileRef | self addNoteFromFileReference: fileRef ]
 	"this test should be grouped somewhere else!"
