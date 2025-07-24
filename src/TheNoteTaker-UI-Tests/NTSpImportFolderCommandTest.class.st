@@ -19,7 +19,7 @@ NTSpImportFolderCommandTest >> testImportFolder [
 	| folderReference fileReference1 fileReference2 fileReference3 |
 	self assert: indexPresenter items size equals: 3.
 
-	folderReference := FileLocator workingDirectory / 'note'.
+	folderReference := memoryFS / 'folder' / 'note'.
 	folderReference ensureCreateDirectory.
 
 	fileReference1 := folderReference / 'aFileReference1.md'.
@@ -34,6 +34,7 @@ NTSpImportFolderCommandTest >> testImportFolder [
 	SpWindowSimulateOpenModal
 		value: [ :aDialogPresenter |
 				aDialogPresenter presenter
+					updateWidgetWithFileReference: memoryFS / 'folder';
 					selectFiles: (OrderedCollection new
 							 add: folderReference;
 							 yourself);
@@ -41,6 +42,4 @@ NTSpImportFolderCommandTest >> testImportFolder [
 		during: [ command execute ].
 
 	self assert: indexPresenter items size equals: 6.
-
-	folderReference deleteAll
 ]
