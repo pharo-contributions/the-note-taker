@@ -33,7 +33,7 @@ NTSpSettingsCommand >> asSpecCommand [
 { #category : 'converting' }
 NTSpSettingsCommand >> execute [
 
-	self application registerWindow: (SettingBrowser new
+	"self application registerWindow:" (SettingBrowser new
 			 rootNodes:
 				 (SettingBrowser currentTree nodeNamed: #tnt) allChildren;
 			 open)
