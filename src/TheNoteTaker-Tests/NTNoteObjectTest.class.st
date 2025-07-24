@@ -22,17 +22,11 @@ NTNoteObjectTest >> generateMetaDataModificationDateLine: modificationDate [
 ]
 
 { #category : 'accessing' }
-NTNoteObjectTest >> generateMetaDataTagLine: aTag [
-
-	^ '"name" : "' , aTag tagName , '"'
-]
-
-{ #category : 'accessing' }
 NTNoteObjectTest >> generateMetaDataTagsCollectionLine: aTagCollection [
 
 	| stream |
 	stream := WriteStream with: '"tags" : "'.
-	stream nextPutAll: ((aTagCollection collect: [ :each | each tagName ]) asArray joinUsing:','). 
+	stream nextPutAll: (((aTagCollection collect: [ :each | each tagName ]) asArray sorted: [ :a :b | a < b ]) joinUsing:','). 
 	stream nextPutAll: '"'.
 	^ stream contents
 ]
