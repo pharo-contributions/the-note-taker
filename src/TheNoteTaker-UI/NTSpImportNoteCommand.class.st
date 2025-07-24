@@ -48,21 +48,11 @@ NTSpImportNoteCommand >> execute [
 	self context items: self noteTakerContainer notes
 ]
 
-{ #category : 'testing' }
-NTSpImportNoteCommand >> isValidNoteName: aString [ 
-	"Answer <true> if aString is a valid note title"
-	
-	^ self application isValidNoteName: aString
-]
-
 { #category : 'executing' }
 NTSpImportNoteCommand >> processSelections: selections [
- 
-	selections isNil 
-        ifTrue: [ ^ self ].
-	
-	self isValidNoteName: selections asFileReference contents.
-	self addNoteFromFileReference: selections asFileReference
+
+	selections ifNotNil: [
+		self addNoteFromFileReference: selections asFileReference ]
 ]
 
 { #category : 'executing' }

@@ -106,13 +106,6 @@ NTSpApplication >> initialize [
 	log := NTLog newWithFolder: settings noteLocation
 ]
 
-{ #category : 'testing' }
-NTSpApplication >> isValidNoteName: aString [ 
-	"Answer <true> if aString is a valid note title"
-	
-	^ self noteTakerContainer isValidNoteName: aString
-]
-
 { #category : 'accessing' }
 NTSpApplication >> log [
 

@@ -58,13 +58,6 @@ NTSpImportFolderCommand >> executeWithDefaultFolder [
 	self context items: self noteTakerContainer notes
 ]
 
-{ #category : 'testing' }
-NTSpImportFolderCommand >> isValidNoteName: aString [ 
-	"Answer <true> if aString is a valid note title"
-	
-	^ self application isValidNoteName: aString
-]
-
 { #category : 'executing' }
 NTSpImportFolderCommand >> processFolder: aFileReference [
 
