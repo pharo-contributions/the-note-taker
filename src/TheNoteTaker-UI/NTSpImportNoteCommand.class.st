@@ -45,7 +45,7 @@ NTSpImportNoteCommand >> execute [
 		               extensions: self validNoteExtensions;
 		               yourself) openModal.
 	selections do: [ :each | self processSelections: each ].
-	self context items: self noteTakerContainer notes
+	self context updatePresenter
 ]
 
 { #category : 'executing' }

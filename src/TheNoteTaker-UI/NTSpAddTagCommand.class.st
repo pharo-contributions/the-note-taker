@@ -38,14 +38,13 @@ NTSpAddTagCommand >> execute [
 		allowTagCreation;
 		title: 'tag name';
 		items:
-			(self noteTakerContainer tags asArray collect: [ :each |
+			(self noteTakerContainer tags asOrderedCollection collect: [ :each |
 					 each tagName ]);
 		display: #asString;
 		onAccept: [ :dialog |
-				| selectedTags |
-				selectedTags := dialog presenter selectedItems collect: [ :each |
-						                self noteTakerContainer tagNamed: each ].
-				selectedTags do: [ :tag |
+				dialog presenter selectedItems do: [ :tagName |
+							| tag |
+							tag := self noteTakerContainer tagNamed: tagName.
 							self selectedNotes do: [ :note |
 										tag addNote: note.
 										note save.

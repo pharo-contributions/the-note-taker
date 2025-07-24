@@ -43,10 +43,8 @@ NTSpRemoveTagCommand >> execute [
 		items: (tagList asArray collect: [ :each | each tagName ]);
 		display: #asString;
 		onAccept: [ :dialog |
-				| selectedTags |
-				selectedTags := dialog presenter selectedItems collect: [ :each |
-						                self noteTakerContainer tagNamed: each ].
-				selectedTags do: [ :tag |
+				dialog presenter selectedItems do: [ :tagName | |tag|
+					tag := self noteTakerContainer tagNamed: tagName.
 							self selectedNotes do: [ :note |
 										note removeTag: tag.
 										note save.

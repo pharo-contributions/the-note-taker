@@ -41,21 +41,17 @@ NTSpImportFolderCommand >> execute [
 
 	| selections |
 	selections := StOpenDirectoryPresenter new
-		          extent: 800 @ 800;
-		          openModal.
+		              extent: 800 @ 800;
+		              openModal.
 	selections ifNil: [ ^ self ].
-	selections do: [ :each | self processFolder: each ].
-	self context items: self noteTakerContainer notes
+	selections do: [ :each | self processFolder: each ]
 ]
 
 { #category : 'executing' }
-NTSpImportFolderCommand >> executeWithDefaultFolder [
+NTSpImportFolderCommand >> executeWithFolder: aFileReference [
 
-	| folder |
-	folder := self application settings noteLocation.
-	folder exists ifFalse: [ ^ self ].
-	self processFolder: folder.
-	self context items: self noteTakerContainer notes
+	aFileReference exists ifFalse: [ ^ self ].
+	self processFolder: aFileReference
 ]
 
 { #category : 'executing' }
@@ -63,11 +59,11 @@ NTSpImportFolderCommand >> processFolder: aFileReference [
 
 	aFileReference allFiles
 		select: [ :fileRef |
-				(self validNoteExtensions includes: fileRef extension asLowercase)
-					ifTrue: [ "self isValidNoteName: fileRef contents"true ]
-					ifFalse: [ false ] ]
-		thenDo: [ :fileRef | self addNoteFromFileReference: fileRef ]
-	"this test should be grouped somewhere else!"
+			self validNoteExtensions includes: fileRef extension asLowercase ]
+		thenDo: [ :fileRef | "this test should be grouped somewhere else!"
+			self addNoteFromFileReference: fileRef ].
+	
+	self context updatePresenter
 ]
 
 { #category : 'executing' }

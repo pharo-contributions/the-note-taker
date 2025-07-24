@@ -48,8 +48,9 @@ NTSpApplication class >> default [
 ]
 
 { #category : 'private' }
-NTSpApplication class >> default: aPharoLauncherApplication [
-	Default := aPharoLauncherApplication
+NTSpApplication class >> default: aNTSpApplication [
+
+	Default := aNTSpApplication
 ]
 
 { #category : 'private' }
