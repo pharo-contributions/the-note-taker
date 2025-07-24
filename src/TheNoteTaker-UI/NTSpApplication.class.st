@@ -98,6 +98,19 @@ NTSpApplication >> applicationTitle [
 	^ self class applicationTitle 
 ]
 
+{ #category : 'running' }
+NTSpApplication >> exportSettings [
+
+	| writeStream stonSettings |
+	
+	writeStream := (self settings noteLocation / 'TNTSettings.config') writeStream.
+	
+	stonSettings := SettingsStonWriter new stream: writeStream.
+	stonSettings addSettings: (StoredSettingsFactory new fromSettingNodes: (SettingBrowser currentTree nodeNamed: #tnt) allChildren).
+	stonSettings store.
+	writeStream flush.
+]
+
 { #category : 'initialization' }
 NTSpApplication >> initialize [
 
@@ -168,4 +181,14 @@ NTSpApplication >> startFullScreen [
 	" Private - Open the main application window in full screen, intended for the release version "
 
 	(NTSpNoteTakerMainUI newApplication: self) asWorldWindow open
+]
+
+{ #category : 'windows' }
+NTSpApplication >> windowClosed: aWindowPresenter [
+	
+	super windowClosed: aWindowPresenter.
+
+	self windows ifEmpty: [ self exportSettings ].
+	
+	
 ]
