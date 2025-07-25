@@ -204,6 +204,13 @@ NTSpNoteIndexPresenter >> openTagsSearcher [
 		openModalWithParent: self window
 ]
 
+{ #category : 'layout' }
+NTSpNoteIndexPresenter >> removeNotes: aNoteCollection [
+
+	self model notes removeAll: aNoteCollection.
+	self updatePresenter
+]
+
 { #category : 'accessing' }
 NTSpNoteIndexPresenter >> searchBar [
 

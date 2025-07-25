@@ -49,6 +49,5 @@ NTSpRemoveNoteCommand >> execute [
 					note fileReference ensureDelete.
 					self context owner statusBar pushMessage:
 						(self application log remove: note) ] ].
-	self noteTakerContainer removeNotes: self selectedNotes.
-	self context items: self noteTakerContainer notes
+	self context removeNotes: self selectedNotes.
 ]
