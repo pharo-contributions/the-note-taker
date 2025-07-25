@@ -33,6 +33,12 @@ Class {
 }
 
 { #category : 'adding - notes' }
+NTContainer >> addNote: aNTNoteObject [
+
+	^ self notes add: aNTNoteObject
+]
+
+{ #category : 'adding - notes' }
 NTContainer >> addNoteFromFileReference: aFileReference [
 	"Add a new note with title aString to the receiver's notes. Answer the receiver"
 

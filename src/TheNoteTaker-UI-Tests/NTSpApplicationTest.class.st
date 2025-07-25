@@ -6,17 +6,6 @@ Class {
 }
 
 { #category : 'tests' }
-NTSpApplicationTest >> testAddNoteByName [
-
-	self assertEmpty: noteContainer notes.
-
-	app addNoteNamed: 'test'.
-
-	self assert: noteContainer notes size equals: 1.
-	self assert: noteContainer notes first title equals: 'test'
-]
-
-{ #category : 'tests' }
 NTSpApplicationTest >> testSearchNoteByName [
 
 	| note1 note3 |

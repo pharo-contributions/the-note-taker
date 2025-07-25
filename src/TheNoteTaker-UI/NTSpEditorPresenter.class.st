@@ -170,7 +170,6 @@ NTSpEditorPresenter >> newEmptyNote [
 
 	| nt |
 	nt := NTNoteObject new.
-	nt folderReference: self application settings noteLocation.
 	self setModel: nt.
 
 	self emptyInputText
@@ -195,6 +194,7 @@ NTSpEditorPresenter >> renderedText [
 { #category : 'actions' }
 NTSpEditorPresenter >> saveFile [
 
+	self model exists ifFalse: [ self owner addNote: self model ].
 	self model save.
 	self owner statusBar pushMessage: (self application log save: model)
 ]

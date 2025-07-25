@@ -46,6 +46,13 @@ NTSpNoteIndexPresenter class >> buildNoteTakerOperationsGroupWith: presenterInst
 		  yourself
 ]
 
+{ #category : 'layout' }
+NTSpNoteIndexPresenter >> addNote: aNTNoteObject [
+
+	self model addNote: aNTNoteObject.
+	self updatePresenter
+]
+
 { #category : 'initialization' }
 NTSpNoteIndexPresenter >> connectPresenters [
 

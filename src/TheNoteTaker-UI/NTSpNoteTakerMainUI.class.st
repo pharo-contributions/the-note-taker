@@ -70,6 +70,12 @@ NTSpNoteTakerMainUI class >> settingsOn: aBuilder [
 When disabled, hide git command button. '
 ]
 
+{ #category : 'initialization' }
+NTSpNoteTakerMainUI >> addNote: aNTNoteObject [
+
+	self notesIndexPresenter addNote: aNTNoteObject
+]
+
 { #category : 'accessing' }
 NTSpNoteTakerMainUI >> applicationTitle [
 

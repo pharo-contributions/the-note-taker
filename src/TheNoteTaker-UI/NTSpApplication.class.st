@@ -86,13 +86,6 @@ NTSpApplication class >> openIt [
 	self new run
 ]
 
-{ #category : 'testing' }
-NTSpApplication >> addNoteNamed: aString [ 
-	"Add a new empty note with title aString to the receiver's notes. Answer the receiver"
-	
-	^ self noteTakerContainer addNoteNamed: aString trimBoth
-]
-
 { #category : 'private' }
 NTSpApplication >> applicationTitle [ 
 
