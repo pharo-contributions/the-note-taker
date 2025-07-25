@@ -15,7 +15,7 @@ Class {
 NTLog class >> newWithFolder: aFileReference [
 
 	^ self new logFileReference:
-		aFileReference / 'TheNoteTaker.log'
+		aFileReference
 ]
 
 { #category : 'actions' }

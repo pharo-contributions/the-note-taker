@@ -133,7 +133,7 @@ NTSpApplication >> initialize [
 	settings := NTSettings.
 	currentFolder := settings noteLocation.
 	settingPersistence := SystemSettingsPersistence new fileReference:
-		                      self configFileLocation.
+		                      self configFileLocation.self halt.
 	log := NTLog newWithFolder: currentFolder
 ]
 
