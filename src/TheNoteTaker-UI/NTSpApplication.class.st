@@ -15,7 +15,8 @@ Class {
 		'noteTakerContainer',
 		'log',
 		'settings',
-		'noteTakerMain'
+		'noteTakerMain',
+		'settingPersistence'
 	],
 	#classVars : [
 		'Default',
@@ -99,16 +100,23 @@ NTSpApplication >> applicationTitle [
 ]
 
 { #category : 'running' }
+NTSpApplication >> configFileLocation [
+	
+	^ (self settings noteLocation / 'TNTSettings.config')
+	
+]
+
+{ #category : 'running' }
 NTSpApplication >> exportSettings [
 
-	| writeStream stonSettings |
+	settingPersistence storeSettingNodes: (SettingBrowser currentTree nodeNamed: #tnt) allChildren.
+]
+
+{ #category : 'running' }
+NTSpApplication >> importSettings [
+
+	settingPersistence updateSettingNodes: (SettingBrowser currentTree nodeNamed: #tnt) allChildren.
 	
-	writeStream := (self settings noteLocation / 'TNTSettings.config') writeStream.
-	
-	stonSettings := SettingsStonWriter new stream: writeStream.
-	stonSettings addSettings: (StoredSettingsFactory new fromSettingNodes: (SettingBrowser currentTree nodeNamed: #tnt) allChildren).
-	stonSettings store.
-	writeStream flush.
 ]
 
 { #category : 'initialization' }
@@ -117,6 +125,7 @@ NTSpApplication >> initialize [
 	super initialize.
 	noteTakerContainer := NTContainer new.
 	settings := NTSettings.
+	settingPersistence := SystemSettingsPersistence new fileReference: self configFileLocation.
 	log := NTLog newWithFolder: settings noteLocation
 ]
 
@@ -172,7 +181,8 @@ NTSpApplication >> settings [
 
 { #category : 'running' }
 NTSpApplication >> start [
-
+	
+	self importSettings.
 	noteTakerMain := (NTSpNoteTakerMainUI newApplication: self) open
 ]
 
