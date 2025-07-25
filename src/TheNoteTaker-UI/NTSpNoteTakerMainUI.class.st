@@ -53,6 +53,7 @@ NTSpNoteTakerMainUI class >> buildNTContextualGroupWith: presenterInstance [
 			commandGroup register:
 				(NTSpGitCommand forSpec context: presenterInstance) ].
 	^ commandGroup
+		  register: (NTSpOpenFolderCommand forSpec context: presenterInstance);
 		  register: (NTSpLogCommand forSpec context: presenterInstance);
 		  register: (NTSpSettingsCommand forSpec context: presenterInstance)
 ]

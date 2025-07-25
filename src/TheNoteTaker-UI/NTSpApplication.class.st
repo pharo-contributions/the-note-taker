@@ -156,6 +156,14 @@ NTSpApplication >> noteTakerContainer [
 ]
 
 { #category : 'running' }
+NTSpApplication >> reset [
+
+	super reset.
+	noteTakerContainer := NTContainer new.
+	self start
+]
+
+{ #category : 'running' }
 NTSpApplication >> settings [
 
 	^ settings
