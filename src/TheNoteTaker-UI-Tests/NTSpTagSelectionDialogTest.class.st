@@ -20,6 +20,25 @@ NTSpTagSelectionDialogTest >> setUp [
 ]
 
 { #category : 'running' }
+NTSpTagSelectionDialogTest >> testAddTagNamed [
+
+| sizeNotesBeforeAddNote |
+	sizeNotesBeforeAddNote := noteContainer tags size.
+	presenter addTagNamed: 'test'.
+
+	self
+		assert: noteContainer tags size
+		equals: sizeNotesBeforeAddNote + 1
+]
+
+{ #category : 'running' }
+NTSpTagSelectionDialogTest >> testAddTagSelectIt [
+
+	presenter addTagNamed: 'test'.
+	self assert: (presenter selectedItems includes: 'test')
+]
+
+{ #category : 'running' }
 NTSpTagSelectionDialogTest >> testFilteredTagsFor [
 
 	self assert: (presenter filteredTagsFor: 'tag') size equals: 3.

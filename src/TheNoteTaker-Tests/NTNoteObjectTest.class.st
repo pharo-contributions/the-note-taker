@@ -61,6 +61,17 @@ NTNoteObjectTest >> setUp [
 ]
 
 { #category : 'tests - saving' }
+NTNoteObjectTest >> testAddSameTagTwice [
+
+	| tag note |
+	
+	tag := NTTag newNamed: 'tag'.
+	note := NTNoteObject new addTag: tag; addTag: tag.
+	
+	self assert: note tags size equals: 1
+]
+
+{ #category : 'tests - saving' }
 NTNoteObjectTest >> testAddTwoTagsWithSameName [
 
 	| tag1 tag2 note |
