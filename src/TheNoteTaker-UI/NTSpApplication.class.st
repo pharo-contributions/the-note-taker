@@ -15,7 +15,6 @@ Class {
 		'noteTakerContainer',
 		'log',
 		'settings',
-		'noteTakerMain',
 		'settingPersistence'
 	],
 	#classVars : [
@@ -134,36 +133,10 @@ NTSpApplication >> log: aNTLog [
 	log := aNTLog
 ]
 
-{ #category : 'accessig' }
-NTSpApplication >> noteInformation: aNtNodeModel [
-
-	self shouldBeImplemented.
-	^ aNtNodeModel 
-]
-
-{ #category : 'callbacks' }
-NTSpApplication >> noteNamed: aString [ 
-
-	^ self noteTakerContainer noteNamed: aString
-]
-
 { #category : 'accessing' }
 NTSpApplication >> noteTakerContainer [
 
 	^ noteTakerContainer
-]
-
-{ #category : 'running' }
-NTSpApplication >> noteTakerMain [
-
-	^ noteTakerMain
-]
-
-{ #category : 'accessing' }
-NTSpApplication >> notes [
-	"Answer the application's <Collection> of <NTNoteObject>"
-
-	^ self noteTakerContainer notes
 ]
 
 { #category : 'running' }
@@ -174,9 +147,9 @@ NTSpApplication >> settings [
 
 { #category : 'running' }
 NTSpApplication >> start [
-	
+
 	self importSettings.
-	noteTakerMain := (NTSpNoteTakerMainUI newApplication: self) open
+	(NTSpNoteTakerMainUI newApplication: self) open
 ]
 
 { #category : 'running' }
