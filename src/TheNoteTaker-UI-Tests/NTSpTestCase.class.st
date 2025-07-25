@@ -25,12 +25,11 @@ NTSpTestCase >> setUp [
 	super setUp.
 
 	settings := NTSettings.
-	previousNotesLocation := settings noteLocation.
 
 	memoryFS := FileSystem memory.
-	settings noteLocation: memoryFS workingDirectory.
 
 	app := NTSpApplication new.
+	app currentFolder: memoryFS workingDirectory.
 	noteContainer := app noteTakerContainer.
 	ressources := NTUITestResource new
 ]
@@ -38,8 +37,7 @@ NTSpTestCase >> setUp [
 { #category : 'nil' }
 NTSpTestCase >> tearDown [
 
-	settings noteLocation: previousNotesLocation.
-	app ifNotNil: [ app closeAllWindows].
+	app ifNotNil: [ app closeAllWindows ].
 
 	super tearDown
 ]

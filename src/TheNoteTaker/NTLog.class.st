@@ -40,9 +40,7 @@ NTLog >> logFileReference [
 { #category : 'accessing' }
 NTLog >> logFileReference: aFileReference [
 
-	logFileReference := aFileReference 
-
-	
+	logFileReference := aFileReference / 'TheNoteTaker.log'
 ]
 
 { #category : 'actions' }

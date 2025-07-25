@@ -61,7 +61,7 @@ NTSpNoteIndexPresenter >> connectPresenters [
 		whenSubmitDo: [ :newNoteName |
 				| newNote |
 				newNote := self model addNoteNamed: newNoteName.
-				newNote folderReference: self application settings noteLocation.
+				newNote folderReference: self application currentFolder.
 				self updatePresenter.
 				self emptySearchBar.
 				self selectNote: newNote ].

@@ -15,6 +15,7 @@ Class {
 		'noteTakerContainer',
 		'log',
 		'settings',
+		'currentFolder',
 		'settingPersistence'
 	],
 	#classVars : [
@@ -93,9 +94,22 @@ NTSpApplication >> applicationTitle [
 
 { #category : 'running' }
 NTSpApplication >> configFileLocation [
-	
-	^ (self settings noteLocation / 'TNTSettings.config')
-	
+
+	^ currentFolder / 'TNTSettings.config'
+]
+
+{ #category : 'accessing' }
+NTSpApplication >> currentFolder [
+
+	^ currentFolder
+]
+
+{ #category : 'accessing' }
+NTSpApplication >> currentFolder: aFileReference [
+
+	currentFolder := aFileReference.
+	log logFileReference: aFileReference.
+	settingPersistence fileReference: self configFileLocation.
 ]
 
 { #category : 'running' }
@@ -117,8 +131,10 @@ NTSpApplication >> initialize [
 	super initialize.
 	noteTakerContainer := NTContainer new.
 	settings := NTSettings.
-	settingPersistence := SystemSettingsPersistence new fileReference: self configFileLocation.
-	log := NTLog newWithFolder: settings noteLocation
+	currentFolder := settings noteLocation.
+	settingPersistence := SystemSettingsPersistence new fileReference:
+		                      self configFileLocation.
+	log := NTLog newWithFolder: currentFolder
 ]
 
 { #category : 'accessing' }

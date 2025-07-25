@@ -34,7 +34,7 @@ NTSpLogCommand >> asSpecCommand [
 NTSpLogCommand >> execute [
 
 	| aFileReference |
-	aFileReference := self application settings noteLocation
+	aFileReference := self application currentFolder
 	                  / 'TheNoteTaker.log'.
 	aFileReference exists ifFalse: [ aFileReference ensureCreateFile ].
 
