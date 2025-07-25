@@ -35,11 +35,11 @@ NTSpTestCase >> setUp [
 	ressources := NTUITestResource new
 ]
 
-{ #category : 'running' }
+{ #category : 'nil' }
 NTSpTestCase >> tearDown [
 
 	settings noteLocation: previousNotesLocation.
-	app closeAllWindows.
+	app ifNotNil: [ app closeAllWindows].
 
 	super tearDown
 ]

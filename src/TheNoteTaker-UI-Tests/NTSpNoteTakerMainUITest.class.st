@@ -28,7 +28,8 @@ NTSpNoteTakerMainUITest >> setUp [
 { #category : 'running' }
 NTSpNoteTakerMainUITest >> tearDown [
 
-	presenter delete
+	presenter ifNotNil: [ presenter delete ].
+	super tearDown 
 ]
 
 { #category : 'tests' }

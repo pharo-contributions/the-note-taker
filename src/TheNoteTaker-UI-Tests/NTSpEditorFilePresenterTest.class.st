@@ -35,7 +35,7 @@ NTSpEditorFilePresenterTest >> setUp [
 NTSpEditorFilePresenterTest >> tearDown [
 
 	fileReference ensureDelete.
-	editorPresenter delete.
+	editorPresenter ifNotNil: [editorPresenter delete].
 	super tearDown
 ]
 

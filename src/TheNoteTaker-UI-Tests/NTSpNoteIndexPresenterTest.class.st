@@ -23,9 +23,7 @@ NTSpNoteIndexPresenterTest >> setUp [
 { #category : 'tests' }
 NTSpNoteIndexPresenterTest >> tearDown [
 
-	settings noteLocation: previousNotesLocation.
-
-	indexPresenter delete.
+	indexPresenter ifNotNil: [indexPresenter delete].
 
 	super tearDown
 ]
