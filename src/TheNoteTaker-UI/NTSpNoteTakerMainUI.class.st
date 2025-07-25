@@ -61,11 +61,9 @@ NTSpNoteTakerMainUI class >> buildNTContextualGroupWith: presenterInstance [
 NTSpNoteTakerMainUI class >> settingsOn: aBuilder [
 
 	<systemsettings>
-	<pharoLauncherSettings>
 	(aBuilder setting: #GitEnable)
 		parent: #tnt;
 		target: self;
-		default: false;
 		order: 60;
 		label: 'enable git command';
 		description: 'When enabled, show git command button.

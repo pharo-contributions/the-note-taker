@@ -30,7 +30,7 @@ NTSpSettingsCommand >> asSpecCommand [
 		  yourself
 ]
 
-{ #category : 'converting' }
+{ #category : 'executing' }
 NTSpSettingsCommand >> execute [
 
 	"self application registerWindow:" (SettingBrowser new

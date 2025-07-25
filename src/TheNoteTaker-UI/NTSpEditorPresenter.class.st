@@ -29,40 +29,29 @@ Class {
 { #category : 'as yet unclassified' }
 NTSpEditorPresenter class >> AutoSave [
 
-	^ AutoSave
+	^ AutoSave ifNil: [AutoSave := true] 
+	
 	
 ]
 
 { #category : 'as yet unclassified' }
 NTSpEditorPresenter class >> AutoSave: aBoolean [
 
-	AutoSave := aBoolean 
+	AutoSave := aBoolean
 ]
 
 { #category : 'settings' }
 NTSpEditorPresenter class >> settingsOn: aBuilder [
 
 	<systemsettings>
-	<pharoLauncherSettings>
 	(aBuilder setting: #AutoSave)
 		parent: #tnt;
 		target: self;
-		default: true;
 		order: 60;
 		label: 'enable automatic save';
 		description:
 			'When enabled, the application save note after a space or enter character.
 When disabled, you need to manually save your note. '
-
-	"(aBuilder setting: #autoSave)
-		parent: #tnt;
-		target: self;
-		default: true;
-		order: 60;
-		label: 'enable automatic save';
-		description:
-			'When enabled, the application save note after a space or enter character.
-When disabled, you need to manually save your note. '"
 ]
 
 { #category : 'actions' }
@@ -119,7 +108,7 @@ NTSpEditorPresenter >> initializePresenters [
 		Character space asKeyCombination | Character cr asKeyCombination
 		toAction: [ :target :morph :event |
 				isRenderedEnable ifTrue: [ self renderDocument ].
-				AutoSave ifTrue: [ self saveFile ].
+				self class AutoSave ifTrue: [ self saveFile ].
 				self updateTitle.
 				"self owner notesIndexPresenter modelChanged."
 				event wasHandled: false ].
