@@ -21,6 +21,15 @@ NTSpRemoveTagCommand class >> defaultName [
 	^ 'Remove Tag'
 ]
 
+{ #category : 'converting' }
+NTSpRemoveTagCommand >> asSpecCommand [
+
+	^ super asSpecCommand
+		  iconName: #delete;
+		  shortcutKey: $D meta;
+		  yourself
+]
+
 { #category : 'executing' }
 NTSpRemoveTagCommand >> execute [
 	"Request a title to create a new note"
@@ -34,14 +43,13 @@ NTSpRemoveTagCommand >> execute [
 		items: (tagList asArray collect: [ :each | each tagName ]);
 		display: #asString;
 		onAccept: [ :dialog |
-				| selectedTags |
-				selectedTags := dialog presenter selectedItems collect: [ :each |
-						                self noteTakerContainer tagNamed: each ].
-				selectedTags do: [ :tag |
+				dialog presenter selectedItems do: [ :tagName | |tag|
+					tag := self noteTakerContainer tagNamed: tagName.
 							self selectedNotes do: [ :note |
 										note removeTag: tag.
 										note save.
-										self context owner statusBar pushMessage: (self application log remove: note tag: tag) ] ] ];
+										self context owner statusBar pushMessage:
+												(self application log remove: note tag: tag) ] ] ];
 		openModalWithParent: context window.
-	self context modelChanged
+	self context updatePresenter
 ]

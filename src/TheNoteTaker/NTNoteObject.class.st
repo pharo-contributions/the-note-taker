@@ -54,9 +54,11 @@ NTNoteObject class >> newFromFileReference: aFileReference [
 ]
 
 { #category : 'accessing - tags' }
-NTNoteObject >> addTag: aNTTag [ 
+NTNoteObject >> addTag: aNTTag [
 
-	self tags detect: [ :tag | tag tagName = aNTTag tagName ] ifNone: [ self tags add: aNTTag ]
+	self tags
+		detect: [ :tag | tag tagName = aNTTag tagName ]
+		ifNone: [ self tags add: aNTTag ]
 ]
 
 { #category : 'accessing' }
@@ -154,12 +156,7 @@ NTNoteObject >> generateMetaDataElements [
 	meta
 		atKey: 'creationDate' put: self creationDate asString;
 		atKey: 'lastModificationDate' put: self modificationDate asString.
-	self tags ifNotEmpty: [
-			meta
-				atKey: 'tags'
-				put:
-				((self tags collect: [ :each | each tagName ]) asArray joinUsing:
-					 ',') ].
+	self tags ifNotEmpty: [ meta atKey: 'tags' put: self tagsNameString ].
 
 	^ (MicTextualMicrodownExporter new visit: meta) contents
 ]
@@ -290,6 +287,18 @@ NTNoteObject >> tags [
 NTNoteObject >> tags: anObject [
 
 	tags := anObject
+]
+
+{ #category : 'accessing - tags' }
+NTNoteObject >> tagsNameString [
+	"Answer a <String> to be displayed"
+
+	| tagsNameList |
+	self tags ifEmpty: [ ^ '' ].
+
+	tagsNameList := self tags collect: [ :each | each tagName ].
+	^ (tagsNameList asOrderedCollection sorted: [ :a :b | a < b ])
+		  joinUsing: ','
 ]
 
 { #category : 'accessing' }

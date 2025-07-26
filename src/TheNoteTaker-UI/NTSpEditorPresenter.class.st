@@ -18,12 +18,41 @@ Class {
 		'worker'
 	],
 	#classVars : [
+		'AutoSave',
 		'isRenderedEnable'
 	],
 	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
 	#tag : 'Core'
 }
+
+{ #category : 'as yet unclassified' }
+NTSpEditorPresenter class >> AutoSave [
+
+	^ AutoSave ifNil: [AutoSave := true] 
+	
+	
+]
+
+{ #category : 'as yet unclassified' }
+NTSpEditorPresenter class >> AutoSave: aBoolean [
+
+	AutoSave := aBoolean
+]
+
+{ #category : 'settings' }
+NTSpEditorPresenter class >> settingsOn: aBuilder [
+
+	<systemsettings>
+	(aBuilder setting: #AutoSave)
+		parent: #tnt;
+		target: self;
+		order: 60;
+		label: 'enable automatic save';
+		description:
+			'When enabled, the application save note after a space or enter character.
+When disabled, you need to manually save your note. '
+]
 
 { #category : 'actions' }
 NTSpEditorPresenter >> defaultInputPort [
@@ -53,12 +82,6 @@ NTSpEditorPresenter >> emptyInputText [
 	"CLEAN button is pressed: erase both input and output text content"
 
 	self textInputText: ''.
-	self emptyRenderedText
-]
-
-{ #category : 'actions' }
-NTSpEditorPresenter >> emptyRenderedText [
-
 	renderedText text: ''
 ]
 
@@ -85,6 +108,7 @@ NTSpEditorPresenter >> initializePresenters [
 		Character space asKeyCombination | Character cr asKeyCombination
 		toAction: [ :target :morph :event |
 				isRenderedEnable ifTrue: [ self renderDocument ].
+				self class AutoSave ifTrue: [ self saveFile ].
 				self updateTitle.
 				"self owner notesIndexPresenter modelChanged."
 				event wasHandled: false ].
@@ -95,13 +119,7 @@ NTSpEditorPresenter >> initializePresenters [
 	textInput
 		whenTextChangedDo: [ model contents: textInput text asString ];
 		bindKeyCombination: $s meta toAction: [
-				self saveFile.
-				self owner statusBar pushMessage:
-						(self application log save: model) ]
-]
-
-{ #category : 'accessing' }
-NTSpEditorPresenter >> isRenderedButton [
+				self saveFile. ]
 ]
 
 { #category : 'actions' }
@@ -152,7 +170,6 @@ NTSpEditorPresenter >> newEmptyNote [
 
 	| nt |
 	nt := NTNoteObject new.
-	nt folderReference: self application settings noteLocation.
 	self setModel: nt.
 
 	self emptyInputText
@@ -177,7 +194,9 @@ NTSpEditorPresenter >> renderedText [
 { #category : 'actions' }
 NTSpEditorPresenter >> saveFile [
 
+	self model exists ifFalse: [ self owner addNote: self model ].
 	self model save.
+	self owner statusBar pushMessage: (self application log save: model)
 ]
 
 { #category : 'accessing' }

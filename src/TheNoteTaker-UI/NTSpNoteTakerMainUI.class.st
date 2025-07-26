@@ -12,10 +12,70 @@ Class {
 		'notesEditorPresenter',
 		'statusBar'
 	],
+	#classVars : [
+		'GitEnable'
+	],
 	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
 	#tag : 'Core'
 }
+
+{ #category : 'commands' }
+NTSpNoteTakerMainUI class >> GitEnable [
+
+	^ GitEnable ifNil: [GitEnable := false] 
+]
+
+{ #category : 'commands' }
+NTSpNoteTakerMainUI class >> GitEnable: aBoolean [
+
+	GitEnable := aBoolean
+]
+
+{ #category : 'nil' }
+NTSpNoteTakerMainUI class >> buildCommandsGroupWith: presenterInstance forRoot: rootCommandGroup [
+
+	rootCommandGroup register:
+		(self buildNTContextualGroupWith: presenterInstance)
+]
+
+{ #category : 'commands' }
+NTSpNoteTakerMainUI class >> buildNTContextualGroupWith: presenterInstance [
+
+	| commandGroup |
+	commandGroup := (CmCommandGroup named: 'Toolbar') asSpecGroup
+		                beRoot;
+		                register:
+			                (NTSpImportFolderCommand forSpec context:
+					                 presenterInstance);
+		                yourself.
+	self GitEnable ifTrue: [
+			commandGroup register:
+				(NTSpGitCommand forSpec context: presenterInstance) ].
+	^ commandGroup
+		  register: (NTSpOpenFolderCommand forSpec context: presenterInstance);
+		  register: (NTSpLogCommand forSpec context: presenterInstance);
+		  register: (NTSpSettingsCommand forSpec context: presenterInstance)
+]
+
+{ #category : 'commands' }
+NTSpNoteTakerMainUI class >> settingsOn: aBuilder [
+
+	<systemsettings>
+	(aBuilder setting: #GitEnable)
+		parent: #tnt;
+		target: self;
+		order: 60;
+		label: 'enable git command';
+		description: 'When enabled, show git command button.
+When disabled, hide git command button. '
+]
+
+{ #category : 'initialization' }
+NTSpNoteTakerMainUI >> addNote: aNTNoteObject [
+
+	self notesIndexPresenter addNote: aNTNoteObject
+]
 
 { #category : 'accessing' }
 NTSpNoteTakerMainUI >> applicationTitle [
@@ -26,22 +86,11 @@ NTSpNoteTakerMainUI >> applicationTitle [
 { #category : 'initialization' }
 NTSpNoteTakerMainUI >> connectPresenters [
 
-	notesIndexPresenter transmitTo: notesEditorPresenter transform: [ :aNotePresenter | aNotePresenter ifNotNil: [ aNotePresenter note ]].
-
-	notesToolbarPresenter searchBarPresenter
-		whenTextChangedDo: [
-			notesIndexPresenter items: notesToolbarPresenter filter ];
-		whenSubmitDo: [ :newNoteName |
-				| newNote |
-				newNote := self application addNoteNamed: newNoteName.
-				newNote folderReference: self application settings noteLocation.
-				notesToolbarPresenter emptySearchBar.
-				notesIndexPresenter notesTable unselectAll.
-				notesIndexPresenter selectNote: newNote.
-				notesEditorPresenter takeKeyboardFocus ].
-
-	notesToolbarPresenter tagsSearchButtonPresenter whenActivatedDo: [
-		notesIndexPresenter items: notesToolbarPresenter filter ]
+	notesIndexPresenter
+		transmitTo: notesEditorPresenter
+		transform: [ :aNotePresenter |
+		aNotePresenter ifNotNil: [ aNotePresenter note ] ]
+		postTransmission: [ notesEditorPresenter takeKeyboardFocus ]
 ]
 
 { #category : 'layout' }
@@ -80,14 +129,14 @@ NTSpNoteTakerMainUI >> initialize [
 { #category : 'initialization' }
 NTSpNoteTakerMainUI >> initializePresenters [
 
-	notesToolbarPresenter := self instantiate: NTSpToolBarPresenter.
-	notesToolbarPresenter setModel: self noteTakerContainer.
-	
-	notesIndexPresenter := self instantiate: NTSpNoteIndexPresenter2.
-	notesIndexPresenter model: self noteTakerContainer notes.
+	notesToolbarPresenter := self newToolbar fillWith:
+		                         self rootCommandsGroup / 'Toolbar'.
+
+	notesIndexPresenter := self instantiate: NTSpNoteIndexPresenter.
+	notesIndexPresenter model: self noteTakerContainer.
 	(NTSpImportFolderCommand new context: notesIndexPresenter)
-		executeWithDefaultFolder.
-		
+		executeWithFolder: self application currentFolder.
+
 	notesEditorPresenter := self instantiate: NTSpEditorPresenter.
 	statusBar := SpStatusBarPresenter new
 ]

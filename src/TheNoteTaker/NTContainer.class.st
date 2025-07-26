@@ -33,6 +33,12 @@ Class {
 }
 
 { #category : 'adding - notes' }
+NTContainer >> addNote: aNTNoteObject [
+
+	^ self notes add: aNTNoteObject
+]
+
+{ #category : 'adding - notes' }
 NTContainer >> addNoteFromFileReference: aFileReference [
 	"Add a new note with title aString to the receiver's notes. Answer the receiver"
 
@@ -80,17 +86,6 @@ NTContainer >> initialize [
 	super initialize.
 	self notes: OrderedCollection new.
 	self tags: OrderedCollection new
-]
-
-{ #category : 'testing' }
-NTContainer >> isValidNoteName: aString [ 
-	"Answer <true> if aString is a valid note title, i.e. 
-		Non-empty, and not already present"
-
-	(aString notNil and: [ aString notEmpty ])
-		ifTrue: [ ^ (self hasNoteNamed: aString trimBoth) not ].
-	self inform: 'Invalid note title'.
-	^ false
 ]
 
 { #category : 'accessing - notes' }

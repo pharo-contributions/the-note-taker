@@ -22,49 +22,27 @@ NTNoteObjectTest >> generateMetaDataModificationDateLine: modificationDate [
 ]
 
 { #category : 'accessing' }
-NTNoteObjectTest >> generateMetaDataTagLine: aTag [
-
-	^ '"name" : "' , aTag tagName , '"'
-]
-
-{ #category : 'accessing' }
 NTNoteObjectTest >> generateMetaDataTagsCollectionLine: aTagCollection [
 
 	| stream |
 	stream := WriteStream with: '"tags" : "'.
-	stream nextPutAll: ((aTagCollection collect: [ :each | each tagName ]) asArray joinUsing:','). 
+	stream nextPutAll: (((aTagCollection collect: [ :each | each tagName ]) asArray sorted: [ :a :b | a < b ]) joinUsing:','). 
 	stream nextPutAll: '"'.
 	^ stream contents
 ]
 
 { #category : 'accessing' }
 NTNoteObjectTest >> generateMetaDataWithCreationDate: creationDate modificationDate: modificationDate [
-	"| meta |
-	meta := MicMetaDataBlock new.
-	meta body: Dictionary new.
-	meta
-		atKey: 'creationDate' put: creationDate asString;
-		atKey: 'lastModificationDate' put: modificationDate asString.
-
-	^ (MicTextualMicrodownExporter new visit: meta) contents"
 
 	^ '{' , String cr
 	  , (self generateMetaDataModificationDateLine: modificationDate)
 	  , ',' , String cr
-	  , (self generateMetaDataCreationDateLine: creationDate)
-	  , String cr , '}'
+	  , (self generateMetaDataCreationDateLine: creationDate) , String cr
+	  , '}'
 ]
 
 { #category : 'accessing' }
 NTNoteObjectTest >> generateMetaDataWithCreationDate: creationDate modificationDate: modificationDate tags: aTagCollection [
-	"| meta |
-	meta := MicMetaDataBlock new.
-	meta body: Dictionary new.
-	meta
-		atKey: 'creationDate' put: creationDate asString;
-		atKey: 'lastModificationDate' put: modificationDate asString.
-
-	^ (MicTextualMicrodownExporter new visit: meta) contents"
 
 	^ '{' , String cr
 	  , (self generateMetaDataModificationDateLine: modificationDate)
@@ -80,6 +58,17 @@ NTNoteObjectTest >> setUp [
 	
 	super setUp.
 	memoryFS := FileSystem memory workingDirectory.
+]
+
+{ #category : 'tests - saving' }
+NTNoteObjectTest >> testAddSameTagTwice [
+
+	| tag note |
+	
+	tag := NTTag newNamed: 'tag'.
+	note := NTNoteObject new addTag: tag; addTag: tag.
+	
+	self assert: note tags size equals: 1
 ]
 
 { #category : 'tests - saving' }
@@ -380,6 +369,29 @@ NTNoteObjectTest >> testSaveNoteLoadedWithoutMetadata [
 		            modificationDate: note modificationDate.
 	finalContents := metadata , String crlf , String crlf
 	                 , 'This is just a new note'.
+
+	self assert: note fileReference contents equals: finalContents
+]
+
+{ #category : 'tests - saving' }
+NTNoteObjectTest >> testSaveNoteWithLessContents [
+
+	| note modificationDate metadata finalContents |
+	note := NTNoteObject named: 'Test' contents: 'Ceci est un test'.
+	modificationDate := note modificationDate.
+	note folderReference: memoryFS.
+	note save.
+	
+	note contents: 'Ceci'.
+	note save.
+
+	self denyEmpty: note fileReference contents.
+
+	metadata := self
+		            generateMetaDataWithCreationDate: note creationDate
+		            modificationDate: note modificationDate.
+	finalContents := metadata , String crlf , String crlf
+	                 , 'Ceci'.
 
 	self assert: note fileReference contents equals: finalContents
 ]

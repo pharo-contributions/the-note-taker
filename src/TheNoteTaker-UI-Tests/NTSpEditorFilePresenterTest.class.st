@@ -1,11 +1,10 @@
 Class {
 	#name : 'NTSpEditorFilePresenterTest',
-	#superclass : 'TestCase',
+	#superclass : 'NTSpTestCase',
 	#instVars : [
-		'memoryFS',
-		'presenter',
 		'note',
-		'fileReference'
+		'fileReference',
+		'editorPresenter'
 	],
 	#category : 'TheNoteTaker-UI-Tests',
 	#package : 'TheNoteTaker-UI-Tests'
@@ -22,12 +21,12 @@ NTSpEditorFilePresenterTest >> setUp [
 
 	| text |
 	super setUp.
-	memoryFS := FileSystem memory.
-	presenter := NTSpEditorPresenter new.
-	
+
 	text := 'This is just a test'.
 	fileReference := memoryFS / 'aFileReference.md'.
 	fileReference writeStreamDo: [ :stream | stream nextPutAll: text ].
+
+	editorPresenter := (NTSpNoteTakerMainUI newApplication: app) notesEditorPresenter.
 
 	note := NTNoteObject newFromFileReference: fileReference
 ]
@@ -36,28 +35,29 @@ NTSpEditorFilePresenterTest >> setUp [
 NTSpEditorFilePresenterTest >> tearDown [
 
 	fileReference ensureDelete.
+	editorPresenter ifNotNil: [editorPresenter delete].
 	super tearDown
 ]
 
 { #category : 'tests' }
 NTSpEditorFilePresenterTest >> testCleanAction [
 
-	presenter emptyInputText.
-	self assert: presenter textInputText equals: ''.
-	self assert: presenter renderedText equals: ''
+	editorPresenter emptyInputText.
+	self assert: editorPresenter textInputText equals: ''.
+	self assert: editorPresenter renderedText equals: ''
 ]
 
 { #category : 'tests' }
 NTSpEditorFilePresenterTest >> testGotCurrentFileWhenIsNotSpecify [
 
-	self assert: presenter model class equals: NTNoteObject
+	self assert: editorPresenter model class equals: NTNoteObject
 ]
 
 { #category : 'tests' }
 NTSpEditorFilePresenterTest >> testGotCurrentFileWhenIsSpecify [
 
-	presenter setModel: note.
-	self assert: presenter model class equals: NTNoteObject
+	editorPresenter setModel: note.
+	self assert: editorPresenter model class equals: NTNoteObject
 ]
 
 { #category : 'running' }
@@ -68,21 +68,22 @@ NTSpEditorFilePresenterTest >> testRenderedTextIsCorrectMicrodown [
 	text := 'This **is** just a __test__'.
 	micText := composer visit: (Microdown parse: text).
 
-	presenter setModel: note.
-	presenter textInputText: text.
+	editorPresenter setModel: note.
+	editorPresenter textInputText: text.
 
-	self assert: presenter renderedText equals: micText
+	self assert: editorPresenter renderedText equals: micText
 ]
 
 { #category : 'running' }
 NTSpEditorFilePresenterTest >> testSave [
 
 	| text |
+	
 	text := 'This is just a test'.
 
-	presenter setModel: note.
-	presenter textInputText: text.
-	presenter saveFile.
+	editorPresenter setModel: note.
+	editorPresenter textInputText: text.
+	editorPresenter saveFile.
 
 	self assert: note contents equals: text.
 	self assert: note exists.
@@ -92,7 +93,7 @@ NTSpEditorFilePresenterTest >> testSave [
 
 { #category : 'tests' }
 NTSpEditorFilePresenterTest >> testTextInputTextIsSpecify [
-	
-	presenter textInputText: 'test'.
-	self assert: presenter textInputText equals: 'test'
+
+	editorPresenter textInputText: 'test'.
+	self assert: editorPresenter textInputText equals: 'test'
 ]

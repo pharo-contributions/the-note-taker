@@ -6,7 +6,10 @@ Class {
 	#name : 'NTSpNoteIndexPresenter',
 	#superclass : 'SpPresenterWithModel',
 	#instVars : [
-		'notesTable'
+		'componentList',
+		'searchBar',
+		'tagsFilterButton',
+		'filteredTagsSelection'
 	],
 	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
@@ -32,52 +35,51 @@ NTSpNoteIndexPresenter class >> buildNTContextualGroupWith: presenterInstance [
 NTSpNoteIndexPresenter class >> buildNoteTakerOperationsGroupWith: presenterInstance [
 
 	^ (CmCommandGroup named: 'NoteTakerMenu') asSpecGroup
-		  register: ((NTSpImportNoteCommand
-				    forSpecWithIconNamed: #into
-				    shortcutKey: 'I' asShortcut) context: presenterInstance);
-		  register: ((NTSpRemoveNoteCommand
-				    forSpecWithIconNamed: #delete
-				    shortcutKey: 'D' asShortcut) context: presenterInstance);
-		  register: ((NTSpAddTagCommand
-				    forSpecWithIconNamed: #add
-				    shortcutKey: 'T' asShortcut) context: presenterInstance);
-		  register: ((NTSpRemoveTagCommand
-				    forSpecWithIconNamed: #delete
-				    shortcutKey: 'D' asShortcut) context: presenterInstance);
+		  register:
+			  (NTSpImportNoteCommand forSpec context: presenterInstance);
+		  register:
+			  (NTSpRemoveNoteCommand forSpec context: presenterInstance);
+		  register: (NTSpAddTagCommand forSpec context: presenterInstance);
+		  register:
+			  (NTSpRemoveTagCommand forSpec context: presenterInstance);
 		  beDisplayedAsGroup;
 		  yourself
 ]
 
-{ #category : 'initialization' }
-NTSpNoteIndexPresenter >> dateFormatter: aDateAndTime [
-	"Answers a string formatting object as time stamp for HTTP1.1 (RFC 1123).
-	Eg. Sun, 06 Nov 1994 08:49:37 GMT"
+{ #category : 'layout' }
+NTSpNoteIndexPresenter >> addNote: aNTNoteObject [
 
-	| utc |
-	utc := aDateAndTime asDateAndTime asUTC.
-	^ String streamContents: [ :stream |
-			  stream
-				  nextPutAll: utc dayOfWeekAbbreviation;
-				  nextPut: $,;
-				  space.
-			  stream nextPutAll:
-				  (utc dayOfMonth printStringLength: 2 padded: true).
-			  stream
-				  space;
-				  nextPutAll: utc monthAbbreviation;
-				  space.
-			  utc year printOn: stream.
-			  stream space.
-			  utc printHMSOn: stream.
-			  stream nextPutAll: ' GMT' ]
+	self model addNote: aNTNoteObject.
+	self updatePresenter
+]
+
+{ #category : 'initialization' }
+NTSpNoteIndexPresenter >> connectPresenters [
+
+	searchBar
+		whenTextChangedDo: [ self items: self filter ];
+		whenSubmitDo: [ :newNoteName |
+				| newNote |
+				newNote := self model addNoteNamed: newNoteName.
+				newNote folderReference: self application currentFolder.
+				self updatePresenter.
+				self emptySearchBar.
+				self selectNote: newNote ].
+
+	tagsFilterButton whenActivatedDo: [ self items: self filter ]
 ]
 
 { #category : 'layout' }
 NTSpNoteIndexPresenter >> defaultLayout [
 
-	^ SpBoxLayout newTopToBottom 
-		add: notesTable;
-		yourself.
+	^ SpBoxLayout newTopToBottom
+		  add: (SpBoxLayout newLeftToRight
+				   add: searchBar;
+				   add: tagsFilterButton expand: false;
+				   yourself)
+		  expand: false;
+		  add: componentList;
+		  yourself
 ]
 
 { #category : 'layout' }
@@ -86,105 +88,163 @@ NTSpNoteIndexPresenter >> defaultOutputPort [
 	^ SpDropListSelectionPort newPresenter: self
 ]
 
-{ #category : 'private' }
-NTSpNoteIndexPresenter >> displayNoteTags: selectedNote [
-	"Answer a <String> to be displayed"
+{ #category : 'callbacks' }
+NTSpNoteIndexPresenter >> emptySearchBar [
 
-	| orderedTags |
-	selectedNote tags ifEmpty: [ ^ '' ].
-	
-	orderedTags := selectedNote tags asOrderedCollection sorted: [:a :b | a tagName < b tagName].
-	^ (orderedTags collect: [ :each | each tagName ]) asArray joinUsing: ','
+	searchBar clearContent
+]
+
+{ #category : 'filtering' }
+NTSpNoteIndexPresenter >> filter [
+
+	| filteredItems |
+	filteredItems := searchBar text
+		                 ifEmpty: [ self model notes ]
+		                 ifNotEmpty: [ :pattern |
+		                 self filteredNotesFor: pattern ].
+
+	filteredItems := filteredTagsSelection
+		                 ifEmpty: [ filteredItems ]
+		                 ifNotEmpty: [ :pattern |
+			                 self
+				                 notes: filteredItems
+				                 withTags: filteredTagsSelection ].
+
+	^ filteredItems
+]
+
+{ #category : 'filtering' }
+NTSpNoteIndexPresenter >> filteredNotesFor: aString [
+
+	^ self model notesTitleMatching: aString
+]
+
+{ #category : 'filtering' }
+NTSpNoteIndexPresenter >> filteredTagsSelection [
+
+	^ filteredTagsSelection
 ]
 
 { #category : 'testing' }
 NTSpNoteIndexPresenter >> hasSelectedNote [
 
-	^ notesTable listSize ~= 0
+	^ componentList listSize ~= 0
 ]
 
 { #category : 'initialization' }
 NTSpNoteIndexPresenter >> initializePresenters [
 
-	notesTable := self newTable
-		              beMultipleSelection;
-		              addColumn: (SpStringTableColumn new
-				               title: 'Title';
-				               compareFunction: [ :e :f | e title > f title ];
-				               evaluated: #title;
-				               yourself);
-		              addColumn: (SpStringTableColumn new
-				               title: 'Tags';
-				               "sortFunction: #yourself ascending;"evaluated: [
-					               :selectedNote |
-					               self displayNoteTags: selectedNote ];
-				               yourself);
-		              addColumn: (SpStringTableColumn new
-				               title: 'Date';
-				               width: 200 * self currentWorld displayScaleFactor;
-				               "sortFunction: #yourself ascending;"evaluated: [
-					               :selectedNote |
-					               self dateFormatter: selectedNote creationDate ];
-				               yourself);
-		              contextMenu: [
-				              (self rootCommandsGroup / 'NTSelContextualMenu')
-					              beRoot asMenuPresenter ].
+	searchBar := self newTextInput
+		             help: 'Create a note by just typing a name';
+		             placeholder: 'Type note to search or create';
+		             yourself.
+
+	tagsFilterButton := self newButton
+		                    icon: (self iconNamed: #recentMessages);
+		                    addStyle: 'small';
+		                    action: [ self openTagsSearcher ];
+		                    help: 'Tags searcher';
+		                    yourself.
+
+	filteredTagsSelection := OrderedCollection new.
+
+	componentList := self instantiate: SpComponentListPresenter.
+	componentList beMultipleSelection.
+
+	componentList contextMenu: [
+			(self rootCommandsGroup / 'NTSelContextualMenu') beRoot
+				asMenuPresenter ]
 ]
 
 { #category : 'accessing' }
 NTSpNoteIndexPresenter >> items [
 	"Answer a <Collection> of notes"
 
-	^ notesTable items
+	^ componentList items collect: [ :each | each note ]
 ]
 
 { #category : 'accessing' }
-NTSpNoteIndexPresenter >> items: aCollection [ 
+NTSpNoteIndexPresenter >> items: aCollection [
+	"componentList items: aCollection."
+	
+	aCollection ifNil: [ ^ self ].
 
-	notesTable items: aCollection
+	componentList presenters:
+		(aCollection collect: [ :each | NTNotePresenter new note: each ])
+]
+
+{ #category : 'initialization' }
+NTSpNoteIndexPresenter >> modelChanged [
+
+	self model ifNotNil: [self items: self model notes]
 ]
 
 { #category : 'callbacks' }
-NTSpNoteIndexPresenter >> modelChanged [
+NTSpNoteIndexPresenter >> notes: aNotesCollection withTags: aTagsCollection [
+	"Answer a <Collection> of <NTNoteObject> whose names match tags"
 
-	notesTable refresh
+	^ self model notes: aNotesCollection withTags: aTagsCollection
+]
+
+{ #category : 'opening' }
+NTSpNoteIndexPresenter >> openTagsSearcher [
+
+	| selectedItems |
+	selectedItems := filteredTagsSelection collect: [ :tag | tag tagName ].
+
+	(NTSpTagSelectionDialog newApplication: self application)
+		allowTagCreation;
+		title: 'tag name';
+		items: (self model tags collect: [ :each | each tagName ]);
+		selectedItems: selectedItems;
+		display: #asString;
+		onAccept: [ :dialog |
+				filteredTagsSelection := dialog presenter selectedItems collect: [
+						                         :each | self model tagNamed: each ] ];
+		openModalWithParent: self window
+]
+
+{ #category : 'layout' }
+NTSpNoteIndexPresenter >> removeNotes: aNoteCollection [
+
+	self model notes removeAll: aNoteCollection.
+	self updatePresenter
 ]
 
 { #category : 'accessing' }
-NTSpNoteIndexPresenter >> notesTable [
+NTSpNoteIndexPresenter >> searchBar [
 
-	^ notesTable
+	^ searchBar
 ]
 
 { #category : 'accessing' }
 NTSpNoteIndexPresenter >> selectNote: aNTNoteObject [
 
-	notesTable selectItem: aNTNoteObject
+	componentList selectItem:
+		(componentList items detect: [ :each | each note = aNTNoteObject ])
 ]
 
 { #category : 'accessing' }
 NTSpNoteIndexPresenter >> selectedNote [
 
-	^ notesTable selectedItem
+	^ componentList selectedItem ifNotNil: [ :notePresenter |
+		  notePresenter note ]
 ]
 
 { #category : 'accessing' }
 NTSpNoteIndexPresenter >> selectedNotes [
 
-	^ notesTable selectedItems
+	^ componentList selectedItems collect: [ :each | each note ]
 ]
 
-{ #category : 'callbacks' }
-NTSpNoteIndexPresenter >> updateRemovedNote [
+{ #category : 'accessing' }
+NTSpNoteIndexPresenter >> tagsFilterButton [
 
-	self modelChanged.
-	self owner
-		updateWindowTitle;
-		updateContents
+	^ tagsFilterButton
 ]
 
 { #category : 'callbacks' }
 NTSpNoteIndexPresenter >> whenSelectionChangedDo: aBlock [
 
-	notesTable whenSelectionChangedDo: aBlock
+	componentList whenSelectionChangedDo: aBlock
 ]

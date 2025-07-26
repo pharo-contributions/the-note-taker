@@ -1,8 +1,12 @@
+"
+I represent a NTNoteObject.
+"
 Class {
 	#name : 'NTNotePresenter',
 	#superclass : 'SpPresenterWithModel',
-	#category : 'TheNoteTaker-UI',
-	#package : 'TheNoteTaker-UI'
+	#category : 'TheNoteTaker-UI-Core',
+	#package : 'TheNoteTaker-UI',
+	#tag : 'Core'
 }
 
 { #category : 'layout' }
@@ -11,19 +15,8 @@ NTNotePresenter >> defaultLayout [
 	^ SpBoxLayout newTopToBottom
 		  add: self note title;
 		  add: self note creationDate asDate asString;
-		  add: self displayNoteTags;
+		  add: self note tagsNameString;
 		  yourself
-]
-
-{ #category : 'layout' }
-NTNotePresenter >> displayNoteTags [
-	"Answer a <String> to be displayed"
-
-	| orderedTags |
-	self note tags ifEmpty: [ ^ '' ].
-	
-	orderedTags := self note tags asOrderedCollection sorted: [:a :b | a tagName < b tagName].
-	^ (orderedTags collect: [ :each | each tagName ]) asArray joinUsing: ','
 ]
 
 { #category : 'layout' }

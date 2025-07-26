@@ -56,6 +56,18 @@ NTTagTest >> testAddNoteToTag [
 ]
 
 { #category : 'tests' }
+NTTagTest >> testAddNoteTwoTimesToTag [
+
+	| tag note |
+	tag := NTTag new.
+	note := NTNoteObject new.
+	tag addNote: note.
+	tag addNote: note.
+	self assert: (tag notes includes: note).
+	self assert: tag notes size equals: 1
+]
+
+{ #category : 'tests' }
 NTTagTest >> testDeleteTag [
     | tag note |
 

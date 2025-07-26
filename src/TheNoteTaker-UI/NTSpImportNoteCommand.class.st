@@ -27,6 +27,15 @@ NTSpImportNoteCommand >> addNoteFromFileReference: aString [
 	self noteTakerContainer addNoteFromFileReference: aString
 ]
 
+{ #category : 'converting' }
+NTSpImportNoteCommand >> asSpecCommand [
+
+	^ super asSpecCommand
+		  iconName: #into;
+		  shortcutKey: $I meta;
+		  yourself
+]
+
 { #category : 'executing' }
 NTSpImportNoteCommand >> execute [
 
@@ -35,25 +44,15 @@ NTSpImportNoteCommand >> execute [
 		               extent: 800 @ 800;
 		               extensions: self validNoteExtensions;
 		               yourself) openModal.
-	self processSelections: selections.
-	self context items: self noteTakerContainer notes
-]
-
-{ #category : 'testing' }
-NTSpImportNoteCommand >> isValidNoteName: aString [ 
-	"Answer <true> if aString is a valid note title"
-	
-	^ self application isValidNoteName: aString
+	selections do: [ :each | self processSelections: each ].
+	self context updatePresenter
 ]
 
 { #category : 'executing' }
 NTSpImportNoteCommand >> processSelections: selections [
- 
-	selections isNil 
-        ifTrue: [ ^ self ].
-	
-	self isValidNoteName: selections asFileReference contents.
-	self addNoteFromFileReference: selections asFileReference
+
+	selections ifNotNil: [
+		self addNoteFromFileReference: selections asFileReference ]
 ]
 
 { #category : 'executing' }

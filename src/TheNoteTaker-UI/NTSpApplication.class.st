@@ -15,7 +15,8 @@ Class {
 		'noteTakerContainer',
 		'log',
 		'settings',
-		'noteTakerMain'
+		'currentFolder',
+		'settingPersistence'
 	],
 	#classVars : [
 		'Default',
@@ -48,8 +49,9 @@ NTSpApplication class >> default [
 ]
 
 { #category : 'private' }
-NTSpApplication class >> default: aPharoLauncherApplication [
-	Default := aPharoLauncherApplication
+NTSpApplication class >> default: aNTSpApplication [
+
+	Default := aNTSpApplication
 ]
 
 { #category : 'private' }
@@ -84,17 +86,43 @@ NTSpApplication class >> openIt [
 	self new run
 ]
 
-{ #category : 'testing' }
-NTSpApplication >> addNoteNamed: aString [ 
-	"Add a new empty note with title aString to the receiver's notes. Answer the receiver"
-	
-	^ self noteTakerContainer addNoteNamed: aString trimBoth
-]
-
 { #category : 'private' }
 NTSpApplication >> applicationTitle [ 
 
 	^ self class applicationTitle 
+]
+
+{ #category : 'running' }
+NTSpApplication >> configFileLocation [
+
+	^ currentFolder / 'TNTSettings.config'
+]
+
+{ #category : 'accessing' }
+NTSpApplication >> currentFolder [
+
+	^ currentFolder
+]
+
+{ #category : 'accessing' }
+NTSpApplication >> currentFolder: aFileReference [
+
+	currentFolder := aFileReference.
+	log logFileReference: aFileReference.
+	settingPersistence fileReference: self configFileLocation.
+]
+
+{ #category : 'running' }
+NTSpApplication >> exportSettings [
+
+	settingPersistence storeSettingNodes: (SettingBrowser currentTree nodeNamed: #tnt) allChildren.
+]
+
+{ #category : 'running' }
+NTSpApplication >> importSettings [
+
+	settingPersistence updateSettingNodes: (SettingBrowser currentTree nodeNamed: #tnt) allChildren.
+	
 ]
 
 { #category : 'initialization' }
@@ -103,14 +131,10 @@ NTSpApplication >> initialize [
 	super initialize.
 	noteTakerContainer := NTContainer new.
 	settings := NTSettings.
-	log := NTLog newWithFolder: settings noteLocation
-]
-
-{ #category : 'testing' }
-NTSpApplication >> isValidNoteName: aString [ 
-	"Answer <true> if aString is a valid note title"
-	
-	^ self noteTakerContainer isValidNoteName: aString
+	currentFolder := settings noteLocation.
+	settingPersistence := SystemSettingsPersistence new fileReference:
+		                      self configFileLocation.self halt.
+	log := NTLog newWithFolder: currentFolder
 ]
 
 { #category : 'accessing' }
@@ -125,19 +149,6 @@ NTSpApplication >> log: aNTLog [
 	log := aNTLog
 ]
 
-{ #category : 'accessig' }
-NTSpApplication >> noteInformation: aNtNodeModel [
-
-	self shouldBeImplemented.
-	^ aNtNodeModel 
-]
-
-{ #category : 'callbacks' }
-NTSpApplication >> noteNamed: aString [ 
-
-	^ self noteTakerContainer noteNamed: aString
-]
-
 { #category : 'accessing' }
 NTSpApplication >> noteTakerContainer [
 
@@ -145,16 +156,11 @@ NTSpApplication >> noteTakerContainer [
 ]
 
 { #category : 'running' }
-NTSpApplication >> noteTakerMain [
+NTSpApplication >> reset [
 
-	^ noteTakerMain
-]
-
-{ #category : 'accessing' }
-NTSpApplication >> notes [
-	"Answer the application's <Collection> of <NTNoteObject>"
-
-	^ self noteTakerContainer notes
+	super reset.
+	noteTakerContainer := NTContainer new.
+	self start
 ]
 
 { #category : 'running' }
@@ -166,7 +172,8 @@ NTSpApplication >> settings [
 { #category : 'running' }
 NTSpApplication >> start [
 
-	noteTakerMain := (NTSpNoteTakerMainUI newApplication: self) open
+	self importSettings.
+	(NTSpNoteTakerMainUI newApplication: self) open
 ]
 
 { #category : 'running' }
@@ -174,4 +181,14 @@ NTSpApplication >> startFullScreen [
 	" Private - Open the main application window in full screen, intended for the release version "
 
 	(NTSpNoteTakerMainUI newApplication: self) asWorldWindow open
+]
+
+{ #category : 'windows' }
+NTSpApplication >> windowClosed: aWindowPresenter [
+	
+	super windowClosed: aWindowPresenter.
+
+	self windows ifEmpty: [ self exportSettings ].
+	
+	
 ]

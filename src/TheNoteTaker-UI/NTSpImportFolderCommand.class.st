@@ -27,34 +27,31 @@ NTSpImportFolderCommand >> addNoteFromFileReference: aFileReference [
 	self noteTakerContainer addNoteFromFileReference: aFileReference
 ]
 
+{ #category : 'converting' }
+NTSpImportFolderCommand >> asSpecCommand [
+
+	^ super asSpecCommand
+		  iconName: #into;
+		  shortcutKey: $T meta;
+		  yourself
+]
+
 { #category : 'executing' }
 NTSpImportFolderCommand >> execute [
 
-	| folder |
-	folder := StOpenDirectoryPresenter new
-		          extent: 800 @ 800;
-		          openModal.
-	folder ifNil: [ ^ self ].
-	self processFolder: folder first.
-	self application log logFileReference: folder.
-	self context items: self noteTakerContainer notes
+	| selections |
+	selections := StOpenDirectoryPresenter new
+		              extent: 800 @ 800;
+		              openModal.
+	selections ifNil: [ ^ self ].
+	selections do: [ :each | self processFolder: each ]
 ]
 
 { #category : 'executing' }
-NTSpImportFolderCommand >> executeWithDefaultFolder [
+NTSpImportFolderCommand >> executeWithFolder: aFileReference [
 
-	| folder |
-	folder := self application settings noteLocation.
-	folder exists ifFalse: [ ^ self ].
-	self processFolder: folder.
-	self context items: self noteTakerContainer notes
-]
-
-{ #category : 'testing' }
-NTSpImportFolderCommand >> isValidNoteName: aString [ 
-	"Answer <true> if aString is a valid note title"
-	
-	^ self application isValidNoteName: aString
+	aFileReference exists ifFalse: [ ^ self ].
+	self processFolder: aFileReference
 ]
 
 { #category : 'executing' }
@@ -62,21 +59,11 @@ NTSpImportFolderCommand >> processFolder: aFileReference [
 
 	aFileReference allFiles
 		select: [ :fileRef |
-				(self validNoteExtensions includes: fileRef extension asLowercase)
-					ifTrue: [ self isValidNoteName: fileRef contents ]
-					ifFalse: [ false ] ]
-		thenDo: [ :fileRef | self addNoteFromFileReference: fileRef ]
-	"this test should be grouped somewhere else!"
-]
-
-{ #category : 'executing' }
-NTSpImportFolderCommand >> processSelections: selections [
-
-	selections isEmptyOrNil
-		ifTrue: [ ^ self ].
-	selections
-		select: [ : selection | self isValidNoteName: selection asFileReference contents ]
-		thenDo: [ : selection | self addNoteFromFileReference: selection asFileReference ]
+			self validNoteExtensions includes: fileRef extension asLowercase ]
+		thenDo: [ :fileRef | "this test should be grouped somewhere else!"
+			self addNoteFromFileReference: fileRef ].
+	
+	self context updatePresenter
 ]
 
 { #category : 'executing' }

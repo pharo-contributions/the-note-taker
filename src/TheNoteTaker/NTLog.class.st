@@ -15,7 +15,7 @@ Class {
 NTLog class >> newWithFolder: aFileReference [
 
 	^ self new logFileReference:
-		aFileReference / 'TheNoteTaker.log'
+		aFileReference
 ]
 
 { #category : 'actions' }
@@ -40,9 +40,7 @@ NTLog >> logFileReference [
 { #category : 'accessing' }
 NTLog >> logFileReference: aFileReference [
 
-	logFileReference := aFileReference 
-
-	
+	logFileReference := aFileReference / 'TheNoteTaker.log'
 ]
 
 { #category : 'actions' }
