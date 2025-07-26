@@ -132,8 +132,7 @@ NTSpApplication >> initialize [
 	noteTakerContainer := NTContainer new.
 	settings := NTSettings.
 	currentFolder := settings noteLocation.
-	settingPersistence := SystemSettingsPersistence new fileReference:
-		                      self configFileLocation.self halt.
+	settingPersistence := SystemSettingsPersistence new fileReference: self configFileLocation.
 	log := NTLog newWithFolder: currentFolder
 ]
 
