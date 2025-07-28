@@ -114,7 +114,7 @@ NTSpApplication >> currentFolder: aFileReference [
 
 { #category : 'running' }
 NTSpApplication >> exportSettings [
-
+	(#systemsettings senders printStringLimitedTo: 50000000) traceCr.
 	settingPersistence storeSettingNodes: (SettingBrowser currentTree nodeNamed: #tnt) allChildren.
 ]
 
