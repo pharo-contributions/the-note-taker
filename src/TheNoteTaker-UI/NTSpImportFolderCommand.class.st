@@ -50,6 +50,7 @@ NTSpImportFolderCommand >> execute [
 { #category : 'executing' }
 NTSpImportFolderCommand >> executeWithFolder: aFileReference [
 
+	aFileReference ifNil: [ ^ self ].
 	aFileReference exists ifFalse: [ ^ self ].
 	self processFolder: aFileReference
 ]
