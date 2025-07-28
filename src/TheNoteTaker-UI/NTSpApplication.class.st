@@ -134,7 +134,6 @@ NTSpApplication >> initialize [
 	currentFolder := settings noteLocation.
 	settingPersistence := SystemSettingsPersistence new fileReference:
 		                      self configFileLocation.
-	SettingBrowser currentTree updateSettingNodes.
 	log := NTLog newWithFolder: currentFolder
 ]
 

@@ -43,7 +43,7 @@ NTSettings class >> noteLocation: aString [
 ]
 
 { #category : 'accessing' }
-NTSettings class >> projectPathSettingsOn: aBuilder [
+NTSettings class >> settingsOn: aBuilder [
 
 	<systemsettings>
 	(aBuilder group: #tnt)
