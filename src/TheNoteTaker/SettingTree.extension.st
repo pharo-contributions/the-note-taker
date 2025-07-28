@@ -17,3 +17,9 @@ SettingTree >> nodeList [
 			  self checkForUnknownTarget.
 			  self nodeList ]
 ]
+
+{ #category : '*TheNoteTaker' }
+SettingTree >> pragmasDo: aBlock [
+
+	^ self collector reset; do: aBlock
+]
