@@ -115,9 +115,16 @@ NTSpApplication >> currentFolder: aFileReference [
 { #category : 'running' }
 NTSpApplication >> exportSettings [
 
-	(#systemsettings senders anySatisfy: [ :m |
-		 m methodClass = NTSettings class ]) ifFalse: [
-		self error: 'Missing class' ].
+	self class environment
+		at: #NTSettings
+		ifPresent: [ :class |
+				class class
+					compiledMethodAt: #settingsOn:
+					ifPresent: [ :meth | (meth pragmas collect: #keyword) traceCr ]
+					ifAbsent: [ self error: 'Missing method' ] ]
+		ifAbsent: [ self error: 'Missing class' ].
+	SettingBrowser settingsKeywords traceCr.
+
 	settingPersistence storeSettingNodes:
 		(SettingBrowser currentTree nodeNamed: #tnt) allChildren
 ]
