@@ -114,8 +114,12 @@ NTSpApplication >> currentFolder: aFileReference [
 
 { #category : 'running' }
 NTSpApplication >> exportSettings [
-	(#systemsettings senders printStringLimitedTo: 50000000) traceCr.
-	settingPersistence storeSettingNodes: (SettingBrowser currentTree nodeNamed: #tnt) allChildren.
+
+	(#systemsettings senders anySatisfy: [ :m |
+		 m methodClass = NTSettings class ]) ifFalse: [
+		self error: 'Missing class' ].
+	settingPersistence storeSettingNodes:
+		(SettingBrowser currentTree nodeNamed: #tnt) allChildren
 ]
 
 { #category : 'running' }
