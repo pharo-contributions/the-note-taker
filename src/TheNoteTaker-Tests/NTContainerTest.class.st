@@ -162,6 +162,84 @@ NTContainerTest >> testNotesInitialization [
 	self assertEmpty: noteTakerContainer notes
 ]
 
+{ #category : 'tests - scenarios' }
+NTContainerTest >> testNotesTitleMatching [
+	
+	noteTakerContainer addNoteNamed: 'Note'.
+	noteTakerContainer addNoteNamed: 'Note2'.
+	noteTakerContainer addNoteNamed: 'Test'.
+	
+	self
+		assert: (noteTakerContainer notesTitleMatching: '') size
+		equals: 3.
+
+	self
+		assert: (noteTakerContainer notesTitleMatching: 'Note') size
+		equals: 2.
+
+	self
+		assert: (noteTakerContainer notesTitleMatching: 't') size
+		equals: 3
+]
+
+{ #category : 'tests - scenarios' }
+NTContainerTest >> testNotesWithTagSearch [
+
+	| result note1 note2 note3 tag1 tag2 tag3 |
+	note1 := noteTakerContainer addNoteNamed: 'note1'.
+	note2 := noteTakerContainer addNoteNamed: 'note2'.
+	note3 := noteTakerContainer addNoteNamed: 'note3'.
+
+	tag1 := noteTakerContainer addTagNamed: 'tag1'.
+	tag2 := noteTakerContainer addTagNamed: 'tag2'.
+	tag3 := noteTakerContainer addTagNamed: 'tag3'.
+
+	note1 addTag: tag1.
+	note1 addTag: tag3.
+	note2 addTag: tag2.
+
+	result := noteTakerContainer
+		          notes: noteTakerContainer notes
+		          withTag: (noteTakerContainer tagNamed: 'test').
+	self assert: result size equals: 0.
+
+	result := noteTakerContainer
+		          notes: noteTakerContainer notes
+		          withTag: tag1.
+	self assert: result size equals: 1
+]
+
+{ #category : 'tests - scenarios' }
+NTContainerTest >> testNotesWithTagsSearch [
+
+	| result note1 note2 note3 tag1 tag2 tag3 |
+	note1 := noteTakerContainer addNoteNamed: 'note1'.
+	note2 := noteTakerContainer addNoteNamed: 'note2'.
+	note3 := noteTakerContainer addNoteNamed: 'note3'.
+
+	tag1 := noteTakerContainer addTagNamed: 'tag1'.
+	tag2 := noteTakerContainer addTagNamed: 'tag2'.
+	tag3 := noteTakerContainer addTagNamed: 'tag3'.
+
+	note1 addTag: tag1.
+	note1 addTag: tag3.
+	note2 addTag: tag2.
+	
+	result := noteTakerContainer
+		          notes: noteTakerContainer notes
+		          withTags: (OrderedCollection new
+				           add: (noteTakerContainer tagNamed: 'test');
+				           yourself).
+	self assert: result size equals: 0.
+
+	result := noteTakerContainer
+		          notes: noteTakerContainer notes
+		          withTags: (OrderedCollection new
+				           add: tag1;
+				           yourself).
+	self assert: result size equals: 1
+]
+
 { #category : 'tests - note' }
 NTContainerTest >> testRemoveNote [
 
