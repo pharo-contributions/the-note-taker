@@ -57,16 +57,15 @@ NTSpNoteIndexPresenter >> addNote: aNTNoteObject [
 NTSpNoteIndexPresenter >> connectPresenters [
 
 	searchBar
-		whenTextChangedDo: [ self items: self filter ];
+		whenTextChangedDo: [ self filter ];
 		whenSubmitDo: [ :newNoteName |
 				| newNote |
 				newNote := self model addNoteNamed: newNoteName.
 				newNote folderReference: self application currentFolder.
-				self updatePresenter.
-				self emptySearchBar.
+				searchBar clearContent.
 				self selectNote: newNote ].
 
-	tagsFilterButton whenActivatedDo: [ self items: self filter ]
+	tagsFilterButton whenActivatedDo: [ self filter ]
 ]
 
 { #category : 'layout' }
@@ -88,35 +87,23 @@ NTSpNoteIndexPresenter >> defaultOutputPort [
 	^ SpDropListSelectionPort newPresenter: self
 ]
 
-{ #category : 'callbacks' }
-NTSpNoteIndexPresenter >> emptySearchBar [
-
-	searchBar clearContent
-]
-
 { #category : 'filtering' }
 NTSpNoteIndexPresenter >> filter [
 
 	| filteredItems |
 	filteredItems := searchBar text
-		                 ifEmpty: [ self model notes ]
+		                 ifEmpty: [ self notes ]
 		                 ifNotEmpty: [ :pattern |
-		                 self filteredNotesFor: pattern ].
+		                 self model notesTitleMatching: pattern ].
 
 	filteredItems := filteredTagsSelection
 		                 ifEmpty: [ filteredItems ]
 		                 ifNotEmpty: [ :pattern |
-			                 self
+			                 self model
 				                 notes: filteredItems
 				                 withTags: filteredTagsSelection ].
 
-	^ filteredItems
-]
-
-{ #category : 'filtering' }
-NTSpNoteIndexPresenter >> filteredNotesFor: aString [
-
-	^ self model notesTitleMatching: aString
+	self items: filteredItems
 ]
 
 { #category : 'filtering' }
@@ -128,7 +115,7 @@ NTSpNoteIndexPresenter >> filteredTagsSelection [
 { #category : 'testing' }
 NTSpNoteIndexPresenter >> hasSelectedNote [
 
-	^ componentList listSize ~= 0
+	^ componentList selectedItems isNotEmpty
 ]
 
 { #category : 'initialization' }
@@ -149,11 +136,11 @@ NTSpNoteIndexPresenter >> initializePresenters [
 	filteredTagsSelection := OrderedCollection new.
 
 	componentList := self instantiate: SpComponentListPresenter.
-	componentList beMultipleSelection.
-
-	componentList contextMenu: [
-			(self rootCommandsGroup / 'NTSelContextualMenu') beRoot
-				asMenuPresenter ]
+	componentList
+		beMultipleSelection;
+		contextMenu: [
+				(self rootCommandsGroup / 'NTSelContextualMenu') beRoot
+					asMenuPresenter ]
 ]
 
 { #category : 'accessing' }
@@ -176,14 +163,13 @@ NTSpNoteIndexPresenter >> items: aCollection [
 { #category : 'initialization' }
 NTSpNoteIndexPresenter >> modelChanged [
 
-	self model ifNotNil: [self items: self model notes]
+	self model ifNotNil: [ self items: self notes ]
 ]
 
-{ #category : 'callbacks' }
-NTSpNoteIndexPresenter >> notes: aNotesCollection withTags: aTagsCollection [
-	"Answer a <Collection> of <NTNoteObject> whose names match tags"
+{ #category : 'opening' }
+NTSpNoteIndexPresenter >> notes [
 
-	^ self model notes: aNotesCollection withTags: aTagsCollection
+	^ self model notes
 ]
 
 { #category : 'opening' }
@@ -207,7 +193,7 @@ NTSpNoteIndexPresenter >> openTagsSearcher [
 { #category : 'layout' }
 NTSpNoteIndexPresenter >> removeNotes: aNoteCollection [
 
-	self model notes removeAll: aNoteCollection.
+	self notes removeAll: aNoteCollection.
 	self updatePresenter
 ]
 
@@ -222,13 +208,6 @@ NTSpNoteIndexPresenter >> selectNote: aNTNoteObject [
 
 	componentList selectItem:
 		(componentList items detect: [ :each | each note = aNTNoteObject ])
-]
-
-{ #category : 'accessing' }
-NTSpNoteIndexPresenter >> selectedNote [
-
-	^ componentList selectedItem ifNotNil: [ :notePresenter |
-		  notePresenter note ]
 ]
 
 { #category : 'accessing' }
