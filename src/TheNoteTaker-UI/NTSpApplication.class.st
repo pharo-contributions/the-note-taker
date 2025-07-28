@@ -133,7 +133,8 @@ NTSpApplication >> initialize [
 	settings := NTSettings.
 	currentFolder := settings noteLocation.
 	settingPersistence := SystemSettingsPersistence new fileReference:
-		                      self configFileLocation.self halt.
+		                      self configFileLocation.
+	(SettingBrowser open) delete.
 	log := NTLog newWithFolder: currentFolder
 ]
 
