@@ -31,7 +31,7 @@ NTSpImportFolderCommand >> addNoteFromFileReference: aFileReference [
 NTSpImportFolderCommand >> asSpecCommand [
 
 	^ super asSpecCommand
-		  iconName: #into;
+		  iconName: #folder;
 		  shortcutKey: $T meta;
 		  yourself
 ]
