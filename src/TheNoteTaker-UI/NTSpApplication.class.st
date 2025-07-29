@@ -114,7 +114,6 @@ NTSpApplication >> currentFolder: aFileReference [
 
 { #category : 'running' }
 NTSpApplication >> exportSettings [
-
 	"self class environment
 		at: #NTSettings
 		ifPresent: [ :class |
@@ -124,11 +123,13 @@ NTSpApplication >> exportSettings [
 					ifAbsent: [ self error: 'Missing method' ] ]
 		ifAbsent: [ self error: 'Missing class' ].
 	SettingBrowser settingsKeywords traceCr."
-	
+
 	(SettingBrowser currentTree nodeNamed: #tnt) ifNil: [ ^ self ].
 
 	settingPersistence storeSettingNodes:
-		(SettingBrowser currentTree nodeNamed: #tnt) allChildren
+		(SettingBrowser currentTree nodeNamed: #tnt) allChildren.
+	
+	(currentFolder / 'TNTSettings.old.txt') deleteIfAbsent: [  ]
 ]
 
 { #category : 'running' }
