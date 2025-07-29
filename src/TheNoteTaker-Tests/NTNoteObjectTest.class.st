@@ -89,17 +89,17 @@ NTNoteObjectTest >> testFileName [
 
 	| note |
 	note := NTNoteObject named: 'Test'.
-	note creationDate: '2024-01-01' asDate.
+	note creationDate: '2024-01-01' asDateAndTime.
 
 	self assert: note fileName equals: '2024-01-01_Test.md'.
 
 	note := NTNoteObject named: '[!Te@st}='.
-	note creationDate: '2024-01-01' asDate.
+	note creationDate: '2024-01-01' asDateAndTime.
 
 	self assert: note fileName equals: '2024-01-01_Test.md'.
-	
+
 	note := NTNoteObject named: 'Test With Space'.
-	note creationDate: '2024-01-01' asDate.
+	note creationDate: '2024-01-01' asDateAndTime.
 
 	self assert: note fileName equals: '2024-01-01_TestWithSpace.md'
 ]
