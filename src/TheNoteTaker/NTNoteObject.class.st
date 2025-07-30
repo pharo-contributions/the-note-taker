@@ -72,9 +72,10 @@ NTNoteObject >> creationDate [
 ]
 
 { #category : 'accessing' }
-NTNoteObject >> creationDate: anObject [
+NTNoteObject >> creationDate: aDateAndTime [
 
-	creationDate := anObject
+	creationDate := aDateAndTime.
+	fileNamer date: creationDate asDate.
 ]
 
 { #category : 'testing' }
@@ -86,11 +87,10 @@ NTNoteObject >> exists [
 { #category : 'accessing' }
 NTNoteObject >> fileName [
 
-	fileNamer date: creationDate asDate.
 	^ fileName ifNil: [
 			  self title ifNotEmpty: [
 					  fileName := fileNamer newNameBasedOn: self title
-						              "(NTFileNamer new newNameBasedOn: self title)" ] ]
+					  "(NTFileNamer new newNameBasedOn: self title)" ] ]
 ]
 
 { #category : 'accessing' }
@@ -176,11 +176,11 @@ NTNoteObject >> hasTitle [
 NTNoteObject >> initialize [
 
 	super initialize.
+	fileNamer := NTISOFileNamer new.
 	contents := String empty.
 	creationDate := DateAndTime now.
 	modificationDate := creationDate.
 	tags := Set new.
-	fileNamer := NTISOFileNamer new.
 ]
 
 { #category : 'testing' }
@@ -229,9 +229,9 @@ NTNoteObject >> modificationDate [
 ]
 
 { #category : 'accessing' }
-NTNoteObject >> modificationDate: anObject [
+NTNoteObject >> modificationDate: aDateAndTime [
 
-	modificationDate := anObject
+	modificationDate := aDateAndTime
 ]
 
 { #category : 'printing' }
