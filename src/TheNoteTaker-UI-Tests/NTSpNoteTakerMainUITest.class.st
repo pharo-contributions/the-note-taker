@@ -102,23 +102,24 @@ NTSpNoteTakerMainUITest >> testAddTagSaveNote [
 { #category : 'tests' }
 NTSpNoteTakerMainUITest >> testAddTagToMultipleNotes [
 
-	| tag note3 note2 |
+	| tag note3 note2 tagsNoteSize |
 	note2 := ressources getNote2.
 	note3 := ressources getNote3.
 	tag := ressources getTag1.
+	tagsNoteSize := tag notes size.
 	indexPresenter selectNote: note3.
 	indexPresenter selectNote: note2.
 
 	SpWindowSimulateOpenModal
 		value: [ :aDialogPresenter |
-				aDialogPresenter presenter selectedItems: #( tag1 ).
+				aDialogPresenter presenter selectedItems: #( 'tag1' ).
 				aDialogPresenter presenter accept ]
 		during: [
 				NTSpAddTagCommand new
 					context: indexPresenter;
 					execute ].
 
-	self assert: tag notes size equals: 2.
+	self assert: tag notes size equals: tagsNoteSize + 2.
 	self assert: (note3 tags includes: tag).
 	self assert: (note2 tags includes: tag)
 ]
@@ -226,7 +227,7 @@ NTSpNoteTakerMainUITest >> testRemoveTagToMultipleNotes [
 
 	SpWindowSimulateOpenModal
 		value: [ :aDialogPresenter |
-				aDialogPresenter presenter selectedItems: #( tag ).
+				aDialogPresenter presenter selectedItems: #( 'tag2' ).
 				aDialogPresenter presenter accept ]
 		during: [
 				NTSpRemoveTagCommand new
