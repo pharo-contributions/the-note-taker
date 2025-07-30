@@ -25,7 +25,7 @@ NTSpOpenFolderCommand class >> defaultName [
 NTSpOpenFolderCommand >> asSpecCommand [
 
 	^ super asSpecCommand
-		  iconName: #into;
+		  iconName: #open;
 		  shortcutKey: $T meta;
 		  yourself
 ]

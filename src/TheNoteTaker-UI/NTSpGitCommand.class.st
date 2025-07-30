@@ -35,7 +35,7 @@ NTSpGitCommand >> add [
 NTSpGitCommand >> asSpecCommand [
 
 	^ super asSpecCommand
-		  iconName: #delete;
+		  iconName: #git;
 		  shortcutKey: $T meta;
 		  yourself
 ]

@@ -27,6 +27,7 @@ NTSpSettingsCommand >> asSpecCommand [
 	^ super asSpecCommand
 		  iconName: #smallConfiguration;
 		  shortcutKey: $P meta;
+		  beDisplayedOnRightSide;
 		  yourself
 ]
 

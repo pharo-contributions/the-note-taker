@@ -2,7 +2,10 @@ Class {
 	#name : 'NTNoteObjectTest',
 	#superclass : 'TestCase',
 	#instVars : [
-		'memoryFS'
+		'memoryFS',
+		'note',
+		'tag1',
+		'tag2'
 	],
 	#category : 'TheNoteTaker-Tests-Core',
 	#package : 'TheNoteTaker-Tests',
@@ -55,52 +58,47 @@ NTNoteObjectTest >> generateMetaDataWithCreationDate: creationDate modificationD
 
 { #category : 'running' }
 NTNoteObjectTest >> setUp [
-	
+
 	super setUp.
 	memoryFS := FileSystem memory workingDirectory.
+	note := NTNoteObject new.
+	tag1 := NTTag newNamed: 'tag1'.
+	tag2 := NTTag newNamed: 'tag2'.
 ]
 
 { #category : 'tests - saving' }
 NTNoteObjectTest >> testAddSameTagTwice [
 
-	| tag note |
-	
-	tag := NTTag newNamed: 'tag'.
-	note := NTNoteObject new addTag: tag; addTag: tag.
-	
+	note
+		addTag: tag1;
+		addTag: tag1.
+
 	self assert: note tags size equals: 1
 ]
 
 { #category : 'tests - saving' }
 NTNoteObjectTest >> testAddTwoTagsWithSameName [
 
-	| tag1 tag2 note |
-	
-	tag1 := NTTag newNamed: 'tag'.
-	tag2 := NTTag newNamed: 'tag'.
-	
-	note := NTNoteObject new addTag: tag1; addTag: tag2.
-	
+	note
+		addTag: tag1;
+		addTag: (NTTag newNamed: tag1 tagName).
+
 	self assert: note tags size equals: 1
 ]
 
 { #category : 'tests' }
 NTNoteObjectTest >> testFileName [
 
-	| note |
-	note := NTNoteObject named: 'Test'.
-	note creationDate: '2024-01-01' asDate.
-
+	self flag: #ToRename.
+	note creationDate: '2024-01-01' asDateAndTime.
+	
+	note fileName: 'Test'.
 	self assert: note fileName equals: '2024-01-01_Test.md'.
 
-	note := NTNoteObject named: '[!Te@st}='.
-	note creationDate: '2024-01-01' asDate.
-
+	note fileName: '[!Te@st}='.
 	self assert: note fileName equals: '2024-01-01_Test.md'.
 	
-	note := NTNoteObject named: 'Test With Space'.
-	note creationDate: '2024-01-01' asDate.
-
+	note fileName: 'Test With Space'.
 	self assert: note fileName equals: '2024-01-01_TestWithSpace.md'
 ]
 
@@ -130,8 +128,8 @@ NTNoteObjectTest >> testGenerateMetaDataElementsWithTags [
 { #category : 'tests -generate' }
 NTNoteObjectTest >> testGenerateMetaDataElementsWithoutTags [
 
-	| note creationDate modificationDate |
-	note := NTNoteObject named: 'Test' contents: 'Ceci est un test'.
+	| creationDate modificationDate |
+	note contents: 'Ceci est un test'.
 	creationDate := '2025-01-01' asDateAndTime.
 	modificationDate := '2025-01-02' asDateAndTime.
 	note creationDate: creationDate.
@@ -160,29 +158,31 @@ NTNoteObjectTest >> testGenerateTitle [
 
 { #category : 'tests' }
 NTNoteObjectTest >> testIsDirty [
-	
-	| noteFile note |
-	noteFile := memoryFS / '2024-06-12_newNote.md'. 
-	noteFile writeStreamDo: [ : stream | stream nextPutAll: 'This is just a new note' ].
-	
+
+	| noteFile |
+	noteFile := memoryFS / '2024-06-12_newNote.md'.
+	noteFile writeStreamDo: [ :stream |
+		stream nextPutAll: 'This is just a new note' ].
+
 	note := NTNoteObject newFromFileReference: noteFile.
 	self deny: note isDirty.
-	
+
 	note contents: 'Change the contents'.
 	self assert: note isDirty.
-	
+
 	note save.
-	self deny: note isDirty.
+	self deny: note isDirty
 ]
 
 { #category : 'tests - loading' }
 NTNoteObjectTest >> testLoadNoteWithAllMetadata [
 
-	| note noteFile metadata tags |
+	| noteFile metadata tags |
 	noteFile := memoryFS / '2024-06-12_newNote.md'.
-	tags := OrderedCollection new.
-	tags add: (NTTag newNamed: 'tag1').
-	tags add: (NTTag newNamed: 'tag2').
+	tags := OrderedCollection new
+		        add: tag1;
+		        add: tag2;
+		        yourself.
 	metadata := self
 		            generateMetaDataWithCreationDate:
 		            '2025-01-01' asDateAndTime
@@ -209,7 +209,7 @@ NTNoteObjectTest >> testLoadNoteWithAllMetadata [
 { #category : 'tests - loading' }
 NTNoteObjectTest >> testLoadNoteWithMetadataWithMissingTags [
 
-	| note noteFile metadata |
+	| noteFile metadata |
 	noteFile := memoryFS / '2024-06-12_newNote.md'.
 	metadata := self
 		            generateMetaDataWithCreationDate:
@@ -235,27 +235,25 @@ NTNoteObjectTest >> testLoadNoteWithMetadataWithMissingTags [
 { #category : 'tests - loading' }
 NTNoteObjectTest >> testLoadNoteWithoutMetadata [
 
-	| note noteFile |
-	
-	noteFile := memoryFS / '2024-06-12_newNote.md'. 
-	noteFile writeStreamDo: [ : stream | stream nextPutAll: 'This is just a new note' ].
-	
+	| noteFile |
+	noteFile := memoryFS / '2024-06-12_newNote.md'.
+	noteFile writeStreamDo: [ :stream |
+		stream nextPutAll: 'This is just a new note' ].
+
 	note := NTNoteObject newFromFileReference: noteFile.
-	
+
 	self assert: note exists.
 	self assert: note contents equals: 'This is just a new note'.
 	self assert: note fileName equals: '2024-06-12_newNote.md'.
-	self assert: note title equals: 'This is just a new note'.
+	self assert: note title equals: 'This is just a new note'
 ]
 
 { #category : 'tests' }
 NTNoteObjectTest >> testNoteCreationAndModificationDates [
 	"Test that creation and modification dates are correctly set for notes"
 
-	| noteName note creationDate modificationDate |
-	noteName := 'testMock Note'.
-
-	note := NTNoteObject named: noteName.
+	| creationDate modificationDate |
+	
 	creationDate := note creationDate.
 	modificationDate := note modificationDate.
 
@@ -268,15 +266,12 @@ NTNoteObjectTest >> testNoteCreationAndModificationDates [
 NTNoteObjectTest >> testNoteModificationDoesNotUpdateCreationDate [
 	"Test that modifying a note does not update the creation date"
 
-	| noteName note creationDate initialModificationDate updatedCreationDate |
-	noteName := 'testMock Creation Date Note'.
-
-	note := NTNoteObject named: noteName.
+	| creationDate initialModificationDate updatedCreationDate |
 	creationDate := note creationDate.
 	initialModificationDate := note modificationDate.
 
 	"Simulate some modification after a delay"
-	Delay forSeconds: 1.
+	(Delay forSeconds: 0.1) wait.
 	note contents: 'testMock Modified content'.
 
 	updatedCreationDate := note creationDate.
@@ -287,11 +282,9 @@ NTNoteObjectTest >> testNoteModificationDoesNotUpdateCreationDate [
 { #category : 'tests' }
 NTNoteObjectTest >> testNoteModificationUpdatesModificationDate [
 	"Test that modifying a note updates the modification date"
-	
-	| noteName note creationDate initialModificationDate updatedModificationDate |
-	noteName := 'testMock Modification Note'.
 
-	note := NTNoteObject named: noteName.
+	| creationDate initialModificationDate updatedModificationDate |
+	
 	creationDate := note creationDate.
 	initialModificationDate := note modificationDate.
 
@@ -307,8 +300,8 @@ NTNoteObjectTest >> testNoteModificationUpdatesModificationDate [
 { #category : 'tests - saving' }
 NTNoteObjectTest >> testSaveExistingFileWithDifferentTitle [
 
-	| note modificationDate metadata finalContents fileName |
-	note := NTNoteObject named: 'Test' contents: 'Ceci est un test'.
+	| modificationDate metadata finalContents fileName |
+	note contents: 'Ceci est un test'.
 	modificationDate := note modificationDate.
 	note folderReference: memoryFS.
 	note save.
@@ -331,8 +324,8 @@ NTNoteObjectTest >> testSaveExistingFileWithDifferentTitle [
 { #category : 'tests - saving' }
 NTNoteObjectTest >> testSaveNote [
 
-	| note modificationDate metadata finalContents |
-	note := NTNoteObject named: 'Test' contents: 'Ceci est un test'.
+	| modificationDate metadata finalContents |
+	note contents: 'Ceci est un test'.
 	modificationDate := note modificationDate.
 	note folderReference: memoryFS.
 	note save.
@@ -351,7 +344,7 @@ NTNoteObjectTest >> testSaveNote [
 { #category : 'tests - saving' }
 NTNoteObjectTest >> testSaveNoteLoadedWithoutMetadata [
 
-	| note modificationDate metadata finalContents noteFile |
+	| modificationDate metadata finalContents noteFile |
 	noteFile := memoryFS / '2024-06-12_newNote.md'.
 	noteFile writeStreamDo: [ :stream |
 		stream nextPutAll: 'This is just a new note' ].
@@ -376,12 +369,12 @@ NTNoteObjectTest >> testSaveNoteLoadedWithoutMetadata [
 { #category : 'tests - saving' }
 NTNoteObjectTest >> testSaveNoteWithLessContents [
 
-	| note modificationDate metadata finalContents |
-	note := NTNoteObject named: 'Test' contents: 'Ceci est un test'.
+	| modificationDate metadata finalContents |
+	note contents: 'Ceci est un test'.
 	modificationDate := note modificationDate.
 	note folderReference: memoryFS.
 	note save.
-	
+
 	note contents: 'Ceci'.
 	note save.
 
@@ -390,8 +383,7 @@ NTNoteObjectTest >> testSaveNoteWithLessContents [
 	metadata := self
 		            generateMetaDataWithCreationDate: note creationDate
 		            modificationDate: note modificationDate.
-	finalContents := metadata , String crlf , String crlf
-	                 , 'Ceci'.
+	finalContents := metadata , String crlf , String crlf , 'Ceci'.
 
 	self assert: note fileReference contents equals: finalContents
 ]
