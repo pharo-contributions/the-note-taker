@@ -17,7 +17,7 @@ Class {
 { #category : 'accessing' }
 NTSettings class >> githubPathString [
 
-	^ GithubPathString
+	^ GithubPathString ifNil: [ '' ]
 ]
 
 { #category : 'accessing' }
