@@ -44,7 +44,7 @@ NTContainerTest >> testAddNewNoteFromFileReference [
 
 	| memory note |
 	memory := FileSystem memory workingDirectory.
-	note := NTNoteObject content: 'TEST'.
+	note := NTNote content: 'TEST'.
 	note folderReference: memory.
 	note save.
 
@@ -317,11 +317,11 @@ NTContainerTest >> testTagsMatchingWithNotes [
 	tag1 := NTTag newNamed: 'Tag1'.
 	tag2 := NTTag newNamed: 'Tag2'.
 
-	note1 := NTNoteObject content: 'note1'.
+	note1 := NTNote content: 'note1'.
 	note1 addTag: tag1.
-	note2 := NTNoteObject content: 'note2'.
+	note2 := NTNote content: 'note2'.
 	note2 addTag: tag1.
-	note3 := NTNoteObject content: 'note3'.
+	note3 := NTNote content: 'note3'.
 	note3 addTag: tag2.
 
 	noteCollection := OrderedCollection new

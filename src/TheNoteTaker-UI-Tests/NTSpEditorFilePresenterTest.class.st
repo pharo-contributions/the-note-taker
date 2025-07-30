@@ -28,7 +28,7 @@ NTSpEditorFilePresenterTest >> setUp [
 
 	editorPresenter := (NTSpNoteTakerMainUI newApplication: app) notesEditorPresenter.
 
-	note := NTNoteObject newFromFileReference: fileReference
+	note := NTNote newFromFileReference: fileReference
 ]
 
 { #category : 'running' }
@@ -50,14 +50,14 @@ NTSpEditorFilePresenterTest >> testCleanAction [
 { #category : 'tests' }
 NTSpEditorFilePresenterTest >> testGotCurrentFileWhenIsNotSpecify [
 
-	self assert: editorPresenter model class equals: NTNoteObject
+	self assert: editorPresenter model class equals: NTNote
 ]
 
 { #category : 'tests' }
 NTSpEditorFilePresenterTest >> testGotCurrentFileWhenIsSpecify [
 
 	editorPresenter setModel: note.
-	self assert: editorPresenter model class equals: NTNoteObject
+	self assert: editorPresenter model class equals: NTNote
 ]
 
 { #category : 'running' }

@@ -18,7 +18,7 @@ NTLogTest >> setUp [
 	super setUp.
 	memory := FileSystem memory workingDirectory.
 	log := NTLog newWithFolder: memory.
-	note := NTNoteObject content: 'noteTest'.
+	note := NTNote content: 'noteTest'.
 	tag := NTTag newNamed: 'tagTest'
 ]
 

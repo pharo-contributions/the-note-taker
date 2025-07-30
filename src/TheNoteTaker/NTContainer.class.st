@@ -44,7 +44,7 @@ NTContainer >> addNoteFromFileReference: aFileReference [
 
 	| newNote |
 	newNote := self notes add:
-		           (NTNoteObject newFromFileReference: aFileReference).
+		           (NTNote newFromFileReference: aFileReference).
 	newNote tagsString ifNotNil: [
 			(newNote tagsString substrings: ',') do: [ :each |
 				(self tagNamed: each) addNote: newNote ] ].
@@ -56,7 +56,7 @@ NTContainer >> addNoteFromFileReference: aFileReference [
 NTContainer >> addNoteNamed: aString [
 	"Add a new empty note with title aString to the receiver's notes. Answer the receiver"
 
-	^ self notes add: (NTNoteObject content: aString)
+	^ self notes add: (NTNote content: aString)
 ]
 
 { #category : 'adding - tags' }

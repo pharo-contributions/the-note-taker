@@ -16,7 +16,7 @@ NTPersistencyTest >> resource [
 NTPersistencyTest >> testCreateNoteDoesNotSerialize [
 
 	| sampleNote |
-	sampleNote := NTNoteObject new.
+	sampleNote := NTNote new.
 	
 	self 
 		deny: sampleNote exists
@@ -35,7 +35,7 @@ NTPersistencyTest >> testCreatingANoteDoesNotAddItToSingleton [
 
 	| sampleNote |
 	self deny: noteTakerContainer hasNotes.
-	sampleNote := NTNoteObject new.
+	sampleNote := NTNote new.
 	self deny: noteTakerContainer hasNotes
 ]
 

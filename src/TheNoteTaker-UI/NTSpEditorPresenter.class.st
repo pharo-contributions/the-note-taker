@@ -169,7 +169,7 @@ NTSpEditorPresenter >> model [
 NTSpEditorPresenter >> newEmptyNote [
 
 	| nt |
-	nt := NTNoteObject new.
+	nt := NTNote new.
 	self setModel: nt.
 
 	self emptyInputText

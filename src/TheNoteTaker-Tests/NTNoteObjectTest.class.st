@@ -61,7 +61,7 @@ NTNoteObjectTest >> setUp [
 
 	super setUp.
 	memoryFS := FileSystem memory workingDirectory.
-	note := NTNoteObject new.
+	note := NTNote new.
 	tag1 := NTTag newNamed: 'tag1'.
 	tag2 := NTTag newNamed: 'tag2'.
 ]
@@ -106,7 +106,7 @@ NTNoteObjectTest >> testFileName [
 NTNoteObjectTest >> testGenerateMetaDataElementsWithTags [
 
 	| note creationDate modificationDate tag1 tag2 |
-	note := NTNoteObject content: 'Ceci est un test'.
+	note := NTNote content: 'Ceci est un test'.
 	creationDate := '2025-01-01' asDateAndTime.
 	modificationDate := '2025-01-02' asDateAndTime.
 	note creationDate: creationDate.
@@ -146,10 +146,10 @@ NTNoteObjectTest >> testGenerateMetaDataElementsWithoutTags [
 NTNoteObjectTest >> testGenerateTitle [
 
 	| note1 note2 note3 |
-	note1 := NTNoteObject content: 'test with only one line'.
-	note2 := NTNoteObject content:
+	note1 := NTNote content: 'test with only one line'.
+	note2 := NTNote content:
 		         'test with two line' , String crlf , 'Second Line'.
-	note3 := NTNoteObject content: ''.
+	note3 := NTNote content: ''.
 
 	self
 		assert: note1 title equals: 'test with only one line';
@@ -165,7 +165,7 @@ NTNoteObjectTest >> testIsDirty [
 	noteFile writeStreamDo: [ :stream |
 		stream nextPutAll: 'This is just a new note' ].
 
-	note := NTNoteObject newFromFileReference: noteFile.
+	note := NTNote newFromFileReference: noteFile.
 	self deny: note isDirty.
 
 	note contents: 'Change the contents'.
@@ -196,7 +196,7 @@ NTNoteObjectTest >> testLoadNoteWithAllMetadata [
 				nextPutAll: String crlf;
 				nextPutAll: 'This is just a new note' ].
 
-	note := NTNoteObject newFromFileReference: noteFile.
+	note := NTNote newFromFileReference: noteFile.
 
 	self assert: note exists.
 	self assert: note contents equals: 'This is just a new note'.
@@ -223,7 +223,7 @@ NTNoteObjectTest >> testLoadNoteWithMetadataWithMissingTags [
 				nextPutAll: String crlf;
 				nextPutAll: 'This is just a new note' ].
 
-	note := NTNoteObject newFromFileReference: noteFile.
+	note := NTNote newFromFileReference: noteFile.
 
 	self assert: note exists.
 	self assert: note contents equals: 'This is just a new note'.
@@ -241,7 +241,7 @@ NTNoteObjectTest >> testLoadNoteWithoutMetadata [
 	noteFile writeStreamDo: [ :stream |
 		stream nextPutAll: 'This is just a new note' ].
 
-	note := NTNoteObject newFromFileReference: noteFile.
+	note := NTNote newFromFileReference: noteFile.
 
 	self assert: note exists.
 	self assert: note contents equals: 'This is just a new note'.
@@ -350,7 +350,7 @@ NTNoteObjectTest >> testSaveNoteLoadedWithoutMetadata [
 	noteFile writeStreamDo: [ :stream |
 		stream nextPutAll: 'This is just a new note' ].
 
-	note := NTNoteObject newFromFileReference: noteFile.
+	note := NTNote newFromFileReference: noteFile.
 
 	modificationDate := note modificationDate.
 	note folderReference: memoryFS.

@@ -17,7 +17,7 @@ NTTagTest >> setUp [
 
 
 	tag := NTTag newNamed: 'tag'.
-	note := NTNoteObject new.
+	note := NTNote new.
 ]
 
 { #category : 'tests' }
@@ -49,7 +49,7 @@ NTTagTest >> testAddTagInNoteAddNoteInTag [
 NTTagTest >> testAddTwoDifferentNote [
 
 	| otherNote |
-	otherNote := NTNoteObject new.
+	otherNote := NTNote new.
 	tag addNote: note.
 	tag addNote: otherNote.
 

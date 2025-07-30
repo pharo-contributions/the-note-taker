@@ -95,7 +95,7 @@ NTSpNoteTakerMainUITest >> testAddTagSaveNote [
 				NTSpAddTagCommand new
 					context: indexPresenter;
 					execute ].
-	newNote := NTNoteObject newFromFileReference: note fileReference.
+	newNote := NTNote newFromFileReference: note fileReference.
 	self assert: newNote tagsString equals: tag tagName
 ]
 
@@ -210,7 +210,7 @@ NTSpNoteTakerMainUITest >> testRemoveTagSaveNote [
 				NTSpRemoveTagCommand new
 					context: indexPresenter;
 					execute ].
-	newNote := NTNoteObject newFromFileReference: note fileReference.
+	newNote := NTNote newFromFileReference: note fileReference.
 	self assert: newNote tagsString isNil
 ]
 
