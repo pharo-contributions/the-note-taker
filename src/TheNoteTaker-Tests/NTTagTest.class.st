@@ -29,32 +29,11 @@ NTTagTest >> testAccessTagId [
 ]
 
 { #category : 'tests' }
-NTTagTest >> testAccessTagName [
-
-	| tagName |
-	tagName := 'Sample Tag'.
-	tag tagName: tagName.
-
-	self assert: tag tagName equals: tagName
-]
-
-{ #category : 'tests' }
-NTTagTest >> testAccessTagNotes [
-
-	| otherNote |
-	otherNote := NTNoteObject new.
-	tag addNote: note.
-	tag addNote: otherNote.
-
-	self assert: (tag notes includes: note).
-	self assert: (tag notes includes: otherNote)
-]
-
-{ #category : 'tests' }
 NTTagTest >> testAddNoteToTag [
 
 	tag addNote: note.
-	self assert: (tag notes includes: note)
+	self assert: (tag notes includes: note).
+	self assert: tag notes size equals: 1
 ]
 
 { #category : 'tests' }
@@ -67,13 +46,24 @@ NTTagTest >> testAddNoteTwoTimesToTag [
 ]
 
 { #category : 'tests' }
-NTTagTest >> testDeleteTag [
+NTTagTest >> testAddTagInNoteAddNoteInTag [
 
-	self flag: #TOREMOVE.
+	self assertEmpty: note tags.
+	note addTag: tag.
+	self assert: tag notes anyOne equals: note
+]
+
+{ #category : 'tests' }
+NTTagTest >> testAddTwoDifferentNote [
+
+	| otherNote |
+	otherNote := NTNoteObject new.
 	tag addNote: note.
-	note removeTag: tag.
+	tag addNote: otherNote.
 
-	self assertEmpty: tag notes
+	self assert: (tag notes includes: note).
+	self assert: (tag notes includes: otherNote).
+	self assert: tag notes size equals: 2
 ]
 
 { #category : 'tests' }
@@ -101,14 +91,4 @@ NTTagTest >> testRenameTag [
 	tag tagName: newName.
 
 	self assert: tag tagName equals: newName
-]
-
-{ #category : 'tests' }
-NTTagTest >> testTagNote [
-
-	self flag: #WrongClassTest.
-
-	self assertEmpty: note tags.
-	note addTag: tag.
-	self assert: note tags anyOne equals: tag
 ]
