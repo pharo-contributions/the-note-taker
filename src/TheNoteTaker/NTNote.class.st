@@ -11,7 +11,6 @@ Class {
 		'tags',
 		'contents',
 		'folderReference',
-		'fileNamer',
 		'fileName',
 		'tagsString'
 	],
@@ -74,8 +73,7 @@ NTNote >> creationDate [
 { #category : 'accessing' }
 NTNote >> creationDate: aDateAndTime [
 
-	creationDate := aDateAndTime.
-	fileNamer date: creationDate asDate.
+	creationDate := aDateAndTime
 ]
 
 { #category : 'testing' }
@@ -87,29 +85,15 @@ NTNote >> exists [
 { #category : 'accessing' }
 NTNote >> fileName [
 
-	^ fileName ifNil: [
-			  self title ifNotEmpty: [
-					  fileName := fileNamer newNameBasedOn: self title
-					  "(NTFileNamer new newNameBasedOn: self title)" ] ]
+	fileName ifNil: [self fileName: self title ].
+	^ fileName
 ]
 
 { #category : 'accessing' }
 NTNote >> fileName: aString [
-
 	"fileName := aString"
-	fileName := fileNamer newNameBasedOn: aString
-]
 
-{ #category : 'accessing' }
-NTNote >> fileNamer [
-
-	^ fileNamer
-]
-
-{ #category : 'accessing' }
-NTNote >> fileNamer: anObject [
-
-	fileNamer := anObject
+	fileName := NTISOFileNamer new date: creationDate asDate; newNameBasedOn: aString
 ]
 
 { #category : 'accessing' }
@@ -176,7 +160,6 @@ NTNote >> hasTitle [
 NTNote >> initialize [
 
 	super initialize.
-	fileNamer := NTISOFileNamer new.
 	contents := String empty.
 	creationDate := DateAndTime now.
 	modificationDate := creationDate.
