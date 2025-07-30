@@ -44,6 +44,12 @@ NTTag >> addNote: aNTNoteObject [
 	aNTNoteObject addTag: self
 ]
 
+{ #category : 'accessing' }
+NTTag >> hasNote: aNTNoteObject [
+
+	^ notes includes: aNTNoteObject 
+]
+
 { #category : 'initialization' }
 NTTag >> initialize [
 
@@ -64,11 +70,9 @@ NTTag >> notes: anObject [
 ]
 
 { #category : 'removing' }
-NTTag >> removeNote: aNTNoteObject [ 
+NTTag >> removeNote: aNTNoteObject [
 
-	self notes
-		remove: aNTNoteObject 
-		ifAbsent: [ ]
+	self notes remove: aNTNoteObject ifAbsent: [ ]
 ]
 
 { #category : 'accessing' }

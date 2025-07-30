@@ -59,6 +59,14 @@ NTTagTest >> testAddTwoDifferentNote [
 ]
 
 { #category : 'tests' }
+NTTagTest >> testHasNote [
+
+	self deny: (tag hasNote: note).
+	tag addNote: note.
+	self assert: (tag hasNote: note).
+]
+
+{ #category : 'tests' }
 NTTagTest >> testRemoveNoteFromTag [
 
 	tag addNote: note.
