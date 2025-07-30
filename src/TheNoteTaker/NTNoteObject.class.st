@@ -256,9 +256,10 @@ NTNoteObject >> removeTag: aNTTag [
 { #category : 'saving' }
 NTNoteObject >> save [
 
-	folderReference ifNil: [  folderReference := FileSystem workingDirectory ].
+	folderReference ifNil: [
+		folderReference := FileSystem workingDirectory ].
 
-	self exists ifTrue: [ self fileReference delete ].
+	self fileReference ensureDelete.
 
 	self fileReference writeStreamDo: [ :str |
 			str nextPutAll: self generateMetaDataElements.
