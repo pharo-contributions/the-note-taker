@@ -99,8 +99,9 @@ NTSpEditorPresenter >> initializePresenters [
 
 	composer := MicRichTextComposer new.
 
-	isRenderedButton := self newButton action: [
-		                    self isRenderedButtonClick ].
+	isRenderedButton := self newButton
+		                    iconName: #smallJustified;
+		                    action: [ self isRenderedButtonClick ].
 
 	textInput := self newText.
 	textInput
@@ -118,8 +119,7 @@ NTSpEditorPresenter >> initializePresenters [
 		                yourself.
 	textInput
 		whenTextChangedDo: [ model contents: textInput text asString ];
-		bindKeyCombination: $s meta toAction: [
-				self saveFile. ]
+		bindKeyCombination: $s meta toAction: [ self saveFile ]
 ]
 
 { #category : 'actions' }
