@@ -38,10 +38,10 @@ NTTag class >> newNamed: aString [
 ]
 
 { #category : 'adding' }
-NTTag >> addNote: aNTNoteObject [ 
+NTTag >> addNote: aNTNoteObject [
 
-	self notes add: aNTNoteObject.
-	aNTNoteObject addTag: self
+	aNTNoteObject addTag: self.
+	self notes add: aNTNoteObject
 ]
 
 { #category : 'accessing' }
