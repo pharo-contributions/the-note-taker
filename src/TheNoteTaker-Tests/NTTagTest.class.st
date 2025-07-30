@@ -21,14 +21,6 @@ NTTagTest >> setUp [
 ]
 
 { #category : 'tests' }
-NTTagTest >> testAccessTagId [
-
-	self
-		assert: tag tagId isString
-		description: 'Assuming tag ID is represented as a string'
-]
-
-{ #category : 'tests' }
 NTTagTest >> testAddNoteToTag [
 
 	tag addNote: note.

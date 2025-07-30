@@ -4,7 +4,6 @@ A note tag object contains the necessary attributes and methods to represent a t
 ## Attributes
 
 - tagName: A string representing the name or label of the tag.
-- tagId: A unique identifier for the tag.
 - notes: A collection (list, set, or other data structure) of notes associated with the tag.
 
 ## Main methods
@@ -15,14 +14,12 @@ A note tag object contains the necessary attributes and methods to represent a t
 - Delete Tag: To remove the tag entirely.
 - Get Notes: To retrieve all notes associated with the tag.
 - Accesss tag name: To retrieve the name of the tag.
-- Access the tag ID/UUID: To retrieve the unique identifier of the tag.
 
 "
 Class {
 	#name : 'NTTag',
 	#superclass : 'Object',
 	#instVars : [
-		'tagId',
 		'notes',
 		'tagName'
 	],
@@ -51,7 +48,6 @@ NTTag >> addNote: aNTNoteObject [
 NTTag >> initialize [
 
 	super initialize.
-	self tagId: UUID new asString36.
 	self notes: Set new
 ]
 
@@ -73,18 +69,6 @@ NTTag >> removeNote: aNTNoteObject [
 	self notes
 		remove: aNTNoteObject 
 		ifAbsent: [ ]
-]
-
-{ #category : 'accessing' }
-NTTag >> tagId [
-
-	^ tagId
-]
-
-{ #category : 'accessing' }
-NTTag >> tagId: anObject [
-
-	tagId := anObject
 ]
 
 { #category : 'accessing' }
