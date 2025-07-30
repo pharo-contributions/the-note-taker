@@ -55,8 +55,8 @@ NTContainer >> addNoteFromFileReference: aFileReference [
 { #category : 'adding - notes' }
 NTContainer >> addNoteNamed: aString [
 	"Add a new empty note with title aString to the receiver's notes. Answer the receiver"
-	
-	^ self notes add: ( NTNoteObject named: aString)
+
+	^ self notes add: (NTNoteObject content: aString)
 ]
 
 { #category : 'adding - tags' }

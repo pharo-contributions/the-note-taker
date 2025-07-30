@@ -33,7 +33,7 @@ NTSpNoteIndexPresenterTest >> testAddNote [
 
 	| sizeNotesBeforeAddNote |
 	sizeNotesBeforeAddNote := indexPresenter items size.
-	indexPresenter addNote: (NTNoteObject named: 'Test').
+	indexPresenter addNote: (NTNoteObject content: 'Test').
 
 	self
 		assert: indexPresenter items size

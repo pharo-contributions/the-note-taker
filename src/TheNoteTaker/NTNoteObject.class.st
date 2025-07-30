@@ -21,7 +21,7 @@ Class {
 }
 
 { #category : 'instance creation' }
-NTNoteObject class >> named: aString [
+NTNoteObject class >> content: aString [
 	"Answer a new instance of the receiver with title aString"
 
 	| note |
@@ -31,16 +31,6 @@ NTNoteObject class >> named: aString [
 		  contents: aString;
 		  modificationDate: note creationDate;
 		  yourself
-]
-
-{ #category : 'instance creation' }
-NTNoteObject class >> named: aString contents: contentsString [
-	"Answer a new instance of the receiver with title aString"
-	
-	^ self new
-		fileName: aString;
-		contents: contentsString;
-		yourself
 ]
 
 { #category : 'instance creation' }

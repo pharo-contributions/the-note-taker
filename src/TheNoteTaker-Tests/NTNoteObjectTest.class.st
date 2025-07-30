@@ -105,13 +105,13 @@ NTNoteObjectTest >> testFileName [
 { #category : 'tests -generate' }
 NTNoteObjectTest >> testGenerateMetaDataElementsWithTags [
 
-	| note creationDate modificationDate tag1 tag2|
-	note := NTNoteObject named: 'Test' contents: 'Ceci est un test'.
+	| note creationDate modificationDate tag1 tag2 |
+	note := NTNoteObject content: 'Ceci est un test'.
 	creationDate := '2025-01-01' asDateAndTime.
 	modificationDate := '2025-01-02' asDateAndTime.
 	note creationDate: creationDate.
 	note modificationDate: modificationDate.
-	
+
 	tag1 := NTTag newNamed: 'tag1'.
 	tag2 := NTTag newNamed: 'tag2'.
 	tag1 addNote: note.
@@ -122,7 +122,7 @@ NTNoteObjectTest >> testGenerateMetaDataElementsWithTags [
 	self assert: note generateMetaDataElements equals: (self
 			 generateMetaDataWithCreationDate: creationDate
 			 modificationDate: modificationDate
-			tags: note tags)
+			 tags: note tags)
 ]
 
 { #category : 'tests -generate' }
@@ -146,14 +146,15 @@ NTNoteObjectTest >> testGenerateMetaDataElementsWithoutTags [
 NTNoteObjectTest >> testGenerateTitle [
 
 	| note1 note2 note3 |
-	
-	note1 := NTNoteObject named: 'Test1' contents: 'test with only one line'.
-	note2 := NTNoteObject named: 'Test2' contents: 'test with two line', String crlf, 'Second Line'.
-	note3 := NTNoteObject named: 'Test3' contents: ''.	
-	
-	self assert: note1 title equals: 'test with only one line';
+	note1 := NTNoteObject content: 'test with only one line'.
+	note2 := NTNoteObject content:
+		         'test with two line' , String crlf , 'Second Line'.
+	note3 := NTNoteObject content: ''.
+
+	self
+		assert: note1 title equals: 'test with only one line';
 		assert: note2 title equals: 'test with two line';
-		assert: note3 title equals: 'unnamed'.
+		assert: note3 title equals: 'unnamed'
 ]
 
 { #category : 'tests' }
