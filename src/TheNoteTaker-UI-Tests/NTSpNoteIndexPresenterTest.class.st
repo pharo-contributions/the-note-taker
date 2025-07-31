@@ -16,7 +16,7 @@ NTSpNoteIndexPresenterTest >> setUp [
 	indexPresenter := NTSpNoteIndexPresenter newApplication: app.
 
 	indexPresenter model: noteContainer.
-	ressources generateNoteAndTagsTo: noteContainer.
+	ressources addingNotesAndTagsTo: noteContainer.
 	indexPresenter updatePresenter
 ]
 

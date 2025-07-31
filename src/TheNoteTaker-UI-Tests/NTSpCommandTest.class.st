@@ -24,6 +24,6 @@ NTSpCommandTest >> setUp [
 	indexPresenter := mainPresenter notesIndexPresenter.
 
 	indexPresenter model: noteContainer.
-	ressources generateNoteAndTagsTo: noteContainer.
+	ressources addingNotesAndTagsTo: noteContainer.
 	indexPresenter updatePresenter
 ]

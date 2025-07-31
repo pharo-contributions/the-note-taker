@@ -2,64 +2,88 @@ Class {
 	#name : 'NTUITestResource',
 	#superclass : 'TestResource',
 	#instVars : [
-		'noteContainer'
+		'note1',
+		'note2',
+		'note3',
+		'tag1',
+		'tag2',
+		'tag3'
 	],
 	#category : 'TheNoteTaker-UI-Tests-Support-Resources',
 	#package : 'TheNoteTaker-UI-Tests',
 	#tag : 'Support-Resources'
 }
 
-{ #category : 'as yet unclassified' }
-NTUITestResource >> generateNoteAndTagsTo: aNoteContainer [
+{ #category : 'adding' }
+NTUITestResource >> addingNotesAndTagsTo: aNoteContainer [
 
-	| note1 note2 note3 tag1 tag2 tag3 |
-	note1 := aNoteContainer addNoteNamed: 'note1'.
-	note2 := aNoteContainer addNoteNamed: 'note2'.
-	note3 := aNoteContainer addNoteNamed: 'note3'.
+	| notesCollection tagsCollection |
+	notesCollection := OrderedCollection new
+		                   add: note1;
+		                   add: note2;
+		                   add: note3;
+		                   yourself.
+	tagsCollection := OrderedCollection new
+		                  add: tag1;
+		                  add: tag2;
+		                  add: tag3;
+		                  yourself.
 
-	tag1 := aNoteContainer addTagNamed: 'tag1'.
-	tag2 := aNoteContainer addTagNamed: 'tag2'.
-	tag3 := aNoteContainer addTagNamed: 'tag3'.
-
-	note1 addTag: tag1.
-	note1 addTag: tag3.
-	note2 addTag: tag2.
-	
-noteContainer := aNoteContainer
+	aNoteContainer
+		notes: notesCollection;
+		tags: tagsCollection
 ]
 
 { #category : 'accessing' }
 NTUITestResource >> getNote1 [
 
-	^ noteContainer noteTitled: 'note1'
+	^ note1
 ]
 
 { #category : 'accessing' }
 NTUITestResource >> getNote2 [
 
-	^ noteContainer noteTitled: 'note2'
+	^ note2
 ]
 
 { #category : 'accessing' }
 NTUITestResource >> getNote3 [
 
-	^ noteContainer noteTitled: 'note3'
+	^ note3
 ]
 
 { #category : 'accessing' }
 NTUITestResource >> getTag1 [
 
-	^ noteContainer tagNamed: 'tag1'
+	^ tag1
 ]
 
 { #category : 'accessing' }
 NTUITestResource >> getTag2 [
 
-	^ noteContainer tagNamed: 'tag2'
+	^ tag2
 ]
 
 { #category : 'accessing' }
 NTUITestResource >> getTag3 [
 
-	^ noteContainer tagNamed: 'tag3'
+	^ tag3
+]
+
+{ #category : 'initialization' }
+NTUITestResource >> initialize [
+
+	super initialize.
+
+	note1 := NTNote content: 'note1'.
+	note2 := NTNote content: 'note2'.
+	note3 := NTNote content: 'note3'.
+
+	tag1 := NTTag newNamed: 'tag1'.
+	tag2 := NTTag newNamed: 'tag2'.
+	tag3 := NTTag newNamed: 'tag3'.
+
+	note1 addTag: tag1.
+	note1 addTag: tag3.
+	note2 addTag: tag2
 ]

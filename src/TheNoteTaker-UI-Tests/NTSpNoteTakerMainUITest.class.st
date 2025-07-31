@@ -21,7 +21,7 @@ NTSpNoteTakerMainUITest >> setUp [
 	editorPresenter := presenter notesEditorPresenter.
 	toolbarPresenter := presenter notesToolbarPresenter.
 
-	ressources generateNoteAndTagsTo: noteContainer.
+	ressources addingNotesAndTagsTo: noteContainer.
 	indexPresenter updatePresenter
 ]
 

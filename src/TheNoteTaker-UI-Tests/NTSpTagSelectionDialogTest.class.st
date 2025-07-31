@@ -16,7 +16,7 @@ NTSpTagSelectionDialogTest >> setUp [
 
 	presenter := NTSpTagSelectionDialog newApplication: app.
 
-	ressources generateNoteAndTagsTo: noteContainer
+	ressources addingNotesAndTagsTo: noteContainer
 ]
 
 { #category : 'running' }
