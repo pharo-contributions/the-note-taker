@@ -260,8 +260,6 @@ NTNote >> tagsNameString [
 	"Answer a <String> to be displayed"
 
 	| tagsNameList |
-	self tags ifEmpty: [ ^ '' ].
-
 	tagsNameList := self tags collect: [ :each | each tagName ].
 	^ (tagsNameList asOrderedCollection sorted: [ :a :b | a < b ])
 		  joinUsing: ','

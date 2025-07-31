@@ -105,7 +105,7 @@ NTNoteObjectTest >> testFileName [
 { #category : 'tests -generate' }
 NTNoteObjectTest >> testGenerateMetaDataElementsWithTags [
 
-	| note creationDate modificationDate tag1 tag2 |
+	| creationDate modificationDate |
 	note := NTNote content: 'Ceci est un test'.
 	creationDate := '2025-01-01' asDateAndTime.
 	modificationDate := '2025-01-02' asDateAndTime.
