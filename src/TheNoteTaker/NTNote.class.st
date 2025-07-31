@@ -79,7 +79,7 @@ NTNote >> creationDate: aDateAndTime [
 { #category : 'testing' }
 NTNote >> exists [
 
-	^ folderReference ifNil: [ ^ false ] ifNotNil: [ self fileReference exists]
+	^ self fileReference exists
 ]
 
 { #category : 'accessing' }
@@ -91,15 +91,16 @@ NTNote >> fileName [
 
 { #category : 'accessing' }
 NTNote >> fileName: aString [
-	"fileName := aString"
 
-	fileName := NTISOFileNamer new date: creationDate asDate; newNameBasedOn: aString
+	fileName := NTISOFileNamer new
+		            date: creationDate asDate;
+		            newNameBasedOn: aString
 ]
 
 { #category : 'accessing' }
-NTNote >> fileReference [ 
+NTNote >> fileReference [
 
-	^ folderReference / (self fileName)
+	^ self folderReference / self fileName
 ]
 
 { #category : 'accessing' }
@@ -113,6 +114,13 @@ NTNote >> fileReferenceContents [
 				fileContentsPart := aString substrings: '}'.
 				^ fileContentsPart second withoutPrefix: String crlf , String crlf].
 		^ aString
+]
+
+{ #category : 'accessing' }
+NTNote >> folderReference [
+
+	^ folderReference ifNil: [
+		folderReference := FileSystem workingDirectory ].
 ]
 
 { #category : 'accessing' }
@@ -139,21 +147,11 @@ NTNote >> generateMetaDataElements [
 NTNote >> generateTitle [
 	"create a new title which corresponds to the first line of the contents"
 
-	| nameOfNewNote collectionOfContents |
-	collectionOfContents := contents substrings: String crlf.
-	nameOfNewNote := String streamContents: [ :stt |
-			                 collectionOfContents isNotEmpty
-				                 ifTrue: [
-				                 stt nextPutAll: collectionOfContents first ]
-				                 ifFalse: [ stt nextPutAll: 'unnamed' ] ].
-
-	self title: nameOfNewNote
-]
-
-{ #category : 'testing' }
-NTNote >> hasTitle [
-
-	^ self title notNil.
+	| collection |
+	collection := (contents substrings: String crlf).
+	collection isNotEmpty
+		ifTrue: [ self title: collection first ]
+		ifFalse: [ self title: 'unnamed' ]
 ]
 
 { #category : 'initialization' }
@@ -167,9 +165,9 @@ NTNote >> initialize [
 ]
 
 { #category : 'testing' }
-NTNote >> isDirty [ 
+NTNote >> isDirty [
 
-	^ (contents = self fileReferenceContents) not
+	^ contents ~= self fileReferenceContents
 ]
 
 { #category : 'testing' }
@@ -221,11 +219,9 @@ NTNote >> modificationDate: aDateAndTime [
 NTNote >> printOn: aStream [
 
 	super printOn: aStream.
-	aStream 
+	aStream
 		<< '[';
-		<< (self hasTitle
-			ifFalse: [ 'no title' ]
-			ifTrue: [ self title asString ]);
+		<<  self title asString;
 		<< ']'
 ]
 
@@ -239,16 +235,12 @@ NTNote >> removeTag: aNTTag [
 { #category : 'saving' }
 NTNote >> save [
 
-	folderReference ifNil: [
-		folderReference := FileSystem workingDirectory ].
-
 	self fileReference ensureDelete.
-
 	self fileReference writeStreamDo: [ :str |
-			str nextPutAll: self generateMetaDataElements.
-			str nextPutAll: String crlf.
-			str nextPutAll: String crlf.
-			str nextPutAll: contents ]
+			str << self generateMetaDataElements.
+			str << String crlf.
+			str << String crlf.
+			str << contents ]
 ]
 
 { #category : 'accessing - tags' }
@@ -281,16 +273,10 @@ NTNote >> tagsString [
 	^ tagsString 
 ]
 
-{ #category : 'sorting' }
-NTNote >> threeWayCompareTo: aNTNoteObject [ 
-	^ self creationDate > aNTNoteObject creationDate
-]
-
 { #category : 'accessing' }
 NTNote >> title [
-	
-	title ifNotNil: [ ^ title ].
-	self generateTitle.
+
+	title ifNil: [ self generateTitle].
 	^ title
 ]
 
