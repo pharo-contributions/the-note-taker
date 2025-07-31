@@ -44,7 +44,7 @@ NTSpNoteIndexPresenterTest >> testAddNote [
 NTSpNoteIndexPresenterTest >> testFilterWithNoteAndTag [
 
 	indexPresenter filteredTagsSelection add:
-		(noteContainer tagNamed: 'test').
+		(noteContainer ensureTagNamed: 'test').
 	indexPresenter searchBar text: 'th'.
 	self assert: indexPresenter items size equals: 0.
 	indexPresenter filteredTagsSelection removeAll.
@@ -94,7 +94,7 @@ NTSpNoteIndexPresenterTest >> testFilterWithoutNoteAndWithTag [
 	indexPresenter filteredTagsSelection removeAll.
 
 	indexPresenter filteredTagsSelection add:
-		(noteContainer tagNamed: 'ZZZ').
+		(noteContainer ensureTagNamed: 'ZZZ').
 	indexPresenter filter.
 	self assert: indexPresenter items size equals: 0
 ]

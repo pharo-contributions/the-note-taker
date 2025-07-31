@@ -44,7 +44,7 @@ NTSpAddTagCommand >> execute [
 		onAccept: [ :dialog |
 				dialog presenter selectedItems do: [ :tagName |
 							| tag |
-							tag := self noteTakerContainer tagNamed: tagName.
+							tag := self noteTakerContainer ensureTagNamed: tagName.
 							self selectedNotes do: [ :note |
 										tag addNote: note.
 										note save.

@@ -48,23 +48,38 @@ NTContainer >> addNoteFromFileReference: aFileReference [
 		           
 	newNote tagsString ifNotNil: [
 			(newNote tagsString substrings: ',') do: [ :each |
-				(self tagNamed: each) addNote: newNote ] ].
+				(self ensureTagNamed: each) addNote: newNote ] ].
 
 	^ newNote
 ]
 
 { #category : 'adding - notes' }
 NTContainer >> addNoteNamed: aString [
-	"Add a new empty note with title aString to the receiver's notes. Answer the receiver"
+	"Add a new empty note with title aString to the receiver's notes."
 
-	^ self notes add: (NTNote content: aString)
+	| note |
+	note := (NTNote content: aString).
+	self notes add: note.
+	^ note
 ]
 
 { #category : 'adding - tags' }
 NTContainer >> addTagNamed: aString [
-	"Add a new empty note with title aString to the receiver's notes. Answer the receiver"
+	"Add a new empty note with title aString to the receiver's notes."
 
-	^ self tags add: (NTTag newNamed: aString)
+	| tag |
+	tag := (NTTag newNamed: aString).
+	self tags add: tag.
+	^ tag 
+]
+
+{ #category : 'accessing - tags' }
+NTContainer >> ensureTagNamed: aString [
+	"Answer the first <NTNoteObject> matching aString in its name"
+
+	^ self tags
+		  detect: [ :n | n tagName = aString ]
+		  ifNone: [ self addTagNamed: aString ]
 ]
 
 { #category : 'initialization' }
@@ -119,15 +134,6 @@ NTContainer >> removeNotes: aCollectionOfNTNoteObject [
 	"Remove the note aNTNoteObject from the receiver's notes. Answer the receiver"
 	
 	self notes removeAll: aCollectionOfNTNoteObject
-]
-
-{ #category : 'accessing - tags' }
-NTContainer >> tagNamed: aString [
-	"Answer the first <NTNoteObject> matching aString in its name"
-self flag: #renameInEnsure.
-	^ self tags
-		  detect: [ :n | n tagName = aString ]
-		  ifNone: [ self addTagNamed: aString ]
 ]
 
 { #category : 'accessing - tags' }

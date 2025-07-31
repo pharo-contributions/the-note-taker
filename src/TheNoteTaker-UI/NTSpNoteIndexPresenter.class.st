@@ -186,7 +186,7 @@ NTSpNoteIndexPresenter >> openTagsSearcher [
 		display: #asString;
 		onAccept: [ :dialog |
 				filteredTagsSelection := dialog presenter selectedItems collect: [
-						                         :each | self model tagNamed: each ] ];
+						                         :each | self model ensureTagNamed: each ] ];
 		openModalWithParent: self window
 ]
 

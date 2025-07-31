@@ -17,7 +17,7 @@ Class {
 { #category : 'adding' }
 NTSpTagSelectionDialog >> addTagNamed: aString [
 
-	self application noteTakerContainer tagNamed: aString.
+	self application noteTakerContainer ensureTagNamed: aString.
 	searchTextPresenter text: ''.
 	selectedItems add: aString
 ]

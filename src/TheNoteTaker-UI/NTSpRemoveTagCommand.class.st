@@ -44,7 +44,7 @@ NTSpRemoveTagCommand >> execute [
 		display: #asString;
 		onAccept: [ :dialog |
 				dialog presenter selectedItems do: [ :tagName | |tag|
-					tag := self noteTakerContainer tagNamed: tagName.
+					tag := self noteTakerContainer ensureTagNamed: tagName.
 							self selectedNotes do: [ :note |
 										note removeTag: tag.
 										note save.

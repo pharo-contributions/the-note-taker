@@ -27,6 +27,13 @@ NTContainerTest >> setUp [
 { #category : 'tests - note' }
 NTContainerTest >> testAddNewNote [
 
+	noteTakerContainer addNote: (NTNote content: 'Test').
+	self assert: noteTakerContainer notesCount equals: 1
+]
+
+{ #category : 'tests - note' }
+NTContainerTest >> testAddNewNoteByName [
+
 	noteTakerContainer addNoteNamed: 'Test'.
 	self assert: noteTakerContainer notesCount equals: 1
 ]
@@ -88,7 +95,7 @@ NTContainerTest >> testNotesTitleMatching [
 ]
 
 { #category : 'tests - scenarios' }
-NTContainerTest >> testNotesWithTagsSearch [
+NTContainerTest >> testNotesWithTags [
 
 	| result |
 	ressources addingNotesAndTagsTo: noteTakerContainer.
@@ -96,7 +103,7 @@ NTContainerTest >> testNotesWithTagsSearch [
 	result := noteTakerContainer
 		          notes: noteTakerContainer notes
 		          withTags: (OrderedCollection new
-				           add: (noteTakerContainer tagNamed: 'test');
+				           add: (noteTakerContainer ensureTagNamed: 'test');
 				           yourself).
 	self assert: result size equals: 0.
 
@@ -108,70 +115,47 @@ NTContainerTest >> testNotesWithTagsSearch [
 	self assert: result size equals: 1
 ]
 
+{ #category : 'tests - note' }
+NTContainerTest >> testRemoveNotes [
+
+	ressources addingNotesAndTagsTo: noteTakerContainer.
+	
+	self assert: noteTakerContainer notesCount equals: 3.
+	noteTakerContainer removeNotes: (OrderedCollection new
+			 add: ressources getNote1;
+			 add: ressources getNote2;
+			 yourself).
+	self assert: noteTakerContainer notesCount equals: 1
+]
+
 { #category : 'tests - tags' }
 NTContainerTest >> testTagNamed [
 
 	ressources addingNotesAndTagsTo: noteTakerContainer.
 
 	self
-		assert: (noteTakerContainer tagNamed: 'tag1')
+		assert: (noteTakerContainer ensureTagNamed: 'tag1')
 		equals: ressources getTag1.
 
 	self
-		assert: (noteTakerContainer tagNamed: 'tag3')
+		assert: (noteTakerContainer ensureTagNamed: 'tag3')
 		equals: ressources getTag3
 ]
 
 { #category : 'tests - tags' }
 NTContainerTest >> testTagNamedCreateTagWhenDoesntExist [
 
-
-	self flag: #RenameTagNameToEnsureTagNamed.
-
-	noteTakerContainer tagNamed: 'Tag'.
+	noteTakerContainer ensureTagNamed: 'Tag'.
 
 	self assert: noteTakerContainer tags size equals: 1.
 
-	noteTakerContainer tagNamed: 'Tag3'.
+	noteTakerContainer ensureTagNamed: 'Tag3'.
 
 	self assert: noteTakerContainer tags size equals: 2
 ]
 
 { #category : 'tests - tags' }
-NTContainerTest >> testTagsMatchingWithNotes [
-
-	| noteCollection |
-	ressources addingNotesAndTagsTo: noteTakerContainer.
-	ressources getNote3 addTag: ressources getTag1.
-	noteCollection := noteTakerContainer notes.
-
-	self
-		assert: (noteTakerContainer
-				 notes: noteCollection
-				 withTags: (OrderedCollection new
-						  add: ressources getTag1;
-						  yourself)) size
-		equals: 2.
-
-	self
-		assert: (noteTakerContainer
-				 notes: noteCollection
-				 withTags: (OrderedCollection new
-						  add: ressources getTag2;
-						  yourself)) size
-		equals: 1.
-
-	self
-		assert: (noteTakerContainer
-				 notes: noteCollection
-				 withTags: (OrderedCollection new
-						  add: (NTTag newNamed: 'Test');
-						  yourself)) size
-		equals: 0
-]
-
-{ #category : 'tests - tags' }
-NTContainerTest >> testTagsNamedMatching [
+NTContainerTest >> testTagsNameMatching [
 
 	ressources addingNotesAndTagsTo: noteTakerContainer.
 
