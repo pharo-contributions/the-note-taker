@@ -35,7 +35,7 @@ Class {
 { #category : 'adding - notes' }
 NTContainer >> addNote: aNTNoteObject [
 
-	^ self notes add: aNTNoteObject
+	self notes add: aNTNoteObject
 ]
 
 { #category : 'adding - notes' }
@@ -43,8 +43,9 @@ NTContainer >> addNoteFromFileReference: aFileReference [
 	"Add a new note with title aString to the receiver's notes. Answer the receiver"
 
 	| newNote |
-	newNote := self notes add:
-		           (NTNote newFromFileReference: aFileReference).
+	newNote := (NTNote newFromFileReference: aFileReference).
+	self notes add: newNote.
+		           
 	newNote tagsString ifNotNil: [
 			(newNote tagsString substrings: ',') do: [ :each |
 				(self tagNamed: each) addNote: newNote ] ].
@@ -66,40 +67,12 @@ NTContainer >> addTagNamed: aString [
 	^ self tags add: (NTTag newNamed: aString)
 ]
 
-{ #category : 'testing' }
-NTContainer >> hasNoteNamed: aString [
-	"Answer <true> if the receiver includes a note with title aString"
-
-	^ self notes anySatisfy: [ : note | note fileName = aString ]
-]
-
-{ #category : 'testing' }
-NTContainer >> hasNotes [
-	"Answer <true> if the receiver includes any note"
-	
-	^ self notes isNotEmpty
-]
-
 { #category : 'initialization' }
 NTContainer >> initialize [
 
 	super initialize.
 	self notes: OrderedCollection new.
 	self tags: OrderedCollection new
-]
-
-{ #category : 'accessing - notes' }
-NTContainer >> noteNamed: aString [
-	"Answer the first <NTNoteObject> matching aString in its name"
-	
-	^ self notes detect: [ : n | n fileName = aString ]
-]
-
-{ #category : 'accessing - notes' }
-NTContainer >> noteTitled: aString [
-	"Answer the first <NTNoteObject> matching aString in its name"
-
-	^ self notes detect: [ :n | n title = aString ]
 ]
 
 { #category : 'accessing - notes' }
@@ -115,20 +88,14 @@ NTContainer >> notes: aCollection [
 ]
 
 { #category : 'accessing - tags' }
-NTContainer >> notes: aNotesCollection withTag: aTag [
-
-	^ aNotesCollection select: [ :n | n tags includes: aTag ]
-]
-
-{ #category : 'accessing - tags' }
 NTContainer >> notes: aNotesCollection withTags: aTagsCollection [
-	
-	| noteCollection |
-	
-	noteCollection := aNotesCollection.
-	aTagsCollection do: [ :tag | noteCollection := self notes: noteCollection withTag: tag ]. 
 
-	^ noteCollection	
+	| noteCollection |
+	noteCollection := aNotesCollection.
+	aTagsCollection do: [ :tag |
+		noteCollection := aNotesCollection select: [ :n | n tags includes: tag ]].
+
+	^ noteCollection
 ]
 
 { #category : 'accessing - notes' }
@@ -148,52 +115,19 @@ NTContainer >> notesTitleMatching: aString [
 ]
 
 { #category : 'removing - notes' }
-NTContainer >> removeNote: aNTNoteObject [
-	"Remove the note aNTNoteObject from the receiver's notes. Answer the receiver"
-	
-	self notes remove: aNTNoteObject
-]
-
-{ #category : 'removing - notes' }
-NTContainer >> removeNoteNamed: aString [
-	"Remove the note with title aString in the receiver's notes. Answer the receiver"
-	
-	self removeNote: (self noteNamed: aString)
-]
-
-{ #category : 'removing - notes' }
 NTContainer >> removeNotes: aCollectionOfNTNoteObject [
 	"Remove the note aNTNoteObject from the receiver's notes. Answer the receiver"
 	
 	self notes removeAll: aCollectionOfNTNoteObject
 ]
 
-{ #category : 'removing - notes' }
-NTContainer >> removeNotesSuchThat: aBlock [
-
-	self notes copy do: [:each | 
-		(aBlock value: each) 
-			ifTrue: [ self removeNoteNamed: each title ] ]
-]
-
-{ #category : 'removing - tags' }
-NTContainer >> removeTag: aNTTag [
-	"Remove the note aNTNoteObject from the receiver's notes. Answer the receiver"
-
-	self tags remove: aNTTag
-]
-
-{ #category : 'removing - tags' }
-NTContainer >> removeTagNamed: aString [
-
-	self removeTag: (self tagNamed: aString)
-]
-
 { #category : 'accessing - tags' }
 NTContainer >> tagNamed: aString [
 	"Answer the first <NTNoteObject> matching aString in its name"
-
-	^ self tags detect: [ :n | n tagName = aString ] ifNone: [ self addTagNamed: aString ]
+self flag: #renameInEnsure.
+	^ self tags
+		  detect: [ :n | n tagName = aString ]
+		  ifNone: [ self addTagNamed: aString ]
 ]
 
 { #category : 'accessing - tags' }

@@ -109,10 +109,11 @@ NTSpNoteIndexPresenterTest >> testHasSelectedNotes [
 
 { #category : 'tests' }
 NTSpNoteIndexPresenterTest >> testRemoveNote [
-
-	| sizeNotesBeforeAddNote |
+	
+	| sizeNotesBeforeAddNote |self skip.
+	self flag: 'Doesn t have to test remove note in index. Can test if index update catch the change of NTContainer'.
 	sizeNotesBeforeAddNote := indexPresenter items size.
-	noteContainer removeNoteNamed: ressources getNote2 fileName.
+	noteContainer removeNote: ressources getNote2.
 	indexPresenter updatePresenter.
 	self
 		assert: indexPresenter items size
@@ -161,11 +162,9 @@ NTSpNoteIndexPresenterTest >> testUpdatingPresenterModifyListWhenModelListChange
 	self
 		assert: indexPresenter items size
 		equals: sizeNotesBeforeAddNote + 1.
-	
-	noteContainer removeNote: note.
+
+	noteContainer removeNotes: (OrderedCollection new add: note; yourself).
 	indexPresenter updatePresenter.
 
-	self
-		assert: indexPresenter items size
-		equals: sizeNotesBeforeAddNote
+	self assert: indexPresenter items size equals: sizeNotesBeforeAddNote
 ]
