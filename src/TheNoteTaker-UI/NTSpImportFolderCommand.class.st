@@ -41,6 +41,7 @@ NTSpImportFolderCommand >> execute [
 
 	| selections |
 	selections := StOpenDirectoryPresenter new
+						updateWidgetWithFileReference: self application currentFolder;
 		              extent: 800 @ 800;
 		              openModal.
 	selections ifNil: [ ^ self ].
