@@ -49,8 +49,10 @@ NTSpNoteIndexPresenter class >> buildNoteTakerOperationsGroupWith: presenterInst
 { #category : 'layout' }
 NTSpNoteIndexPresenter >> addNote: aNTNoteObject [
 
+	aNTNoteObject folderReference: self application currentFolder.
 	self model addNote: aNTNoteObject.
-	self updatePresenter
+	self updatePresenter.
+	self selectNote: aNTNoteObject.
 ]
 
 { #category : 'initialization' }
@@ -59,11 +61,8 @@ NTSpNoteIndexPresenter >> connectPresenters [
 	searchBar
 		whenTextChangedDo: [ self filter ];
 		whenSubmitDo: [ :newNoteName |
-				| newNote |
-				newNote := self model addNoteNamed: newNoteName.
-				newNote folderReference: self application currentFolder.
-				searchBar clearContent.
-				self selectNote: newNote ].
+				self addNote: newNoteName.
+				searchBar clearContent ].
 
 	tagsFilterButton whenActivatedDo: [ self filter ]
 ]

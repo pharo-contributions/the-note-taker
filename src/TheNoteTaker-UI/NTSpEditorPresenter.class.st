@@ -15,7 +15,8 @@ Class {
 		'model',
 		'renderedText',
 		'isRenderedButton',
-		'worker'
+		'worker',
+		'isNewNote'
 	],
 	#classVars : [
 		'AutoSave',
@@ -170,6 +171,8 @@ NTSpEditorPresenter >> newEmptyNote [
 
 	| nt |
 	nt := NTNote new.
+	isNewNote := true.
+		
 	self setModel: nt.
 
 	self emptyInputText
@@ -194,7 +197,9 @@ NTSpEditorPresenter >> renderedText [
 { #category : 'actions' }
 NTSpEditorPresenter >> saveFile [
 
-	self model exists ifFalse: [ self owner addNote: self model ].
+	isNewNote ifTrue: [
+			isNewNote := false.
+			self owner addNote: self model ].
 	self model save.
 	self owner statusBar pushMessage: (self application log save: model)
 ]
