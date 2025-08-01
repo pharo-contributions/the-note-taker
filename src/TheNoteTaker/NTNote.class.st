@@ -11,8 +11,7 @@ Class {
 		'tags',
 		'contents',
 		'folderReference',
-		'fileName',
-		'tagsString'
+		'fileName'
 	],
 	#category : 'TheNoteTaker-Core',
 	#package : 'TheNoteTaker',
@@ -38,7 +37,6 @@ NTNote class >> newFromFileReference: aFileReference [
 	^ self new
 		  folderReference: aFileReference parent;
 		  fileName: aFileReference basename;
-		  loadFileContents: aFileReference contents;
 		  yourself
 ]
 
@@ -176,33 +174,6 @@ NTNote >> isNote [
 	^ true
 ]
 
-{ #category : 'loading' }
-NTNote >> loadFileContents: aString [
-
-	| fileContentsPart |
-	(aString beginsWith: '{')
-		ifTrue: [
-				fileContentsPart := aString substrings: '}'.
-				self contents:
-					(fileContentsPart second withoutPrefix: String crlf , String crlf).
-				self loadMetaData: fileContentsPart first ]
-		ifFalse: [self contents: aString]
-]
-
-{ #category : 'loading' }
-NTNote >> loadMetaData: aString [
-
-	| metaData |
-	metaData := (MicrodownParser parse: aString) metaDataElement.
-	self creationDate:
-		(metaData at: 'creationDate' ifAbsent: DateAndTime now)
-			asDateAndTime.
-	self modificationDate:
-		(metaData at: 'lastModificationDate' ifAbsent: self creationDate)
-			asDateAndTime.
-	tagsString := metaData at: 'tags' ifAbsent: [ ^ self ]
-]
-
 { #category : 'accessing' }
 NTNote >> modificationDate [
 
@@ -263,12 +234,6 @@ NTNote >> tagsNameString [
 	tagsNameList := self tags collect: [ :each | each tagName ].
 	^ (tagsNameList asOrderedCollection sorted: [ :a :b | a < b ])
 		  joinUsing: ','
-]
-
-{ #category : 'accessing' }
-NTNote >> tagsString [
-
-	^ tagsString 
 ]
 
 { #category : 'accessing' }

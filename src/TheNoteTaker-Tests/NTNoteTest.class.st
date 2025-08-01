@@ -160,12 +160,9 @@ NTNoteTest >> testGenerateTitle [
 { #category : 'tests' }
 NTNoteTest >> testIsDirty [
 
-	| noteFile |
-	noteFile := memoryFS / '2024-06-12_newNote.md'.
-	noteFile writeStreamDo: [ :stream |
-		stream nextPutAll: 'This is just a new note' ].
-
-	note := NTNote newFromFileReference: noteFile.
+	note contents: 'This is just a new note'.
+	note save.
+	
 	self deny: note isDirty.
 
 	note contents: 'Change the contents'.
@@ -173,80 +170,6 @@ NTNoteTest >> testIsDirty [
 
 	note save.
 	self deny: note isDirty
-]
-
-{ #category : 'tests - loading' }
-NTNoteTest >> testLoadNoteWithAllMetadata [
-
-	| noteFile metadata tags |
-	noteFile := memoryFS / '2024-06-12_newNote.md'.
-	tags := OrderedCollection new
-		        add: tag1;
-		        add: tag2;
-		        yourself.
-	metadata := self
-		            generateMetaDataWithCreationDate:
-		            '2025-01-01' asDateAndTime
-		            modificationDate: '2024-01-01' asDateAndTime
-		            tags: tags.
-	noteFile writeStreamDo: [ :stream |
-			stream
-				nextPutAll: metadata;
-				nextPutAll: String crlf;
-				nextPutAll: String crlf;
-				nextPutAll: 'This is just a new note' ].
-
-	note := NTNote newFromFileReference: noteFile.
-
-	self assert: note exists.
-	self assert: note contents equals: 'This is just a new note'.
-	self assert: note fileName equals: '2024-06-12_newNote.md'.
-	self assert: note title equals: 'This is just a new note'.
-	self assert: note creationDate equals: '2025-01-01' asDateAndTime.
-	self assert: note modificationDate equals: '2024-01-01' asDateAndTime.
-	self assert: note tagsString equals: 'tag1,tag2'
-]
-
-{ #category : 'tests - loading' }
-NTNoteTest >> testLoadNoteWithMetadataWithMissingTags [
-
-	| noteFile metadata |
-	noteFile := memoryFS / '2024-06-12_newNote.md'.
-	metadata := self
-		            generateMetaDataWithCreationDate:
-		            '2025-01-01' asDateAndTime
-		            modificationDate: '2024-01-01' asDateAndTime.
-	noteFile writeStreamDo: [ :stream |
-			stream
-				nextPutAll: metadata;
-				nextPutAll: String crlf;
-				nextPutAll: String crlf;
-				nextPutAll: 'This is just a new note' ].
-
-	note := NTNote newFromFileReference: noteFile.
-
-	self assert: note exists.
-	self assert: note contents equals: 'This is just a new note'.
-	self assert: note fileName equals: '2024-06-12_newNote.md'.
-	self assert: note title equals: 'This is just a new note'.
-	self assert: note creationDate equals: '2025-01-01' asDateAndTime.
-	self assert: note modificationDate equals: '2024-01-01' asDateAndTime
-]
-
-{ #category : 'tests - loading' }
-NTNoteTest >> testLoadNoteWithoutMetadata [
-
-	| noteFile |
-	noteFile := memoryFS / '2024-06-12_newNote.md'.
-	noteFile writeStreamDo: [ :stream |
-		stream nextPutAll: 'This is just a new note' ].
-
-	note := NTNote newFromFileReference: noteFile.
-
-	self assert: note exists.
-	self assert: note contents equals: 'This is just a new note'.
-	self assert: note fileName equals: '2024-06-12_newNote.md'.
-	self assert: note title equals: 'This is just a new note'
 ]
 
 { #category : 'tests' }
@@ -338,31 +261,6 @@ NTNoteTest >> testSaveNote [
 		            modificationDate: note modificationDate.
 	finalContents := metadata , String crlf , String crlf
 	                 , 'Ceci est un test'.
-
-	self assert: note fileReference contents equals: finalContents
-]
-
-{ #category : 'tests - saving' }
-NTNoteTest >> testSaveNoteLoadedWithoutMetadata [
-
-	| modificationDate metadata finalContents noteFile |
-	noteFile := memoryFS / '2024-06-12_newNote.md'.
-	noteFile writeStreamDo: [ :stream |
-		stream nextPutAll: 'This is just a new note' ].
-
-	note := NTNote newFromFileReference: noteFile.
-
-	modificationDate := note modificationDate.
-	note folderReference: memoryFS.
-	note save.
-
-	self denyEmpty: note fileReference contents.
-
-	metadata := self
-		            generateMetaDataWithCreationDate: note creationDate
-		            modificationDate: note modificationDate.
-	finalContents := metadata , String crlf , String crlf
-	                 , 'This is just a new note'.
 
 	self assert: note fileReference contents equals: finalContents
 ]

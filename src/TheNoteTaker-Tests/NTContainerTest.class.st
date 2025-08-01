@@ -3,7 +3,8 @@ Class {
 	#superclass : 'TestCase',
 	#instVars : [
 		'noteTakerContainer',
-		'ressources'
+		'ressources',
+		'memoryFS'
 	],
 	#category : 'TheNoteTaker-Tests-Core',
 	#package : 'TheNoteTaker-Tests',
@@ -20,8 +21,9 @@ NTContainerTest >> setUp [
 
 	super setUp.
 	noteTakerContainer := NTContainer new.
+	memoryFS := FileSystem memory workingDirectory.
 
-	ressources := NTTestResource new.
+	ressources := NTTestResource new
 ]
 
 { #category : 'tests - note' }
@@ -76,6 +78,81 @@ NTContainerTest >> testAddingNotesWithSameName [
 	self assert: notes size equals: 2
 ]
 
+{ #category : 'tests - note' }
+NTContainerTest >> testLoadNoteWithAllMetadata [
+
+	| noteFile metadata tags note |
+	ressources addingNotesAndTagsTo: noteTakerContainer.
+	noteFile := memoryFS / '2024-06-12_newNote.md'.
+	tags := OrderedCollection new
+		        add: ressources getTag1;
+		        add: ressources getTag2;
+		        yourself.
+	metadata := NTNoteTest new
+		            generateMetaDataWithCreationDate:
+		            '2025-01-01' asDateAndTime
+		            modificationDate: '2024-01-01' asDateAndTime
+		            tags: tags.
+	noteFile writeStreamDo: [ :stream |
+			stream
+				nextPutAll: metadata;
+				nextPutAll: String crlf;
+				nextPutAll: String crlf;
+				nextPutAll: 'This is just a new note' ].
+
+	note := noteTakerContainer addNoteFromFileReference: noteFile.
+
+	self assert: note exists.
+	self assert: note contents equals: 'This is just a new note'.
+	self assert: note fileName equals: '2024-06-12_newNote.md'.
+	self assert: note title equals: 'This is just a new note'.
+	self assert: note creationDate equals: '2025-01-01' asDateAndTime.
+	self assert: note modificationDate equals: '2024-01-01' asDateAndTime.
+	self assert: (note tags includesAll: tags)
+]
+
+{ #category : 'tests - note' }
+NTContainerTest >> testLoadNoteWithMetadataWithMissingTags [
+
+	| noteFile metadata note |
+	noteFile := memoryFS / '2024-06-12_newNote.md'.
+	metadata := NTNoteTest new
+		            generateMetaDataWithCreationDate:
+		            '2025-01-01' asDateAndTime
+		            modificationDate: '2024-01-01' asDateAndTime.
+	noteFile writeStreamDo: [ :stream |
+			stream
+				nextPutAll: metadata;
+				nextPutAll: String crlf;
+				nextPutAll: String crlf;
+				nextPutAll: 'This is just a new note' ].
+
+	note := noteTakerContainer addNoteFromFileReference: noteFile.
+
+	self assert: note exists.
+	self assert: note contents equals: 'This is just a new note'.
+	self assert: note fileName equals: '2024-06-12_newNote.md'.
+	self assert: note title equals: 'This is just a new note'.
+	self assert: note creationDate equals: '2025-01-01' asDateAndTime.
+	self assert: note modificationDate equals: '2024-01-01' asDateAndTime
+]
+
+{ #category : 'tests - note' }
+NTContainerTest >> testLoadNoteWithoutMetadata [
+
+	| noteFile note |
+	noteFile := memoryFS / '2024-06-12_newNote.md'.
+	noteFile writeStreamDo: [ :stream |
+		stream nextPutAll: 'This is just a new note' ].
+
+	note := noteTakerContainer addNoteFromFileReference: noteFile.
+
+	self assert: note exists.
+	self assert: note contents equals: 'This is just a new note'.
+	self assert: note fileName equals: '2024-06-12_newNote.md'.
+	self assert: note title equals: 'This is just a new note'
+]
+
 { #category : 'tests - scenarios' }
 NTContainerTest >> testNotesTitleMatching [
 
@@ -126,6 +203,31 @@ NTContainerTest >> testRemoveNotes [
 			 add: ressources getNote2;
 			 yourself).
 	self assert: noteTakerContainer notesCount equals: 1
+]
+
+{ #category : 'tests - note' }
+NTContainerTest >> testSaveNoteLoadedWithoutMetadata [
+
+	| modificationDate metadata finalContents noteFile note |
+	noteFile := memoryFS / '2024-06-12_newNote.md'.
+	noteFile writeStreamDo: [ :stream |
+		stream nextPutAll: 'This is just a new note' ].
+
+	note := noteTakerContainer addNoteFromFileReference: noteFile.
+
+	modificationDate := note modificationDate.
+	note folderReference: memoryFS.
+	note save.
+
+	self denyEmpty: note fileReference contents.
+
+	metadata := NTNoteTest new
+		            generateMetaDataWithCreationDate: note creationDate
+		            modificationDate: note modificationDate.
+	finalContents := metadata , String crlf , String crlf
+	                 , 'This is just a new note'.
+
+	self assert: note fileReference contents equals: finalContents
 ]
 
 { #category : 'tests - tags' }

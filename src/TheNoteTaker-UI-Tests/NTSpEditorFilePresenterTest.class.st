@@ -70,6 +70,7 @@ NTSpEditorFilePresenterTest >> testRenderedTextIsCorrectMicrodown [
 
 	editorPresenter setModel: note.
 	editorPresenter textInputText: text.
+	editorPresenter renderDocument.
 
 	self assert: editorPresenter renderedText equals: micText
 ]

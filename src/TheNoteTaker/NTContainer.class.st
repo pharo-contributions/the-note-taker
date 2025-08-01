@@ -43,12 +43,9 @@ NTContainer >> addNoteFromFileReference: aFileReference [
 	"Add a new note with title aString to the receiver's notes. Answer the receiver"
 
 	| newNote |
-	newNote := (NTNote newFromFileReference: aFileReference).
+	newNote := NTNote newFromFileReference: aFileReference.
+	self loadFileContents: aFileReference contents for: newNote.
 	self notes add: newNote.
-		           
-	newNote tagsString ifNotNil: [
-			(newNote tagsString substrings: ',') do: [ :each |
-				(self ensureTagNamed: each) addNote: newNote ] ].
 
 	^ newNote
 ]
@@ -88,6 +85,37 @@ NTContainer >> initialize [
 	super initialize.
 	self notes: OrderedCollection new.
 	self tags: OrderedCollection new
+]
+
+{ #category : 'loading - note' }
+NTContainer >> loadFileContents: aString for: aNTNote [
+
+	| fileContentsPart |
+	(aString beginsWith: '{')
+		ifTrue: [
+				fileContentsPart := aString substrings: '}'.
+				aNTNote contents:
+					(fileContentsPart second withoutPrefix: String crlf , String crlf).
+				self loadMetaData: fileContentsPart first for: aNTNote ]
+		ifFalse: [ aNTNote contents: aString ]
+]
+
+{ #category : 'loading - note' }
+NTContainer >> loadMetaData: aString for: aNTNote [
+
+	| metaData tagsString |
+	metaData := (MicrodownParser parse: aString) metaDataElement.
+	aNTNote creationDate:
+		(metaData at: 'creationDate' ifAbsent: DateAndTime now)
+			asDateAndTime.
+	aNTNote modificationDate:
+		(metaData at: 'lastModificationDate' ifAbsent: aNTNote creationDate)
+			asDateAndTime.
+	tagsString := metaData at: 'tags' ifAbsent: [ ^ self ].
+
+	tagsString ifNotNil: [
+			(tagsString substrings: ',') do: [ :each |
+				(self ensureTagNamed: each) addNote: aNTNote ] ]
 ]
 
 { #category : 'accessing - notes' }
