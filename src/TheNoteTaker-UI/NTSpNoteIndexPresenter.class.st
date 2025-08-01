@@ -61,8 +61,11 @@ NTSpNoteIndexPresenter >> connectPresenters [
 	searchBar
 		whenTextChangedDo: [ self filter ];
 		whenSubmitDo: [ :newNoteName |
-				self addNote: newNoteName.
-				searchBar clearContent ].
+				| newNote |
+				newNote := self model addNoteNamed: newNoteName.
+				newNote folderReference: self application currentFolder.
+				searchBar clearContent.
+				self selectNote: newNote ].
 
 	tagsFilterButton whenActivatedDo: [ self filter ]
 ]
