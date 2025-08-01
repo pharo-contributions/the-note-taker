@@ -172,7 +172,7 @@ NTSpEditorPresenter >> newEmptyNote [
 	| nt |
 	nt := NTNote new.
 	isNewNote := true.
-		
+
 	self setModel: nt.
 
 	self emptyInputText
@@ -211,6 +211,8 @@ NTSpEditorPresenter >> setModel: aNTNoteObject [
 		ifNil: [ self newEmptyNote ]
 		ifNotNil: [ model := aNTNoteObject ].
 		
+	isNewNote := false.
+
 	self textInputText: model contents asString.
 	self renderDocument.
 	self updateTitle
