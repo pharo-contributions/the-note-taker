@@ -21,7 +21,7 @@ NTContainerTest >> setUp [
 	super setUp.
 	noteTakerContainer := NTContainer new.
 
-	ressources := NTUITestResource new.
+	ressources := NTTestResource new.
 ]
 
 { #category : 'tests - note' }

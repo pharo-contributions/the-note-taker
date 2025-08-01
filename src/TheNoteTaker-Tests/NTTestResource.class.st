@@ -1,5 +1,5 @@
 Class {
-	#name : 'NTUITestResource',
+	#name : 'NTTestResource',
 	#superclass : 'TestResource',
 	#instVars : [
 		'note1',
@@ -9,13 +9,13 @@ Class {
 		'tag2',
 		'tag3'
 	],
-	#category : 'TheNoteTaker-UI-Tests-Support-Resources',
-	#package : 'TheNoteTaker-UI-Tests',
+	#category : 'TheNoteTaker-Tests-Support-Resources',
+	#package : 'TheNoteTaker-Tests',
 	#tag : 'Support-Resources'
 }
 
 { #category : 'adding' }
-NTUITestResource >> addingNotesAndTagsTo: aNoteContainer [
+NTTestResource >> addingNotesAndTagsTo: aNoteContainer [
 
 	| notesCollection tagsCollection |
 	notesCollection := OrderedCollection new
@@ -35,43 +35,43 @@ NTUITestResource >> addingNotesAndTagsTo: aNoteContainer [
 ]
 
 { #category : 'accessing' }
-NTUITestResource >> getNote1 [
+NTTestResource >> getNote1 [
 
 	^ note1
 ]
 
 { #category : 'accessing' }
-NTUITestResource >> getNote2 [
+NTTestResource >> getNote2 [
 
 	^ note2
 ]
 
 { #category : 'accessing' }
-NTUITestResource >> getNote3 [
+NTTestResource >> getNote3 [
 
 	^ note3
 ]
 
 { #category : 'accessing' }
-NTUITestResource >> getTag1 [
+NTTestResource >> getTag1 [
 
 	^ tag1
 ]
 
 { #category : 'accessing' }
-NTUITestResource >> getTag2 [
+NTTestResource >> getTag2 [
 
 	^ tag2
 ]
 
 { #category : 'accessing' }
-NTUITestResource >> getTag3 [
+NTTestResource >> getTag3 [
 
 	^ tag3
 ]
 
 { #category : 'initialization' }
-NTUITestResource >> initialize [
+NTTestResource >> initialize [
 
 	super initialize.
 
