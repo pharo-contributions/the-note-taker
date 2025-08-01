@@ -1,0 +1,40 @@
+name: Packaging for OSX
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  
+jobs:
+  build:
+    runs-on: [ macos-13 ]
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+        with:
+            fetch-depth: 5
+
+      - name: Install create-dmg
+        run: |
+          brew update
+          brew install create-dmg
+
+      - name: Create Package
+        run: |
+          chmod 700 ./buildOSX.sh
+          ./buildOSX.sh
+
+      - name: Continuous Release
+        if: ${{ github.event_name == 'push' }}
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "intel-macos"
+          prerelease: true
+          title: "Intel Development Build"
+          files: |
+            build/*.dmg
