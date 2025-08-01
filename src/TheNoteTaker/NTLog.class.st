@@ -66,7 +66,6 @@ NTLog >> save: aNTNoteObjet [
 { #category : 'actions' }
 NTLog >> write: aString [
 
-	logFileReference exists ifFalse: [ logFileReference ensureCreateFile ].
 	logFileReference writeStreamDo: [ :str |
 			str
 				setToEnd;

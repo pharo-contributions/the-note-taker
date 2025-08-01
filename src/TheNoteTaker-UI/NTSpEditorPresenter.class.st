@@ -15,7 +15,8 @@ Class {
 		'model',
 		'renderedText',
 		'isRenderedButton',
-		'worker'
+		'worker',
+		'isNewNote'
 	],
 	#classVars : [
 		'AutoSave',
@@ -99,8 +100,9 @@ NTSpEditorPresenter >> initializePresenters [
 
 	composer := MicRichTextComposer new.
 
-	isRenderedButton := self newButton action: [
-		                    self isRenderedButtonClick ].
+	isRenderedButton := self newButton
+		                    iconName: #smallJustified;
+		                    action: [ self isRenderedButtonClick ].
 
 	textInput := self newText.
 	textInput
@@ -118,8 +120,7 @@ NTSpEditorPresenter >> initializePresenters [
 		                yourself.
 	textInput
 		whenTextChangedDo: [ model contents: textInput text asString ];
-		bindKeyCombination: $s meta toAction: [
-				self saveFile. ]
+		bindKeyCombination: $s meta toAction: [ self saveFile ]
 ]
 
 { #category : 'actions' }
@@ -169,7 +170,9 @@ NTSpEditorPresenter >> model [
 NTSpEditorPresenter >> newEmptyNote [
 
 	| nt |
-	nt := NTNoteObject new.
+	nt := NTNote new.
+	isNewNote := true.
+
 	self setModel: nt.
 
 	self emptyInputText
@@ -194,7 +197,9 @@ NTSpEditorPresenter >> renderedText [
 { #category : 'actions' }
 NTSpEditorPresenter >> saveFile [
 
-	self model exists ifFalse: [ self owner addNote: self model ].
+	isNewNote ifTrue: [
+			isNewNote := false.
+			self owner addNote: self model ].
 	self model save.
 	self owner statusBar pushMessage: (self application log save: model)
 ]
@@ -206,6 +211,8 @@ NTSpEditorPresenter >> setModel: aNTNoteObject [
 		ifNil: [ self newEmptyNote ]
 		ifNotNil: [ model := aNTNoteObject ].
 		
+	isNewNote := false.
+
 	self textInputText: model contents asString.
 	self renderDocument.
 	self updateTitle

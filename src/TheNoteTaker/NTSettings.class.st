@@ -17,7 +17,7 @@ Class {
 { #category : 'accessing' }
 NTSettings class >> githubPathString [
 
-	^ GithubPathString
+	^ GithubPathString ifNil: [ '' ]
 ]
 
 { #category : 'accessing' }
@@ -32,7 +32,8 @@ NTSettings class >> noteLocation [
 	"Answer the preferred <String> where notes will be stored"
 
 	^ noteLocation ifNil: [
-			  (FileLocator preferences / 'noteTaker') asFileReference ensureCreateDirectory  ]
+			  (FileLocator documents / 'noteTaker') asFileReference
+				  ensureCreateDirectory ]
 ]
 
 { #category : 'accessing' }
@@ -43,7 +44,7 @@ NTSettings class >> noteLocation: aString [
 ]
 
 { #category : 'accessing' }
-NTSettings class >> projectPathSettingsOn: aBuilder [
+NTSettings class >> settingsOn: aBuilder [
 
 	<systemsettings>
 	(aBuilder group: #tnt)

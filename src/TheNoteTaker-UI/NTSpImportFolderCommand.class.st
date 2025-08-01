@@ -31,7 +31,7 @@ NTSpImportFolderCommand >> addNoteFromFileReference: aFileReference [
 NTSpImportFolderCommand >> asSpecCommand [
 
 	^ super asSpecCommand
-		  iconName: #into;
+		  iconName: #folder;
 		  shortcutKey: $T meta;
 		  yourself
 ]
@@ -39,17 +39,20 @@ NTSpImportFolderCommand >> asSpecCommand [
 { #category : 'executing' }
 NTSpImportFolderCommand >> execute [
 
-	| selections |
-	selections := StOpenDirectoryPresenter new
-		              extent: 800 @ 800;
-		              openModal.
-	selections ifNil: [ ^ self ].
-	selections do: [ :each | self processFolder: each ]
+	| selectedEntry |
+	selectedEntry := StOpenDirectoryPresenter new
+		                 openFolder: self application currentFolder;
+		                 extent: 800 @ 800;
+		                 openModal;
+		                 selectedEntry.
+	selectedEntry ifNil: [ ^ self ].
+	self processFolder: selectedEntry
 ]
 
 { #category : 'executing' }
 NTSpImportFolderCommand >> executeWithFolder: aFileReference [
 
+	aFileReference ifNil: [ ^ self ].
 	aFileReference exists ifFalse: [ ^ self ].
 	self processFolder: aFileReference
 ]
@@ -62,7 +65,7 @@ NTSpImportFolderCommand >> processFolder: aFileReference [
 			self validNoteExtensions includes: fileRef extension asLowercase ]
 		thenDo: [ :fileRef | "this test should be grouped somewhere else!"
 			self addNoteFromFileReference: fileRef ].
-	
+
 	self context updatePresenter
 ]
 

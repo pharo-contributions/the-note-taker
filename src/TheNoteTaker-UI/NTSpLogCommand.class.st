@@ -27,6 +27,7 @@ NTSpLogCommand >> asSpecCommand [
 	^ super asSpecCommand
 		  iconName: #recentMessages;
 		  shortcutKey: $L meta;
+		  beDisplayedOnRightSide;
 		  yourself
 ]
 

@@ -42,13 +42,6 @@ NTSpAbstractCommand >> notesIndex [
 ]
 
 { #category : 'accessing' }
-NTSpAbstractCommand >> selectedNote [
-	"Answer the currently selected <NTObject>"
-
-	^ self context selectedNote
-]
-
-{ #category : 'accessing' }
 NTSpAbstractCommand >> selectedNotes [
 	"Answer a <Collection> with the currently selected <NTObject>'s"
 	

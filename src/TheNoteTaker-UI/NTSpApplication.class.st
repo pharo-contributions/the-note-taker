@@ -114,8 +114,22 @@ NTSpApplication >> currentFolder: aFileReference [
 
 { #category : 'running' }
 NTSpApplication >> exportSettings [
+	"self class environment
+		at: #NTSettings
+		ifPresent: [ :class |
+				class class
+					compiledMethodAt: #settingsOn:
+					ifPresent: [ :meth | (meth pragmas collect: #keyword) traceCr ]
+					ifAbsent: [ self error: 'Missing method' ] ]
+		ifAbsent: [ self error: 'Missing class' ].
+	SettingBrowser settingsKeywords traceCr."
 
-	settingPersistence storeSettingNodes: (SettingBrowser currentTree nodeNamed: #tnt) allChildren.
+	(SettingBrowser currentTree nodeNamed: #tnt) ifNil: [ ^ self ].
+
+	settingPersistence storeSettingNodes:
+		(SettingBrowser currentTree nodeNamed: #tnt) allChildren.
+	
+	(currentFolder / 'TNTSettings.old.txt') deleteIfAbsent: [  ]
 ]
 
 { #category : 'running' }
@@ -133,7 +147,7 @@ NTSpApplication >> initialize [
 	settings := NTSettings.
 	currentFolder := settings noteLocation.
 	settingPersistence := SystemSettingsPersistence new fileReference:
-		                      self configFileLocation.self halt.
+		                      self configFileLocation.
 	log := NTLog newWithFolder: currentFolder
 ]
 

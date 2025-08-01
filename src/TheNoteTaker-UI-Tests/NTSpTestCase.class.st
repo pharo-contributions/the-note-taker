@@ -31,7 +31,7 @@ NTSpTestCase >> setUp [
 	app := NTSpApplication new.
 	app currentFolder: memoryFS workingDirectory.
 	noteContainer := app noteTakerContainer.
-	ressources := NTUITestResource new
+	ressources := NTTestResource new
 ]
 
 { #category : 'nil' }

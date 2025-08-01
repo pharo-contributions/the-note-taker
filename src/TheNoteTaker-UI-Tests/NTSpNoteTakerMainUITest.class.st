@@ -21,7 +21,7 @@ NTSpNoteTakerMainUITest >> setUp [
 	editorPresenter := presenter notesEditorPresenter.
 	toolbarPresenter := presenter notesToolbarPresenter.
 
-	ressources generateNoteAndTagsTo: noteContainer.
+	ressources addingNotesAndTagsTo: noteContainer.
 	indexPresenter updatePresenter
 ]
 
@@ -95,30 +95,31 @@ NTSpNoteTakerMainUITest >> testAddTagSaveNote [
 				NTSpAddTagCommand new
 					context: indexPresenter;
 					execute ].
-	newNote := NTNoteObject newFromFileReference: note fileReference.
-	self assert: newNote tagsString equals: tag tagName
+	newNote := noteContainer addNoteFromFileReference: note fileReference.
+	self assert: (newNote tags includes: tag)
 ]
 
 { #category : 'tests' }
 NTSpNoteTakerMainUITest >> testAddTagToMultipleNotes [
 
-	| tag note3 note2 |
+	| tag note3 note2 tagsNoteSize |
 	note2 := ressources getNote2.
 	note3 := ressources getNote3.
 	tag := ressources getTag1.
+	tagsNoteSize := tag notes size.
 	indexPresenter selectNote: note3.
 	indexPresenter selectNote: note2.
 
 	SpWindowSimulateOpenModal
 		value: [ :aDialogPresenter |
-				aDialogPresenter presenter selectedItems: #( tag1 ).
+				aDialogPresenter presenter selectedItems: #( 'tag1' ).
 				aDialogPresenter presenter accept ]
 		during: [
 				NTSpAddTagCommand new
 					context: indexPresenter;
 					execute ].
 
-	self assert: tag notes size equals: 2.
+	self assert: tag notes size equals: tagsNoteSize + 2.
 	self assert: (note3 tags includes: tag).
 	self assert: (note2 tags includes: tag)
 ]
@@ -209,8 +210,8 @@ NTSpNoteTakerMainUITest >> testRemoveTagSaveNote [
 				NTSpRemoveTagCommand new
 					context: indexPresenter;
 					execute ].
-	newNote := NTNoteObject newFromFileReference: note fileReference.
-	self assert: newNote tagsString isNil
+	newNote := noteContainer addNoteFromFileReference: note fileReference.
+	self assertEmpty: newNote tags
 ]
 
 { #category : 'tests' }
@@ -226,7 +227,7 @@ NTSpNoteTakerMainUITest >> testRemoveTagToMultipleNotes [
 
 	SpWindowSimulateOpenModal
 		value: [ :aDialogPresenter |
-				aDialogPresenter presenter selectedItems: #( tag ).
+				aDialogPresenter presenter selectedItems: #( 'tag2' ).
 				aDialogPresenter presenter accept ]
 		during: [
 				NTSpRemoveTagCommand new

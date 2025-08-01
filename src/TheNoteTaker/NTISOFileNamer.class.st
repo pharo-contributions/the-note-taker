@@ -1,14 +1,12 @@
 "
-I will name file following the give pattern
+I represent a file name with the following structure:
 
-- Iso date e.g. 2024-05-18
-- a separator
-- a body (alpha numeric only)
-- an extension
+- a list of parts separated by a separator where a part can only contain alpha numerical characters.
+- finished with an extension
 "
 Class {
 	#name : 'NTISOFileNamer',
-	#superclass : 'NTFileNamer',
+	#superclass : 'Object',
 	#instVars : [
 		'date'
 	],
@@ -17,85 +15,67 @@ Class {
 	#tag : 'Utilities'
 }
 
-{ #category : 'naming' }
-NTISOFileNamer >> basicDecoratedName: aString [
-
-	| ymd |
-	ymd := self date yyyymmdd.
-	^ ymd , self separatorString , (self addExtensionIfNeeded:( super newNameBasedOn: aString)).
-]
-
-{ #category : 'naming' }
-NTISOFileNamer >> buildNameFromParts: aCollection [
-	"Answer a String representing the receiver's file name"
-
-	(DateParser
-		 readingFrom: aCollection first readStream
-		 pattern: 'yyyy-mm-dd') parse.
-	^ aCollection first , self separatorString
-	  , (self curateParts: aCollection allButFirst)
-]
-
-{ #category : 'naming' }
+{ #category : 'accessing' }
 NTISOFileNamer >> date [
 
 	^ date ifNil: [ date := Date today ]
 ]
 
-{ #category : 'naming' }
+{ #category : 'accessing' }
 NTISOFileNamer >> date: aDate [
 
 	date := aDate
 ]
 
-{ #category : 'naming' }
-NTISOFileNamer >> extractBaseNameFrom: aString [
-	"Answer a String representing the receiver's file name"
+{ #category : 'accessing' }
+NTISOFileNamer >> defaultEmptyName [
 
-	| splits |
-	splits := (aString withoutSuffix: '.md') splitOn:
-		          self separatorString.
-	"let us see if it is raising an error"
-	^ self titleFromParts: splits allButFirst
+	^ 'unnamed'
 ]
 
-{ #category : 'naming' }
-NTISOFileNamer >> extractBaseNameFromParts: aCollection [
-	"Answer a String representing the receiver's file name"
+{ #category : 'testing' }
+NTISOFileNamer >> isDate: aString [
 
-	"let us see if it is raising an error"
-
-	(DateParser
-		 readingFrom: aCollection first readStream
-		 pattern: 'yyyy-mm-dd') parse.
-	^ (self curateParts: aCollection allButFirst)
+	[
+		(DateParser readingFrom: aString readStream pattern: 'yyyy-mm-dd')
+			parse ]
+		on: DateError
+		do: [ ^ false ].
+	^ true
 ]
 
-{ #category : 'naming' }
-NTISOFileNamer >> fullnameFromParts: aCollection [
-	"Answer a String representing the receiver's file name"
-
-	(DateParser
-		 readingFrom: aCollection first readStream
-		 pattern: 'yyyy-mm-dd') parse.
-	^ aCollection first , self separatorString , (self curateParts: aCollection allButFirst)
-]
-
-{ #category : 'naming' }
+{ #category : 'instance creation' }
 NTISOFileNamer >> newNameBasedOn: aString [
 	"Answer a String representing the receiver's file name with extension."
 
-	| splits withoutExtension |
-	withoutExtension := aString withoutSuffix: '.md'.
-	splits := withoutExtension splitOn: self separatorString.
-	^ self addExtensionIfNeeded: (splits size = 1
-			   ifTrue: [ self basicDecoratedName: aString ]
-			   ifFalse: [ self fullnameFromParts: splits ])
+	| splits |
+	splits := (aString asFileReference fullPath withExtension: '') fullName splitOn:
+		          self separatorString.
+
+	^ String streamContents: [ :s |
+			  (self isDate: splits first)
+				  ifTrue: [
+						  s nextPutAll: splits first.
+						  splits := splits allButFirst ]
+				  ifFalse: [ s nextPutAll: self date yyyymmdd ].
+			  s nextPutAll: self separatorString.
+			  splits
+				  do: [ :each | self printCuratedParts: each on: s ]
+				  separatedBy: [ s nextPutAll: self separatorString ].
+			  s nextPutAll: '.md' ]
 ]
 
-{ #category : 'naming' }
-NTISOFileNamer >> titleFromParts: aCollection [
-	"Answer a String representing the receiver's file name"
+{ #category : 'initialization' }
+NTISOFileNamer >> printCuratedParts: aCollection on: aStream [
+	"Print a file name from parts of a name but where each part in only alphanumerical."
 
-	^ self curateParts: aCollection
+	(aCollection select: [ :part | part isAlphaNumeric ])
+		ifEmpty: [ aStream nextPutAll: self defaultEmptyName ]
+		ifNotEmpty: [ :parts | parts do: [ :part | aStream nextPut: part ] ]
+]
+
+{ #category : 'accessing' }
+NTISOFileNamer >> separatorString [
+
+	^ '_'
 ]

@@ -22,7 +22,7 @@ NTNotePresenter >> defaultLayout [
 { #category : 'layout' }
 NTNotePresenter >> initializePresenter [ 
 
-	self note: NTNoteObject new
+	self note: NTNote new
 ]
 
 { #category : 'layout' }

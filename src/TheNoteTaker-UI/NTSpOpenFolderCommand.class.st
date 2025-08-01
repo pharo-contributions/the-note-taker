@@ -25,7 +25,7 @@ NTSpOpenFolderCommand class >> defaultName [
 NTSpOpenFolderCommand >> asSpecCommand [
 
 	^ super asSpecCommand
-		  iconName: #into;
+		  iconName: #open;
 		  shortcutKey: $T meta;
 		  yourself
 ]
@@ -35,9 +35,11 @@ NTSpOpenFolderCommand >> execute [
 
 	| selectedDir |
 	selectedDir := StOpenDirectoryPresenter new
+		               openFolder: self application currentFolder;
 		               extent: 800 @ 800;
-		               openModal.
+		               openModal;
+		               selectedEntry.
 	selectedDir ifNil: [ ^ self ].
-	self application currentFolder: selectedDir first.
+	self application currentFolder: selectedDir.
 	self application reset
 ]

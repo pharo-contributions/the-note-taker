@@ -35,7 +35,7 @@ Class {
 { #category : 'adding - notes' }
 NTContainer >> addNote: aNTNoteObject [
 
-	^ self notes add: aNTNoteObject
+	self notes add: aNTNoteObject
 ]
 
 { #category : 'adding - notes' }
@@ -43,41 +43,40 @@ NTContainer >> addNoteFromFileReference: aFileReference [
 	"Add a new note with title aString to the receiver's notes. Answer the receiver"
 
 	| newNote |
-	newNote := self notes add:
-		           (NTNoteObject newFromFileReference: aFileReference).
-	newNote tagsString ifNotNil: [
-			(newNote tagsString substrings: ',') do: [ :each |
-				(self tagNamed: each) addNote: newNote ] ].
+	newNote := NTNote newFromFileReference: aFileReference.
+	self loadFileContents: aFileReference contents for: newNote.
+	self notes add: newNote.
 
 	^ newNote
 ]
 
 { #category : 'adding - notes' }
 NTContainer >> addNoteNamed: aString [
-	"Add a new empty note with title aString to the receiver's notes. Answer the receiver"
-	
-	^ self notes add: ( NTNoteObject named: aString)
+	"Add a new empty note with title aString to the receiver's notes."
+
+	| note |
+	note := (NTNote content: aString).
+	self notes add: note.
+	^ note
 ]
 
 { #category : 'adding - tags' }
 NTContainer >> addTagNamed: aString [
-	"Add a new empty note with title aString to the receiver's notes. Answer the receiver"
+	"Add a new empty note with title aString to the receiver's notes."
 
-	^ self tags add: (NTTag newNamed: aString)
+	| tag |
+	tag := (NTTag newNamed: aString).
+	self tags add: tag.
+	^ tag 
 ]
 
-{ #category : 'testing' }
-NTContainer >> hasNoteNamed: aString [
-	"Answer <true> if the receiver includes a note with title aString"
+{ #category : 'accessing - tags' }
+NTContainer >> ensureTagNamed: aString [
+	"Answer the first <NTNoteObject> matching aString in its name"
 
-	^ self notes anySatisfy: [ : note | note fileName = aString ]
-]
-
-{ #category : 'testing' }
-NTContainer >> hasNotes [
-	"Answer <true> if the receiver includes any note"
-	
-	^ self notes isNotEmpty
+	^ self tags
+		  detect: [ :n | n tagName = aString ]
+		  ifNone: [ self addTagNamed: aString ]
 ]
 
 { #category : 'initialization' }
@@ -88,18 +87,35 @@ NTContainer >> initialize [
 	self tags: OrderedCollection new
 ]
 
-{ #category : 'accessing - notes' }
-NTContainer >> noteNamed: aString [
-	"Answer the first <NTNoteObject> matching aString in its name"
-	
-	^ self notes detect: [ : n | n fileName = aString ]
+{ #category : 'loading - note' }
+NTContainer >> loadFileContents: aString for: aNTNote [
+
+	| fileContentsPart |
+	(aString beginsWith: '{')
+		ifTrue: [
+				fileContentsPart := aString substrings: '}'.
+				aNTNote contents:
+					(fileContentsPart second withoutPrefix: String crlf , String crlf).
+				self loadMetaData: fileContentsPart first for: aNTNote ]
+		ifFalse: [ aNTNote contents: aString ]
 ]
 
-{ #category : 'accessing - notes' }
-NTContainer >> noteTitled: aString [
-	"Answer the first <NTNoteObject> matching aString in its name"
+{ #category : 'loading - note' }
+NTContainer >> loadMetaData: aString for: aNTNote [
 
-	^ self notes detect: [ :n | n title = aString ]
+	| metaData tagsString |
+	metaData := (MicrodownParser parse: aString) metaDataElement.
+	aNTNote creationDate:
+		(metaData at: 'creationDate' ifAbsent: DateAndTime now)
+			asDateAndTime.
+	aNTNote modificationDate:
+		(metaData at: 'lastModificationDate' ifAbsent: aNTNote creationDate)
+			asDateAndTime.
+	tagsString := metaData at: 'tags' ifAbsent: [ ^ self ].
+
+	tagsString ifNotNil: [
+			(tagsString substrings: ',') do: [ :each |
+				(self ensureTagNamed: each) addNote: aNTNote ] ]
 ]
 
 { #category : 'accessing - notes' }
@@ -115,20 +131,14 @@ NTContainer >> notes: aCollection [
 ]
 
 { #category : 'accessing - tags' }
-NTContainer >> notes: aNotesCollection withTag: aTag [
-
-	^ aNotesCollection select: [ :n | n tags includes: aTag ]
-]
-
-{ #category : 'accessing - tags' }
 NTContainer >> notes: aNotesCollection withTags: aTagsCollection [
-	
-	| noteCollection |
-	
-	noteCollection := aNotesCollection.
-	aTagsCollection do: [ :tag | noteCollection := self notes: noteCollection withTag: tag ]. 
 
-	^ noteCollection	
+	| noteCollection |
+	noteCollection := aNotesCollection.
+	aTagsCollection do: [ :tag |
+		noteCollection := aNotesCollection select: [ :n | n tags includes: tag ]].
+
+	^ noteCollection
 ]
 
 { #category : 'accessing - notes' }
@@ -148,52 +158,10 @@ NTContainer >> notesTitleMatching: aString [
 ]
 
 { #category : 'removing - notes' }
-NTContainer >> removeNote: aNTNoteObject [
-	"Remove the note aNTNoteObject from the receiver's notes. Answer the receiver"
-	
-	self notes remove: aNTNoteObject
-]
-
-{ #category : 'removing - notes' }
-NTContainer >> removeNoteNamed: aString [
-	"Remove the note with title aString in the receiver's notes. Answer the receiver"
-	
-	self removeNote: (self noteNamed: aString)
-]
-
-{ #category : 'removing - notes' }
 NTContainer >> removeNotes: aCollectionOfNTNoteObject [
 	"Remove the note aNTNoteObject from the receiver's notes. Answer the receiver"
 	
 	self notes removeAll: aCollectionOfNTNoteObject
-]
-
-{ #category : 'removing - notes' }
-NTContainer >> removeNotesSuchThat: aBlock [
-
-	self notes copy do: [:each | 
-		(aBlock value: each) 
-			ifTrue: [ self removeNoteNamed: each title ] ]
-]
-
-{ #category : 'removing - tags' }
-NTContainer >> removeTag: aNTTag [
-	"Remove the note aNTNoteObject from the receiver's notes. Answer the receiver"
-
-	self tags remove: aNTTag
-]
-
-{ #category : 'removing - tags' }
-NTContainer >> removeTagNamed: aString [
-
-	self removeTag: (self tagNamed: aString)
-]
-
-{ #category : 'accessing - tags' }
-NTContainer >> tagNamed: aString [
-	"Answer the first <NTNoteObject> matching aString in its name"
-
-	^ self tags detect: [ :n | n tagName = aString ] ifNone: [ self addTagNamed: aString ]
 ]
 
 { #category : 'accessing - tags' }
