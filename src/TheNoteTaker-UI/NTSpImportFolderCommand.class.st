@@ -39,13 +39,14 @@ NTSpImportFolderCommand >> asSpecCommand [
 { #category : 'executing' }
 NTSpImportFolderCommand >> execute [
 
-	| selections |
-	selections := StOpenDirectoryPresenter new
-						updateWidgetWithFileReference: self application currentFolder;
-		              extent: 800 @ 800;
-		              openModal.
-	selections ifNil: [ ^ self ].
-	selections do: [ :each | self processFolder: each ]
+	| selectedEntry |
+	selectedEntry := StOpenDirectoryPresenter new
+		                 openFolder: self application currentFolder;
+		                 extent: 800 @ 800;
+		                 openModal;
+		                 selectedEntry.
+	selectedEntry ifNil: [ ^ self ].
+	self processFolder: selectedEntry
 ]
 
 { #category : 'executing' }
@@ -64,7 +65,7 @@ NTSpImportFolderCommand >> processFolder: aFileReference [
 			self validNoteExtensions includes: fileRef extension asLowercase ]
 		thenDo: [ :fileRef | "this test should be grouped somewhere else!"
 			self addNoteFromFileReference: fileRef ].
-	
+
 	self context updatePresenter
 ]
 

@@ -35,11 +35,11 @@ NTSpOpenFolderCommand >> execute [
 
 	| selectedDir |
 	selectedDir := StOpenDirectoryPresenter new
-		              updateWidgetWithFileReference:
-			              self application currentFolder;
+		               openFolder: self application currentFolder;
 		               extent: 800 @ 800;
-		               openModal.
+		               openModal;
+		               selectedEntry.
 	selectedDir ifNil: [ ^ self ].
-	self application currentFolder: selectedDir first.
+	self application currentFolder: selectedDir.
 	self application reset
 ]
