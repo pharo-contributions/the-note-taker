@@ -142,6 +142,15 @@ NTContainer >> notes: aNotesCollection withTags: aTagsCollection [
 ]
 
 { #category : 'accessing - notes' }
+NTContainer >> notesContentsMatching: aString [
+	"Answer a <Collection> with <NoteObject> objects whose title matched named aString"
+
+	| pattern |
+	pattern := '*' , aString , '*'.
+	^ self notes select: [ :n | pattern match: n contents ]
+]
+
+{ #category : 'accessing - notes' }
 NTContainer >> notesCount [
 	"Answer an <Integer> representing how many notes the receiver includes"
 	
