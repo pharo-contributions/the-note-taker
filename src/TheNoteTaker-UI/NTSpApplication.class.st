@@ -20,12 +20,29 @@ Class {
 	],
 	#classVars : [
 		'Default',
-		'IsDeployed'
+		'IsDeployed',
+		'NoteLocation'
 	],
 	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
 	#tag : 'Core'
 }
+
+{ #category : 'private' }
+NTSpApplication class >> NoteLocation [
+	"Answer the preferred <String> where notes will be stored"
+
+	^ NoteLocation ifNil: [
+			  (FileLocator documents / 'noteTaker') asFileReference
+				  ensureCreateDirectory ]
+]
+
+{ #category : 'private' }
+NTSpApplication class >> NoteLocation: aString [
+	"Set the preferred fileReference where notes will be stored"
+
+	NoteLocation := aString
+]
 
 { #category : 'private' }
 NTSpApplication class >> applicationTitle [
@@ -87,6 +104,24 @@ NTSpApplication class >> openIt [
 ]
 
 { #category : 'private' }
+NTSpApplication class >> settingsOn: aBuilder [
+
+	<systemsettings>
+	(aBuilder group: #tnt)
+		label: 'The Note Taker';
+		description: 'All TNT related settings';
+		noOrdering;
+		with: [
+				(aBuilder setting: #NoteLocation)
+					label: 'Project Path';
+					type: #Directory;
+					ghostHelp:
+						'/Users/ducasse/Workspace/FirstCircle/Writing/Working/researchnotes';
+					description:
+						'Enter your local or remote path where notes will be committed. It can be empty']
+]
+
+{ #category : 'private' }
 NTSpApplication >> applicationTitle [ 
 
 	^ self class applicationTitle 
@@ -144,8 +179,7 @@ NTSpApplication >> initialize [
 
 	super initialize.
 	noteTakerContainer := NTContainer new.
-	settings := NTSettings.
-	currentFolder := settings noteLocation.
+	currentFolder := self class NoteLocation.
 	settingPersistence := SystemSettingsPersistence new fileReference:
 		                      self configFileLocation.
 	log := NTLog newWithFolder: currentFolder

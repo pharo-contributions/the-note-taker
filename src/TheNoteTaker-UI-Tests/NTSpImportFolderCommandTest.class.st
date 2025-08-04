@@ -34,7 +34,7 @@ NTSpImportFolderCommandTest >> testImportFolder [
 	SpWindowSimulateOpenModal
 		value: [ :aDialogPresenter |
 				aDialogPresenter presenter
-					updateWidgetWithFileReference: memoryFS / 'folder';
+					openFolder: memoryFS / 'folder';
 					selectFiles: (OrderedCollection new
 							 add: folderReference;
 							 yourself);
