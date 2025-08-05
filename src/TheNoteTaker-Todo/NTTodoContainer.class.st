@@ -52,19 +52,19 @@ NTTodoContainer >> getDefaultTask [
 { #category : 'as yet unclassified' }
 NTTodoContainer >> getDoneTask [
 
-	^ self tasks select: [ :t | t state = done ]
+	^ self tasks select: [ :t | t state tagName = 'Done' ]
 ]
 
 { #category : 'as yet unclassified' }
 NTTodoContainer >> getInBoxTask [
 
-	^ self tasks select: [ :t | t state = inBox ]
+	^ self tasks select: [ :t | t state tagName = 'In Box' ]
 ]
 
 { #category : 'as yet unclassified' }
 NTTodoContainer >> getTodayTask [
 
-	^ self tasks select: [ :t | t state = today ]
+	^ self tasks select: [ :t | t state tagName = 'Today' ]
 ]
 
 { #category : 'accessing - notes' }

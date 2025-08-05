@@ -20,13 +20,21 @@ Class {
 
 { #category : 'initialization' }
 NTTodoSpNoteIndexPresenter >> addTask [
+
+	| task |
+	task := NTTodo new.
+	NTTodoSpTaskEditor new task: task; openModal.
+	self model addTask: task.
+	self updatePresenter
 ]
 
 { #category : 'initialization' }
 NTTodoSpNoteIndexPresenter >> connectPresenters [
 
 	searchBar
-		whenTextChangedDo: [ self filter ]
+		whenTextChangedDo: [ self filter ].
+		
+	componentList whenSelectedItemChangedDo: [ :taskPresenter | taskPresenter ifNotNil: [ NTTodoSpTaskEditor new task: taskPresenter task; openModal ] ]
 ]
 
 { #category : 'layout' }
@@ -35,6 +43,7 @@ NTTodoSpNoteIndexPresenter >> defaultLayout [
 	^ SpBoxLayout newLeftToRight
 		  add: (SpBoxLayout newTopToBottom
 				   add: searchBar;
+				add: addButton;
 				add: doneButton;
 				add: inBoxButton;
 				add: todayButton;

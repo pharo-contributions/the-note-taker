@@ -26,6 +26,13 @@ NTTodo >> description: anObject [
 ]
 
 { #category : 'accessing' }
+NTTodo >> initialize [ 
+
+	isRecurrent := false.
+	limitDate := Date tomorrow.
+]
+
+{ #category : 'accessing' }
 NTTodo >> isRecurrent [
 
 	^ isRecurrent
