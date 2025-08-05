@@ -79,6 +79,16 @@ NTContainer >> ensureTagNamed: aString [
 		  ifNone: [ self addTagNamed: aString ]
 ]
 
+{ #category : 'as yet unclassified' }
+NTContainer >> importFolder: aFolder [
+
+	aFolder allFiles
+		select: [ :fileRef |
+			{ 'txt'. 'md' .'text' } includes: fileRef extension asLowercase ]
+		thenDo: [ :fileRef | "this test should be grouped somewhere else!"
+			self addNoteFromFileReference: fileRef ].
+]
+
 { #category : 'initialization' }
 NTContainer >> initialize [
 
