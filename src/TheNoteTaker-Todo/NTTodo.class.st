@@ -7,7 +7,7 @@ Class {
 		'tags',
 		'limitDate',
 		'isRecurrent',
-		'state'
+		'isDone'
 	],
 	#category : 'TheNoteTaker-Todo',
 	#package : 'TheNoteTaker-Todo'
@@ -26,10 +26,24 @@ NTTodo >> description: anObject [
 ]
 
 { #category : 'accessing' }
-NTTodo >> initialize [ 
+NTTodo >> initialize [
 
 	isRecurrent := false.
 	limitDate := Date tomorrow.
+	isDone := false.
+	tags := Set new.
+]
+
+{ #category : 'accessing' }
+NTTodo >> isDone [
+
+	^ isDone
+]
+
+{ #category : 'accessing' }
+NTTodo >> isDone: anObject [
+
+	isDone := anObject
 ]
 
 { #category : 'accessing' }
@@ -54,18 +68,6 @@ NTTodo >> limitDate [
 NTTodo >> limitDate: anObject [
 
 	limitDate := anObject
-]
-
-{ #category : 'accessing' }
-NTTodo >> state [
-
-	^ state
-]
-
-{ #category : 'accessing' }
-NTTodo >> state: anObject [
-
-	state := anObject
 ]
 
 { #category : 'accessing' }

@@ -67,16 +67,26 @@ NTTodoSpNoteIndexPresenter >> filter [
 { #category : 'initialization' }
 NTTodoSpNoteIndexPresenter >> initializePresenters [
 
+	self model: self application taskContainer.
+
 	searchBar := self newTextInput
 		             help: 'Create a note by just typing a name';
 		             placeholder: 'Type note to search or create';
 		             yourself.
 
 	componentList := self instantiate: SpComponentListPresenter.
-	addButton := self newButton label: 'add new'; action: [ self addTask].
-	doneButton := self newButton label: 'done'; action: [ self showDoneTasks].
-	inBoxButton := self newButton label: 'In Box'; action: [ self showInBoxTasks].
-	todayButton := self newButton label: 'today'; action: [ self showTodayTasks].
+	addButton := self newButton
+		             label: 'add new';
+		             action: [ self addTask ].
+	doneButton := self newButton
+		              label: 'done';
+		              action: [ self showDoneTasks ].
+	inBoxButton := self newButton
+		               label: 'In Box';
+		               action: [ self showInBoxTasks ].
+	todayButton := self newButton
+		               label: 'today';
+		               action: [ self showTodayTasks ]
 ]
 
 { #category : 'accessing' }

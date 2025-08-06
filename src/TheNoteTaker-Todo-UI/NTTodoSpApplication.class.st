@@ -43,14 +43,14 @@ NTTodoSpApplication >> initialize [
 { #category : 'running' }
 NTTodoSpApplication >> start [
 
-	(NTTodoSpNoteTakerMainUI newApplication: self) open
+	(NTTodoSpNoteIndexPresenter newApplication: self) open
 ]
 
 { #category : 'running' }
 NTTodoSpApplication >> startFullScreen [
 	" Private - Open the main application window in full screen, intended for the release version "
 
-	(NTTodoSpNoteTakerMainUI newApplication: self) asWorldWindow open
+	(NTTodoSpNoteIndexPresenter newApplication: self) asWorldWindow open
 ]
 
 { #category : 'accessing' }

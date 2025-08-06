@@ -12,7 +12,10 @@ Class {
 { #category : 'accessing' }
 NTTodoPresenter >> defaultLayout [
 
-	^ SpBoxLayout new beLeftToRight add: task title; yourself
+	^ SpBoxLayout new beTopToBottom
+		  add: task title;
+		  add: task limitDate;
+		  yourself
 ]
 
 { #category : 'accessing' }

@@ -24,10 +24,7 @@ Class {
 	#name : 'NTTodoContainer',
 	#superclass : 'Object',
 	#instVars : [
-		'tasks',
-		'inBox',
-		'today',
-		'done'
+		'tasks'
 	],
 	#category : 'TheNoteTaker-Todo',
 	#package : 'TheNoteTaker-Todo'
@@ -42,29 +39,35 @@ NTTodoContainer >> addTask: aNTTodo [
 { #category : 'adding - notes' }
 NTTodoContainer >> getDefaultTask [
 
-	self addTask: (NTTodo new title: 'Chercher le pain'; state: done).
-	self addTask: (NTTodo new title: 'Reviser'; state: today ; isRecurrent: true).
-	self addTask: (NTTodo new title: 'Machin 1 '; state: done).
-	self addTask: (NTTodo new title: 'Machin 2 '; state: done).
-	self addTask: (NTTodo new title: 'Machin 3'; state: inBox).
+	self addTask: (NTTodo new
+			 title: 'Chercher le pain').
+	self addTask: (NTTodo new
+			 title: 'Reviser';
+			 isRecurrent: true).
+	self addTask: (NTTodo new
+			 title: 'Machin 1 ').
+	self addTask: (NTTodo new
+			 title: 'Machin 2 ').
+	self addTask: (NTTodo new
+			 title: 'Machin 3')
 ]
 
 { #category : 'as yet unclassified' }
 NTTodoContainer >> getDoneTask [
 
-	^ self tasks select: [ :t | t state tagName = 'Done' ]
+	^ self tasks select: [ :t | t isDone ]
 ]
 
 { #category : 'as yet unclassified' }
 NTTodoContainer >> getInBoxTask [
 
-	^ self tasks select: [ :t | t state tagName = 'In Box' ]
+	^ self tasks select: [ :t | t tags isEmpty ]
 ]
 
 { #category : 'as yet unclassified' }
 NTTodoContainer >> getTodayTask [
 
-	^ self tasks select: [ :t | t state tagName = 'Today' ]
+	^ self tasks select: [ :t | t limitDate asDate equals: Date today ]
 ]
 
 { #category : 'accessing - notes' }
@@ -72,10 +75,6 @@ NTTodoContainer >> initialize [
 
 	tasks := OrderedCollection new.
 
-	done := NTDone new.
-	inBox := NTInBox new.
-	today := NTToday new.
-	
 	self getDefaultTask
 ]
 
