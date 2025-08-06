@@ -16,12 +16,12 @@ Class {
 		'log',
 		'settings',
 		'currentFolder',
-		'settingPersistence'
+		'settingPersistence',
+		'noteLocation'
 	],
 	#classVars : [
 		'Default',
-		'IsDeployed',
-		'NoteLocation'
+		'IsDeployed'
 	],
 	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
@@ -32,16 +32,13 @@ Class {
 NTSpApplication class >> NoteLocation [
 	"Answer the preferred <String> where notes will be stored"
 
-	^ NoteLocation ifNil: [
-			  (FileLocator documents / 'noteTaker') asFileReference
-				  ensureCreateDirectory ]
+	^ self default noteLocation
 ]
 
 { #category : 'private' }
 NTSpApplication class >> NoteLocation: aString [
 	"Set the preferred fileReference where notes will be stored"
-
-	NoteLocation := aString
+	self default noteLocation: aString.
 ]
 
 { #category : 'private' }
@@ -100,7 +97,7 @@ NTSpApplication class >> openFull [
 NTSpApplication class >> openIt [
 
 	<script>
-	self new run
+	self default run
 ]
 
 { #category : 'private' }
@@ -178,7 +175,7 @@ NTSpApplication >> importSettings [
 NTSpApplication >> initialize [
 
 	super initialize.
-	currentFolder := self class NoteLocation.
+	currentFolder := self noteLocation.
 	noteTakerContainer := NTContainer new importFolder: currentFolder.
 	settingPersistence := SystemSettingsPersistence new fileReference:
 		                      self configFileLocation.
@@ -195,6 +192,23 @@ NTSpApplication >> log [
 NTSpApplication >> log: aNTLog [
 
 	log := aNTLog
+]
+
+{ #category : 'accessing' }
+NTSpApplication >> noteLocation [
+
+	^ noteLocation ifNil: [
+			  (FileLocator documents / 'noteTaker') asFileReference
+				  ensureCreateDirectory ]
+]
+
+{ #category : 'accessing' }
+NTSpApplication >> noteLocation: aFileReference [
+
+	self noteLocation == aFileReference ifTrue: [ ^ self ].
+
+	noteLocation := aFileReference.
+	self reset
 ]
 
 { #category : 'accessing' }
@@ -220,7 +234,7 @@ NTSpApplication >> settings [
 { #category : 'running' }
 NTSpApplication >> start [
 
-	self importSettings.
+	"self importSettings."
 	(NTSpNoteTakerMainUI newApplication: self) open
 ]
 
