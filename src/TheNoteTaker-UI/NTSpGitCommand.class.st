@@ -83,15 +83,15 @@ NTSpGitCommand >> commit [
 { #category : 'executing' }
 NTSpGitCommand >> execute [
 
+	GithubPathString ifEmpty: [ self context alert: 'No Github path set in settings'. ^ self ].
 	(self projectPathString , '.git') asFileReference exists ifFalse: [
 		self init ].
-	
+
 	self
 		add;
 		commit;
 		pull;
-		"merge;"
-		push
+		"merge;"push
 ]
 
 { #category : 'executing' }
