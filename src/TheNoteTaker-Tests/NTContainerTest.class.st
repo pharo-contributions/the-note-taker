@@ -78,6 +78,66 @@ NTContainerTest >> testAddingNotesWithSameName [
 	self assert: notes size equals: 2
 ]
 
+{ #category : 'tests - tags' }
+NTContainerTest >> testImportEmptyFolder [
+
+	| folderReference |
+	self assertEmpty: noteTakerContainer notes.
+
+	folderReference := memoryFS / 'folder' / 'note'.
+	folderReference ensureCreateDirectory.
+
+	noteTakerContainer importFolder: folderReference.
+
+	self assert: noteTakerContainer notesCount equals: 0
+]
+
+{ #category : 'tests - tags' }
+NTContainerTest >> testImportFolder [
+
+	| folderReference fileReference1 fileReference2 fileReference3 |
+	self assertEmpty: noteTakerContainer notes.
+
+	folderReference := memoryFS / 'folder' / 'note'.
+	folderReference ensureCreateDirectory.
+
+	fileReference1 := folderReference / 'aFileReference1.md'.
+	fileReference1 ensureCreateFile.
+
+	fileReference2 := folderReference / 'aFileReference2.md'.
+	fileReference2 ensureCreateFile.
+
+	fileReference3 := folderReference / 'aFileReference3.md'.
+	fileReference3 ensureCreateFile.
+	
+	noteTakerContainer importFolder: folderReference.
+
+	self assert: noteTakerContainer notesCount equals: 3.
+]
+
+{ #category : 'tests - tags' }
+NTContainerTest >> testImportFolderWithFileWithoutAvailableExtensions [
+
+	| folderReference fileReference1 fileReference2 fileReference3 |
+	self assertEmpty: noteTakerContainer notes.
+
+	folderReference := memoryFS / 'folder' / 'note'.
+	folderReference ensureCreateDirectory.
+
+	fileReference1 := folderReference / 'aFileReference1.png'.
+	fileReference1 ensureCreateFile.
+
+	fileReference2 := folderReference / 'aFileReference2.html'.
+	fileReference2 ensureCreateFile.
+
+	fileReference3 := folderReference / 'aFileReference3.css'.
+	fileReference3 ensureCreateFile.
+
+	noteTakerContainer importFolder: folderReference.
+
+	self assert: noteTakerContainer notesCount equals: 0
+]
+
 { #category : 'tests - note' }
 NTContainerTest >> testLoadNoteWithAllMetadata [
 

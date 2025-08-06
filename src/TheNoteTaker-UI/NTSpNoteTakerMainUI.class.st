@@ -131,11 +131,9 @@ NTSpNoteTakerMainUI >> initializePresenters [
 
 	notesIndexPresenter := self instantiate: NTSpNoteIndexPresenter.
 	notesIndexPresenter model: self noteTakerContainer.
-	(NTSpImportFolderCommand new context: notesIndexPresenter)
-		executeWithFolder: self application currentFolder.
 
 	notesEditorPresenter := self instantiate: NTSpEditorPresenter.
-	
+
 	notesToolbarPresenter := self newToolbar fillWith:
 		                         self rootCommandsGroup / 'Toolbar'.
 	statusBar := SpStatusBarPresenter new
