@@ -192,6 +192,12 @@ NTSpNoteIndexPresenter >> openTagsSearcher [
 		openModalWithParent: self window
 ]
 
+{ #category : 'accessing' }
+NTSpNoteIndexPresenter >> refreshSelectedItem [
+
+	componentList selectedItem ifNotNil: [ :item | item updatePresenter ]
+]
+
 { #category : 'layout' }
 NTSpNoteIndexPresenter >> removeNotes: aNoteCollection [
 
