@@ -51,13 +51,6 @@ NTSpGitCommand class >> settingsOn: aBuilder [
 ]
 
 { #category : 'executing' }
-NTSpGitCommand >> GithubPathString [
-	"Answer a <String> with a local or remote path where notes will be committed"
-
-	^ self settingsClass GithubPathString
-]
-
-{ #category : 'executing' }
 NTSpGitCommand >> add [
 
 	self
@@ -215,9 +208,7 @@ NTSpGitCommand >> init [
 
 	LibC runCommand: self gitOnNoteFolder , ' init'.
 	LibC runCommand:
-		self gitOnNoteFolder , ' remote add origin ' , self GithubPathString
-
-	
+		self gitOnNoteFolder , ' remote add origin ' , GithubPathString
 ]
 
 { #category : 'executing' }
@@ -232,9 +223,8 @@ NTSpGitCommand >> merge [
 
 { #category : 'executing' }
 NTSpGitCommand >> projectPath [
-	"Answer a <FileReference> with a local or remote path where notes will be committed"
 
-	^ self settingsClass NoteLocation
+	^ self application currentFolder
 ]
 
 { #category : 'executing' }
@@ -264,12 +254,6 @@ NTSpGitCommand >> push [
 				(errString includesSubstring: 'Permission denied (publickey)')
 					ifTrue: [ IceAuthenticationError signal: errString ].
 				IceGenericError signal: errString ]
-]
-
-{ #category : 'executing' }
-NTSpGitCommand >> settingsClass [
-
-	^ self application settings
 ]
 
 { #category : 'executing' }
