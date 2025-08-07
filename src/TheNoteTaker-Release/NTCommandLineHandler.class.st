@@ -19,20 +19,29 @@ NTCommandLineHandler class >> description [
 
 { #category : 'building' }
 NTCommandLineHandler class >> generateApplication [
+
 	<script: 'self generateApplication'>
-	
 	(self environment at: #AppGeneratorOSXGenerator) new
-		properties: { 
-        #AppName -> 'NoteTaker' .
-        #InfoString -> 'A note taking application written in Pharo' .
-        #BundleIdentifier -> 'org.pharo.notetaker' .
-        #ShortVersion -> '1.0.0' .
-        #DisplayName -> 'Note Taker' .
-        #CommandLineHandler -> 'noteTaker' .
-        #CompanyName -> 'INRIA' .
-		  #VMType -> 'Spur' } asDictionary;
+		properties: {
+				(#AppName -> 'NoteTaker').
+				(#InfoString -> 'A note taking application written in Pharo').
+				(#BundleIdentifier -> 'org.pharo.notetaker').
+				(#ShortVersion -> '1.0.0').
+				(#IconFile -> self iconFile).
+				(#DisplayName -> 'Note Taker').
+				(#CommandLineHandler -> 'noteTaker').
+				(#CompanyName -> 'INRIA').
+				(#VMType -> 'Spur') } asDictionary;
 		outputDirectory: FileLocator workingDirectory / 'build';
-		generate.
+		generate
+]
+
+{ #category : 'building' }
+NTCommandLineHandler class >> iconFile [
+
+	^ (IceRepository repositoryNamed: 'the-note-taker')
+		  location
+	  / 'ressources' / 'logo.png'
 ]
 
 { #category : 'activation' }
