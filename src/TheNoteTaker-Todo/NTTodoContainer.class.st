@@ -52,22 +52,47 @@ NTTodoContainer >> getDefaultTask [
 			 title: 'Machin 3')
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'accessing' }
 NTTodoContainer >> getDoneTask [
 
 	^ self tasks select: [ :t | t isDone ]
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'accessing' }
 NTTodoContainer >> getInBoxTask [
 
 	^ self tasks select: [ :t | t tags isEmpty ]
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'accessing' }
+NTTodoContainer >> getLateTask [
+
+	^ self tasks select: [ :t | t limitDate < DateAndTime now ]
+]
+
+{ #category : 'accessing' }
+NTTodoContainer >> getTaskForTag: aTag [
+
+	^ aTag tasks
+]
+
+{ #category : 'accessing' }
 NTTodoContainer >> getTodayTask [
 
 	^ self tasks select: [ :t | t limitDate asDate equals: Date today ]
+]
+
+{ #category : 'accessing' }
+NTTodoContainer >> getTrashTask [
+
+	^ self tasks select: [ :t |
+		  t isTrash ]
+]
+
+{ #category : 'accessing' }
+NTTodoContainer >> getWeekTask [
+
+	^ self tasks select: [ :t | t limitDate asDate weeks equals: Date today weeks ]
 ]
 
 { #category : 'accessing - notes' }

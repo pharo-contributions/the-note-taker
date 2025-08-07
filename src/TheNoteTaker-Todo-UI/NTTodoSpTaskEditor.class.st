@@ -37,10 +37,12 @@ NTTodoSpTaskEditor >> initializePresenters [
 	descriptionInput := self newTextInput.
 	isRecurrentInput := self newRadioButton.
 	limitDateInput := SpDatePresenter new.
-	stateInput := SpEasyListViewPresenter new items: (OrderedCollection new add: NTDone new; add: NTInBox new; add: NTToday new; yourself).
-	stateInput selectFirst.
 	tagsInput := NTSpTagSelectionDialog new.
-	validButton := self newButton label: 'Valid'; action: [ self save. self delete ]
+	validButton := self newButton
+		               label: 'Valid';
+		               action: [
+				               self save.
+				               self delete ]
 ]
 
 { #category : 'initialization' }

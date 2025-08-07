@@ -11,7 +11,11 @@ Class {
 		'doneButton',
 		'inBoxButton',
 		'todayButton',
-		'addButton'
+		'addButton',
+		'weekButton',
+		'lateButton',
+		'trashButton',
+		'tagsList'
 	],
 	#category : 'TheNoteTaker-Todo-UI-Core',
 	#package : 'TheNoteTaker-Todo-UI',
@@ -43,10 +47,13 @@ NTTodoSpNoteIndexPresenter >> defaultLayout [
 	^ SpBoxLayout newLeftToRight
 		  add: (SpBoxLayout newTopToBottom
 				   add: searchBar;
-				add: addButton;
-				add: doneButton;
-				add: inBoxButton;
-				add: todayButton;
+				   add: addButton;
+				   add: doneButton;
+				   add: inBoxButton;
+				   add: todayButton;
+				   add: weekButton;
+				   add: lateButton;
+				   add: trashButton;
 				   yourself);
 		  add: componentList;
 		  yourself
@@ -86,7 +93,16 @@ NTTodoSpNoteIndexPresenter >> initializePresenters [
 		               action: [ self showInBoxTasks ].
 	todayButton := self newButton
 		               label: 'today';
-		               action: [ self showTodayTasks ]
+		               action: [ self showTodayTasks ].
+	weekButton := self newButton
+		               label: 'In Box';
+		               action: [ self showWeekTasks ].
+	lateButton := self newButton
+		               label: 'In Box';
+		               action: [ self showLateTasks ].
+	trashButton := self newButton
+		               label: 'In Box';
+		               action: [ self showTrashTasks ].
 ]
 
 { #category : 'accessing' }
@@ -125,9 +141,33 @@ NTTodoSpNoteIndexPresenter >> showInBoxTasks [
 ]
 
 { #category : 'initialization' }
+NTTodoSpNoteIndexPresenter >> showLateTasks [
+
+	self items: self model getLateTask
+]
+
+{ #category : 'initialization' }
+NTTodoSpNoteIndexPresenter >> showTaskForTag: aTag [
+
+	self items: (self model getTaskForTag: aTag)
+]
+
+{ #category : 'initialization' }
 NTTodoSpNoteIndexPresenter >> showTodayTasks [
 
 	self items: self model getTodayTask
+]
+
+{ #category : 'initialization' }
+NTTodoSpNoteIndexPresenter >> showTrashTasks [
+
+	self items: self model getTrashTask
+]
+
+{ #category : 'initialization' }
+NTTodoSpNoteIndexPresenter >> showWeekTasks [
+
+	self items: self model getWeekTask
 ]
 
 { #category : 'filtering' }

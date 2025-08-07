@@ -39,7 +39,8 @@ NTTodoTag class >> newNamed: aString [
 { #category : 'adding' }
 NTTodoTag >> addTask: aTask [
 
-	self tasks add: aTask
+	self tasks add: aTask.
+	aTask addTag: self
 ]
 
 { #category : 'accessing' }
