@@ -111,8 +111,6 @@ NTSpEditorPresenter >> initializePresenters [
 		toAction: [ :target :morph :event |
 				isRenderedEnable ifTrue: [ self renderDocument ].
 				self class AutoSave ifTrue: [ self saveFile ].
-				self updateTitle.
-				"self owner notesIndexPresenter modelChanged."
 				event wasHandled: false ].
 
 	renderedText := self newText
@@ -210,12 +208,11 @@ NTSpEditorPresenter >> setModel: aNTNoteObject [
 	aNTNoteObject
 		ifNil: [ self newEmptyNote ]
 		ifNotNil: [ model := aNTNoteObject ].
-		
+
 	isNewNote := false.
 
 	self textInputText: model contents asString.
 	self renderDocument.
-	self updateTitle
 
 	"self mayLoseEdits ifTrue: [ (self application confirm:
 			 'You have unsaved edits. Do you want to proceed?')
@@ -235,9 +232,7 @@ NTSpEditorPresenter >> textInputText: aString [
 ]
 
 { #category : 'api' }
-NTSpEditorPresenter >> updateTitle [
+NTSpEditorPresenter >> whenNoteChangedDo: aBlock [
 
-	self window ifNotNil: [
-			self window title:
-				self application applicationTitle , ' - ' , model title ]
+	textInput whenTextChangedDo: [ aBlock cull: self model ]
 ]
