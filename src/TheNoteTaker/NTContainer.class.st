@@ -157,15 +157,6 @@ NTContainer >> notesCount [
 	^ self notes size
 ]
 
-{ #category : 'accessing - notes' }
-NTContainer >> notesTitleMatching: aString [
-	"Answer a <Collection> with <NoteObject> objects whose title matched named aString"
-
-	| pattern |
-	pattern := '*' , aString , '*'.
-	^ self notes select: [ :n | pattern match: n title ]
-]
-
 { #category : 'removing - notes' }
 NTContainer >> removeNotes: aCollectionOfNTNoteObject [
 	"Remove the note aNTNoteObject from the receiver's notes. Answer the receiver"

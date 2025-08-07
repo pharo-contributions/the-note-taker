@@ -179,24 +179,6 @@ NTContainerTest >> testNotesContentMatching [
 ]
 
 { #category : 'tests - scenarios' }
-NTContainerTest >> testNotesTitleMatching [
-
-	ressources addingNotesAndTagsTo: noteTakerContainer.
-
-	self
-		assert: (noteTakerContainer notesTitleMatching: '') size
-		equals: 3.
-
-	self
-		assert: (noteTakerContainer notesTitleMatching: 'note') size
-		equals: 3.
-
-	self
-		assert: (noteTakerContainer notesTitleMatching: 'ZZZ') size
-		equals: 0
-]
-
-{ #category : 'tests - scenarios' }
 NTContainerTest >> testNotesWithTags [
 
 	| result |
