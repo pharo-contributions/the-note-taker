@@ -214,21 +214,28 @@ NTContainerTest >> testLoadNoteWithoutMetadata [
 ]
 
 { #category : 'tests - scenarios' }
-NTContainerTest >> testNotesTitleMatching [
+NTContainerTest >> testNotesContentMatching [
 
+	| note |
 	ressources addingNotesAndTagsTo: noteTakerContainer.
+	note := NTNote content: 'TITLE', String crlf, 'note content'.
+	noteTakerContainer addNote: note.
 
 	self
-		assert: (noteTakerContainer notesTitleMatching: '') size
-		equals: 3.
+		assert: (noteTakerContainer notesContentsMatching: '') size
+		equals: 4.
 
 	self
-		assert: (noteTakerContainer notesTitleMatching: 'note') size
-		equals: 3.
+		assert: (noteTakerContainer notesContentsMatching: 'note') size
+		equals: 4.
 
 	self
-		assert: (noteTakerContainer notesTitleMatching: 'ZZZ') size
-		equals: 0
+		assert: (noteTakerContainer notesContentsMatching: 'TITLE') size
+		equals: 1.
+		
+	self
+		assert: (noteTakerContainer notesContentsMatching: 'content') size
+		equals: 1
 ]
 
 { #category : 'tests - scenarios' }

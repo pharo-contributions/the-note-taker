@@ -41,6 +41,30 @@ NTSpNoteIndexPresenterTest >> testAddNote [
 ]
 
 { #category : 'tests' }
+NTSpNoteIndexPresenterTest >> testFilterNoteWithTheirContent [
+
+	| note |
+	ressources addingNotesAndTagsTo: noteContainer.
+	note := NTNote content: 'TITLE' , String crlf , 'note content'.
+	noteContainer addNote: note.
+
+	indexPresenter searchBar text: ''.
+	self assert: indexPresenter items size equals: 4.
+
+	indexPresenter searchBar text: 'note1'.
+	self assert: indexPresenter items size equals: 1.
+
+	indexPresenter searchBar text: 'note'.
+	self assert: indexPresenter items size equals: 4.
+	
+	indexPresenter searchBar text: 'content'.
+	self assert: indexPresenter items size equals: 1.
+
+	indexPresenter searchBar text: 'ZZZ'.
+	self assert: indexPresenter items size equals: 0
+]
+
+{ #category : 'tests' }
 NTSpNoteIndexPresenterTest >> testFilterWithNoteAndTag [
 
 	indexPresenter filteredTagsSelection add:

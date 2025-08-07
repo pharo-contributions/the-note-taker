@@ -96,7 +96,7 @@ NTSpNoteIndexPresenter >> filter [
 	filteredItems := searchBar text
 		                 ifEmpty: [ self notes ]
 		                 ifNotEmpty: [ :pattern |
-		                 self model notesTitleMatching: pattern ].
+		                 self model notesContentsMatching: pattern ].
 
 	filteredItems := filteredTagsSelection
 		                 ifEmpty: [ filteredItems ]

@@ -152,19 +152,19 @@ NTContainer >> notes: aNotesCollection withTags: aTagsCollection [
 ]
 
 { #category : 'accessing - notes' }
-NTContainer >> notesCount [
-	"Answer an <Integer> representing how many notes the receiver includes"
-	
-	^ self notes size
-]
-
-{ #category : 'accessing - notes' }
-NTContainer >> notesTitleMatching: aString [
+NTContainer >> notesContentsMatching: aString [
 	"Answer a <Collection> with <NoteObject> objects whose title matched named aString"
 
 	| pattern |
 	pattern := '*' , aString , '*'.
-	^ self notes select: [ :n | pattern match: n title ]
+	^ self notes select: [ :n | pattern match: n contents ]
+]
+
+{ #category : 'accessing - notes' }
+NTContainer >> notesCount [
+	"Answer an <Integer> representing how many notes the receiver includes"
+	
+	^ self notes size
 ]
 
 { #category : 'removing - notes' }
