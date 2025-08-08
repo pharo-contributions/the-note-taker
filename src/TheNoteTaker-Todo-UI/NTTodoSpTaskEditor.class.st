@@ -1,6 +1,6 @@
 Class {
 	#name : 'NTTodoSpTaskEditor',
-	#superclass : 'SpPresenter',
+	#superclass : 'SpDialogPresenter',
 	#instVars : [
 		'task',
 		'titleInput',
@@ -8,8 +8,7 @@ Class {
 		'isRecurrentInput',
 		'limitDateInput',
 		'tagsInput',
-		'validButton',
-		'stateInput'
+		'validButton'
 	],
 	#category : 'TheNoteTaker-Todo-UI-Core',
 	#package : 'TheNoteTaker-Todo-UI',
@@ -20,14 +19,18 @@ Class {
 NTTodoSpTaskEditor >> defaultLayout [
 
 	^ SpBoxLayout newTopToBottom
-			add: titleInput;
-			add: descriptionInput;
-			add: isRecurrentInput ;
-			add: limitDateInput ;
-			add: stateInput ;
-			"add: tagsInput;"
-			add: validButton;
-			yourself
+		  add: 'Title : ';
+		  add: titleInput;
+		  add: 'Description : ';
+		  add: descriptionInput;
+		  add: (SpBoxLayout newLeftToRight
+				   add: 'Recurrent : ';
+				   add: isRecurrentInput;
+				   add: 'limit Date : ';
+				   add: limitDateInput);
+		  add: tagsInput;
+		  add: validButton;
+		  yourself
 ]
 
 { #category : 'initialization' }
@@ -37,12 +40,30 @@ NTTodoSpTaskEditor >> initializePresenters [
 	descriptionInput := self newTextInput.
 	isRecurrentInput := self newRadioButton.
 	limitDateInput := SpDatePresenter new.
-	tagsInput := NTSpTagSelectionDialog new.
+	tagsInput := self newButton label: 'tags'; action: [ self openTagsManager ]; yourself.
 	validButton := self newButton
 		               label: 'Valid';
 		               action: [
 				               self save.
 				               self delete ]
+]
+
+{ #category : 'initialization' }
+NTTodoSpTaskEditor >> openTagsManager [
+
+	(NTTodoSpTagSelectionDialog newApplication: self application)
+		allowTagCreation;
+		title: 'tag name';
+		items:
+			(self application taskContainer tags asOrderedCollection collect: [ :each |
+					 each tagName ]);
+		display: #asString;
+		onAccept: [ :dialog |
+				dialog presenter selectedItems do: [ :tagName |
+							| tag |
+							tag := self application taskContainer ensureTagNamed: tagName.
+							tag addTask: task ] ];
+		openModalWithParent: self window
 ]
 
 { #category : 'initialization' }
@@ -52,7 +73,6 @@ NTTodoSpTaskEditor >> save [
 	task description: descriptionInput text.
 	task isRecurrent: isRecurrentInput isActive.
 	task limitDate: limitDateInput date asDateAndTime.
-	task state: stateInput selectedItem.
 ]
 
 { #category : 'initialization' }

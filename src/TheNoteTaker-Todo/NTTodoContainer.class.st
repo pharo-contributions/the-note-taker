@@ -24,32 +24,59 @@ Class {
 	#name : 'NTTodoContainer',
 	#superclass : 'Object',
 	#instVars : [
-		'tasks'
+		'tasks',
+		'tags'
 	],
 	#category : 'TheNoteTaker-Todo',
 	#package : 'TheNoteTaker-Todo'
 }
 
+{ #category : 'accessing - notes' }
+NTTodoContainer >> addTagNamed: aString [
+	"Add a new empty note with title aString to the receiver's notes."
+
+	| tag |
+	tag := NTTodoTag newNamed: aString.
+	self tags add: tag.
+	^ tag
+]
+
 { #category : 'adding - notes' }
 NTTodoContainer >> addTask: aNTTodo [
 
-	self tasks add: aNTTodo
+	self tasks add: aNTTodo.
+	^ aNTTodo
+]
+
+{ #category : 'accessing - notes' }
+NTTodoContainer >> ensureTagNamed: aString [
+	"Answer the first <NTNoteObject> matching aString in its name"
+
+	^ self tags
+		  detect: [ :n | n tagName = aString ]
+		  ifNone: [ self addTagNamed: aString ]
 ]
 
 { #category : 'adding - notes' }
 NTTodoContainer >> getDefaultTask [
 
-	self addTask: (NTTodo new
-			 title: 'Chercher le pain').
-	self addTask: (NTTodo new
+	| maison machin reviser machin1 machin2 machin3 |
+	
+	maison := self ensureTagNamed: 'Maison'.
+	machin := self ensureTagNamed: 'Machin'.
+	
+	self addTask: (NTTodo new title: 'Chercher le pain').
+	reviser := self addTask: (NTTodo new
 			 title: 'Reviser';
 			 isRecurrent: true).
-	self addTask: (NTTodo new
-			 title: 'Machin 1 ').
-	self addTask: (NTTodo new
-			 title: 'Machin 2 ').
-	self addTask: (NTTodo new
-			 title: 'Machin 3')
+	machin1 := self addTask: (NTTodo new title: 'Machin 1 ').
+	machin2 := self addTask: (NTTodo new title: 'Machin 2 ').
+	machin3 := self addTask: (NTTodo new title: 'Machin 3').
+	
+	maison addTask: reviser.
+	machin addTask: machin1.
+	machin addTask: machin2.
+	machin addTask: machin3.
 ]
 
 { #category : 'accessing' }
@@ -92,13 +119,14 @@ NTTodoContainer >> getTrashTask [
 { #category : 'accessing' }
 NTTodoContainer >> getWeekTask [
 
-	^ self tasks select: [ :t | t limitDate asDate weeks equals: Date today weeks ]
+	^ self tasks select: [ :t | t limitDate asDate weeks = Date today weeks ]
 ]
 
 { #category : 'accessing - notes' }
 NTTodoContainer >> initialize [
 
 	tasks := OrderedCollection new.
+	tags := OrderedCollection new.
 
 	self getDefaultTask
 ]
@@ -108,6 +136,28 @@ NTTodoContainer >> removetasks: aCollectionOfNTTodo [
 	"Remove the note aNTNoteObject from the receiver's notes. Answer the receiver"
 	
 	self tasks removeAll: aCollectionOfNTTodo
+]
+
+{ #category : 'accessing' }
+NTTodoContainer >> tags [
+	"Answer the receiver's <Collection> of <NTNoteObject>"
+
+	^ tags
+]
+
+{ #category : 'accessing' }
+NTTodoContainer >> tags: aCollection [
+
+	tags := aCollection
+]
+
+{ #category : 'accessing - notes' }
+NTTodoContainer >> tagsNameMatching: aString [
+	"Answer a <Collection> with <NoteObject> objects whose title matched named aString"
+
+	| pattern |
+	pattern := '*' , aString , '*'.
+	^ self tags select: [ :n | pattern match: n tagName ]
 ]
 
 { #category : 'accessing - notes' }

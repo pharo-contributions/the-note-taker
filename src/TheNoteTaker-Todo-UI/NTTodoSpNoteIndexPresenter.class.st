@@ -27,7 +27,7 @@ NTTodoSpNoteIndexPresenter >> addTask [
 
 	| task |
 	task := NTTodo new.
-	NTTodoSpTaskEditor new task: task; openModal.
+	(NTTodoSpTaskEditor newApplication: self application) task: task; openModalWithParent: self.
 	self model addTask: task.
 	self updatePresenter
 ]
@@ -35,10 +35,15 @@ NTTodoSpNoteIndexPresenter >> addTask [
 { #category : 'initialization' }
 NTTodoSpNoteIndexPresenter >> connectPresenters [
 
-	searchBar
-		whenTextChangedDo: [ self filter ].
-		
-	componentList whenSelectedItemChangedDo: [ :taskPresenter | taskPresenter ifNotNil: [ NTTodoSpTaskEditor new task: taskPresenter task; openModal ] ]
+	searchBar whenTextChangedDo: [ self filter ].
+	
+	tagsList whenSelectionChangedDo: [ :tag |  self showTaskForTag: tagsList selectedItem ].
+
+	componentList whenSelectedItemChangedDo: [ :taskPresenter |
+			taskPresenter ifNotNil: [
+					(NTTodoSpTaskEditor newApplication: self application)
+						task: taskPresenter task;
+						openModalWithParent: self ]. self updatePresenter ]
 ]
 
 { #category : 'layout' }
@@ -54,6 +59,8 @@ NTTodoSpNoteIndexPresenter >> defaultLayout [
 				   add: weekButton;
 				   add: lateButton;
 				   add: trashButton;
+				   add: 'Tags List';
+				   add: tagsList;
 				   yourself);
 		  add: componentList;
 		  yourself
@@ -95,14 +102,16 @@ NTTodoSpNoteIndexPresenter >> initializePresenters [
 		               label: 'today';
 		               action: [ self showTodayTasks ].
 	weekButton := self newButton
-		               label: 'In Box';
-		               action: [ self showWeekTasks ].
+		              label: 'Week';
+		              action: [ self showWeekTasks ].
 	lateButton := self newButton
-		               label: 'In Box';
-		               action: [ self showLateTasks ].
+		              label: 'Late';
+		              action: [ self showLateTasks ].
 	trashButton := self newButton
-		               label: 'In Box';
+		               label: 'Trash';
 		               action: [ self showTrashTasks ].
+
+	tagsList := SpEasyListViewPresenter new items: self model tags
 ]
 
 { #category : 'accessing' }
@@ -125,7 +134,9 @@ NTTodoSpNoteIndexPresenter >> items: aCollection [
 { #category : 'initialization' }
 NTTodoSpNoteIndexPresenter >> modelChanged [
 
-	self model ifNotNil: [ self items: self tasks ]
+	self model ifNotNil: [
+			self items: self tasks.
+			"tagsList items: self model tags" ]
 ]
 
 { #category : 'initialization' }
