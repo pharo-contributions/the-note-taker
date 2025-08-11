@@ -175,8 +175,8 @@ NTSpApplication >> importSettings [
 NTSpApplication >> initialize [
 
 	super initialize.
-	currentFolder := self noteLocation.
-	noteTakerContainer := NTContainer new importFolder: currentFolder.
+	currentFolder := self class NoteLocation.
+	noteTakerContainer := NTContainer new.
 	settingPersistence := SystemSettingsPersistence new fileReference:
 		                      self configFileLocation.
 	log := NTLog newWithFolder: currentFolder
@@ -234,7 +234,8 @@ NTSpApplication >> settings [
 { #category : 'running' }
 NTSpApplication >> start [
 
-	"self importSettings."
+	self importSettings.
+	noteTakerContainer importFolder: currentFolder.
 	(NTSpNoteTakerMainUI newApplication: self) open
 ]
 

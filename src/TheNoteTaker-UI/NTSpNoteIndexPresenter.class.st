@@ -55,6 +55,12 @@ NTSpNoteIndexPresenter >> addNote: aNTNoteObject [
 	self selectNote: aNTNoteObject.
 ]
 
+{ #category : 'accessing' }
+NTSpNoteIndexPresenter >> componentListCount [
+
+	^ componentList listSize
+]
+
 { #category : 'initialization' }
 NTSpNoteIndexPresenter >> connectPresenters [
 
@@ -96,7 +102,7 @@ NTSpNoteIndexPresenter >> filter [
 	filteredItems := searchBar text
 		                 ifEmpty: [ self notes ]
 		                 ifNotEmpty: [ :pattern |
-		                 self model notesTitleMatching: pattern ].
+		                 self model notesContentsMatching: pattern ].
 
 	filteredItems := filteredTagsSelection
 		                 ifEmpty: [ filteredItems ]
@@ -190,6 +196,12 @@ NTSpNoteIndexPresenter >> openTagsSearcher [
 				filteredTagsSelection := dialog presenter selectedItems collect: [
 						                         :each | self model ensureTagNamed: each ] ];
 		openModalWithParent: self window
+]
+
+{ #category : 'accessing' }
+NTSpNoteIndexPresenter >> refreshSelectedItem [
+
+	componentList selectedItem ifNotNil: [ :item | item updatePresenter ]
 ]
 
 { #category : 'layout' }

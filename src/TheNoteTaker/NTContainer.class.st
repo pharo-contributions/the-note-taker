@@ -101,13 +101,11 @@ NTContainer >> initialize [
 NTContainer >> loadFileContents: aString for: aNTNote [
 
 	| fileContentsPart |
-	(aString beginsWith: '{')
-		ifTrue: [
-				fileContentsPart := aString substrings: '}'.
-				aNTNote contents:
-					(fileContentsPart second withoutPrefix: String crlf , String crlf).
-				self loadMetaData: fileContentsPart first for: aNTNote ]
-		ifFalse: [ aNTNote contents: aString ]
+	(aString beginsWith: '{') ifFalse: [ ^ self ].
+	fileContentsPart := aString substrings: '}'.
+	aNTNote contents:
+		(fileContentsPart second withoutPrefix: String crlf , String crlf).
+	self loadMetaData: fileContentsPart first for: aNTNote
 ]
 
 { #category : 'loading - note' }
@@ -115,12 +113,12 @@ NTContainer >> loadMetaData: aString for: aNTNote [
 
 	| metaData tagsString |
 	metaData := (MicrodownParser parse: aString) metaDataElement.
-	aNTNote creationDate:
-		(metaData at: 'creationDate' ifAbsent: DateAndTime now)
-			asDateAndTime.
-	aNTNote modificationDate:
-		(metaData at: 'lastModificationDate' ifAbsent: aNTNote creationDate)
-			asDateAndTime.
+	aNTNote creationDate: (metaData
+			 at: 'creationDate'
+			 ifAbsent: aNTNote fileReference creationTime) asDateAndTime.
+	aNTNote modificationDate: (metaData
+			 at: 'lastModificationDate'
+			 ifAbsent: aNTNote fileReference modificationTime) asDateAndTime.
 	tagsString := metaData at: 'tags' ifAbsent: [ ^ self ].
 
 	tagsString ifNotNil: [
@@ -152,19 +150,19 @@ NTContainer >> notes: aNotesCollection withTags: aTagsCollection [
 ]
 
 { #category : 'accessing - notes' }
-NTContainer >> notesCount [
-	"Answer an <Integer> representing how many notes the receiver includes"
-	
-	^ self notes size
-]
-
-{ #category : 'accessing - notes' }
-NTContainer >> notesTitleMatching: aString [
+NTContainer >> notesContentsMatching: aString [
 	"Answer a <Collection> with <NoteObject> objects whose title matched named aString"
 
 	| pattern |
 	pattern := '*' , aString , '*'.
-	^ self notes select: [ :n | pattern match: n title ]
+	^ self notes select: [ :n | pattern match: n contents ]
+]
+
+{ #category : 'accessing - notes' }
+NTContainer >> notesCount [
+	"Answer an <Integer> representing how many notes the receiver includes"
+	
+	^ self notes size
 ]
 
 { #category : 'removing - notes' }

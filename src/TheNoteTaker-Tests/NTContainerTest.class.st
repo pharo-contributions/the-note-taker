@@ -210,25 +210,34 @@ NTContainerTest >> testLoadNoteWithoutMetadata [
 	self assert: note exists.
 	self assert: note contents equals: 'This is just a new note'.
 	self assert: note fileName equals: '2024-06-12_newNote.md'.
-	self assert: note title equals: 'This is just a new note'
+	self assert: note title equals: 'This is just a new note'.
+	self assert: note creationDate equals: noteFile creationTime asDateAndTime.
+	self assert: note modificationDate equals: noteFile modificationTime asDateAndTime
 ]
 
 { #category : 'tests - scenarios' }
-NTContainerTest >> testNotesTitleMatching [
+NTContainerTest >> testNotesContentMatching [
 
+	| note |
 	ressources addingNotesAndTagsTo: noteTakerContainer.
+	note := NTNote content: 'TITLE', String crlf, 'note content'.
+	noteTakerContainer addNote: note.
 
 	self
-		assert: (noteTakerContainer notesTitleMatching: '') size
-		equals: 3.
+		assert: (noteTakerContainer notesContentsMatching: '') size
+		equals: 4.
 
 	self
-		assert: (noteTakerContainer notesTitleMatching: 'note') size
-		equals: 3.
+		assert: (noteTakerContainer notesContentsMatching: 'note') size
+		equals: 4.
 
 	self
-		assert: (noteTakerContainer notesTitleMatching: 'ZZZ') size
-		equals: 0
+		assert: (noteTakerContainer notesContentsMatching: 'TITLE') size
+		equals: 1.
+		
+	self
+		assert: (noteTakerContainer notesContentsMatching: 'content') size
+		equals: 1
 ]
 
 { #category : 'tests - scenarios' }

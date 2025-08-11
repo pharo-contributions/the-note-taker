@@ -90,7 +90,12 @@ NTSpNoteTakerMainUI >> connectPresenters [
 		transmitTo: notesEditorPresenter
 		transform: [ :aNotePresenter |
 		aNotePresenter ifNotNil: [ aNotePresenter note ] ]
-		postTransmission: [ notesEditorPresenter takeKeyboardFocus ]
+		postTransmission: [ notesEditorPresenter takeKeyboardFocus ].
+
+	notesEditorPresenter whenNoteChangedDo: [ :note |
+			notesIndexPresenter refreshSelectedItem.
+			self window ifNotNil: [:window | window title:
+						self application applicationTitle , ' - ' , note title ] ]
 ]
 
 { #category : 'layout' }
@@ -131,6 +136,7 @@ NTSpNoteTakerMainUI >> initializePresenters [
 
 	notesIndexPresenter := self instantiate: NTSpNoteIndexPresenter.
 	notesIndexPresenter model: self noteTakerContainer.
+	notesIndexPresenter updatePresenter.
 
 	notesEditorPresenter := self instantiate: NTSpEditorPresenter.
 
