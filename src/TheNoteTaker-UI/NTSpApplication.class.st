@@ -175,7 +175,7 @@ NTSpApplication >> importSettings [
 NTSpApplication >> initialize [
 
 	super initialize.
-	currentFolder := self class NoteLocation.
+	currentFolder := self noteLocation.
 	noteTakerContainer := NTContainer new.
 	settingPersistence := SystemSettingsPersistence new fileReference:
 		                      self configFileLocation.
@@ -205,9 +205,10 @@ NTSpApplication >> noteLocation [
 { #category : 'accessing' }
 NTSpApplication >> noteLocation: aFileReference [
 
-	self noteLocation == aFileReference ifTrue: [ ^ self ].
+	self noteLocation = aFileReference ifTrue: [ ^ self ].
 
 	noteLocation := aFileReference.
+	currentFolder := noteLocation.
 	self reset
 ]
 
@@ -221,7 +222,6 @@ NTSpApplication >> noteTakerContainer [
 NTSpApplication >> reset [
 
 	super reset.
-	noteTakerContainer := NTContainer new.
 	self start
 ]
 
@@ -248,10 +248,10 @@ NTSpApplication >> startFullScreen [
 
 { #category : 'windows' }
 NTSpApplication >> windowClosed: aWindowPresenter [
-	
+
 	super windowClosed: aWindowPresenter.
 
-	self windows ifEmpty: [ self exportSettings ].
-	
-	
+	self windows ifEmpty: [
+			self exportSettings.
+			noteTakerContainer := NTContainer new ]
 ]
