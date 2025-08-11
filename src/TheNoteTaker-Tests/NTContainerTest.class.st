@@ -210,7 +210,9 @@ NTContainerTest >> testLoadNoteWithoutMetadata [
 	self assert: note exists.
 	self assert: note contents equals: 'This is just a new note'.
 	self assert: note fileName equals: '2024-06-12_newNote.md'.
-	self assert: note title equals: 'This is just a new note'
+	self assert: note title equals: 'This is just a new note'.
+	self assert: note creationDate equals: noteFile creationTime asDateAndTime.
+	self assert: note modificationDate equals: noteFile modificationTime asDateAndTime
 ]
 
 { #category : 'tests - scenarios' }
