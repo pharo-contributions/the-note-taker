@@ -55,6 +55,12 @@ NTSpNoteIndexPresenter >> addNote: aNTNoteObject [
 	self selectNote: aNTNoteObject.
 ]
 
+{ #category : 'accessing' }
+NTSpNoteIndexPresenter >> componentListCount [
+
+	^ componentList listSize
+]
+
 { #category : 'initialization' }
 NTSpNoteIndexPresenter >> connectPresenters [
 

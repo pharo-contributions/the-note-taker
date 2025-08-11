@@ -136,6 +136,7 @@ NTSpNoteTakerMainUI >> initializePresenters [
 
 	notesIndexPresenter := self instantiate: NTSpNoteIndexPresenter.
 	notesIndexPresenter model: self noteTakerContainer.
+	notesIndexPresenter updatePresenter.
 
 	notesEditorPresenter := self instantiate: NTSpEditorPresenter.
 

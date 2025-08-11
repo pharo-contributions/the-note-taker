@@ -214,6 +214,13 @@ NTSpNoteTakerMainUITest >> testIndexSelectNoteSendItToEditor [
 ]
 
 { #category : 'tests' }
+NTSpNoteTakerMainUITest >> testLaunchingAppAddContainerNoteToIndexPresenter [
+
+	app start.
+	self assert: indexPresenter componentListCount equals: noteContainer notesCount
+]
+
+{ #category : 'tests' }
 NTSpNoteTakerMainUITest >> testNameNoteIsInISOFormat [
 
 	| date tempNote note |
