@@ -4,10 +4,26 @@ Implements logic to add a single note to a note taking application. Particularil
 Class {
 	#name : 'NTSpGitCommand',
 	#superclass : 'NTSpAbstractCommand',
+	#classVars : [
+		'GithubPathString'
+	],
 	#category : 'TheNoteTaker-UI-Commands',
 	#package : 'TheNoteTaker-UI',
 	#tag : 'Commands'
 }
+
+{ #category : 'default' }
+NTSpGitCommand class >> GithubPathString [
+
+	^ GithubPathString ifNil: [ '' ]
+]
+
+{ #category : 'accessing' }
+NTSpGitCommand class >> GithubPathString: aString [
+	"Set the preferred <String> where notes will be stored"
+
+	GithubPathString := aString
+]
 
 { #category : 'default' }
 NTSpGitCommand class >> defaultDescription [
@@ -19,6 +35,19 @@ NTSpGitCommand class >> defaultDescription [
 NTSpGitCommand class >> defaultName [
 
 	^ 'Git Save'
+]
+
+{ #category : 'accessing' }
+NTSpGitCommand class >> settingsOn: aBuilder [
+
+	<systemsettings>
+	(aBuilder setting: #GithubPathString)
+		parent: #tnt;
+		target: self;
+		label: 'Github Path';
+		ghostHelp: 'git@github.com:moufort/noteTest.git';
+		description:
+			'Enter your github path where notes will be committed. It can be empty'
 ]
 
 { #category : 'executing' }
@@ -54,15 +83,15 @@ NTSpGitCommand >> commit [
 { #category : 'executing' }
 NTSpGitCommand >> execute [
 
+	GithubPathString ifEmpty: [ self context alert: 'No Github path set in settings'. ^ self ].
 	(self projectPathString , '.git') asFileReference exists ifFalse: [
 		self init ].
-	
+
 	self
 		add;
 		commit;
 		pull;
-		"merge;"
-		push
+		"merge;"push
 ]
 
 { #category : 'executing' }
@@ -175,20 +204,11 @@ NTSpGitCommand >> gitOnNoteFolder [
 ]
 
 { #category : 'executing' }
-NTSpGitCommand >> githubPathString [
-	"Answer a <String> with a local or remote path where notes will be committed"
-
-	^ self settingsClass githubPathString
-]
-
-{ #category : 'executing' }
 NTSpGitCommand >> init [
 
 	LibC runCommand: self gitOnNoteFolder , ' init'.
 	LibC runCommand:
-		self gitOnNoteFolder , ' remote add origin ' , self githubPathString
-
-	
+		self gitOnNoteFolder , ' remote add origin ' , GithubPathString
 ]
 
 { #category : 'executing' }
@@ -203,9 +223,8 @@ NTSpGitCommand >> merge [
 
 { #category : 'executing' }
 NTSpGitCommand >> projectPath [
-	"Answer a <FileReference> with a local or remote path where notes will be committed"
 
-	^ self settingsClass noteLocation
+	^ self application currentFolder
 ]
 
 { #category : 'executing' }
@@ -235,12 +254,6 @@ NTSpGitCommand >> push [
 				(errString includesSubstring: 'Permission denied (publickey)')
 					ifTrue: [ IceAuthenticationError signal: errString ].
 				IceGenericError signal: errString ]
-]
-
-{ #category : 'executing' }
-NTSpGitCommand >> settingsClass [
-
-	^ self application settings
 ]
 
 { #category : 'executing' }

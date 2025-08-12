@@ -146,6 +146,43 @@ NTSpNoteTakerMainUITest >> testAddTagToSingleNote [
 ]
 
 { #category : 'tests' }
+NTSpNoteTakerMainUITest >> testChangeNoteTitleInEditorUpdateIndexSelectedNoteTitle [
+
+	| string note |
+	string := 'title windows test'.
+	note := ressources getNote1.
+	
+	self deny: note title equals: string. 
+	
+	indexPresenter selectNote: note.
+	editorPresenter textInputText: string.
+	
+	self assert: note title equals: string. 
+]
+
+{ #category : 'tests' }
+NTSpNoteTakerMainUITest >> testChangeNoteTitleInEditorUpdateWindowTitle [
+
+	| string |
+	string := 'title windows test'.
+
+	presenter open.
+	editorPresenter textInputText: string.
+
+	self
+		assert: presenter window title
+		equals: app applicationTitle , ' - ' , string
+]
+
+{ #category : 'tests' }
+NTSpNoteTakerMainUITest >> testChangeNoteTitleInEditorWithoutSelectedNote [
+
+	self deny: indexPresenter hasSelectedNote.
+	editorPresenter textInputText: 'title windows test'.
+	self deny: indexPresenter hasSelectedNote description: 'Verify that change note title doesn t select it when his not selected'.
+]
+
+{ #category : 'tests' }
 NTSpNoteTakerMainUITest >> testCreateANoteSelectIt [
 
 	self skip.
@@ -174,6 +211,13 @@ NTSpNoteTakerMainUITest >> testIndexSelectNoteSendItToEditor [
 	indexPresenter selectNote: note.
 
 	self assert: editorPresenter model equals: note
+]
+
+{ #category : 'tests' }
+NTSpNoteTakerMainUITest >> testLaunchingAppAddContainerNoteToIndexPresenter [
+
+	app start.
+	self assert: indexPresenter componentListCount equals: noteContainer notesCount
 ]
 
 { #category : 'tests' }

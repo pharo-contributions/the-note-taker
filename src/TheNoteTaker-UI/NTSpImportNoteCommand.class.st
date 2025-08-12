@@ -21,12 +21,6 @@ NTSpImportNoteCommand class >> defaultName [
 	^ 'Import Notes'
 ]
 
-{ #category : 'adding' }
-NTSpImportNoteCommand >> addNoteFromFileReference: aString [
-
-	self noteTakerContainer addNoteFromFileReference: aString
-]
-
 { #category : 'converting' }
 NTSpImportNoteCommand >> asSpecCommand [
 
@@ -42,26 +36,8 @@ NTSpImportNoteCommand >> execute [
 	| selections |
 	selections := (StOpenFilePresenter new
 		               extent: 800 @ 800;
-		               extensions: self validNoteExtensions;
+		               extensions: { 'txt'. 'mic'. 'md' };
 		               yourself) openModal.
-	selections do: [ :each | self processSelections: each ].
+	selections do: [ :each | self noteTakerContainer addNoteFromFileReference: each ].
 	self context updatePresenter
-]
-
-{ #category : 'executing' }
-NTSpImportNoteCommand >> processSelections: selections [
-
-	selections ifNotNil: [
-		self addNoteFromFileReference: selections asFileReference ]
-]
-
-{ #category : 'executing' }
-NTSpImportNoteCommand >> validNoteExtensions [
-	"Answer a <Collection> of <String> each one specifying a valid file extension for a note"
-	
-	^ { 
-		'txt' .
-		'mic' .
-		'md' 
-		}
 ]

@@ -10,10 +10,11 @@ Class {
 		'notesToolbarPresenter',
 		'notesIndexPresenter',
 		'notesEditorPresenter',
-		'statusBar'
+		'statusBar',
+		'gitEnable'
 	],
 	#classVars : [
-		'GitEnable'
+		'Default'
 	],
 	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
@@ -23,13 +24,13 @@ Class {
 { #category : 'commands' }
 NTSpNoteTakerMainUI class >> GitEnable [
 
-	^ GitEnable ifNil: [GitEnable := false] 
+	^ self default gitEnable
 ]
 
 { #category : 'commands' }
 NTSpNoteTakerMainUI class >> GitEnable: aBoolean [
 
-	GitEnable := aBoolean
+	self default gitEnable: aBoolean
 ]
 
 { #category : 'nil' }
@@ -56,6 +57,29 @@ NTSpNoteTakerMainUI class >> buildNTContextualGroupWith: presenterInstance [
 	^ commandGroup
 		  register: (NTSpLogCommand forSpec context: presenterInstance);
 		  register: (NTSpSettingsCommand forSpec context: presenterInstance)
+]
+
+{ #category : 'accessing' }
+NTSpNoteTakerMainUI class >> default [
+
+	^ Default ifNil: [ Default := self new ]
+]
+
+{ #category : 'commands' }
+NTSpNoteTakerMainUI class >> default: aNTSpApplication [
+
+	Default := aNTSpApplication
+]
+
+{ #category : 'commands' }
+NTSpNoteTakerMainUI class >> newApplication: anApplication [
+
+	self default: (self basicNew
+		  application: anApplication;
+		  yourself).
+		
+	self default initialize.
+	^ self default
 ]
 
 { #category : 'commands' }
@@ -90,7 +114,12 @@ NTSpNoteTakerMainUI >> connectPresenters [
 		transmitTo: notesEditorPresenter
 		transform: [ :aNotePresenter |
 		aNotePresenter ifNotNil: [ aNotePresenter note ] ]
-		postTransmission: [ notesEditorPresenter takeKeyboardFocus ]
+		postTransmission: [ notesEditorPresenter takeKeyboardFocus ].
+
+	notesEditorPresenter whenNoteChangedDo: [ :note |
+			notesIndexPresenter refreshSelectedItem.
+			self window ifNotNil: [:window | window title:
+						self application applicationTitle , ' - ' , note title ] ]
 ]
 
 { #category : 'layout' }
@@ -105,6 +134,21 @@ NTSpNoteTakerMainUI >> defaultLayout [
 			yourself);
 		add: statusBar height: self toolbarHeight;
 		yourself
+]
+
+{ #category : 'accessing' }
+NTSpNoteTakerMainUI >> gitEnable [
+
+	^ gitEnable ifNil: [ gitEnable := false ]
+]
+
+{ #category : 'accessing' }
+NTSpNoteTakerMainUI >> gitEnable: anObject [
+
+	gitEnable := anObject.
+	notesToolbarPresenter := self newToolbar fillWith:
+		                         self rootCommandsGroup / 'Toolbar'.
+	self layout: self defaultLayout
 ]
 
 { #category : 'testing' }
@@ -131,11 +175,10 @@ NTSpNoteTakerMainUI >> initializePresenters [
 
 	notesIndexPresenter := self instantiate: NTSpNoteIndexPresenter.
 	notesIndexPresenter model: self noteTakerContainer.
-	(NTSpImportFolderCommand new context: notesIndexPresenter)
-		executeWithFolder: self application currentFolder.
+	notesIndexPresenter updatePresenter.
 
 	notesEditorPresenter := self instantiate: NTSpEditorPresenter.
-	
+
 	notesToolbarPresenter := self newToolbar fillWith:
 		                         self rootCommandsGroup / 'Toolbar'.
 	statusBar := SpStatusBarPresenter new

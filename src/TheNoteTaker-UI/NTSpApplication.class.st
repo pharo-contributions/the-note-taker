@@ -16,7 +16,8 @@ Class {
 		'log',
 		'settings',
 		'currentFolder',
-		'settingPersistence'
+		'settingPersistence',
+		'noteLocation'
 	],
 	#classVars : [
 		'Default',
@@ -26,6 +27,19 @@ Class {
 	#package : 'TheNoteTaker-UI',
 	#tag : 'Core'
 }
+
+{ #category : 'private' }
+NTSpApplication class >> NoteLocation [
+	"Answer the preferred <String> where notes will be stored"
+
+	^ self default noteLocation
+]
+
+{ #category : 'private' }
+NTSpApplication class >> NoteLocation: aString [
+	"Set the preferred fileReference where notes will be stored"
+	self default noteLocation: aString.
+]
 
 { #category : 'private' }
 NTSpApplication class >> applicationTitle [
@@ -83,7 +97,25 @@ NTSpApplication class >> openFull [
 NTSpApplication class >> openIt [
 
 	<script>
-	self new run
+	self default run
+]
+
+{ #category : 'private' }
+NTSpApplication class >> settingsOn: aBuilder [
+
+	<systemsettings>
+	(aBuilder group: #tnt)
+		label: 'The Note Taker';
+		description: 'All TNT related settings';
+		noOrdering;
+		with: [
+				(aBuilder setting: #NoteLocation)
+					label: 'Project Path';
+					type: #Directory;
+					ghostHelp:
+						'/Users/ducasse/Workspace/FirstCircle/Writing/Working/researchnotes';
+					description:
+						'Enter your local or remote path where notes will be committed. It can be empty']
 ]
 
 { #category : 'private' }
@@ -143,9 +175,8 @@ NTSpApplication >> importSettings [
 NTSpApplication >> initialize [
 
 	super initialize.
+	currentFolder := self noteLocation.
 	noteTakerContainer := NTContainer new.
-	settings := NTSettings.
-	currentFolder := settings noteLocation.
 	settingPersistence := SystemSettingsPersistence new fileReference:
 		                      self configFileLocation.
 	log := NTLog newWithFolder: currentFolder
@@ -164,6 +195,24 @@ NTSpApplication >> log: aNTLog [
 ]
 
 { #category : 'accessing' }
+NTSpApplication >> noteLocation [
+
+	^ noteLocation ifNil: [
+			  (FileLocator documents / 'noteTaker') asFileReference
+				  ensureCreateDirectory ]
+]
+
+{ #category : 'accessing' }
+NTSpApplication >> noteLocation: aFileReference [
+
+	self noteLocation = aFileReference ifTrue: [ ^ self ].
+
+	noteLocation := aFileReference.
+	currentFolder := noteLocation.
+	self reset
+]
+
+{ #category : 'accessing' }
 NTSpApplication >> noteTakerContainer [
 
 	^ noteTakerContainer
@@ -173,7 +222,6 @@ NTSpApplication >> noteTakerContainer [
 NTSpApplication >> reset [
 
 	super reset.
-	noteTakerContainer := NTContainer new.
 	self start
 ]
 
@@ -187,6 +235,7 @@ NTSpApplication >> settings [
 NTSpApplication >> start [
 
 	self importSettings.
+	noteTakerContainer importFolder: currentFolder.
 	(NTSpNoteTakerMainUI newApplication: self) open
 ]
 
@@ -199,10 +248,10 @@ NTSpApplication >> startFullScreen [
 
 { #category : 'windows' }
 NTSpApplication >> windowClosed: aWindowPresenter [
-	
+
 	super windowClosed: aWindowPresenter.
 
-	self windows ifEmpty: [ self exportSettings ].
-	
-	
+	self windows ifEmpty: [
+			self exportSettings.
+			noteTakerContainer := NTContainer new ]
 ]

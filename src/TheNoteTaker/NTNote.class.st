@@ -37,6 +37,9 @@ NTNote class >> newFromFileReference: aFileReference [
 	^ self new
 		  folderReference: aFileReference parent;
 		  fileName: aFileReference basename;
+		contents: aFileReference contents;
+		  creationDate: aFileReference creationTime;
+		  modificationDate: aFileReference modificationTime;
 		  yourself
 ]
 
