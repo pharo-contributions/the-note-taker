@@ -1,5 +1,5 @@
 Class {
-	#name : 'NTTodoPresenter',
+	#name : 'SpTaskPresenter',
 	#superclass : 'SpPresenter',
 	#instVars : [
 		'task'
@@ -10,7 +10,7 @@ Class {
 }
 
 { #category : 'accessing' }
-NTTodoPresenter >> defaultLayout [
+SpTaskPresenter >> defaultLayout [
 
 	^ SpBoxLayout new beTopToBottom
 		  add: task title;
@@ -19,13 +19,13 @@ NTTodoPresenter >> defaultLayout [
 ]
 
 { #category : 'accessing' }
-NTTodoPresenter >> task [ 
+SpTaskPresenter >> task [ 
 
 	^ task
 ]
 
 { #category : 'accessing' }
-NTTodoPresenter >> task: aTask [
+SpTaskPresenter >> task: aTask [
 
 	task := aTask 
 ]

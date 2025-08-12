@@ -1,5 +1,5 @@
 Class {
-	#name : 'NTTodo',
+	#name : 'Task',
 	#superclass : 'Object',
 	#instVars : [
 		'title',
@@ -15,25 +15,25 @@ Class {
 }
 
 { #category : 'accessing' }
-NTTodo >> addTag: aTag [
+Task >> addTag: aTag [
 
 	tags add: aTag 
 ]
 
 { #category : 'accessing' }
-NTTodo >> description [
+Task >> description [
 
 	^ description
 ]
 
 { #category : 'accessing' }
-NTTodo >> description: anObject [
+Task >> description: anObject [
 
 	description := anObject
 ]
 
 { #category : 'accessing' }
-NTTodo >> initialize [
+Task >> initialize [
 
 	isRecurrent := false.
 	limitDate := Date tomorrow.
@@ -43,73 +43,73 @@ NTTodo >> initialize [
 ]
 
 { #category : 'accessing' }
-NTTodo >> isDone [
+Task >> isDone [
 
 	^ isDone
 ]
 
 { #category : 'accessing' }
-NTTodo >> isDone: anObject [
+Task >> isDone: anObject [
 
 	isDone := anObject
 ]
 
 { #category : 'accessing' }
-NTTodo >> isRecurrent [
+Task >> isRecurrent [
 
 	^ isRecurrent
 ]
 
 { #category : 'accessing' }
-NTTodo >> isRecurrent: anObject [
+Task >> isRecurrent: anObject [
 
 	isRecurrent := anObject
 ]
 
 { #category : 'accessing' }
-NTTodo >> isTrash [
+Task >> isTrash [
 
 	^ isTrash
 ]
 
 { #category : 'accessing' }
-NTTodo >> isTrash: aBoolean [
+Task >> isTrash: aBoolean [
 
 	isTrash := aBoolean
 ]
 
 { #category : 'accessing' }
-NTTodo >> limitDate [
+Task >> limitDate [
 
 	^ limitDate
 ]
 
 { #category : 'accessing' }
-NTTodo >> limitDate: anObject [
+Task >> limitDate: anObject [
 
 	limitDate := anObject
 ]
 
 { #category : 'accessing' }
-NTTodo >> tags [
+Task >> tags [
 
 	^ tags
 ]
 
 { #category : 'accessing' }
-NTTodo >> tags: anObject [
+Task >> tags: anObject [
 
 	tags := anObject
 ]
 
 { #category : 'accessing' }
-NTTodo >> title [
+Task >> title [
 
 	^ title
 ]
 
 { #category : 'accessing' }
-NTTodo >> title: anObject [
+Task >> title: anObject [
 
 	title := anObject
 ]

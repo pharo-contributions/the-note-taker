@@ -4,7 +4,7 @@ Open a presenter with a search bar and a list of tag.
 If we use allowTagCreation, so when we submit the text in searchBar ( Enter character ), a new Tag is created
 "
 Class {
-	#name : 'NTTodoSpTagSelectionDialog',
+	#name : 'SpTaskTagSelectionDialog',
 	#superclass : 'SpSelectMultipleDialog',
 	#instVars : [
 		'searchTextPresenter'
@@ -15,7 +15,7 @@ Class {
 }
 
 { #category : 'adding' }
-NTTodoSpTagSelectionDialog >> addTagNamed: aString [
+SpTaskTagSelectionDialog >> addTagNamed: aString [
 
 	self application taskContainer ensureTagNamed: aString.
 	searchTextPresenter text: ''.
@@ -23,7 +23,7 @@ NTTodoSpTagSelectionDialog >> addTagNamed: aString [
 ]
 
 { #category : 'initialization' }
-NTTodoSpTagSelectionDialog >> allowTagCreation [
+SpTaskTagSelectionDialog >> allowTagCreation [
 
 	searchTextPresenter
 		help:
@@ -33,7 +33,7 @@ NTTodoSpTagSelectionDialog >> allowTagCreation [
 ]
 
 { #category : 'adding' }
-NTTodoSpTagSelectionDialog >> defaultLayout [
+SpTaskTagSelectionDialog >> defaultLayout [
 
 	^ SpBoxLayout newTopToBottom
 		  add: searchTextPresenter expand: false;
@@ -42,7 +42,7 @@ NTTodoSpTagSelectionDialog >> defaultLayout [
 ]
 
 { #category : 'adding' }
-NTTodoSpTagSelectionDialog >> filteredTagsFor: aString [
+SpTaskTagSelectionDialog >> filteredTagsFor: aString [
 	"Answer a <Collection> of <NTNoteObject> whose names match aString"
 
 	^ (self application taskContainer tagsNameMatching: aString)
@@ -50,7 +50,7 @@ NTTodoSpTagSelectionDialog >> filteredTagsFor: aString [
 ]
 
 { #category : 'initialization' }
-NTTodoSpTagSelectionDialog >> initializePresenters [
+SpTaskTagSelectionDialog >> initializePresenters [
 
 	super initializePresenters.
 
@@ -63,7 +63,7 @@ NTTodoSpTagSelectionDialog >> initializePresenters [
 ]
 
 { #category : 'adding' }
-NTTodoSpTagSelectionDialog >> selectedItems: aTagNameCollection [
+SpTaskTagSelectionDialog >> selectedItems: aTagNameCollection [
 
 	selectedItems addAll: aTagNameCollection
 ]

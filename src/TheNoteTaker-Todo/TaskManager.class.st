@@ -21,7 +21,7 @@ Note: It is recommended to use the `uniqueInstance` method to access the singlet
 
 "
 Class {
-	#name : 'NTTodoContainer',
+	#name : 'TaskManager',
 	#superclass : 'Object',
 	#instVars : [
 		'tasks',
@@ -32,24 +32,24 @@ Class {
 }
 
 { #category : 'accessing - notes' }
-NTTodoContainer >> addTagNamed: aString [
+TaskManager >> addTagNamed: aString [
 	"Add a new empty note with title aString to the receiver's notes."
 
 	| tag |
-	tag := NTTodoTag newNamed: aString.
+	tag := TodoTag newNamed: aString.
 	self tags add: tag.
 	^ tag
 ]
 
 { #category : 'adding - notes' }
-NTTodoContainer >> addTask: aNTTodo [
+TaskManager >> addTask: aNTTodo [
 
 	self tasks add: aNTTodo.
 	^ aNTTodo
 ]
 
 { #category : 'accessing - notes' }
-NTTodoContainer >> ensureTagNamed: aString [
+TaskManager >> ensureTagNamed: aString [
 	"Answer the first <NTNoteObject> matching aString in its name"
 
 	^ self tags
@@ -58,20 +58,20 @@ NTTodoContainer >> ensureTagNamed: aString [
 ]
 
 { #category : 'adding - notes' }
-NTTodoContainer >> getDefaultTask [
+TaskManager >> getDefaultTask [
 
 	| maison machin reviser machin1 machin2 machin3 |
 	
 	maison := self ensureTagNamed: 'Maison'.
 	machin := self ensureTagNamed: 'Machin'.
 	
-	self addTask: (NTTodo new title: 'Chercher le pain').
-	reviser := self addTask: (NTTodo new
+	self addTask: (Task new title: 'Chercher le pain').
+	reviser := self addTask: (Task new
 			 title: 'Reviser';
 			 isRecurrent: true).
-	machin1 := self addTask: (NTTodo new title: 'Machin 1 ').
-	machin2 := self addTask: (NTTodo new title: 'Machin 2 ').
-	machin3 := self addTask: (NTTodo new title: 'Machin 3').
+	machin1 := self addTask: (Task new title: 'Machin 1 ').
+	machin2 := self addTask: (Task new title: 'Machin 2 ').
+	machin3 := self addTask: (Task new title: 'Machin 3').
 	
 	maison addTask: reviser.
 	machin addTask: machin1.
@@ -80,50 +80,50 @@ NTTodoContainer >> getDefaultTask [
 ]
 
 { #category : 'accessing' }
-NTTodoContainer >> getDoneTask [
+TaskManager >> getDoneTask [
 
 	^ self tasks select: [ :t | t isDone ]
 ]
 
 { #category : 'accessing' }
-NTTodoContainer >> getInBoxTask [
+TaskManager >> getInBoxTask [
 
 	^ self tasks select: [ :t | t tags isEmpty ]
 ]
 
 { #category : 'accessing' }
-NTTodoContainer >> getLateTask [
+TaskManager >> getLateTask [
 
 	^ self tasks select: [ :t | t limitDate < DateAndTime now ]
 ]
 
 { #category : 'accessing' }
-NTTodoContainer >> getTaskForTag: aTag [
+TaskManager >> getTaskForTag: aTag [
 
 	^ aTag tasks
 ]
 
 { #category : 'accessing' }
-NTTodoContainer >> getTodayTask [
+TaskManager >> getTodayTask [
 
 	^ self tasks select: [ :t | t limitDate asDate equals: Date today ]
 ]
 
 { #category : 'accessing' }
-NTTodoContainer >> getTrashTask [
+TaskManager >> getTrashTask [
 
 	^ self tasks select: [ :t |
 		  t isTrash ]
 ]
 
 { #category : 'accessing' }
-NTTodoContainer >> getWeekTask [
+TaskManager >> getWeekTask [
 
 	^ self tasks select: [ :t | t limitDate asDate weeks = Date today weeks ]
 ]
 
 { #category : 'accessing - notes' }
-NTTodoContainer >> initialize [
+TaskManager >> initialize [
 
 	tasks := OrderedCollection new.
 	tags := OrderedCollection new.
@@ -132,27 +132,27 @@ NTTodoContainer >> initialize [
 ]
 
 { #category : 'removing - notes' }
-NTTodoContainer >> removetasks: aCollectionOfNTTodo [
+TaskManager >> removetasks: aCollectionOfNTTodo [
 	"Remove the note aNTNoteObject from the receiver's notes. Answer the receiver"
 	
 	self tasks removeAll: aCollectionOfNTTodo
 ]
 
 { #category : 'accessing' }
-NTTodoContainer >> tags [
+TaskManager >> tags [
 	"Answer the receiver's <Collection> of <NTNoteObject>"
 
 	^ tags
 ]
 
 { #category : 'accessing' }
-NTTodoContainer >> tags: aCollection [
+TaskManager >> tags: aCollection [
 
 	tags := aCollection
 ]
 
 { #category : 'accessing - notes' }
-NTTodoContainer >> tagsNameMatching: aString [
+TaskManager >> tagsNameMatching: aString [
 	"Answer a <Collection> with <NoteObject> objects whose title matched named aString"
 
 	| pattern |
@@ -161,19 +161,19 @@ NTTodoContainer >> tagsNameMatching: aString [
 ]
 
 { #category : 'accessing - notes' }
-NTTodoContainer >> tasks [
+TaskManager >> tasks [
 	"Answer the receiver's <Collection> of <NTNoteObject>"
 
 	^ tasks
 ]
 
 { #category : 'accessing - notes' }
-NTTodoContainer >> tasks: aCollection [ 
+TaskManager >> tasks: aCollection [ 
 	tasks := aCollection
 ]
 
 { #category : 'accessing - notes' }
-NTTodoContainer >> tasksTitleMatching: aString [
+TaskManager >> tasksTitleMatching: aString [
 	"Answer a <Collection> with <NoteObject> objects whose title matched named aString"
 
 	| pattern |

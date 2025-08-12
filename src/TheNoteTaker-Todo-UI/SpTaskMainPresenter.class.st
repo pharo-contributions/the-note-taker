@@ -3,7 +3,7 @@ Presents a table with basic metadata information about saved notes in the system
 
 "
 Class {
-	#name : 'NTTodoSpNoteIndexPresenter',
+	#name : 'SpTaskMainPresenter',
 	#superclass : 'SpPresenterWithModel',
 	#instVars : [
 		'componentList',
@@ -23,17 +23,17 @@ Class {
 }
 
 { #category : 'initialization' }
-NTTodoSpNoteIndexPresenter >> addTask [
+SpTaskMainPresenter >> addTask [
 
 	| task |
-	task := NTTodo new.
-	(NTTodoSpTaskEditor newApplication: self application) task: task; openModalWithParent: self.
+	task := Task new.
+	(SpTaskEditorPresenter newApplication: self application) task: task; openModalWithParent: self.
 	self model addTask: task.
 	self updatePresenter
 ]
 
 { #category : 'initialization' }
-NTTodoSpNoteIndexPresenter >> connectPresenters [
+SpTaskMainPresenter >> connectPresenters [
 
 	searchBar whenTextChangedDo: [ self filter ].
 	
@@ -41,13 +41,13 @@ NTTodoSpNoteIndexPresenter >> connectPresenters [
 
 	componentList whenSelectedItemChangedDo: [ :taskPresenter |
 			taskPresenter ifNotNil: [
-					(NTTodoSpTaskEditor newApplication: self application)
+					(SpTaskEditorPresenter newApplication: self application)
 						task: taskPresenter task;
 						openModalWithParent: self ]. self updatePresenter ]
 ]
 
 { #category : 'layout' }
-NTTodoSpNoteIndexPresenter >> defaultLayout [
+SpTaskMainPresenter >> defaultLayout [
 
 	^ SpBoxLayout newLeftToRight
 		  add: (SpBoxLayout newTopToBottom
@@ -67,7 +67,7 @@ NTTodoSpNoteIndexPresenter >> defaultLayout [
 ]
 
 { #category : 'filtering' }
-NTTodoSpNoteIndexPresenter >> filter [
+SpTaskMainPresenter >> filter [
 
 	| filteredItems |
 	filteredItems := searchBar text
@@ -79,7 +79,7 @@ NTTodoSpNoteIndexPresenter >> filter [
 ]
 
 { #category : 'initialization' }
-NTTodoSpNoteIndexPresenter >> initializePresenters [
+SpTaskMainPresenter >> initializePresenters [
 
 	self model: self application taskContainer.
 
@@ -115,24 +115,24 @@ NTTodoSpNoteIndexPresenter >> initializePresenters [
 ]
 
 { #category : 'accessing' }
-NTTodoSpNoteIndexPresenter >> items [
+SpTaskMainPresenter >> items [
 	"Answer a <Collection> of notes"
 
 	^ componentList items collect: [ :each | each note ]
 ]
 
 { #category : 'accessing' }
-NTTodoSpNoteIndexPresenter >> items: aCollection [
+SpTaskMainPresenter >> items: aCollection [
 	"componentList items: aCollection."
 	
 	aCollection ifNil: [ ^ self ].
 
 	componentList presenters:
-		(aCollection collect: [ :each | NTTodoPresenter new task: each ])
+		(aCollection collect: [ :each | SpTaskPresenter new task: each ])
 ]
 
 { #category : 'initialization' }
-NTTodoSpNoteIndexPresenter >> modelChanged [
+SpTaskMainPresenter >> modelChanged [
 
 	self model ifNotNil: [
 			self items: self tasks.
@@ -140,49 +140,49 @@ NTTodoSpNoteIndexPresenter >> modelChanged [
 ]
 
 { #category : 'initialization' }
-NTTodoSpNoteIndexPresenter >> showDoneTasks [
+SpTaskMainPresenter >> showDoneTasks [
 
 	self items: self model getDoneTask
 ]
 
 { #category : 'initialization' }
-NTTodoSpNoteIndexPresenter >> showInBoxTasks [
+SpTaskMainPresenter >> showInBoxTasks [
 
 	self items: self model getInBoxTask
 ]
 
 { #category : 'initialization' }
-NTTodoSpNoteIndexPresenter >> showLateTasks [
+SpTaskMainPresenter >> showLateTasks [
 
 	self items: self model getLateTask
 ]
 
 { #category : 'initialization' }
-NTTodoSpNoteIndexPresenter >> showTaskForTag: aTag [
+SpTaskMainPresenter >> showTaskForTag: aTag [
 
 	self items: (self model getTaskForTag: aTag)
 ]
 
 { #category : 'initialization' }
-NTTodoSpNoteIndexPresenter >> showTodayTasks [
+SpTaskMainPresenter >> showTodayTasks [
 
 	self items: self model getTodayTask
 ]
 
 { #category : 'initialization' }
-NTTodoSpNoteIndexPresenter >> showTrashTasks [
+SpTaskMainPresenter >> showTrashTasks [
 
 	self items: self model getTrashTask
 ]
 
 { #category : 'initialization' }
-NTTodoSpNoteIndexPresenter >> showWeekTasks [
+SpTaskMainPresenter >> showWeekTasks [
 
 	self items: self model getWeekTask
 ]
 
 { #category : 'filtering' }
-NTTodoSpNoteIndexPresenter >> tasks [ 
+SpTaskMainPresenter >> tasks [ 
 
 	^ self model tasks
 ]

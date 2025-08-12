@@ -9,7 +9,7 @@ This is the main Notes Taker Spec2 application class which:
 
 "
 Class {
-	#name : 'NTTodoSpApplication',
+	#name : 'SpTaskApplication',
 	#superclass : 'SpApplication',
 	#instVars : [
 		'taskContainer'
@@ -20,41 +20,41 @@ Class {
 }
 
 { #category : 'private' }
-NTTodoSpApplication class >> openFull [ 
+SpTaskApplication class >> openFull [ 
 	<script>
 	
 	^ self new startFullScreen 
 ]
 
 { #category : 'private' }
-NTTodoSpApplication class >> openIt [
+SpTaskApplication class >> openIt [
 
 	<script>
 	self new run
 ]
 
 { #category : 'initialization' }
-NTTodoSpApplication >> initialize [
+SpTaskApplication >> initialize [
 
 	super initialize.
-	taskContainer := NTTodoContainer new
+	taskContainer := TaskManager new
 ]
 
 { #category : 'running' }
-NTTodoSpApplication >> start [
+SpTaskApplication >> start [
 
-	(NTTodoSpNoteIndexPresenter newApplication: self) open
+	(SpTaskMainPresenter newApplication: self) open
 ]
 
 { #category : 'running' }
-NTTodoSpApplication >> startFullScreen [
+SpTaskApplication >> startFullScreen [
 	" Private - Open the main application window in full screen, intended for the release version "
 
-	(NTTodoSpNoteIndexPresenter newApplication: self) asWorldWindow open
+	(SpTaskMainPresenter newApplication: self) asWorldWindow open
 ]
 
 { #category : 'accessing' }
-NTTodoSpApplication >> taskContainer [
+SpTaskApplication >> taskContainer [
 
 	^ taskContainer
 ]

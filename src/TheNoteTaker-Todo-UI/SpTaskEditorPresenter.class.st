@@ -1,5 +1,5 @@
 Class {
-	#name : 'NTTodoSpTaskEditor',
+	#name : 'SpTaskEditorPresenter',
 	#superclass : 'SpDialogPresenter',
 	#instVars : [
 		'task',
@@ -16,7 +16,7 @@ Class {
 }
 
 { #category : 'initialization' }
-NTTodoSpTaskEditor >> defaultLayout [
+SpTaskEditorPresenter >> defaultLayout [
 
 	^ SpBoxLayout newTopToBottom
 		  add: 'Title : ';
@@ -34,7 +34,7 @@ NTTodoSpTaskEditor >> defaultLayout [
 ]
 
 { #category : 'initialization' }
-NTTodoSpTaskEditor >> initializePresenters [
+SpTaskEditorPresenter >> initializePresenters [
 
 	titleInput := self newTextInput.
 	descriptionInput := self newTextInput.
@@ -49,9 +49,9 @@ NTTodoSpTaskEditor >> initializePresenters [
 ]
 
 { #category : 'initialization' }
-NTTodoSpTaskEditor >> openTagsManager [
+SpTaskEditorPresenter >> openTagsManager [
 
-	(NTTodoSpTagSelectionDialog newApplication: self application)
+	(SpTaskTagSelectionDialog newApplication: self application)
 		allowTagCreation;
 		title: 'tag name';
 		items:
@@ -67,7 +67,7 @@ NTTodoSpTaskEditor >> openTagsManager [
 ]
 
 { #category : 'initialization' }
-NTTodoSpTaskEditor >> save [
+SpTaskEditorPresenter >> save [
 
 	task title: titleInput text.
 	task description: descriptionInput text.
@@ -76,13 +76,13 @@ NTTodoSpTaskEditor >> save [
 ]
 
 { #category : 'initialization' }
-NTTodoSpTaskEditor >> task [
+SpTaskEditorPresenter >> task [
 	
 	^ task
 ]
 
 { #category : 'initialization' }
-NTTodoSpTaskEditor >> task: aTask [
+SpTaskEditorPresenter >> task: aTask [
 	
 	task := aTask.
 	titleInput text: task title.

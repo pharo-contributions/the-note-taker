@@ -17,7 +17,7 @@ A note tag object contains the necessary attributes and methods to represent a t
 
 "
 Class {
-	#name : 'NTTodoTag',
+	#name : 'TodoTag',
 	#superclass : 'Object',
 	#instVars : [
 		'tasks',
@@ -28,7 +28,7 @@ Class {
 }
 
 { #category : 'instance creation' }
-NTTodoTag class >> newNamed: aString [
+TodoTag class >> newNamed: aString [
 	"Answer a new tag named aString"
 	
 	^ self new 
@@ -37,58 +37,52 @@ NTTodoTag class >> newNamed: aString [
 ]
 
 { #category : 'adding' }
-NTTodoTag >> addTask: aTask [
+TodoTag >> addTask: aTask [
 
 	self tasks add: aTask.
 	aTask addTag: self
 ]
 
 { #category : 'accessing' }
-NTTodoTag >> hasTask: aTask [
+TodoTag >> hasTask: aTask [
 
 	^ tasks includes: aTask
 ]
 
 { #category : 'initialization' }
-NTTodoTag >> initialize [
+TodoTag >> initialize [
 
 	super initialize.
 	self tasks: Set new
 ]
 
 { #category : 'removing' }
-NTTodoTag >> removeNote: aNTNoteObject [
-
-	self notes remove: aNTNoteObject ifAbsent: [ ]
-]
-
-{ #category : 'removing' }
-NTTodoTag >> removeTask: aTask [
+TodoTag >> removeTask: aTask [
 
 	self tasks remove: aTask ifAbsent: [ ]
 ]
 
 { #category : 'accessing' }
-NTTodoTag >> tagName [
+TodoTag >> tagName [
 	"Answer a <String> representing the receiver's name"
 	
 	^ tagName
 ]
 
 { #category : 'accessing' }
-NTTodoTag >> tagName: anObject [
+TodoTag >> tagName: anObject [
 
 	tagName := anObject
 ]
 
 { #category : 'accessing' }
-NTTodoTag >> tasks [
+TodoTag >> tasks [
 
 	^ tasks
 ]
 
 { #category : 'accessing' }
-NTTodoTag >> tasks: aTask [
+TodoTag >> tasks: aTask [
 
 	tasks := aTask
 ]
