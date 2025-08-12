@@ -36,14 +36,18 @@ SpTaskMainPresenter >> addTask [
 SpTaskMainPresenter >> connectPresenters [
 
 	searchBar whenTextChangedDo: [ self filter ].
-	
-	tagsList whenSelectionChangedDo: [ :tag |  self showTaskForTag: tagsList selectedItem ].
+
+	tagsList whenSelectionChangedDo: [ :tag |
+		self showTaskForTag: tagsList selectedItem ].
 
 	componentList whenSelectedItemChangedDo: [ :taskPresenter |
 			taskPresenter ifNotNil: [
 					(SpTaskEditorPresenter newApplication: self application)
 						task: taskPresenter task;
-						openModalWithParent: self ]. self updatePresenter ]
+						onAccept: [  ];
+						onCancel: [  ];
+						openModalWithParent: self ].
+			self updatePresenter ]
 ]
 
 { #category : 'layout' }

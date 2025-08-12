@@ -20,13 +20,6 @@ Class {
 }
 
 { #category : 'private' }
-SpTaskApplication class >> openFull [ 
-	<script>
-	
-	^ self new startFullScreen 
-]
-
-{ #category : 'private' }
 SpTaskApplication class >> openIt [
 
 	<script>

@@ -39,7 +39,9 @@ Task >> initialize [
 	limitDate := Date tomorrow.
 	isDone := false.
 	tags := Set new.
-	isTrash := false
+	isTrash := false.
+	title := ''.
+	description := ''
 ]
 
 { #category : 'accessing' }
