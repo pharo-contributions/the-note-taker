@@ -11,12 +11,6 @@ Class {
 }
 
 { #category : 'running' }
-NTSpEditorFilePresenterTest >> mockTextObject: aString [ 
-
-	^ SpTextPresenter new text: aString 
-]
-
-{ #category : 'running' }
 NTSpEditorFilePresenterTest >> setUp [
 
 	| text |
@@ -45,6 +39,30 @@ NTSpEditorFilePresenterTest >> testCleanAction [
 	editorPresenter emptyInputText.
 	self assert: editorPresenter textInputText equals: ''.
 	self assert: editorPresenter renderedText equals: ''
+]
+
+{ #category : 'tests' }
+NTSpEditorFilePresenterTest >> testCreateNewNoteDontSaveIt [
+
+	| newNote |
+	editorPresenter newEmptyNote.
+	newNote := editorPresenter model.
+	
+	self deny: newNote exists.
+]
+
+{ #category : 'tests' }
+NTSpEditorFilePresenterTest >> testCreateNewNoteDontSaveItWhenAutoSave [
+
+	| newNote initialAutoSave |
+	initialAutoSave := editorPresenter class AutoSave.
+	editorPresenter class AutoSave: true.
+	editorPresenter newEmptyNote.
+	newNote := editorPresenter model.
+	
+	editorPresenter class AutoSave: false.
+
+	self deny: newNote exists
 ]
 
 { #category : 'tests' }
