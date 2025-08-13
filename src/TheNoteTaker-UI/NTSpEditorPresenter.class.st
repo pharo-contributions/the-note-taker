@@ -112,7 +112,7 @@ NTSpEditorPresenter >> initializePresenters [
 		             whenTextChangedDo: [
 				             model contents: textInput text asString.
 				             isRenderedEnable ifTrue: [ self renderDocument ].
-				             AutoSave ifTrue: [ self saveFile ] ];
+				             self class AutoSave ifTrue: [ self saveFile ] ];
 		             bindKeyCombination: $s meta
 		             toAction: [ self saveFile ];
 		             yourself
