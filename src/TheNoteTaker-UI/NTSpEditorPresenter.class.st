@@ -111,7 +111,7 @@ NTSpEditorPresenter >> initializePresenters [
 	textInput := self newText
 		             whenTextChangedDo: [
 				             model contents: textInput text asString.
-				             isRenderedEnable ifTrue: [ self renderDocument ].
+				             self isRenderedEnable ifTrue: [ self renderDocument ].
 				             self class AutoSave ifTrue: [ self saveFile ] ];
 		             bindKeyCombination: $s meta
 		             toAction: [ self saveFile ];
