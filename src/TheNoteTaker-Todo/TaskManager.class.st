@@ -128,7 +128,7 @@ TaskManager >> initialize [
 	tasks := OrderedCollection new.
 	tags := OrderedCollection new.
 
-	self getDefaultTask
+	"self getDefaultTask"
 ]
 
 { #category : 'removing - notes' }
