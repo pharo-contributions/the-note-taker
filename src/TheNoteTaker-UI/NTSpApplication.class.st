@@ -167,8 +167,10 @@ NTSpApplication >> exportSettings [
 { #category : 'running' }
 NTSpApplication >> importSettings [
 
-	settingPersistence updateSettingNodes: (SettingBrowser currentTree nodeNamed: #tnt) allChildren.
+	(SettingBrowser currentTree nodeNamed: #tnt) ifNil: [ ^ self ].
 	
+	settingPersistence updateSettingNodes:
+		(SettingBrowser currentTree nodeNamed: #tnt) allChildren
 ]
 
 { #category : 'initialization' }
