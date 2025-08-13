@@ -82,19 +82,19 @@ TaskManager >> getDefaultTask [
 { #category : 'accessing' }
 TaskManager >> getDoneTask [
 
-	^ self tasks select: [ :t | t isDone ]
+	^ self tasks select: [ :t | t isDone and: t isTrash not ]
 ]
 
 { #category : 'accessing' }
 TaskManager >> getInBoxTask [
 
-	^ self tasks select: [ :t | t tags isEmpty ]
+	^ self tasks select: [ :t | t tags isEmpty and: t isTrash not ]
 ]
 
 { #category : 'accessing' }
 TaskManager >> getLateTask [
 
-	^ self tasks select: [ :t | t limitDate < DateAndTime now ]
+	^ self tasks select: [ :t | (t limitDate < DateAndTime now) and: t isTrash not ]
 ]
 
 { #category : 'accessing' }
@@ -106,7 +106,7 @@ TaskManager >> getTaskForTag: aTag [
 { #category : 'accessing' }
 TaskManager >> getTodayTask [
 
-	^ self tasks select: [ :t | t limitDate asDate equals: Date today ]
+	^ self tasks select: [ :t | (t limitDate asDate equals: Date today) and: t isTrash not ]
 ]
 
 { #category : 'accessing' }
@@ -119,7 +119,8 @@ TaskManager >> getTrashTask [
 { #category : 'accessing' }
 TaskManager >> getWeekTask [
 
-	^ self tasks select: [ :t | t limitDate asDate weeks = Date today weeks ]
+	^ self tasks select: [ :t |
+		 (t limitDate asDate weeks = Date today weeks) and: t isTrash not ]
 ]
 
 { #category : 'accessing - notes' }
