@@ -35,6 +35,7 @@ NTSpImportFolderCommand >> execute [
 
 	| selectedEntry |
 	selectedEntry := StOpenDirectoryPresenter new
+		                 application: self application;
 		                 openFolder: self application currentFolder;
 		                 extent: 800 @ 800;
 		                 openModal;
