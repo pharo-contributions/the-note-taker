@@ -4,8 +4,8 @@ Class {
 	#instVars : [
 		'tag'
 	],
-	#category : 'TheNoteTaker-Todo-Test',
-	#package : 'TheNoteTaker-Todo-Test'
+	#category : 'TheNoteTaker-Todo-Tests',
+	#package : 'TheNoteTaker-Todo-Tests'
 }
 
 { #category : 'running' }
