@@ -104,21 +104,18 @@ NTSpEditorPresenter >> initializePresenters [
 		                    iconName: #smallJustified;
 		                    action: [ self isRenderedButtonClick ].
 
-	textInput := self newText.
-	textInput
-		bindKeyCombination:
-		Character space asKeyCombination | Character cr asKeyCombination
-		toAction: [ :target :morph :event |
-				isRenderedEnable ifTrue: [ self renderDocument ].
-				self class AutoSave ifTrue: [ self saveFile ].
-				event wasHandled: false ].
-
 	renderedText := self newText
 		                beNotEditable;
 		                yourself.
-	textInput
-		whenTextChangedDo: [ model contents: textInput text asString ];
-		bindKeyCombination: $s meta toAction: [ self saveFile ]
+
+	textInput := self newText
+		             whenTextChangedDo: [
+				             model contents: textInput text asString.
+				             self isRenderedEnable ifTrue: [ self renderDocument ].
+				             self class AutoSave ifTrue: [ self saveFile ] ];
+		             bindKeyCombination: $s meta
+		             toAction: [ self saveFile ];
+		             yourself
 ]
 
 { #category : 'actions' }
@@ -169,9 +166,8 @@ NTSpEditorPresenter >> newEmptyNote [
 
 	| nt |
 	nt := NTNote new.
+	model := nt.
 	isNewNote := true.
-
-	self setModel: nt.
 
 	self emptyInputText
 ]
@@ -195,7 +191,7 @@ NTSpEditorPresenter >> renderedText [
 { #category : 'actions' }
 NTSpEditorPresenter >> saveFile [
 
-	isNewNote ifTrue: [
+	isNewNote ifTrue: [ textInput text ifEmpty: [ ^ self ].
 			isNewNote := false.
 			self owner addNote: self model ].
 	self model save.
