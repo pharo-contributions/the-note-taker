@@ -28,13 +28,12 @@ SpTaskPresenter >> defaultLayout [
 SpTaskPresenter >> initializePresenters [
 
 	doneButton := self newButton
-		  icon: (self iconNamed: #smallOk);
-		  label: 'Done';
-		  action: [ task isDone: true].
+		              icon: (self iconNamed: #smallOk);
+		              label: 'Done';
+		              action: [ task isDone: true ].
 	removeButton := self newButton
-		  icon: (self iconNamed: #smallCancel);
-		  label: 'Remove';
-		  action: [ task isTrash: true ]
+		                icon: (self iconNamed: #smallCancel);
+		                label: 'Remove'
 ]
 
 { #category : 'accessing' }
@@ -47,4 +46,10 @@ SpTaskPresenter >> task [
 SpTaskPresenter >> task: aTask [
 
 	task := aTask 
+]
+
+{ #category : 'accessing' }
+SpTaskPresenter >> whenRemovedDo: aBlock [
+
+	removeButton whenActivatedDo: aBlock
 ]

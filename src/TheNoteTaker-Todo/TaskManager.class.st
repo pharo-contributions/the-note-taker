@@ -132,6 +132,13 @@ TaskManager >> initialize [
 ]
 
 { #category : 'removing - notes' }
+TaskManager >> removeTask: aTask [
+	"Remove the note aNTNoteObject from the receiver's notes. Answer the receiver"
+	
+	aTask isTrash ifTrue:  [ self tasks remove: aTask ] ifFalse: [aTask isTrash: true].
+]
+
+{ #category : 'removing - notes' }
 TaskManager >> removetasks: aCollectionOfNTTodo [
 	"Remove the note aNTNoteObject from the receiver's notes. Answer the receiver"
 	

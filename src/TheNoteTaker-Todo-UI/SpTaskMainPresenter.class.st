@@ -128,11 +128,17 @@ SpTaskMainPresenter >> items [
 { #category : 'accessing' }
 SpTaskMainPresenter >> items: aCollection [
 	"componentList items: aCollection."
-	
+
 	aCollection ifNil: [ ^ self ].
 
-	componentList presenters:
-		(aCollection collect: [ :each | SpTaskPresenter new task: each ])
+	componentList presenters: (aCollection collect: [ :each |
+				 | taskPresenter |
+				 taskPresenter := SpTaskPresenter new task: each.
+				 taskPresenter whenRemovedDo: [
+						self model removeTask: each.
+						 componentList presenters: (componentList presenters
+								  remove: taskPresenter;
+								  yourself) ] ])
 ]
 
 { #category : 'initialization' }
