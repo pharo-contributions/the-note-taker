@@ -61,9 +61,9 @@ NTNoteTest >> setUp [
 
 	super setUp.
 	memoryFS := FileSystem memory workingDirectory.
-	note := NTNote new.
+	note := NTNote new folderReference: memoryFS.
 	tag1 := NTTag newNamed: 'tag1'.
-	tag2 := NTTag newNamed: 'tag2'.
+	tag2 := NTTag newNamed: 'tag2'
 ]
 
 { #category : 'tests - saving' }
@@ -117,8 +117,6 @@ NTNoteTest >> testGenerateMetaDataElementsWithTags [
 	tag1 addNote: note.
 	tag2 addNote: note.
 
-	note folderReference: memoryFS.
-
 	self assert: note generateMetaDataElements equals: (self
 			 generateMetaDataWithCreationDate: creationDate
 			 modificationDate: modificationDate
@@ -134,8 +132,6 @@ NTNoteTest >> testGenerateMetaDataElementsWithoutTags [
 	modificationDate := '2025-01-02' asDateAndTime.
 	note creationDate: creationDate.
 	note modificationDate: modificationDate.
-
-	note folderReference: memoryFS.
 
 	self assert: note generateMetaDataElements equals: (self
 			 generateMetaDataWithCreationDate: creationDate
@@ -162,7 +158,7 @@ NTNoteTest >> testIsDirty [
 
 	note contents: 'This is just a new note'.
 	note save.
-	
+
 	self deny: note isDirty.
 
 	note contents: 'Change the contents'.
@@ -227,7 +223,6 @@ NTNoteTest >> testSaveExistingFileWithDifferentTitle [
 	| modificationDate metadata finalContents fileName |
 	note contents: 'Ceci est un test'.
 	modificationDate := note modificationDate.
-	note folderReference: memoryFS.
 	note save.
 	fileName := note fileName.
 	note contents: 'I change the title'.
@@ -251,7 +246,6 @@ NTNoteTest >> testSaveNote [
 	| modificationDate metadata finalContents |
 	note contents: 'Ceci est un test'.
 	modificationDate := note modificationDate.
-	note folderReference: memoryFS.
 	note save.
 
 	self denyEmpty: note fileReference contents.
@@ -271,7 +265,6 @@ NTNoteTest >> testSaveNoteWithLessContents [
 	| modificationDate metadata finalContents |
 	note contents: 'Ceci est un test'.
 	modificationDate := note modificationDate.
-	note folderReference: memoryFS.
 	note save.
 
 	note contents: 'Ceci'.
