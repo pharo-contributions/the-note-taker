@@ -44,10 +44,10 @@ SpTaskFilterPresenter >> defaultLayout [
 	^ SpBoxLayout newTopToBottom
 		  add: searchBar;
 		  add: addButton;
-		  add: doneButton;
 		  add: inBoxButton;
 		  add: todayButton;
 		  add: lateButton;
+		  add: doneButton;
 		  add: trashButton;
 		  yourself
 ]
