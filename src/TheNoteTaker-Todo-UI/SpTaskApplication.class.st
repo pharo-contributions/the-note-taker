@@ -36,14 +36,7 @@ SpTaskApplication >> initialize [
 { #category : 'running' }
 SpTaskApplication >> start [
 
-	(SpTaskMainPresenter newApplication: self) open
-]
-
-{ #category : 'running' }
-SpTaskApplication >> startFullScreen [
-	" Private - Open the main application window in full screen, intended for the release version "
-
-	(SpTaskMainPresenter newApplication: self) asWorldWindow open
+	(SpTaskMain2Presenter newApplication: self) open
 ]
 
 { #category : 'accessing' }

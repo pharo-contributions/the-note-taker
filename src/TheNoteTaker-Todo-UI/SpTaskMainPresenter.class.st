@@ -122,7 +122,7 @@ SpTaskMainPresenter >> initializePresenters [
 SpTaskMainPresenter >> items [
 	"Answer a <Collection> of notes"
 
-	^ componentList items collect: [ :each | each note ]
+	^ componentList items collect: [ :each | each task ]
 ]
 
 { #category : 'accessing' }

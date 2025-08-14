@@ -11,6 +11,18 @@ Class {
 	#tag : 'Core'
 }
 
+{ #category : 'accessing' }
+SpTaskPresenter >> clickDone [
+
+	doneButton click
+]
+
+{ #category : 'accessing' }
+SpTaskPresenter >> clickRemove [
+
+	removeButton click 
+]
+
 { #category : 'layout' }
 SpTaskPresenter >> defaultLayout [
 
