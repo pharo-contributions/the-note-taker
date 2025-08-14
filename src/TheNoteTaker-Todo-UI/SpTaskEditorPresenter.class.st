@@ -100,6 +100,13 @@ SpTaskEditorPresenter >> initializePresenters [
 	tagsList := self newList.
 ]
 
+{ #category : 'initialization' }
+SpTaskEditorPresenter >> initializeWindow: aWindowPresenter [
+
+	super initializeWindow: aWindowPresenter.
+	aWindowPresenter whenOpenedDo: [ titleInput takeKeyboardFocus ]
+]
+
 { #category : 'opening' }
 SpTaskEditorPresenter >> openTagsManager [
 
