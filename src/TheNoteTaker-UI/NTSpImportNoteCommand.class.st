@@ -35,6 +35,7 @@ NTSpImportNoteCommand >> execute [
 
 	| selections |
 	selections := (StOpenFilePresenter new
+		               application: self application;
 		               extent: 800 @ 800;
 		               extensions: { 'txt'. 'mic'. 'md' };
 		               yourself) openModal.
