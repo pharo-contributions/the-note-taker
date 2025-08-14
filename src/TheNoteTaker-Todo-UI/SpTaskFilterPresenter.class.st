@@ -80,7 +80,7 @@ SpTaskFilterPresenter >> filteredItem: anObject [
 SpTaskFilterPresenter >> initializePresenters [
 
 	self model: self application taskContainer.
-	
+
 	filteredItem := self tasks.
 
 	searchBar := self newTextInput
@@ -93,55 +93,19 @@ SpTaskFilterPresenter >> initializePresenters [
 		             action: [ self addTask ].
 	doneButton := self newButton
 		              label: 'done';
-		              action: [ self showDoneTasks ].
+		              action: [ self filteredItem: self model getDoneTask ].
 	inBoxButton := self newButton
 		               label: 'In Box';
-		               action: [ self showInBoxTasks ].
+		               action: [ self filteredItem: self model getInBoxTask ].
 	todayButton := self newButton
 		               label: 'today';
-		               action: [ self showTodayTasks ].
+		               action: [ self filteredItem: self model getTodayTask ].
 	lateButton := self newButton
 		              label: 'Late';
-		              action: [ self showLateTasks ].
+		              action: [ self filteredItem: self model getLateTask ].
 	trashButton := self newButton
 		               label: 'Trash';
-		               action: [ self showTrashTasks ]
-]
-
-{ #category : 'initialization' }
-SpTaskFilterPresenter >> showDoneTasks [
-
-	self filteredItem: self model getDoneTask
-]
-
-{ #category : 'initialization' }
-SpTaskFilterPresenter >> showInBoxTasks [
-
-	self filteredItem: self model getInBoxTask
-]
-
-{ #category : 'initialization' }
-SpTaskFilterPresenter >> showLateTasks [
-
-	self filteredItem: self model getLateTask
-]
-
-{ #category : 'initialization' }
-SpTaskFilterPresenter >> showTodayTasks [
-
-	self filteredItem: self model getTodayTask
-]
-
-{ #category : 'initialization' }
-SpTaskFilterPresenter >> showTrashTasks [
-
-	self filteredItem: self model getTrashTask
-]
-
-{ #category : 'initialization' }
-SpTaskFilterPresenter >> showWeekTasks [
-
-	self filteredItem: self model getWeekTask
+		               action: [ self filteredItem: self model getTrashTask ]
 ]
 
 { #category : 'filtering' }

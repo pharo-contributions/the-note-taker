@@ -36,7 +36,7 @@ SpTaskApplication >> initialize [
 { #category : 'running' }
 SpTaskApplication >> start [
 
-	(SpTaskMain2Presenter newApplication: self) open
+	(SpTaskMainPresenter newApplication: self) open
 ]
 
 { #category : 'accessing' }
