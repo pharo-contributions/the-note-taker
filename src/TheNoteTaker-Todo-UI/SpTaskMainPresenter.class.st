@@ -34,9 +34,11 @@ SpTaskMainPresenter >> defaultLayout [
 { #category : 'initialization' }
 SpTaskMainPresenter >> initializePresenters [
 
-	taskFilter := self instantiate: SpTaskFilterPresenter on: self application taskContainer.
-	
-	taskList := self instantiate: SpTaskListPresenter.
+	taskFilter := self
+		              instantiate: SpTaskFilterPresenter
+		              on: self application taskContainer.
+
+	taskList := self instantiate: SpTaskListPresenter on: self application taskContainer tasks
 ]
 
 { #category : 'initialization' }

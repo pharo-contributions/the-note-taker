@@ -15,7 +15,7 @@ Class {
 { #category : 'initialization' }
 SpTaskListPresenter >> connectPresenters [
 
-	componentList whenSelectedItemChangedDo: [ :taskPresenter |
+	self whenSelectedItemChangedDo: [ :taskPresenter |
 			taskPresenter ifNotNil: [
 					(SpTaskEditorPresenter newApplication: self application)
 						task: taskPresenter task;
@@ -84,4 +84,14 @@ SpTaskListPresenter >> items: aCollection [
 SpTaskListPresenter >> modelChanged [
 
 	self model ifNotNil: [ self items: self model ]
+]
+
+{ #category : 'initialization' }
+SpTaskListPresenter >> whenSelectedItemChangedDo: aBlock [
+	"Inform when an item was selected (a real object in the items list).
+	 `aBlock` receives one argument (the new selected element)"
+
+	componentList whenSelectionChangedDo: [ :selection |
+			selection selectedItems size = 1 ifTrue: [
+				aBlock value: selection selectedItem ] ]
 ]
