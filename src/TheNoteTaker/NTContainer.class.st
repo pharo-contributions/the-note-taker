@@ -155,8 +155,8 @@ NTContainer >> rawTags: aCollection [
 
 { #category : 'removing - notes' }
 NTContainer >> removeNotes: aCollectionOfNTNoteObject [
-	"Remove the note aNTNoteObject from the receiver's notes. Answer the receiver"
-	
+	"Remove the notes from the receiver's notes. Answer the receiver"
+
 	self notes removeAll: aCollectionOfNTNoteObject
 ]
 
@@ -165,12 +165,6 @@ NTContainer >> tags [
 	"Answer the receiver's <Collection> of <NTNoteObject>"
 
 	^ tags
-]
-
-{ #category : 'private' }
-NTContainer >> tags: aCollection [
-
-	tags := aCollection
 ]
 
 { #category : 'accessing - tags' }
