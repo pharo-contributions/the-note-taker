@@ -1,24 +1,6 @@
 "
-Represents a singleton pattern implementation for managing a centralized instance of `NTNoteObject` notes container.
-
-The singleton ensures that there is only one instance of the container throughout the application's lifecycle, providing global access to the collection of notes. It is useful for scenarios where a single instance of a class needs to be shared and accessed globally across multiple parts of the application.
-
-## Usage
-
-To access the unique instance of the Notes container, use the class method 'uniqueInstance'. For example:
-
-```
-| notesContainer |
-notesContainer := NTSingleton uniqueInstance.
-```
-
-### Responsibilities
-
-- Providing a centralized and globally accessible instance of Notes.
-- Ensuring that only one instance of the notes container exists within the application.
-
-Note: It is recommended to use the `uniqueInstance` method to access the singleton rather than instantiating it directly.
-
+I hold notes and a list of all possible tags.
+Usually the list of tags does not have duplicates.
 "
 Class {
 	#name : 'NTContainer',
@@ -46,7 +28,6 @@ NTContainer >> addNoteFromFileReference: aFileReference [
 	newNote := NTNote newFromFileReference: aFileReference.
 	self loadFileContents: aFileReference contents for: newNote.
 	self notes add: newNote.
-
 	^ newNote
 ]
 
@@ -55,31 +36,30 @@ NTContainer >> addNoteNamed: aString [
 	"Add a new empty note with title aString to the receiver's notes."
 
 	| note |
-	note := (NTNote content: aString).
+	note := NTNote content: aString.
 	self notes add: note.
 	^ note
 ]
 
 { #category : 'adding - tags' }
 NTContainer >> addTagNamed: aString [
-	"Add a new empty note with title aString to the receiver's notes."
 
 	| tag |
-	tag := (NTTag newNamed: aString).
+	tag := NTTag newNamed: aString.
 	self tags add: tag.
 	^ tag 
 ]
 
 { #category : 'accessing - tags' }
 NTContainer >> ensureTagNamed: aString [
-	"Answer the first <NTNoteObject> matching aString in its name"
-
+	"Add a tag if it not already present"
+	
 	^ self tags
 		  detect: [ :n | n tagName = aString ]
 		  ifNone: [ self addTagNamed: aString ]
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'loading - note' }
 NTContainer >> importFolder: aFolder [
 
 	aFolder allFiles
@@ -94,7 +74,7 @@ NTContainer >> initialize [
 
 	super initialize.
 	self notes: OrderedCollection new.
-	self tags: OrderedCollection new
+	self rawTags: OrderedCollection new
 ]
 
 { #category : 'loading - note' }
@@ -128,19 +108,20 @@ NTContainer >> loadMetaData: aString for: aNTNote [
 
 { #category : 'accessing - notes' }
 NTContainer >> notes [
-	"Answer the receiver's <Collection> of <NTNoteObject>"
 
 	^ notes
 ]
 
 { #category : 'accessing - notes' }
-NTContainer >> notes: aCollection [ 
+NTContainer >> notes: aCollection [
+
 	notes := aCollection
 ]
 
 { #category : 'accessing - tags' }
 NTContainer >> notes: aNotesCollection withTags: aTagsCollection [
-
+	"Select the notes which defines a given list of tags"
+	
 	| noteCollection |
 	noteCollection := aNotesCollection.
 	aTagsCollection do: [ :tag |
@@ -151,8 +132,8 @@ NTContainer >> notes: aNotesCollection withTags: aTagsCollection [
 
 { #category : 'accessing - notes' }
 NTContainer >> notesContentsMatching: aString [
-	"Answer a <Collection> with <NoteObject> objects whose title matched named aString"
-
+	"Answer a <Collection> with <Note> objects whose contents matched named aString"
+	
 	| pattern |
 	pattern := '*' , aString , '*'.
 	^ self notes select: [ :n | pattern match: n contents ]
@@ -163,6 +144,13 @@ NTContainer >> notesCount [
 	"Answer an <Integer> representing how many notes the receiver includes"
 	
 	^ self notes size
+]
+
+{ #category : 'private' }
+NTContainer >> rawTags: aCollection [
+	"Private use ensureTagNamed: to add tags."
+	
+	tags := aCollection
 ]
 
 { #category : 'removing - notes' }
@@ -179,7 +167,7 @@ NTContainer >> tags [
 	^ tags
 ]
 
-{ #category : 'accessing - tags' }
+{ #category : 'private' }
 NTContainer >> tags: aCollection [
 
 	tags := aCollection
