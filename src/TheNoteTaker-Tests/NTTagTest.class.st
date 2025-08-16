@@ -14,10 +14,8 @@ Class {
 NTTagTest >> setUp [
 
 	super setUp.
-
-
 	tag := NTTag newNamed: 'tag'.
-	note := NTNote new.
+	note := NTNote new
 ]
 
 { #category : 'tests' }
