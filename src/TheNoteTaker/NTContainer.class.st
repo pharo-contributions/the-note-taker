@@ -27,7 +27,7 @@ NTContainer >> addNoteFromFileReference: aFileReference [
 	| newNote |
 	newNote := NTNote newFromFileReference: aFileReference.
 	self loadFileContents: aFileReference contents for: newNote.
-	self notes add: newNote.
+	self addNote: newNote.
 	^ newNote
 ]
 
@@ -37,7 +37,7 @@ NTContainer >> addNoteNamed: aString [
 
 	| note |
 	note := NTNote content: aString.
-	self notes add: note.
+	self addNote: note.
 	^ note
 ]
 
