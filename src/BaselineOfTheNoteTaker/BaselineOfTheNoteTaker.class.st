@@ -54,7 +54,7 @@ BaselineOfTheNoteTaker >> microdown: spec [
 	spec
 		baseline: 'Microdown'
 		with: [ spec 
-			loads: 'All';
+			loads: 'RichText';
 			repository: 'github://pillar-markup/Microdown:dev/src' ].
 ]
 
