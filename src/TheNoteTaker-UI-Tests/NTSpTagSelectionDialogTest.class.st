@@ -22,10 +22,9 @@ NTSpTagSelectionDialogTest >> setUp [
 { #category : 'running' }
 NTSpTagSelectionDialogTest >> testAddTagNamed [
 
-| sizeNotesBeforeAddNote |
+	| sizeNotesBeforeAddNote |
 	sizeNotesBeforeAddNote := noteContainer tags size.
 	presenter addTagNamed: 'test'.
-
 	self
 		assert: noteContainer tags size
 		equals: sizeNotesBeforeAddNote + 1

@@ -1,5 +1,14 @@
 "
-Represent the log file of folder open in TheNoteTaker
+I represent a log of actions for tracing the tool behavior. 
+Here are the actions that are logged:
+
+- addition of a tag to a note
+- note creation
+- removal of a note
+- removal of a tag
+- save of a note
+
+In addition my contents can be save into file.
 "
 Class {
 	#name : 'NTLog',
