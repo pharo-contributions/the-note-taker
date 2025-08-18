@@ -87,3 +87,11 @@ NTTestResource >> initialize [
 	note1 addTag: tag3.
 	note2 addTag: tag2
 ]
+
+{ #category : 'accessing' }
+NTTestResource >> useFolder: aFileReference [
+
+	note1 folderReference: aFileReference.
+	note2 folderReference: aFileReference.
+	note3 folderReference: aFileReference.
+]

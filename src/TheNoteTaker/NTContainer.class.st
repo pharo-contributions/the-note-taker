@@ -1,4 +1,5 @@
 "
+
 I hold notes and a list of all possible tags.
 Usually the list of tags does not have duplicates.
 "
@@ -114,7 +115,7 @@ NTContainer >> notes [
 
 { #category : 'accessing - notes' }
 NTContainer >> notes: aCollection [
-
+    
 	notes := aCollection
 ]
 
@@ -145,6 +146,7 @@ NTContainer >> notesCount [
 	
 	^ self notes size
 ]
+
 
 { #category : 'private' }
 NTContainer >> rawTags: aCollection [
