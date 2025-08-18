@@ -1,8 +1,15 @@
 "
 I represent a file name with the following structure:
 
+- A first part with an iso date: 2025-08-16
 - a list of parts separated by a separator where a part can only contain alpha numerical characters.
 - finished with an extension
+
+Here it is an example
+```
+2025-08-16_nenuphar_collection.md
+```
+
 "
 Class {
 	#name : 'NTISOFileNamer',

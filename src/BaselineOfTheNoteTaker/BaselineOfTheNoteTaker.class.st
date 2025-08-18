@@ -53,8 +53,8 @@ BaselineOfTheNoteTaker >> microdown: spec [
 
 	spec
 		baseline: 'Microdown'
-		with: [ spec 
-			loads: 'All';
+		with: [ spec
+			loads: 'Editor';
 			repository: 'github://pillar-markup/Microdown:dev/src' ].
 ]
 

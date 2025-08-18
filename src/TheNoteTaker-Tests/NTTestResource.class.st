@@ -31,7 +31,7 @@ NTTestResource >> addingNotesAndTagsTo: aNoteContainer [
 
 	aNoteContainer
 		notes: notesCollection;
-		tags: tagsCollection
+		rawTags: tagsCollection
 ]
 
 { #category : 'accessing' }

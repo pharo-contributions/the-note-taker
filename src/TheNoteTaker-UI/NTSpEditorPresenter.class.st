@@ -168,7 +168,6 @@ NTSpEditorPresenter >> newEmptyNote [
 	nt := NTNote new.
 	model := nt.
 	isNewNote := true.
-
 	self emptyInputText
 ]
 
