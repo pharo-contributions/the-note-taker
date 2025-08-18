@@ -86,16 +86,17 @@ NTNote >> exists [
 { #category : 'accessing' }
 NTNote >> fileName [
 
-	fileName ifNil: [self fileName: self title ].
+	fileName ifNil: [
+			self fileName: (NTISOFileNamer new
+					 date: creationDate asDate;
+					 newNameBasedOn: self title) ].
 	^ fileName
 ]
 
 { #category : 'accessing' }
 NTNote >> fileName: aString [
 
-	fileName := NTISOFileNamer new
-		            date: creationDate asDate;
-		            newNameBasedOn: aString
+	fileName := aString
 ]
 
 { #category : 'accessing' }
