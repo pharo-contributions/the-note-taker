@@ -14,7 +14,7 @@ NTNotePresenter >> defaultLayout [
 
 	^ SpBoxLayout newTopToBottom
 		  add: self note title;
-		  add: self note creationDate asDate asString;
+		  add: self note modificationDate asDate asString;
 		  add: self note tagsNameString;
 		  yourself
 ]
