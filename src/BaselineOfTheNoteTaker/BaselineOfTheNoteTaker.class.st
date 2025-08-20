@@ -23,6 +23,7 @@ BaselineOfTheNoteTaker >> baseline: spec [
 			self microdown: spec.
 			self applicationGenerator: spec.
 			self objcbridge: spec.
+			spec preLoadDoIt: #'preload:package:'.
 			spec postLoadDoIt: #postload:package:.
 			spec
 				package: 'TheNoteTaker' with: [ spec requires: #( Microdown ) ];
@@ -54,7 +55,7 @@ BaselineOfTheNoteTaker >> microdown: spec [
 	spec
 		baseline: 'Microdown'
 		with: [ spec
-			loads: 'All';
+			loads: 'Editor';
 			repository: 'github://pillar-markup/Microdown:dev/src' ].
 ]
 
@@ -90,4 +91,19 @@ BaselineOfTheNoteTaker >> postload: loader package: packageSpec [
 	
 	((Process allInstances select: [ :p | p priority = 70 ]) select: [ :e | '*OSSub*' match: e name ]) 
 		ifNotEmpty: [ : processArray | processArray first terminate ]
+]
+
+{ #category : 'baselines' }
+BaselineOfTheNoteTaker >> preload: loader package: packageSpec [
+	
+	#( 'Microdown' ) do: [ :name |
+		(IceRepository repositoryNamed: name)
+			ifNil: [ self inform: 'Project not found: ' , name ]
+			ifNotNil: [ :found |
+				found
+					unload;
+					forget ] ].
+	Smalltalk globals 
+			at: #BaselineOfMicrodown 
+			ifPresent: [ :c | c removeFromSystem ]
 ]
