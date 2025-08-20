@@ -1,1 +1,15 @@
-SmalltalkCISpec {  #loading : [    SCIMetacelloLoadSpec {      #baseline : 'TheNoteTaker',      #directory : 'src',      #platforms : [ #pharo ]    }  ],  #testing : {    #coverage : {      #packages : [ 'TheNoteTaker*' ]    }  }}
+SmalltalkCISpec {
+  #preLoading: 'scripts/preLoading.st',
+  #loading : [
+    SCIMetacelloLoadSpec {
+      #baseline : 'TheNoteTaker',
+      #directory : 'src',
+      #platforms : [ #pharo ]
+    }
+  ],
+  #testing : {
+    #coverage : {
+      #packages : [ 'TheNoteTaker*' ]
+    }
+  }
+}
