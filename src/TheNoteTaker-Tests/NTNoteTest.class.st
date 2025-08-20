@@ -86,22 +86,6 @@ NTNoteTest >> testAddTwoTagsWithSameName [
 	self assert: note tags size equals: 1
 ]
 
-{ #category : 'tests' }
-NTNoteTest >> testFileName [
-
-	self flag: #ToRename.
-	note creationDate: '2024-01-01' asDateAndTime.
-	
-	note fileName: 'Test'.
-	self assert: note fileName equals: '2024-01-01_Test.md'.
-
-	note fileName: '[!Te@st}='.
-	self assert: note fileName equals: '2024-01-01_Test.md'.
-	
-	note fileName: 'Test With Space'.
-	self assert: note fileName equals: '2024-01-01_TestWithSpace.md'
-]
-
 { #category : 'tests -generate' }
 NTNoteTest >> testGenerateMetaDataElementsWithTags [
 
@@ -138,6 +122,23 @@ NTNoteTest >> testGenerateMetaDataElementsWithoutTags [
 			 modificationDate: modificationDate)
 ]
 
+{ #category : 'tests' }
+NTNoteTest >> testGenerateNewFileName [
+
+	note creationDate: '2024-01-01' asDateAndTime.
+
+	note contents: 'Test'.
+	self assert: note fileName equals: '2024-01-01_Test.md'.
+
+	note fileName: nil.
+	note contents: '[!Te@st}='.
+	self assert: note fileName equals: '2024-01-01_Test.md'.
+
+	note fileName: nil.
+	note contents: 'Test With Space'.
+	self assert: note fileName equals: '2024-01-01_TestWithSpace.md'
+]
+
 { #category : 'tests -generate' }
 NTNoteTest >> testGenerateTitle [
 
@@ -151,6 +152,16 @@ NTNoteTest >> testGenerateTitle [
 		assert: note1 title equals: 'test with only one line';
 		assert: note2 title equals: 'test with two line';
 		assert: note3 title equals: 'unnamed'
+]
+
+{ #category : 'tests' }
+NTNoteTest >> testImportExistingNoteSetFileName [
+
+	| noteFile |
+	noteFile := memoryFS / 'note.md'.
+	noteFile  ensureCreateFile.
+	note := NTNote newFromFileReference: noteFile.
+	self assert: note fileName equals: 'note.md'
 ]
 
 { #category : 'tests' }
@@ -278,4 +289,13 @@ NTNoteTest >> testSaveNoteWithLessContents [
 	finalContents := metadata , String crlf , String crlf , 'Ceci'.
 
 	self assert: note fileReference contents equals: finalContents
+]
+
+{ #category : 'tests' }
+NTNoteTest >> testSetFileNameDoesntChangeIt [
+
+	note fileName: 'Toto'.
+	self assert: note fileName equals: 'Toto'.
+
+	
 ]
