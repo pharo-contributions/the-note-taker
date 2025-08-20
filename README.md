@@ -37,16 +37,6 @@ Metacello new
 	load.
 ```
 
-## Baseline String 
-
-If you want to add the TheNoteTaker to your Metacello Baselines or Configurations, copy and paste the following expression:
-```smalltalk
-	" ... "
-	spec
-		baseline: 'TheNoteTaker' 
-		with: [ spec repository: 'github://hernanmd/the-note-taker/src' ];
-	" ... "
-```
 
 # Usage
 
