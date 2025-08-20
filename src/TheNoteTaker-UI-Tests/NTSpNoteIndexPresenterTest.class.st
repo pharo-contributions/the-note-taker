@@ -132,6 +132,21 @@ NTSpNoteIndexPresenterTest >> testHasSelectedNotes [
 ]
 
 { #category : 'tests' }
+NTSpNoteIndexPresenterTest >> testNotesAreFilteredByModificationDate [
+
+	| orderedItems |
+	ressources getNote1 modificationDate: Date yesterday.
+	ressources getNote2 modificationDate: Date today.
+	ressources getNote3 modificationDate: Date tomorrow.
+
+	indexPresenter items: noteContainer notes.
+	orderedItems := indexPresenter items.
+	self assert: orderedItems first equals: ressources getNote3.
+	self assert: orderedItems second equals: ressources getNote2.
+	self assert: orderedItems third equals: ressources getNote1
+]
+
+{ #category : 'tests' }
 NTSpNoteIndexPresenterTest >> testRemoveNote [
 	
 	| sizeNotesBeforeAddNote |self skip.

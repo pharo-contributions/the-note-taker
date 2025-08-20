@@ -146,6 +146,7 @@ NTSpNoteIndexPresenter >> initializePresenters [
 	componentList := self instantiate: SpComponentListPresenter.
 	componentList
 		beMultipleSelection;
+		sortingBlock: [ :a :b | a note modificationDate > b note modificationDate ];
 		contextMenu: [
 				(self rootCommandsGroup / 'NTSelContextualMenu') beRoot
 					asMenuPresenter ]
@@ -161,7 +162,7 @@ NTSpNoteIndexPresenter >> items [
 { #category : 'accessing' }
 NTSpNoteIndexPresenter >> items: aCollection [
 	"componentList items: aCollection."
-	
+
 	aCollection ifNil: [ ^ self ].
 
 	componentList presenters:

@@ -113,13 +113,13 @@ NTSpNoteTakerMainUI >> connectPresenters [
 	notesIndexPresenter
 		transmitTo: notesEditorPresenter
 		transform: [ :aNotePresenter |
-		aNotePresenter ifNotNil: [ aNotePresenter note ] ]
-		postTransmission: [ notesEditorPresenter takeKeyboardFocus ].
+		aNotePresenter ifNotNil: [ aNotePresenter note ] ].
 
 	notesEditorPresenter whenNoteChangedDo: [ :note |
 			notesIndexPresenter refreshSelectedItem.
-			self window ifNotNil: [:window | window title:
-						self application applicationTitle , ' - ' , note title ] ]
+			self window ifNotNil: [ :window |
+				window title:
+					self application applicationTitle , ' - ' , note title ] ]
 ]
 
 { #category : 'layout' }
