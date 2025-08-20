@@ -95,7 +95,7 @@ BaselineOfTheNoteTaker >> postload: loader package: packageSpec [
 
 { #category : 'baselines' }
 BaselineOfTheNoteTaker >> preload: loader package: packageSpec [
-	
+	self halt.
 	#( 'Microdown' ) do: [ :name |
 		(IceRepository repositoryNamed: name)
 			ifNil: [ self inform: 'Project not found: ' , name ]
