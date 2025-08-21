@@ -197,14 +197,14 @@ NTSpEditorPresenter >> saveFile [
 	self owner statusBar pushMessage: (self application log save: model)
 ]
 
-{ #category : 'accessing' }
+{ #category : 'accessing - model' }
 NTSpEditorPresenter >> setModel: aNTNoteObject [
 
+	isNewNote := false.
+	
 	aNTNoteObject
 		ifNil: [ self newEmptyNote ]
 		ifNotNil: [ model := aNTNoteObject ].
-
-	isNewNote := false.
 
 	self textInputText: model contents asString.
 	self renderDocument.

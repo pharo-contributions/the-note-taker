@@ -41,6 +41,16 @@ NTSpEditorFilePresenterTest >> testCleanAction [
 	self assert: editorPresenter renderedText equals: ''
 ]
 
+{ #category : 'running' }
+NTSpEditorFilePresenterTest >> testCreateNewNoteBySettingModelDontSaveIt [
+
+	| newNote |
+	editorPresenter setModel: nil.
+	newNote := editorPresenter model.
+	
+	self deny: newNote exists.
+]
+
 { #category : 'tests' }
 NTSpEditorFilePresenterTest >> testCreateNewNoteDontSaveIt [
 
@@ -60,7 +70,7 @@ NTSpEditorFilePresenterTest >> testCreateNewNoteDontSaveItWhenAutoSave [
 	editorPresenter newEmptyNote.
 	newNote := editorPresenter model.
 	
-	editorPresenter class AutoSave: false.
+	editorPresenter class AutoSave: initialAutoSave.
 
 	self deny: newNote exists
 ]

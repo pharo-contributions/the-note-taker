@@ -20,22 +20,23 @@
 # Installation
 
 ```smalltalk
+#( 'Microdown' ) do: [ :name |
+		(IceRepository repositoryNamed: name)
+			ifNil: [ self inform: 'Project not found: ' , name ]
+			ifNotNil: [ :found |
+				found
+					unload;
+					forget ] ].
+	Smalltalk globals 
+			at: #BaselineOfMicrodown 
+			ifPresent: [ :c | c removeFromSystem ].		
+
 Metacello new	
 	baseline: 'TheNoteTaker';	
 	repository: 'github://hernanmd/the-note-taker/src';	
 	load.
 ```
 
-## Baseline String 
-
-If you want to add the TheNoteTaker to your Metacello Baselines or Configurations, copy and paste the following expression:
-```smalltalk
-	" ... "
-	spec
-		baseline: 'TheNoteTaker' 
-		with: [ spec repository: 'github://hernanmd/the-note-taker/src' ];
-	" ... "
-```
 
 # Usage
 
