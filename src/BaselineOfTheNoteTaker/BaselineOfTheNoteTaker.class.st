@@ -23,7 +23,7 @@ BaselineOfTheNoteTaker >> baseline: spec [
 			self microdown: spec.
 			self applicationGenerator: spec.
 			self objcbridge: spec.
-			spec preLoadDoIt: #'preload:package:'.
+			spec preLoadDoIt: #preload:package:.
 			spec postLoadDoIt: #postload:package:.
 			spec
 				package: 'TheNoteTaker' with: [ spec requires: #( Microdown ) ];
@@ -95,7 +95,7 @@ BaselineOfTheNoteTaker >> postload: loader package: packageSpec [
 
 { #category : 'baselines' }
 BaselineOfTheNoteTaker >> preload: loader package: packageSpec [
-	self halt.
+	
 	#( 'Microdown' ) do: [ :name |
 		(IceRepository repositoryNamed: name)
 			ifNil: [ self inform: 'Project not found: ' , name ]
