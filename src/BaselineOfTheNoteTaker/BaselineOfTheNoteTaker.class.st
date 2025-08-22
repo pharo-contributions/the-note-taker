@@ -18,13 +18,14 @@ BaselineOfTheNoteTaker >> baseline: spec [
 
 	<baseline>
 	spec for: #( common ) do: [
+			spec preLoadDoIt: #preload:package:.
+			spec postLoadDoIt: #postload:package:.
 			self osWinSubprocess: spec.
 			self osSubprocess: spec.
 			self microdown: spec.
 			self applicationGenerator: spec.
 			self objcbridge: spec.
-			spec preLoadDoIt: #preload:package:.
-			spec postLoadDoIt: #postload:package:.
+			
 			spec
 				package: 'TheNoteTaker' with: [ spec requires: #( Microdown ) ];
 				package: 'TheNoteTaker-UI'
