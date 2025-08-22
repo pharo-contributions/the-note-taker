@@ -63,6 +63,24 @@ NTContainerTest >> testAddNewTag [
 ]
 
 { #category : 'tests - note' }
+NTContainerTest >> testAddTwoNoteWithSameFileReference [
+
+	| memory note |
+
+	memory := FileSystem memory workingDirectory.
+	note := NTNote content: 'TEST'.
+	note folderReference: memory.
+	note save.
+
+	noteTakerContainer addNoteFromFileReference: note fileReference.
+	self assert: noteTakerContainer notesCount equals: 1.
+	
+	noteTakerContainer addNoteFromFileReference: note fileReference.
+	self assert: noteTakerContainer notesCount equals: 1
+	
+]
+
+{ #category : 'tests - note' }
 NTContainerTest >> testAddingNotesWithSameName [
 	"Test adding notes with the same name"
 
@@ -113,6 +131,59 @@ NTContainerTest >> testImportFolder [
 	noteTakerContainer importFolder: folderReference.
 
 	self assert: noteTakerContainer notesCount equals: 3.
+]
+
+{ #category : 'tests - tags' }
+NTContainerTest >> testImportFolderTwice [
+
+	| folderReference fileReference1 fileReference2 fileReference3 |
+	self assertEmpty: noteTakerContainer notes.
+
+	folderReference := memoryFS / 'folder' / 'note'.
+	folderReference ensureCreateDirectory.
+
+	fileReference1 := folderReference / 'aFileReference1.md'.
+	fileReference1 ensureCreateFile.
+
+	fileReference2 := folderReference / 'aFileReference2.md'.
+	fileReference2 ensureCreateFile.
+
+	fileReference3 := folderReference / 'aFileReference3.md'.
+	fileReference3 ensureCreateFile.
+	
+	noteTakerContainer importFolder: folderReference.
+	self assert: noteTakerContainer notesCount equals: 3.
+	
+	noteTakerContainer importFolder: folderReference.
+	self assert: noteTakerContainer notesCount equals: 3.
+]
+
+{ #category : 'tests - tags' }
+NTContainerTest >> testImportFolderTwiceWithMoreNoteAddThem [
+
+	| folderReference fileReference1 fileReference2 fileReference3 fileReference4 |
+	self assertEmpty: noteTakerContainer notes.
+
+	folderReference := memoryFS / 'folder' / 'note'.
+	folderReference ensureCreateDirectory.
+
+	fileReference1 := folderReference / 'aFileReference1.md'.
+	fileReference1 ensureCreateFile.
+
+	fileReference2 := folderReference / 'aFileReference2.md'.
+	fileReference2 ensureCreateFile.
+
+	fileReference3 := folderReference / 'aFileReference3.md'.
+	fileReference3 ensureCreateFile.
+	
+	noteTakerContainer importFolder: folderReference.
+	self assert: noteTakerContainer notesCount equals: 3.
+	
+	fileReference4 := folderReference / 'aFileReference4.md'.
+	fileReference4 ensureCreateFile.
+	
+	noteTakerContainer importFolder: folderReference.
+	self assert: noteTakerContainer notesCount equals: 4.
 ]
 
 { #category : 'tests - tags' }
