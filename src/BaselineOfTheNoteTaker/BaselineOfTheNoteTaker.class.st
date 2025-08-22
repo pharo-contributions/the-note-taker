@@ -55,8 +55,9 @@ BaselineOfTheNoteTaker >> microdown: spec [
 	spec
 		baseline: 'Microdown'
 		with: [ spec
-			loads: 'All';
-			repository: 'github://pillar-markup/Microdown:dev/src' ].
+			repository: 'github://pillar-markup/Microdown:dev/src';
+			loads
+			].
 ]
 
 { #category : 'baselines' }
