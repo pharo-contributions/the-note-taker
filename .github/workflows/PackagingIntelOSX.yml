@@ -1,4 +1,4 @@
-name: Packaging for OSX
+name: Packaging for Intel OSX
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
