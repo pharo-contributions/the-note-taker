@@ -57,7 +57,7 @@ BaselineOfTheNoteTaker >> microdown: spec [
 		baseline: 'Microdown'
 		with: [ spec
 			repository: 'github://pillar-markup/Microdown:dev/src';
-			loads
+			load
 			].
 ]
 
