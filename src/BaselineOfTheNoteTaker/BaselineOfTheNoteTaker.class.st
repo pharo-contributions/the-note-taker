@@ -106,5 +106,5 @@ BaselineOfTheNoteTaker >> preload: loader package: packageSpec [
 	Smalltalk globals 
 			at: #BaselineOfMicrodown 
 			ifPresent: [ :c | c removeFromSystem ].
-	'BaselineOfMicrodown' asPackage removeFromSystem
+	
 ]
