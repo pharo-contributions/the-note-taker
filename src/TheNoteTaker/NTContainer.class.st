@@ -25,6 +25,7 @@ NTContainer >> addNoteFromFileReference: aFileReference [
 	"Add a new note with title aString to the receiver's notes. Answer the receiver"
 
 	| newNote |
+	self notes detect: [ :note | note fileReference = aFileReference ] ifFound: [ :note | ^ note]. 
 	newNote := NTNote newFromFileReference: aFileReference.
 	self loadFileContents: aFileReference contents for: newNote.
 	self addNote: newNote.
