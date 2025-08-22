@@ -33,14 +33,12 @@ NTSpOpenFolderCommand >> asSpecCommand [
 { #category : 'executing' }
 NTSpOpenFolderCommand >> execute [
 
-	| selectedDir |
-	selectedDir := StOpenDirectoryPresenter new
-		               application: self application;
-		               openFolder: self application currentFolder;
-		               extent: 800 @ 800;
-		               openModal;
-		               selectedEntry.
-	selectedDir ifNil: [ ^ self ].
-	self application currentFolder: selectedDir.
-	self application reset
+	StOpenDirectoryPresenter new
+		application: self application;
+		openFolder: self application currentFolder;
+		extent: 800 @ 800;
+		okAction: [ :dir |
+				self application currentFolder: dir.
+				self application reset ];
+		openModal
 ]

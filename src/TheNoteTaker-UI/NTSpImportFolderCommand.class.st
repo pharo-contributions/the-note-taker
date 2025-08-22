@@ -33,13 +33,11 @@ NTSpImportFolderCommand >> asSpecCommand [
 { #category : 'executing' }
 NTSpImportFolderCommand >> execute [
 
-	| selectedEntry |
-	selectedEntry := StOpenDirectoryPresenter new
-		                 application: self application;
-		                 openFolder: self application currentFolder;
-		                 extent: 800 @ 800;
-		                 openModal;
-		                 selectedEntry.
-	selectedEntry ifNotNil: [ self noteTakerContainer importFolder: selectedEntry ].
+	StOpenDirectoryPresenter new
+		application: self application;
+		openFolder: self application currentFolder;
+		extent: 800 @ 800;
+		okAction: [ :dir | self noteTakerContainer importFolder: dir ];
+		openModal.
 	self context updatePresenter
 ]
