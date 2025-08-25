@@ -188,14 +188,14 @@ NTSpNoteIndexPresenter >> openTagsSearcher [
 	selectedItems := filteredTagsSelection collect: [ :tag | tag tagName ].
 
 	(NTSpTagSelectionDialog newApplication: self application)
-		allowTagCreation;
 		title: 'tag name';
 		items: (self model tags collect: [ :each | each tagName ]);
 		selectedItems: selectedItems;
 		display: #asString;
 		onAccept: [ :dialog |
 				filteredTagsSelection := dialog presenter selectedItems collect: [
-						                         :each | self model ensureTagNamed: each ] ];
+						                         :each |
+						                         self model ensureTagNamed: each ] ];
 		openModalWithParent: self window
 ]
 
