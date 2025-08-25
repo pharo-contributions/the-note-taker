@@ -113,8 +113,10 @@ NTSpEditorPresenter >> initializePresenters [
 				             model contents: textInput text asString.
 				             self isRenderedEnable ifTrue: [ self renderDocument ].
 				             self class AutoSave ifTrue: [ self saveFile ] ];
-		             bindKeyCombination: $s meta
-		             toAction: [ self saveFile ];
+		             addShortcutWith: [ :action |
+				             action
+					             shortcutKey: $s meta;
+					             action: [ self saveFile ] ];
 		             yourself
 ]
 
