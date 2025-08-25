@@ -146,7 +146,15 @@ NTSpNoteIndexPresenter >> initializePresenters [
 	componentList := self instantiate: SpComponentListPresenter.
 	componentList
 		beMultipleSelection;
-		sortingBlock: [ :a :b | a note modificationDate > b note modificationDate ];
+		sortingBlock: [ :a :b |
+			a note modificationDate > b note modificationDate ];
+		addShortcutWith: [ :action |
+				action
+					shortcutKey: KeyboardKey delete;
+					action: [
+							NTSpRemoveNoteCommand new
+								context: self;
+								execute ] ];
 		contextMenu: [
 				(self rootCommandsGroup / 'NTSelContextualMenu') beRoot
 					asMenuPresenter ]
