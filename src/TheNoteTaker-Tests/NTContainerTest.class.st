@@ -172,6 +172,22 @@ NTContainerTest >> testLoadNoteWithAllMetadata [
 ]
 
 { #category : 'tests - note' }
+NTContainerTest >> testLoadNoteWithExistingTagDontDuplicateIt [
+
+	| note tag nbTags |
+	tag := (noteTakerContainer ensureTagNamed: 'A').
+	nbTags := noteTakerContainer tags size.
+	note := NTNote new.
+	note addTag: tag.
+	note folderReference: memoryFS.
+	note save.
+	
+noteTakerContainer importFolder: memoryFS.
+
+self assert: nbTags equals: noteTakerContainer tags size
+]
+
+{ #category : 'tests - note' }
 NTContainerTest >> testLoadNoteWithMetadataWithMissingTags [
 
 	| noteFile metadata note |
