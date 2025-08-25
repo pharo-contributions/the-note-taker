@@ -120,6 +120,45 @@ NTSpEditorFilePresenterTest >> testSave [
 	self assert: (note fileReference contents endsWith: text)
 ]
 
+{ #category : 'running' }
+NTSpEditorFilePresenterTest >> testSaveWhenNoteDirty [
+
+	| text noteFile modifTime |
+	text := 'This is just a new note'.
+	noteFile := memoryFS / '2024-06-12_newNote.md'.
+	noteFile writeStreamDo: [ :stream |
+		stream nextPutAll: text ].
+	modifTime := noteFile modificationTime.
+	
+	note := NTNote newFromFileReference: noteFile.
+
+	editorPresenter setModel: note.
+	
+	note contents: 'test'.
+	editorPresenter saveFile.
+
+	self deny: noteFile modificationTime equals: modifTime
+]
+
+{ #category : 'running' }
+NTSpEditorFilePresenterTest >> testSaveWhenNoteNotDirty [
+
+	| text noteFile modifTime |
+	self skip.
+	text := 'This is just a new note'.
+	noteFile := memoryFS / '2024-06-12_newNote.md'.
+	noteFile writeStreamDo: [ :stream |
+		stream nextPutAll: text ].
+	modifTime := noteFile modificationTime.
+	
+	note := NTNote newFromFileReference: noteFile.
+
+	editorPresenter setModel: note.
+	editorPresenter saveFile.
+
+	self assert: noteFile modificationTime equals: modifTime
+]
+
 { #category : 'tests' }
 NTSpEditorFilePresenterTest >> testTextInputTextIsSpecify [
 

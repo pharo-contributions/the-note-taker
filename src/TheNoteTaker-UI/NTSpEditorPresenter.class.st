@@ -193,6 +193,7 @@ NTSpEditorPresenter >> saveFile [
 	isNewNote ifTrue: [ textInput text ifEmpty: [ ^ self ].
 			isNewNote := false.
 			self owner addNote: self model ].
+	self model isDirty ifFalse: [ ^ self ].
 	self model save.
 	self owner statusBar pushMessage: (self application log save: model)
 ]
