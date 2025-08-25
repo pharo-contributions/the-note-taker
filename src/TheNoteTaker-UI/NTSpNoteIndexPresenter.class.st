@@ -150,7 +150,7 @@ NTSpNoteIndexPresenter >> initializePresenters [
 			a note modificationDate > b note modificationDate ];
 		addShortcutWith: [ :action |
 				action
-					shortcutKey: KeyboardKey delete;
+					shortcutKey: KeyboardKey delete asKeyCombination;
 					action: [
 							NTSpRemoveNoteCommand new
 								context: self;
