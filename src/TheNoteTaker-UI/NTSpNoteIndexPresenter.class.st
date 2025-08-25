@@ -67,13 +67,16 @@ NTSpNoteIndexPresenter >> connectPresenters [
 	searchBar
 		whenTextChangedDo: [ self filter ];
 		whenSubmitDo: [ :newNoteName |
-				| newNote |
-				newNote := self model addNoteNamed: newNoteName.
-				newNote folderReference: self application currentFolder.
-				searchBar clearContent.
-				self selectNote: newNote ].
+				self createNoteNamed: newNoteName.
+				searchBar clearContent ].
 
 	tagsFilterButton whenActivatedDo: [ self filter ]
+]
+
+{ #category : 'layout' }
+NTSpNoteIndexPresenter >> createNoteNamed: aString [
+
+	aString ifNotEmpty: [ self addNote: (NTNote content: aString) ]
 ]
 
 { #category : 'layout' }
@@ -223,6 +226,12 @@ NTSpNoteIndexPresenter >> selectNote: aNTNoteObject [
 
 	componentList selectItem:
 		(componentList items detect: [ :each | each note = aNTNoteObject ])
+]
+
+{ #category : 'accessing' }
+NTSpNoteIndexPresenter >> selectedNote [
+
+	^ componentList selectedItem note
 ]
 
 { #category : 'accessing' }
