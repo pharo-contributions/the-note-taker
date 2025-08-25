@@ -41,6 +41,35 @@ NTSpNoteIndexPresenterTest >> testAddNote [
 ]
 
 { #category : 'tests' }
+NTSpNoteIndexPresenterTest >> testCreateNoteSelectIt [
+
+	| nbNote |
+	nbNote := indexPresenter notes size.
+	indexPresenter createNoteNamed: 'Test'.
+	self assert: indexPresenter selectedNote contents equals: 'Test'
+]
+
+{ #category : 'tests' }
+NTSpNoteIndexPresenterTest >> testCreateNoteWithName [
+
+	| nbNote |
+	nbNote := indexPresenter notes size.
+	indexPresenter createNoteNamed: 'Test'.
+	
+	self assert: indexPresenter notes size equals: nbNote +1
+]
+
+{ #category : 'tests' }
+NTSpNoteIndexPresenterTest >> testCreateNoteWithoutName [
+
+	| nbNote |
+	nbNote := indexPresenter notes size.
+	indexPresenter createNoteNamed: ''.
+	
+	self assert: indexPresenter notes size equals: nbNote
+]
+
+{ #category : 'tests' }
 NTSpNoteIndexPresenterTest >> testFilterNoteWithTheirContent [
 
 	| note |
