@@ -175,18 +175,6 @@ NTSpNoteTakerMainUITest >> testChangeNoteTitleInEditorUpdateWindowTitle [
 ]
 
 { #category : 'tests' }
-NTSpNoteTakerMainUITest >> testCreateANoteSelectIt [
-
-	self skip.
-	indexPresenter searchBar type: 'createNote'.
-	indexPresenter searchBar typeByChar: String cr.
-
-	self
-		assert: indexPresenter selectedNote
-		equals: (noteContainer noteNamed: 'createNote')
-]
-
-{ #category : 'tests' }
 NTSpNoteTakerMainUITest >> testFilterNotesWithToolbarSetIndexItems [
 
 	self assert: indexPresenter items size equals: 3.
