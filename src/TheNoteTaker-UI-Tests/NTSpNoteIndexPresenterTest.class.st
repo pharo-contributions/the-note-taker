@@ -176,19 +176,6 @@ NTSpNoteIndexPresenterTest >> testNotesAreFilteredByModificationDate [
 ]
 
 { #category : 'tests' }
-NTSpNoteIndexPresenterTest >> testRemoveNote [
-	
-	| sizeNotesBeforeAddNote |self skip.
-	self flag: 'Doesn t have to test remove note in index. Can test if index update catch the change of NTContainer'.
-	sizeNotesBeforeAddNote := indexPresenter items size.
-	noteContainer removeNote: ressources getNote2.
-	indexPresenter updatePresenter.
-	self
-		assert: indexPresenter items size
-		equals: sizeNotesBeforeAddNote - 1
-]
-
-{ #category : 'tests' }
 NTSpNoteIndexPresenterTest >> testSelectNote [
 
 	indexPresenter selectNote: ressources getNote1.
@@ -217,6 +204,20 @@ NTSpNoteIndexPresenterTest >> testTagsSearchButtonOpenModalWindow [
 	self currentWorld doOneCycle.
 
 	self assert: indexPresenter application windows size equals: nbOpenWindows + 1
+]
+
+{ #category : 'tests' }
+NTSpNoteIndexPresenterTest >> testUpdatePresenterRemoveDeletedNote [
+
+	| sizeNotesBeforeAddNote |
+	sizeNotesBeforeAddNote := indexPresenter items size.
+	noteContainer removeNotes: (OrderedCollection new
+			 add: ressources getNote2;
+			 yourself).
+	indexPresenter updatePresenter.
+	self
+		assert: indexPresenter items size
+		equals: sizeNotesBeforeAddNote - 1
 ]
 
 { #category : 'tests' }

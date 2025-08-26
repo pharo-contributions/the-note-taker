@@ -126,14 +126,13 @@ NTSpEditorFilePresenterTest >> testSaveWhenNoteDirty [
 	| text noteFile modifTime |
 	text := 'This is just a new note'.
 	noteFile := memoryFS / '2024-06-12_newNote.md'.
-	noteFile writeStreamDo: [ :stream |
-		stream nextPutAll: text ].
+	noteFile writeStreamDo: [ :stream | stream nextPutAll: text ].
 	modifTime := noteFile modificationTime.
-	
-	note := NTNote newFromFileReference: noteFile.
 
+	note := NTNote newFromFileReference: noteFile.
+	(Delay forSeconds: 0.01) wait.
 	editorPresenter setModel: note.
-	
+
 	note contents: 'test'.
 	editorPresenter saveFile.
 
@@ -144,13 +143,11 @@ NTSpEditorFilePresenterTest >> testSaveWhenNoteDirty [
 NTSpEditorFilePresenterTest >> testSaveWhenNoteNotDirty [
 
 	| text noteFile modifTime |
-	self skip.
 	text := 'This is just a new note'.
 	noteFile := memoryFS / '2024-06-12_newNote.md'.
-	noteFile writeStreamDo: [ :stream |
-		stream nextPutAll: text ].
+	noteFile writeStreamDo: [ :stream | stream nextPutAll: text ].
 	modifTime := noteFile modificationTime.
-	
+
 	note := NTNote newFromFileReference: noteFile.
 
 	editorPresenter setModel: note.

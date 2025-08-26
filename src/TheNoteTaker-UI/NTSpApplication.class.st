@@ -253,7 +253,5 @@ NTSpApplication >> windowClosed: aWindowPresenter [
 
 	super windowClosed: aWindowPresenter.
 
-	self windows ifEmpty: [
-			self exportSettings.
-			noteTakerContainer := NTContainer new ]
+	self windows ifEmpty: [self exportSettings]
 ]

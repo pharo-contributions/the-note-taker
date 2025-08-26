@@ -26,7 +26,7 @@ NTSpImportNoteCommandTest >> testImportNote [
 	SpWindowSimulateOpenModal
 		value: [ :aDialogPresenter |
 				aDialogPresenter presenter
-					updateWidgetWithFileReference: memoryFS / 'folder';
+					openFolder: memoryFS / 'folder';
 					selectFiles: (OrderedCollection new
 							 add: fileReference;
 							 yourself);
