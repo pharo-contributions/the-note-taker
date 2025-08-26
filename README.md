@@ -33,7 +33,7 @@
 
 Metacello new	
 	baseline: 'TheNoteTaker';	
-	repository: 'github://hernanmd/the-note-taker/src';	
+	repository: 'github://pharo-contributions/the-note-taker/src';	
 	load.
 ```
 
