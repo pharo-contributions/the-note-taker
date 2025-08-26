@@ -169,6 +169,7 @@ NTNote >> initialize [
 { #category : 'testing' }
 NTNote >> isDirty [
 
+	self exists ifFalse: [ ^ true ].
 	^ contents ~= self fileReferenceContents
 ]
 
