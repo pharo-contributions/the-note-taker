@@ -175,14 +175,6 @@ NTSpNoteTakerMainUITest >> testChangeNoteTitleInEditorUpdateWindowTitle [
 ]
 
 { #category : 'tests' }
-NTSpNoteTakerMainUITest >> testChangeNoteTitleInEditorWithoutSelectedNote [
-
-	self deny: indexPresenter hasSelectedNote.
-	editorPresenter textInputText: 'title windows test'.
-	self deny: indexPresenter hasSelectedNote description: 'Verify that change note title doesn t select it when his not selected'.
-]
-
-{ #category : 'tests' }
 NTSpNoteTakerMainUITest >> testCreateANoteSelectIt [
 
 	self skip.
@@ -218,6 +210,15 @@ NTSpNoteTakerMainUITest >> testLaunchingAppAddContainerNoteToIndexPresenter [
 
 	app start.
 	self assert: indexPresenter componentListCount equals: noteContainer notesCount
+]
+
+{ #category : 'tests' }
+NTSpNoteTakerMainUITest >> testModifiedUnselectedNoteInEditorSelectIt [
+
+	self deny: indexPresenter hasSelectedNote.
+	editorPresenter textInputText: 'title windows test'.
+	self
+		assert: indexPresenter hasSelectedNote
 ]
 
 { #category : 'tests' }
