@@ -29,25 +29,25 @@ BaselineOfTheNoteTaker >> baseline: spec [
 			spec
 				package: 'TheNoteTaker' with: [ spec requires: #( Microdown ) ];
 				package: 'TheNoteTaker-UI'
-				with: [
-					spec requires: #( TheNoteTaker OSSubprocess OSWinSubprocess ) ];
+					with: [ spec requires: #( TheNoteTaker OSSubprocess OSWinSubprocess ) ];
+			
 				package: 'TheNoteTaker-Release'
-				with: [ spec requires: #( ApplicationGenerator
-						   ObjCBridge ) ];
+					with: [ spec requires: #( ApplicationGenerator ObjCBridge) ];
+			
 				package: 'TheNoteTaker-Tests'
-				with: [ spec requires: #( TheNoteTaker ) ];
+					with: [ spec requires: #( TheNoteTaker ) ];
+			
 				package: 'TheNoteTaker-UI-Tests'
-				with: [
-					spec requires: #( 'TheNoteTaker-Tests' 'TheNoteTaker-UI' ) ].
+					with: [	spec requires: #( 'TheNoteTaker-Tests' 'TheNoteTaker-UI' ) ].
 
 			spec
 				group: 'Core' with: #( 'TheNoteTaker' );
 				group: 'UI' with: #( 'TheNoteTaker-UI' );
 				group: 'Tests'
-				with: #( 'Core' 'TheNoteTaker-Tests' 'TheNoteTaker-UI-Tests' );
+					with: #( 'Core' 'TheNoteTaker-Tests' 'TheNoteTaker-UI-Tests' );
 				group: 'Release'
-				with: #( 'Core' 'UI' 'TheNoteTaker-Release' );
-				group: 'default' with: #( 'Core' 'Tests' 'UI' ) ]
+					with: #( 'Core' 'UI' 'TheNoteTaker-Release' );
+				group: 'default' with: #( 'Core' 'Tests' 'UI' 'Release') ]
 ]
 
 { #category : 'baselines' }
