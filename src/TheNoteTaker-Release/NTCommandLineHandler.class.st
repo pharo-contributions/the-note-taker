@@ -21,7 +21,8 @@ NTCommandLineHandler class >> description [
 NTCommandLineHandler class >> generateApplication [
 
 	<script: 'self generateApplication'>
-	(self environment at: #AppGeneratorOSXGenerator) new
+	
+	AppGeneratorOSXGenerator new
 		properties: {
 				(#AppName -> 'NoteTaker').
 				(#InfoString -> 'A note taking application written in Pharo').
