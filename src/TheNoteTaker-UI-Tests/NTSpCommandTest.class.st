@@ -23,7 +23,6 @@ NTSpCommandTest >> setUp [
 	mainPresenter := NTSpNoteTakerMainUI newApplication: app.
 	indexPresenter := mainPresenter notesIndexPresenter.
 
-	indexPresenter model: noteContainer.
 	ressources addingNotesAndTagsTo: noteContainer.
 	indexPresenter updatePresenter
 ]

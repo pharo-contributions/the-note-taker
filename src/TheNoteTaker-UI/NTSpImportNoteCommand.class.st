@@ -39,6 +39,7 @@ NTSpImportNoteCommand >> execute [
 		               extent: 800 @ 800;
 		               extensions: { 'txt'. 'mic'. 'md' };
 		               yourself) openModal.
-	selections do: [ :each | self noteTakerContainer addNoteFromFileReference: each ].
+	selections do: [ :each |
+		self noteTakerContainer addNoteFromFileReference: each ].
 	self context updatePresenter
 ]
