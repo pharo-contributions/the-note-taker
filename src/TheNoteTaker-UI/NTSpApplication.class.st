@@ -132,7 +132,7 @@ NTSpApplication >> configFileLocation [
 { #category : 'accessing' }
 NTSpApplication >> currentFolder [
 
-	^ currentFolder ifNil: [ currentFolder :=
+	^ currentFolder ifNil: [
 			  (FileLocator documents / 'noteTaker') asFileReference
 				  ensureCreateDirectory ]
 ]
@@ -140,13 +140,13 @@ NTSpApplication >> currentFolder [
 { #category : 'accessing' }
 NTSpApplication >> currentFolder: aFileReference [
 
-	self currentFolder = aFileReference ifTrue: [ ^ self ].
+	currentFolder = aFileReference ifTrue: [ ^ self ].
 
 	currentFolder := aFileReference.
 	log logFileReference: currentFolder.
 	settingPersistence fileReference: self configFileLocation.
 	noteTakerContainer replaceFolder: currentFolder.
-	mainPresenter updatePresenter.
+	mainPresenter ifNotNil: [ mainPresenter updatePresenter].
 	self importSettings.
 	
 ]
@@ -186,12 +186,10 @@ NTSpApplication >> initialize [
 	super initialize.
 	noteTakerContainer := NTContainer new.
 	log := NTLog new.
+	settingPersistence := SystemSettingsPersistence new.
 	
-	mainPresenter := (NTSpNoteTakerMainUI newApplication: self).
 	self currentFolder: self currentFolder.
-	
-	settingPersistence := SystemSettingsPersistence new fileReference:
-		                      self configFileLocation.
+	mainPresenter := (NTSpNoteTakerMainUI newApplication: self)
 ]
 
 { #category : 'accessing' }
