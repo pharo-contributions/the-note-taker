@@ -21,14 +21,13 @@ NTCommandLineHandler class >> description [
 NTCommandLineHandler class >> generateApplication [
 
 	<script: 'self generateApplication'>
-	
 	AppGeneratorOSXGenerator new
 		properties: {
 				(#AppName -> 'NoteTaker').
 				(#InfoString -> 'A note taking application written in Pharo').
 				(#BundleIdentifier -> 'org.pharo.notetaker').
 				(#ShortVersion -> '1.0.0').
-				(#IconFile -> self iconFile).
+				(#IconSetFile -> self iconFile).
 				(#DisplayName -> 'Note Taker').
 				(#CommandLineHandler -> 'noteTaker').
 				(#CompanyName -> 'INRIA').
