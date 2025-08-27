@@ -6,16 +6,17 @@ Class {
 }
 
 { #category : 'tests' }
-NTSpApplicationTest >> testLaunchingAppImportCurrentFolder [
+NTSpApplicationTest >> testChangeCurrentFolderImportIt [
 
 	| noteFile |
-	noteFile := memoryFS / '2024-06-12_newNote.md'.
+	(memoryFS / 'test') ensureCreateDirectory.
+	noteFile := memoryFS / 'test' / '2024-06-12_newNote.md'.
 	noteFile writeStreamDo: [ :stream |
 		stream nextPutAll: 'This is just a new note' ].
 	
 	self assertEmpty: noteContainer notes.
 	
-	app start.
+	app currentFolder: (memoryFS / 'test').
 	
 	self assert: noteContainer notesCount equals: 1.
 	self assert: (noteContainer notesContentsMatching: 'This is just a new note') size equals: 1

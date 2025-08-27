@@ -186,6 +186,8 @@ NTSpApplication >> initialize [
 	super initialize.
 	noteTakerContainer := NTContainer new.
 	log := NTLog new.
+	
+	mainPresenter := (NTSpNoteTakerMainUI newApplication: self).
 	self currentFolder: self currentFolder.
 	
 	settingPersistence := SystemSettingsPersistence new fileReference:
@@ -198,6 +200,18 @@ NTSpApplication >> log [
 	^ log
 ]
 
+{ #category : 'running' }
+NTSpApplication >> mainPresenter [
+
+	^ mainPresenter
+]
+
+{ #category : 'running' }
+NTSpApplication >> mainPresenter: aNtSpNoteTakerMainUI [
+
+	mainPresenter := aNtSpNoteTakerMainUI
+]
+
 { #category : 'accessing' }
 NTSpApplication >> noteTakerContainer [
 
@@ -207,14 +221,14 @@ NTSpApplication >> noteTakerContainer [
 { #category : 'running' }
 NTSpApplication >> start [
 
-	mainPresenter := (NTSpNoteTakerMainUI newApplication: self) open
+	mainPresenter open
 ]
 
 { #category : 'running' }
 NTSpApplication >> startFullScreen [
 	" Private - Open the main application window in full screen, intended for the release version "
 
-	mainPresenter := (NTSpNoteTakerMainUI newApplication: self) asWorldWindow open
+	mainPresenter asWorldWindow open
 ]
 
 { #category : 'windows' }
