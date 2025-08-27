@@ -2,7 +2,6 @@ Class {
 	#name : 'NTSpTagSelectionDialogTest',
 	#superclass : 'NTSpTestCase',
 	#instVars : [
-		'mainPresenter',
 		'presenter'
 	],
 	#category : 'TheNoteTaker-UI-Tests',

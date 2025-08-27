@@ -251,6 +251,12 @@ NTSpNoteTakerMainUI >> updateContents [
 	notesEditorPresenter newEmptyNote
 ]
 
+{ #category : 'layout' }
+NTSpNoteTakerMainUI >> updatePresenter [
+
+	self notesIndexPresenter updatePresenter
+]
+
 { #category : 'activation' }
 NTSpNoteTakerMainUI >> updateWindowTitle [
 

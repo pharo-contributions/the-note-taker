@@ -7,7 +7,8 @@ Class {
 		'previousNotesLocation',
 		'settings',
 		'memoryFS',
-		'ressources'
+		'ressources',
+		'mainPresenter'
 	],
 	#category : 'TheNoteTaker-UI-Tests',
 	#package : 'TheNoteTaker-UI-Tests'
@@ -28,6 +29,7 @@ NTSpTestCase >> setUp [
 
 	app := NTSpApplication new.
 	app currentFolder: memoryFS workingDirectory.
+	mainPresenter := app mainPresenter.
 	noteContainer := app noteTakerContainer.
 	ressources := NTTestResource new.
 	ressources useFolder: memoryFS

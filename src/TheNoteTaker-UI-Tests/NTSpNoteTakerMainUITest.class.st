@@ -16,7 +16,7 @@ NTSpNoteTakerMainUITest >> setUp [
 
 	super setUp.
 
-	presenter := NTSpNoteTakerMainUI newApplication: app.
+	presenter := mainPresenter.
 	indexPresenter := presenter notesIndexPresenter.
 	editorPresenter := presenter notesEditorPresenter.
 	toolbarPresenter := presenter notesToolbarPresenter.
