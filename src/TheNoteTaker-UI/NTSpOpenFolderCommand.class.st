@@ -38,7 +38,6 @@ NTSpOpenFolderCommand >> execute [
 		openFolder: self application currentFolder;
 		extent: 800 @ 800;
 		okAction: [ :dir |
-				self application currentFolder: dir.
-				self application reset ];
+				self application currentFolder: dir ];
 		openModal
 ]
