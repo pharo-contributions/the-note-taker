@@ -161,6 +161,14 @@ NTContainer >> removeNotes: aCollectionOfNTNoteObject [
 	self notes removeAll: aCollectionOfNTNoteObject
 ]
 
+{ #category : 'loading - note' }
+NTContainer >> replaceFolder: aFolder [
+
+	self notes: OrderedCollection new.
+	self rawTags: OrderedCollection new.
+	self importFolder: aFolder
+]
+
 { #category : 'accessing - tags' }
 NTContainer >> tags [
 	"Answer the receiver's <Collection> of <NTNoteObject>"
