@@ -187,10 +187,9 @@ NTSpApplication >> initialize [
 	noteTakerContainer := NTContainer new.
 	log := NTLog new.
 	settingPersistence := SystemSettingsPersistence new.
-
-	mainPresenter := NTSpNoteTakerMainUI newApplication: self.
-	self currentFolder: self currentFolder.
 	
+	self currentFolder: self currentFolder.
+	mainPresenter := (NTSpNoteTakerMainUI newApplication: self)
 ]
 
 { #category : 'accessing' }
