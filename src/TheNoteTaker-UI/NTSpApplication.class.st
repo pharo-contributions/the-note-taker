@@ -132,7 +132,7 @@ NTSpApplication >> configFileLocation [
 { #category : 'accessing' }
 NTSpApplication >> currentFolder [
 
-	^ currentFolder ifNil: [
+	^ currentFolder ifNil: [ currentFolder :=
 			  (FileLocator documents / 'noteTaker') asFileReference
 				  ensureCreateDirectory ]
 ]
@@ -146,9 +146,8 @@ NTSpApplication >> currentFolder: aFileReference [
 	log logFileReference: currentFolder.
 	settingPersistence fileReference: self configFileLocation.
 	noteTakerContainer replaceFolder: currentFolder.
-	mainPresenter ifNotNil: [ mainPresenter updatePresenter].
-	self importSettings.
-	
+	mainPresenter updatePresenter.
+	self importSettings
 ]
 
 { #category : 'running' }
@@ -184,12 +183,12 @@ NTSpApplication >> importSettings [
 NTSpApplication >> initialize [
 
 	super initialize.
-	noteTakerContainer := NTContainer new.
-	log := NTLog new.
-	settingPersistence := SystemSettingsPersistence new.
-	
-	self currentFolder: self currentFolder.
-	mainPresenter := (NTSpNoteTakerMainUI newApplication: self)
+	noteTakerContainer := NTContainer new importFolder:
+		                      self currentFolder.
+	log := NTLog newWithFolder: self currentFolder.
+	settingPersistence := SystemSettingsPersistence new fileReference:
+		                      self configFileLocation.
+	mainPresenter := NTSpNoteTakerMainUI newApplication: self
 ]
 
 { #category : 'accessing' }
@@ -219,14 +218,16 @@ NTSpApplication >> noteTakerContainer [
 { #category : 'running' }
 NTSpApplication >> start [
 
-	mainPresenter open
+	mainPresenter open.
+	self importSettings
 ]
 
 { #category : 'running' }
 NTSpApplication >> startFullScreen [
 	" Private - Open the main application window in full screen, intended for the release version "
 
-	mainPresenter asWorldWindow open
+	mainPresenter asWorldWindow open.
+	self importSettings
 ]
 
 { #category : 'windows' }
