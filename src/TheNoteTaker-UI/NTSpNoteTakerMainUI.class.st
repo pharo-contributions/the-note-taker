@@ -11,7 +11,9 @@ Class {
 		'notesIndexPresenter',
 		'notesEditorPresenter',
 		'statusBar',
-		'gitEnable'
+		'gitEnable',
+		'taskMainPresener',
+		'todoToolbarPresenter'
 	],
 	#classVars : [
 		'Default'
@@ -125,15 +127,7 @@ NTSpNoteTakerMainUI >> connectPresenters [
 { #category : 'layout' }
 NTSpNoteTakerMainUI >> defaultLayout [
 
-	^ SpBoxLayout newTopToBottom
-		add: notesToolbarPresenter height: self toolbarHeight;
-		add: (SpPanedLayout newLeftToRight
-			positionOfSlider: 20 percent;
-			add: notesIndexPresenter;
-			add: notesEditorPresenter;
-			yourself);
-		add: statusBar height: self toolbarHeight;
-		yourself
+	^ self noteLayout
 ]
 
 { #category : 'accessing' }
@@ -148,6 +142,10 @@ NTSpNoteTakerMainUI >> gitEnable: anObject [
 	gitEnable := anObject.
 	notesToolbarPresenter := self newToolbar fillWith:
 		                         self rootCommandsGroup / 'Toolbar'.
+	notesToolbarPresenter add: (SpToolbarButtonPresenter new
+			 icon: (self iconNamed: #refreshCircling);
+			 label: 'Change to Todo list';
+			 action: [ layout := self todoLayout ]) yourself.
 	self layout: self defaultLayout
 ]
 
@@ -178,9 +176,17 @@ NTSpNoteTakerMainUI >> initializePresenters [
 	notesIndexPresenter updatePresenter.
 
 	notesEditorPresenter := self instantiate: NTSpEditorPresenter.
+	
+	taskMainPresener := self instantiate: SpTaskMainPresenter.
+	todoToolbarPresenter := self newToolbar add: (SpToolbarButtonPresenter new icon: (self iconNamed: #refreshCircling);
+		label: 'Change to note';
+		action: [ layout := self noteLayout ]); yourself.
 
 	notesToolbarPresenter := self newToolbar fillWith:
 		                         self rootCommandsGroup / 'Toolbar'.
+	notesToolbarPresenter add: (SpToolbarButtonPresenter new icon: (self iconNamed: #refreshCircling);
+		label: 'Change to Todo list';
+		action: [ layout := self todoLayout ]) yourself.
 	statusBar := SpStatusBarPresenter new
 ]
 
@@ -192,6 +198,20 @@ NTSpNoteTakerMainUI >> initializeWindow: aSpWindowPresenter [
 	self setTitleTo: aSpWindowPresenter.
 	aSpWindowPresenter windowIcon: (self iconNamed: #page).
    aSpWindowPresenter initialExtent: self initialExtentForWindow.
+]
+
+{ #category : 'layout' }
+NTSpNoteTakerMainUI >> noteLayout [
+
+	^ SpBoxLayout newTopToBottom
+		add: notesToolbarPresenter height: self toolbarHeight;
+		add: (SpPanedLayout newLeftToRight
+			positionOfSlider: 20 percent;
+			add: notesIndexPresenter;
+			add: notesEditorPresenter;
+			yourself);
+		add: statusBar height: self toolbarHeight;
+		yourself
 ]
 
 { #category : 'accessing' }
@@ -237,6 +257,15 @@ NTSpNoteTakerMainUI >> setTitleTo: aSpWindowPresenter [
 NTSpNoteTakerMainUI >> statusBar [
 
 	^ statusBar
+]
+
+{ #category : 'layout' }
+NTSpNoteTakerMainUI >> todoLayout [
+
+	^ SpBoxLayout newTopToBottom
+		  add: todoToolbarPresenter height: self toolbarHeight;
+		  add: taskMainPresener;
+		  yourself
 ]
 
 { #category : 'layout' }

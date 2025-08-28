@@ -16,7 +16,8 @@ Class {
 		'log',
 		'currentFolder',
 		'settingPersistence',
-		'mainPresenter'
+		'mainPresenter',
+		'taskContainer'
 	],
 	#classVars : [
 		'Default',
@@ -185,6 +186,7 @@ NTSpApplication >> initialize [
 	super initialize.
 	noteTakerContainer := NTContainer new importFolder:
 		                      self currentFolder.
+	taskContainer := TaskManager new.
 	log := NTLog newWithFolder: self currentFolder.
 	settingPersistence := SystemSettingsPersistence new fileReference:
 		                      self configFileLocation.
@@ -228,6 +230,12 @@ NTSpApplication >> startFullScreen [
 
 	mainPresenter asWorldWindow open.
 	self importSettings
+]
+
+{ #category : 'running' }
+NTSpApplication >> taskContainer [
+
+	^ taskContainer
 ]
 
 { #category : 'windows' }
