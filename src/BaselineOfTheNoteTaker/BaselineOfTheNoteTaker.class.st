@@ -30,7 +30,7 @@ BaselineOfTheNoteTaker >> baseline: spec [
 				package: 'TheNoteTaker' with: [ spec requires: #( Microdown ) ];
 				package: 'TheNoteTaker-UI'
 				with: [
-					spec requires: #( TheNoteTaker OSSubprocess OSWinSubprocess ) ];
+					spec requires: #( TheNoteTaker OSSubprocess OSWinSubprocess 'TheNoteTaker-Todo-UI' ) ];
 				package: 'TheNoteTaker-Release'
 				with: [ spec requires: #( ApplicationGenerator
 						   ObjCBridge ) ];
@@ -40,16 +40,20 @@ BaselineOfTheNoteTaker >> baseline: spec [
 				with: [
 					spec requires: #( 'TheNoteTaker-Tests' 'TheNoteTaker-UI' ) ];
 				package: 'TheNoteTaker-Todo';
-				package: 'TheNoteTaker-Todo-Tests' with: [ spec requires: #( 'TheNoteTaker-Todo' ) ];
-				package: 'TheNoteTaker-Todo-UI' with: [ spec requires: #( 'TheNoteTaker-Todo' ) ].
+				package: 'TheNoteTaker-Todo-Tests'
+				with: [ spec requires: #( 'TheNoteTaker-Todo' ) ];
+				package: 'TheNoteTaker-Todo-UI'
+				with: [ spec requires: #( 'TheNoteTaker-Todo' ) ].
 
 			spec
 				group: 'Core' with: #( 'TheNoteTaker' );
 				group: 'UI' with: #( 'TheNoteTaker-UI' );
 				group: 'Tests'
-				with: #( 'Core' 'TheNoteTaker-Tests' 'TheNoteTaker-UI-Tests' );
+				with: #( 'Core' 'TheNoteTaker-Tests' 'TheNoteTaker-UI-Tests'  'TheNoteTaker-Todo-Tests' );
 				group: 'Release' with: #( 'Core' 'UI' 'TheNoteTaker-Release' );
-				group: 'default' with: #( 'Core' 'Tests' 'UI' 'TheNoteTaker-Todo-UI' 'TheNoteTaker-Todo-Tests') ]
+				group: 'default'
+				with:
+					#( 'Core' 'Tests' 'UI' ) ]
 ]
 
 { #category : 'baselines' }
