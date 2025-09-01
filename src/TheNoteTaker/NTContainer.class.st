@@ -126,7 +126,7 @@ NTContainer >> notes: aNotesCollection withTags: aTagsCollection [
 	| noteCollection |
 	noteCollection := aNotesCollection.
 	aTagsCollection do: [ :tag |
-		noteCollection := aNotesCollection select: [ :n | n tags includes: tag ]].
+		noteCollection := noteCollection select: [ :n | n tags includes: tag ]].
 
 	^ noteCollection
 ]
