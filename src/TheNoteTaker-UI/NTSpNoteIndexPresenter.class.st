@@ -151,13 +151,13 @@ NTSpNoteIndexPresenter >> initializePresenters [
 		beMultipleSelection;
 		sortingBlock: [ :a :b |
 			a note modificationDate > b note modificationDate ];
-		addShortcutWith: [ :action |
+		"addShortcutWith: [ :action |
 				action
 					shortcutKey: KeyboardKey delete asKeyCombination;
 					action: [
 							NTSpRemoveNoteCommand new
 								context: self;
-								execute ] ];
+								execute ] ];"
 		contextMenu: [
 				(self rootCommandsGroup / 'NTSelContextualMenu') beRoot
 					asMenuPresenter ]
