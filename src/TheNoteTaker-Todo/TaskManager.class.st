@@ -25,11 +25,18 @@ Class {
 	#superclass : 'Object',
 	#instVars : [
 		'tasks',
-		'tags'
+		'tags',
+		'fileReference'
 	],
 	#category : 'TheNoteTaker-Todo',
 	#package : 'TheNoteTaker-Todo'
 }
+
+{ #category : 'ston-core' }
+TaskManager class >> stonAllInstVarNames [
+
+	^ self allInstVarNames copyWithout: #fileReference
+]
 
 { #category : 'accessing - notes' }
 TaskManager >> addTagNamed: aString [
@@ -61,6 +68,18 @@ TaskManager >> ensureTagNamed: aString [
 TaskManager >> fileName [
 
 	^ 'taskManager.txt'
+]
+
+{ #category : 'removing - notes' }
+TaskManager >> fileReference [
+
+	^ fileReference
+]
+
+{ #category : 'removing - notes' }
+TaskManager >> folderReference: aFileReference [
+
+	fileReference := aFileReference / self fileName
 ]
 
 { #category : 'adding - notes' }
@@ -133,16 +152,16 @@ TaskManager >> getWeekTask [
 TaskManager >> initialize [
 
 	tasks := OrderedCollection new.
-	tags := OrderedCollection new
+	tags := OrderedCollection new.
+	fileReference := FileLocator workingDirectory / self fileName
 
 	"self getDefaultTask"
 ]
 
 { #category : 'removing - notes' }
-TaskManager >> loadFromFolder: aFileReference [
+TaskManager >> load [
 
-	| loadTaskManager fileReference |
-	fileReference := aFileReference / self fileName.
+	| loadTaskManager |
 	fileReference exists ifFalse: [ ^ self ].
 	loadTaskManager := [ STON fromString: fileReference contents ]
 		                   on: STONReaderError
@@ -167,12 +186,9 @@ TaskManager >> removetasks: aCollectionOfNTTodo [
 ]
 
 { #category : 'removing - notes' }
-TaskManager >> saveToFolder: aFileReference [
+TaskManager >> save [
 
-	| fileReference |
-	fileReference := aFileReference / self fileName.
-	fileReference writeStreamDo: [ :str |
-			str << (STON toString: self) ]
+	fileReference writeStreamDo: [ :str | str << (STON toString: self) ]
 ]
 
 { #category : 'accessing' }

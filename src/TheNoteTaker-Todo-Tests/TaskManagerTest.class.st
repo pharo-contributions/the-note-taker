@@ -11,10 +11,12 @@ Class {
 
 { #category : 'running' }
 TaskManagerTest >> setUp [
+
 	super setUp.
 
 	taskManager := TodoRessourcesTest new generateTaskManager.
-	memory := FileSystem memory workingDirectory
+	memory := FileSystem memory workingDirectory.
+	taskManager folderReference: memory
 ]
 
 { #category : 'tests' }
@@ -66,13 +68,13 @@ TaskManagerTest >> testGetTrashTask [
 TaskManagerTest >> testLoad [
 
 	| newTaskManager |
-	taskManager saveToFolder: memory.
-	newTaskManager := TaskManager new.
+	taskManager save.
+	newTaskManager := TaskManager new folderReference: memory.
 
 	self assertEmpty: newTaskManager tasks.
 	self assertEmpty: newTaskManager tags.
 
-	newTaskManager loadFromFolder: memory.
+	newTaskManager load.
 
 	self assert: taskManager tasks size equals: newTaskManager tasks size.
 	taskManager tasks do: [ :each |
@@ -84,7 +86,8 @@ TaskManagerTest >> testLoad [
 	taskManager tags do: [ :each |
 			self
 				deny:
-				(newTaskManager tags detect: [ :each2 | each tagName = each2 tagName ])
+				(newTaskManager tags detect: [ :each2 |
+					 each tagName = each2 tagName ])
 				equals: nil ]
 ]
 
@@ -96,15 +99,14 @@ TaskManagerTest >> testLoadWhenCorruptFile [
 
 	self assertEmpty: newTaskManager tasks.
 	self assertEmpty: newTaskManager tags.
-	
-	(memory / newTaskManager fileName) writeStreamDo: [ :str |
+
+	newTaskManager fileReference writeStreamDo: [ :str |
 		str nextPutAll: 'BLABLABLA' ].
 
-	newTaskManager loadFromFolder: memory.
+	newTaskManager load.
 
 	self assertEmpty: newTaskManager tasks.
-	self assertEmpty: newTaskManager tags.
-
+	self assertEmpty: newTaskManager tags
 ]
 
 { #category : 'tests' }
@@ -116,10 +118,10 @@ TaskManagerTest >> testLoadWhenCorruptFileWithWrongObject [
 	self assertEmpty: newTaskManager tasks.
 	self assertEmpty: newTaskManager tags.
 
-	memory / newTaskManager fileName writeStreamDo: [ :str |
+	newTaskManager fileReference writeStreamDo: [ :str |
 		str << (STON toString: Task new) ].
 
-	newTaskManager loadFromFolder: memory.
+	newTaskManager load.
 
 	self assertEmpty: newTaskManager tasks.
 	self assertEmpty: newTaskManager tags
@@ -134,11 +136,10 @@ TaskManagerTest >> testLoadWhenNonExistantFile [
 	self assertEmpty: newTaskManager tasks.
 	self assertEmpty: newTaskManager tags.
 
-	newTaskManager loadFromFolder: memory.
+	newTaskManager load.
 
 	self assertEmpty: newTaskManager tasks.
-	self assertEmpty: newTaskManager tags.
-
+	self assertEmpty: newTaskManager tags
 ]
 
 { #category : 'tests' }
@@ -146,11 +147,11 @@ TaskManagerTest >> testSave [
 
 	| ston |
 	ston := STON toString: taskManager.
-	
-	taskManager saveToFolder: memory.
-	
-	self assert: (memory / taskManager fileName )exists.
-	self assert: (memory / taskManager fileName ) contents equals: ston
+
+	taskManager save.
+
+	self assert: taskManager fileReference exists.
+	self assert: taskManager fileReference contents equals: ston
 ]
 
 { #category : 'tests' }
