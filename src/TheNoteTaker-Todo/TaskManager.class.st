@@ -57,6 +57,12 @@ TaskManager >> ensureTagNamed: aString [
 		  ifNone: [ self addTagNamed: aString ]
 ]
 
+{ #category : 'removing - notes' }
+TaskManager >> fileName [
+
+	^ 'taskManager.txt'
+]
+
 { #category : 'adding - notes' }
 TaskManager >> getDefaultTask [
 
@@ -127,9 +133,23 @@ TaskManager >> getWeekTask [
 TaskManager >> initialize [
 
 	tasks := OrderedCollection new.
-	tags := OrderedCollection new.
+	tags := OrderedCollection new
 
 	"self getDefaultTask"
+]
+
+{ #category : 'removing - notes' }
+TaskManager >> loadFromFolder: aFileReference [
+
+	| loadTaskManager fileReference |
+	fileReference := aFileReference / self fileName.
+	fileReference exists ifFalse: [ ^ self ].
+	loadTaskManager := [ STON fromString: fileReference contents ]
+		                   on: STONReaderError
+		                   do: [ ^ self ].
+	(loadTaskManager isKindOf: self class) ifFalse: [ ^ self ].
+	self tags: loadTaskManager tags.
+	self tasks: loadTaskManager tasks
 ]
 
 { #category : 'removing - notes' }
@@ -144,6 +164,15 @@ TaskManager >> removetasks: aCollectionOfNTTodo [
 	"Remove the note aNTNoteObject from the receiver's notes. Answer the receiver"
 	
 	self tasks removeAll: aCollectionOfNTTodo
+]
+
+{ #category : 'removing - notes' }
+TaskManager >> saveToFolder: aFileReference [
+
+	| fileReference |
+	fileReference := aFileReference / self fileName.
+	fileReference writeStreamDo: [ :str |
+			str << (STON toString: self) ]
 ]
 
 { #category : 'accessing' }

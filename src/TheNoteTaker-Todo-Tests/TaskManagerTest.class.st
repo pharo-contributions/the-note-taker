@@ -2,7 +2,8 @@ Class {
 	#name : 'TaskManagerTest',
 	#superclass : 'TestCase',
 	#instVars : [
-		'taskManager'
+		'taskManager',
+		'memory'
 	],
 	#category : 'TheNoteTaker-Todo-Tests',
 	#package : 'TheNoteTaker-Todo-Tests'
@@ -12,7 +13,8 @@ Class {
 TaskManagerTest >> setUp [
 	super setUp.
 
-	taskManager := TodoRessourcesTest new generateTaskManager 
+	taskManager := TodoRessourcesTest new generateTaskManager.
+	memory := FileSystem memory workingDirectory
 ]
 
 { #category : 'tests' }
@@ -58,6 +60,97 @@ TaskManagerTest >> testGetTrashTask [
 	trashTasks := taskManager getTrashTask .
 	self assert: trashTasks size equals: 1.
 	self assert: trashTasks first isTrash
+]
+
+{ #category : 'tests' }
+TaskManagerTest >> testLoad [
+
+	| newTaskManager |
+	taskManager saveToFolder: memory.
+	newTaskManager := TaskManager new.
+
+	self assertEmpty: newTaskManager tasks.
+	self assertEmpty: newTaskManager tags.
+
+	newTaskManager loadFromFolder: memory.
+
+	self assert: taskManager tasks size equals: newTaskManager tasks size.
+	taskManager tasks do: [ :each |
+			self
+				deny:
+				(newTaskManager tasks detect: [ :each2 | each title = each2 title ])
+				equals: nil ].
+	self assert: taskManager tags size equals: newTaskManager tags size.
+	taskManager tags do: [ :each |
+			self
+				deny:
+				(newTaskManager tags detect: [ :each2 | each tagName = each2 tagName ])
+				equals: nil ]
+]
+
+{ #category : 'tests' }
+TaskManagerTest >> testLoadWhenCorruptFile [
+
+	| newTaskManager |
+	newTaskManager := TaskManager new.
+
+	self assertEmpty: newTaskManager tasks.
+	self assertEmpty: newTaskManager tags.
+	
+	(memory / newTaskManager fileName) writeStreamDo: [ :str |
+		str nextPutAll: 'BLABLABLA' ].
+
+	newTaskManager loadFromFolder: memory.
+
+	self assertEmpty: newTaskManager tasks.
+	self assertEmpty: newTaskManager tags.
+
+]
+
+{ #category : 'tests' }
+TaskManagerTest >> testLoadWhenCorruptFileWithWrongObject [
+
+	| newTaskManager |
+	newTaskManager := TaskManager new.
+
+	self assertEmpty: newTaskManager tasks.
+	self assertEmpty: newTaskManager tags.
+
+	memory / newTaskManager fileName writeStreamDo: [ :str |
+		str << (STON toString: Task new) ].
+
+	newTaskManager loadFromFolder: memory.
+
+	self assertEmpty: newTaskManager tasks.
+	self assertEmpty: newTaskManager tags
+]
+
+{ #category : 'tests' }
+TaskManagerTest >> testLoadWhenNonExistantFile [
+
+	| newTaskManager |
+	newTaskManager := TaskManager new.
+
+	self assertEmpty: newTaskManager tasks.
+	self assertEmpty: newTaskManager tags.
+
+	newTaskManager loadFromFolder: memory.
+
+	self assertEmpty: newTaskManager tasks.
+	self assertEmpty: newTaskManager tags.
+
+]
+
+{ #category : 'tests' }
+TaskManagerTest >> testSave [
+
+	| ston |
+	ston := STON toString: taskManager.
+	
+	taskManager saveToFolder: memory.
+	
+	self assert: (memory / taskManager fileName )exists.
+	self assert: (memory / taskManager fileName ) contents equals: ston
 ]
 
 { #category : 'tests' }
