@@ -327,27 +327,6 @@ NTContainerTest >> testNotesContentMatching [
 		equals: 1
 ]
 
-{ #category : 'tests - scenarios' }
-NTContainerTest >> testNotesWithTags [
-
-	| result |
-	ressources addingNotesAndTagsTo: noteTakerContainer.
-
-	result := noteTakerContainer
-		          notes: noteTakerContainer notes
-		          withTags: (OrderedCollection new
-				           add: (noteTakerContainer ensureTagNamed: 'test');
-				           yourself).
-	self assert: result size equals: 0.
-
-	result := noteTakerContainer
-		          notes: noteTakerContainer notes
-		          withTags: (OrderedCollection new
-				           add: ressources getTag1;
-				           yourself).
-	self assert: result size equals: 1
-]
-
 { #category : 'tests - note' }
 NTContainerTest >> testRemoveNotes [
 
@@ -384,6 +363,43 @@ NTContainerTest >> testSaveNoteLoadedWithoutMetadata [
 	                 , 'This is just a new note'.
 
 	self assert: note fileReference contents equals: finalContents
+]
+
+{ #category : 'tests - scenarios' }
+NTContainerTest >> testSelectNotesWithTags [
+
+	| result |
+	ressources addingNotesAndTagsTo: noteTakerContainer.
+
+	result := noteTakerContainer
+		          notes: noteTakerContainer notes
+		          withTags: (OrderedCollection new
+				           add: (noteTakerContainer ensureTagNamed: 'test');
+				           yourself).
+	self assert: result size equals: 0.
+
+	result := noteTakerContainer
+		          notes: noteTakerContainer notes
+		          withTags: (OrderedCollection new
+				           add: ressources getTag1;
+				           yourself).
+	self assert: result size equals: 1.
+	
+	result := noteTakerContainer
+		          notes: noteTakerContainer notes
+		          withTags: (OrderedCollection new
+				           add: ressources getTag1;
+							  add: ressources getTag2;
+				           yourself).
+	self assert: result size equals: 0.
+	
+	result := noteTakerContainer
+		          notes: noteTakerContainer notes
+		          withTags: (OrderedCollection new
+				           add: ressources getTag1;
+							  add: ressources getTag3;
+				           yourself).
+	self assert: result size equals: 1
 ]
 
 { #category : 'tests - tags' }
