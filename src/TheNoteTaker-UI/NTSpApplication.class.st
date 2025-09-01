@@ -100,6 +100,13 @@ NTSpApplication class >> openIt [
 	self default run
 ]
 
+{ #category : 'class initialization' }
+NTSpApplication class >> reset [
+
+	<script>
+	Default := nil
+]
+
 { #category : 'private' }
 NTSpApplication class >> settingsOn: aBuilder [
 
