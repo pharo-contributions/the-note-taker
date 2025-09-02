@@ -114,11 +114,9 @@ NTSpApplication >> exportSettings [
 { #category : 'running' }
 NTSpApplication >> importSettings [
 
-	| tree |
-	tree := SettingBrowser currentTree nodeNamed: #tnt.
-	tree ifNil: [ ^ self ].
-
-	settingPersistence updateSettingNodes: tree allChildren
+	self configFileLocation ifAbsent: [ ^ self ].
+	(SettingBrowser currentTree nodeNamed: #tnt) ifNotNil: [ :tntNode |
+		settingPersistence updateSettingNodes: tntNode allChildren ]
 ]
 
 { #category : 'initialization' }
@@ -133,8 +131,7 @@ NTSpApplication >> initialize [
 	settingPersistence := SystemSettingsPersistence new fileReference:
 		                      self configFileLocation.
 	settings whenCurrentFolderChangeDo: [ :newFolder :oldFolder |
-			newFolder = oldFolder ifFalse: [ self updateApplication ] ].
-	mainPresenter := NTSpNoteTakerMainUI newApplication: self
+		newFolder = oldFolder ifFalse: [ self updateApplication ] ]
 ]
 
 { #category : 'accessing' }
@@ -170,6 +167,7 @@ NTSpApplication >> settings [
 { #category : 'running' }
 NTSpApplication >> start [
 
+	mainPresenter := NTSpNoteTakerMainUI newApplication: self.
 	mainPresenter open.
 	self importSettings
 ]
@@ -178,6 +176,7 @@ NTSpApplication >> start [
 NTSpApplication >> startFullScreen [
 	" Private - Open the main application window in full screen, intended for the release version "
 
+	mainPresenter := NTSpNoteTakerMainUI newApplication: self.
 	mainPresenter asWorldWindow open.
 	self importSettings
 ]
@@ -194,7 +193,7 @@ NTSpApplication >> updateApplication [
 	log logFileReference: self currentFolder.
 	settingPersistence fileReference: self configFileLocation.
 	noteTakerContainer replaceFolder: self currentFolder.
-	mainPresenter updatePresenter.
+	mainPresenter ifNotNil: [ :main | main updatePresenter ].
 	self importSettings
 ]
 
