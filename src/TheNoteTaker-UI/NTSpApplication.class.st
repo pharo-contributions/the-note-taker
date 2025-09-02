@@ -134,6 +134,12 @@ NTSpApplication >> initialize [
 		newFolder = oldFolder ifFalse: [ self updateApplication ] ]
 ]
 
+{ #category : 'initialization' }
+NTSpApplication >> initializeMainPresenter [
+
+	mainPresenter := NTSpNoteTakerMainUI newApplication: self.
+]
+
 { #category : 'accessing' }
 NTSpApplication >> log [
 
@@ -167,7 +173,7 @@ NTSpApplication >> settings [
 { #category : 'running' }
 NTSpApplication >> start [
 
-	mainPresenter := NTSpNoteTakerMainUI newApplication: self.
+	self initializeMainPresenter.
 	mainPresenter open.
 	self importSettings
 ]
@@ -176,7 +182,7 @@ NTSpApplication >> start [
 NTSpApplication >> startFullScreen [
 	" Private - Open the main application window in full screen, intended for the release version "
 
-	mainPresenter := NTSpNoteTakerMainUI newApplication: self.
+	self initializeMainPresenter.
 	mainPresenter asWorldWindow open.
 	self importSettings
 ]

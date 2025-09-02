@@ -3,7 +3,8 @@ Class {
 	#superclass : 'NTSpTestCase',
 	#instVars : [
 		'indexPresenter',
-		'command'
+		'command',
+		'mainPresenter'
 	],
 	#category : 'TheNoteTaker-UI-Tests',
 	#package : 'TheNoteTaker-UI-Tests'
@@ -18,7 +19,8 @@ NTSpCommandTest class >> isAbstract [
 NTSpCommandTest >> setUp [
 
 	super setUp.
-	
+	app initializeMainPresenter.
+	mainPresenter := app mainPresenter.	
 	indexPresenter := mainPresenter notesIndexPresenter.
 
 	ressources addingNotesAndTagsTo: noteContainer.

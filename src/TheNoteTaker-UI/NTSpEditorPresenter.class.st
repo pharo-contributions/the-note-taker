@@ -197,7 +197,7 @@ NTSpEditorPresenter >> saveFile [
 			self owner addNote: self model ].
 	self model isDirty ifFalse: [ ^ self ].
 	self model save.
-	self owner statusBar pushMessage: (self application log save: model)
+	self owner ifNotNil: [ :owner | owner statusBar pushMessage: (self application log save: model)]
 ]
 
 { #category : 'accessing - model' }
