@@ -11,28 +11,27 @@ Class {
 		'notesIndexPresenter',
 		'notesEditorPresenter',
 		'statusBar',
-		'gitEnable',
 		'taskMainPresener',
 		'todoToolbarPresenter'
 	],
 	#classVars : [
-		'Default'
+		'GitEnable'
 	],
 	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
 	#tag : 'Core'
 }
 
-{ #category : 'commands' }
+{ #category : 'nil' }
 NTSpNoteTakerMainUI class >> GitEnable [
 
-	^ self default gitEnable
+	^ GitEnable
 ]
 
-{ #category : 'commands' }
+{ #category : 'nil' }
 NTSpNoteTakerMainUI class >> GitEnable: aBoolean [
 
-	self default gitEnable: aBoolean
+	GitEnable := aBoolean
 ]
 
 { #category : 'nil' }
@@ -59,42 +58,6 @@ NTSpNoteTakerMainUI class >> buildNTContextualGroupWith: presenterInstance [
 	^ commandGroup
 		  register: (NTSpLogCommand forSpec context: presenterInstance);
 		  register: (NTSpSettingsCommand forSpec context: presenterInstance)
-]
-
-{ #category : 'accessing' }
-NTSpNoteTakerMainUI class >> default [
-
-	^ Default ifNil: [ Default := self new ]
-]
-
-{ #category : 'commands' }
-NTSpNoteTakerMainUI class >> default: aNTSpApplication [
-
-	Default := aNTSpApplication
-]
-
-{ #category : 'commands' }
-NTSpNoteTakerMainUI class >> newApplication: anApplication [
-
-	self default: (self basicNew
-		  application: anApplication;
-		  yourself).
-		
-	self default initialize.
-	^ self default
-]
-
-{ #category : 'commands' }
-NTSpNoteTakerMainUI class >> settingsOn: aBuilder [
-
-	<systemsettings>
-	(aBuilder setting: #GitEnable)
-		parent: #tnt;
-		target: self;
-		order: 60;
-		label: 'enable git command';
-		description: 'When enabled, show git command button.
-When disabled, hide git command button. '
 ]
 
 { #category : 'initialization' }
@@ -130,23 +93,10 @@ NTSpNoteTakerMainUI >> defaultLayout [
 	^ self noteLayout
 ]
 
-{ #category : 'accessing' }
-NTSpNoteTakerMainUI >> gitEnable [
+{ #category : 'layout' }
+NTSpNoteTakerMainUI >> gitSettings [
 
-	^ gitEnable ifNil: [ gitEnable := false ]
-]
-
-{ #category : 'accessing' }
-NTSpNoteTakerMainUI >> gitEnable: anObject [
-
-	gitEnable := anObject.
-	notesToolbarPresenter := self newToolbar fillWith:
-		                         self rootCommandsGroup / 'Toolbar'.
-	notesToolbarPresenter add: (SpToolbarButtonPresenter new
-			 icon: (self iconNamed: #refreshCircling);
-			 label: 'Change to Todo list';
-			 action: [ layout := self todoLayout ]) yourself.
-	self layout: self defaultLayout
+	^ self settings gitEnable
 ]
 
 { #category : 'testing' }
@@ -169,6 +119,18 @@ NTSpNoteTakerMainUI >> initialize [
 ]
 
 { #category : 'initialization' }
+NTSpNoteTakerMainUI >> initializeNoteToolBar [
+
+	notesToolbarPresenter := self newToolbar fillWith:
+		                         self rootCommandsGroup / 'Toolbar'.
+		
+	notesToolbarPresenter add: (SpToolbarButtonPresenter new
+			 icon: (self iconNamed: #refreshCircling);
+			 label: 'Change to Todo list';
+			 action: [ layout := self todoLayout ]) yourself
+]
+
+{ #category : 'initialization' }
 NTSpNoteTakerMainUI >> initializePresenters [
 
 	notesIndexPresenter := self instantiate: NTSpNoteIndexPresenter.
@@ -176,17 +138,19 @@ NTSpNoteTakerMainUI >> initializePresenters [
 	notesIndexPresenter updatePresenter.
 
 	notesEditorPresenter := self instantiate: NTSpEditorPresenter.
-	
-	taskMainPresener := self instantiate: SpTaskMainPresenter.
-	todoToolbarPresenter := self newToolbar add: (SpToolbarButtonPresenter new icon: (self iconNamed: #refreshCircling);
-		label: 'Change to note';
-		action: [ layout := self noteLayout ]); yourself.
 
-	notesToolbarPresenter := self newToolbar fillWith:
-		                         self rootCommandsGroup / 'Toolbar'.
-	notesToolbarPresenter add: (SpToolbarButtonPresenter new icon: (self iconNamed: #refreshCircling);
-		label: 'Change to Todo list';
-		action: [ layout := self todoLayout ]) yourself.
+	taskMainPresener := self instantiate: SpTaskMainPresenter.
+	todoToolbarPresenter := self newToolbar
+		                        add: (SpToolbarButtonPresenter new
+				                         icon: (self iconNamed: #refreshCircling);
+				                         label: 'Change to note';
+				                         action: [ layout := self noteLayout ]);
+		                        yourself.
+	GitEnable := self gitSettings.
+	self settings whenGitEnableChangeDo: [
+			GitEnable := self gitSettings.
+			self initializeNoteToolBar ].
+	self initializeNoteToolBar.
 	statusBar := SpStatusBarPresenter new
 ]
 
@@ -251,6 +215,12 @@ NTSpNoteTakerMainUI >> setTitleTo: aSpWindowPresenter [
 
 	aSpWindowPresenter title: self applicationTitle
 
+]
+
+{ #category : 'layout' }
+NTSpNoteTakerMainUI >> settings [
+
+	^ self application settings
 ]
 
 { #category : 'accessing' }

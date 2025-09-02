@@ -14,32 +14,18 @@ Class {
 	#instVars : [
 		'noteTakerContainer',
 		'log',
-		'currentFolder',
 		'settingPersistence',
 		'mainPresenter',
-		'taskContainer'
+		'taskContainer',
+		'settings'
 	],
 	#classVars : [
-		'Default',
 		'IsDeployed'
 	],
 	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
 	#tag : 'Core'
 }
-
-{ #category : 'private' }
-NTSpApplication class >> CurrentFolder [
-	"Answer the preferred <String> where notes will be stored"
-
-	^ self default currentFolder
-]
-
-{ #category : 'private' }
-NTSpApplication class >> CurrentFolder: aString [
-	"Set the preferred fileReference where notes will be stored"
-	self default currentFolder: aString.
-]
 
 { #category : 'private' }
 NTSpApplication class >> applicationTitle [
@@ -58,19 +44,9 @@ NTSpApplication class >> beUndeployed [
 ]
 
 { #category : 'private' }
-NTSpApplication class >> default [
-	^ Default ifNil: [ Default := self new ]
-]
-
-{ #category : 'private' }
-NTSpApplication class >> default: aNTSpApplication [
-
-	Default := aNTSpApplication
-]
-
-{ #category : 'private' }
 NTSpApplication class >> isDeployed [
-	^ IsDeployed ifNil: [ IsDeployed := false ]
+
+	^ IsDeployed ifNil: [ self beUndeployed ]
 ]
 
 { #category : 'private' }
@@ -97,32 +73,7 @@ NTSpApplication class >> openFull [
 NTSpApplication class >> openIt [
 
 	<script>
-	self default run
-]
-
-{ #category : 'class initialization' }
-NTSpApplication class >> reset [
-
-	<script>
-	Default := nil
-]
-
-{ #category : 'private' }
-NTSpApplication class >> settingsOn: aBuilder [
-
-	<systemsettings>
-	(aBuilder group: #tnt)
-		label: 'The Note Taker';
-		description: 'All TNT related settings';
-		noOrdering;
-		with: [
-				(aBuilder setting: #CurrentFolder)
-					label: 'Project Path';
-					type: #Directory;
-					ghostHelp:
-						'/Users/ducasse/Workspace/FirstCircle/Writing/Working/researchnotes';
-					description:
-						'Enter your local or remote path where notes will be committed. It can be empty']
+	self new run
 ]
 
 { #category : 'private' }
@@ -134,69 +85,55 @@ NTSpApplication >> applicationTitle [
 { #category : 'running' }
 NTSpApplication >> configFileLocation [
 
-	^ currentFolder / 'TNTSettings.config'
+	^ self currentFolder / 'TNTSettings.config'
 ]
 
-{ #category : 'accessing' }
+{ #category : 'running' }
 NTSpApplication >> currentFolder [
 
-	^ currentFolder ifNil: [ currentFolder :=
-			  (FileLocator documents / 'noteTaker') asFileReference
-				  ensureCreateDirectory ]
+	^ settings currentFolder
 ]
 
-{ #category : 'accessing' }
+{ #category : 'running' }
 NTSpApplication >> currentFolder: aFileReference [
 
-	currentFolder = aFileReference ifTrue: [ ^ self ].
-
-	currentFolder := aFileReference.
-	log logFileReference: currentFolder.
-	settingPersistence fileReference: self configFileLocation.
-	noteTakerContainer replaceFolder: currentFolder.
-	mainPresenter updatePresenter.
-	self importSettings
+	settings currentFolder: aFileReference
 ]
 
 { #category : 'running' }
 NTSpApplication >> exportSettings [
-	"self class environment
-		at: #NTSettings
-		ifPresent: [ :class |
-				class class
-					compiledMethodAt: #settingsOn:
-					ifPresent: [ :meth | (meth pragmas collect: #keyword) traceCr ]
-					ifAbsent: [ self error: 'Missing method' ] ]
-		ifAbsent: [ self error: 'Missing class' ].
-	SettingBrowser settingsKeywords traceCr."
 
 	(SettingBrowser currentTree nodeNamed: #tnt) ifNil: [ ^ self ].
 
 	settingPersistence storeSettingNodes:
 		(SettingBrowser currentTree nodeNamed: #tnt) allChildren.
-	
-	(currentFolder / 'TNTSettings.old.txt') deleteIfAbsent: [  ]
+
+	self currentFolder / 'TNTSettings.old.txt' deleteIfAbsent: [ ]
 ]
 
 { #category : 'running' }
 NTSpApplication >> importSettings [
 
-	(SettingBrowser currentTree nodeNamed: #tnt) ifNil: [ ^ self ].
-	
-	settingPersistence updateSettingNodes:
-		(SettingBrowser currentTree nodeNamed: #tnt) allChildren
+	| tree |
+	tree := SettingBrowser currentTree nodeNamed: #tnt.
+	tree ifNil: [ ^ self ].
+
+	settingPersistence updateSettingNodes: tree allChildren
 ]
 
 { #category : 'initialization' }
 NTSpApplication >> initialize [
 
 	super initialize.
+	settings := NTSettings new.
 	noteTakerContainer := NTContainer new importFolder:
 		                      self currentFolder.
 	taskContainer := TaskManager new.
 	log := NTLog newWithFolder: self currentFolder.
 	settingPersistence := SystemSettingsPersistence new fileReference:
 		                      self configFileLocation.
+	settings whenCurrentFolderChangeDo: [ :newFolder :oldFolder |
+			newFolder = oldFolder ifFalse: [ self updateApplication ] ].
 	mainPresenter := NTSpNoteTakerMainUI newApplication: self
 ]
 
@@ -224,6 +161,12 @@ NTSpApplication >> noteTakerContainer [
 	^ noteTakerContainer
 ]
 
+{ #category : 'initialization' }
+NTSpApplication >> settings [
+
+	^ settings
+]
+
 { #category : 'running' }
 NTSpApplication >> start [
 
@@ -243,6 +186,16 @@ NTSpApplication >> startFullScreen [
 NTSpApplication >> taskContainer [
 
 	^ taskContainer
+]
+
+{ #category : 'accessing' }
+NTSpApplication >> updateApplication [
+
+	log logFileReference: self currentFolder.
+	settingPersistence fileReference: self configFileLocation.
+	noteTakerContainer replaceFolder: self currentFolder.
+	mainPresenter updatePresenter.
+	self importSettings
 ]
 
 { #category : 'windows' }
