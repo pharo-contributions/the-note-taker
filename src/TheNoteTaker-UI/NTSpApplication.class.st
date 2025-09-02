@@ -46,7 +46,7 @@ NTSpApplication class >> beUndeployed [
 { #category : 'private' }
 NTSpApplication class >> isDeployed [
 
-	^ IsDeployed ifNil: [ self beUndeployed ]
+	^ IsDeployed ifNil: [ IsDeployed := false ]
 ]
 
 { #category : 'private' }
@@ -103,10 +103,9 @@ NTSpApplication >> currentFolder: aFileReference [
 { #category : 'running' }
 NTSpApplication >> exportSettings [
 
-	(SettingBrowser currentTree nodeNamed: #tnt) ifNil: [ ^ self ].
-
-	settingPersistence storeSettingNodes:
-		(SettingBrowser currentTree nodeNamed: #tnt) allChildren.
+	(SettingBrowser currentTree nodeNamed: #tnt_note) ifNotNil: [
+		:tntNode |
+		settingPersistence storeSettingNodes: tntNode allChildren ].
 
 	self currentFolder / 'TNTSettings.old.txt' deleteIfAbsent: [ ]
 ]
@@ -115,7 +114,7 @@ NTSpApplication >> exportSettings [
 NTSpApplication >> importSettings [
 
 	self configFileLocation ifAbsent: [ ^ self ].
-	(SettingBrowser currentTree nodeNamed: #tnt) ifNotNil: [ :tntNode |
+	(SettingBrowser currentTree nodeNamed: #tnt_note) ifNotNil: [ :tntNode |
 		settingPersistence updateSettingNodes: tntNode allChildren ]
 ]
 

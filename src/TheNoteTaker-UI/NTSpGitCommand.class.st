@@ -42,7 +42,7 @@ NTSpGitCommand class >> settingsOn: aBuilder [
 
 	<systemsettings>
 	(aBuilder setting: #GithubPathString)
-		parent: #tnt;
+		parent: #tnt_note;
 		target: self;
 		label: 'Github Path';
 		ghostHelp: 'git@github.com:moufort/noteTest.git';

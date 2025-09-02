@@ -83,13 +83,17 @@ NTSettings class >> settingsOn: aBuilder [
 						'/Users/ducasse/Workspace/FirstCircle/Writing/Working/researchnotes';
 					description:
 						'Enter your local or remote path where notes will be committed. It can be empty'.
-				(aBuilder setting: #GitEnable)
-					parent: #tnt;
-					target: self;
-					order: 60;
-					label: 'enable git command';
-					description: 'When enabled, show git command button.
-When disabled, hide git command button. ' ]
+
+				(aBuilder group: #tnt_note)
+					label: 'Note section parameter';
+					with: [
+							(aBuilder setting: #GitEnable)
+								parent: #tnt_note;
+								target: self;
+								order: 60;
+								label: 'enable git command';
+								description: 'When enabled, show git command button.
+When disabled, hide git command button. ' ] ]
 ]
 
 { #category : 'enumerating' }

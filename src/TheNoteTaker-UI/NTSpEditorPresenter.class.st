@@ -46,7 +46,7 @@ NTSpEditorPresenter class >> settingsOn: aBuilder [
 
 	<systemsettings>
 	(aBuilder setting: #AutoSave)
-		parent: #tnt;
+		parent: #tnt_note;
 		target: self;
 		order: 60;
 		label: 'enable automatic save';
