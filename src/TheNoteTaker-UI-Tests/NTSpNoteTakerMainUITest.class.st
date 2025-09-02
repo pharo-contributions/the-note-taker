@@ -15,8 +15,8 @@ Class {
 NTSpNoteTakerMainUITest >> setUp [
 
 	super setUp.
-
-	presenter := mainPresenter.
+	app initializeMainPresenter.
+	presenter := app mainPresenter.
 	indexPresenter := presenter notesIndexPresenter.
 	editorPresenter := presenter notesEditorPresenter.
 	toolbarPresenter := presenter notesToolbarPresenter.

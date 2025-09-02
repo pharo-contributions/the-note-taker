@@ -221,17 +221,18 @@ NTDeploymentScript class >> setProgressBarSizeAndPosition [
 
 { #category : 'as yet unclassified' }
 NTDeploymentScript class >> settingsOn: aBuilder [
+
 	<systemsettings>
-	<pharoLauncherSettings>
-	(aBuilder setting: #developmentEnvironmentEnabled) 
+	(aBuilder setting: #developmentEnvironmentEnabled)
 		parent: #tnt;
 		target: self;
 		default: false;
 		order: 60;
 		label: 'Enable development environment';
-		description: 'Missing a feature?  Hey come join in!  Add your custom feature.
+		description:
+			'Missing a feature?  Hey come join in!  Add your custom feature.
 When enabled, exits the Launcher application into the Pharo development environment.
-When disabled, closes all windows and locks Launcher as the only running application. '.
+When disabled, closes all windows and locks Launcher as the only running application. '
 ]
 
 { #category : 'as yet unclassified' }

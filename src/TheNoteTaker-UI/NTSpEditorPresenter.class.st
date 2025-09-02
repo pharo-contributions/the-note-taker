@@ -46,7 +46,7 @@ NTSpEditorPresenter class >> settingsOn: aBuilder [
 
 	<systemsettings>
 	(aBuilder setting: #AutoSave)
-		parent: #tnt;
+		parent: #tnt_note;
 		target: self;
 		order: 60;
 		label: 'enable automatic save';
@@ -197,7 +197,7 @@ NTSpEditorPresenter >> saveFile [
 			self owner addNote: self model ].
 	self model isDirty ifFalse: [ ^ self ].
 	self model save.
-	self owner statusBar pushMessage: (self application log save: model)
+	self owner ifNotNil: [ :owner | owner statusBar pushMessage: (self application log save: model)]
 ]
 
 { #category : 'accessing - model' }
