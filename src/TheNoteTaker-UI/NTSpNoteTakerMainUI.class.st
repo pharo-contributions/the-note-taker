@@ -147,9 +147,10 @@ NTSpNoteTakerMainUI >> initializePresenters [
 				                         action: [ layout := self noteLayout ]);
 		                        yourself.
 	GitEnable := self gitSettings.
-	self settings whenGitEnableChangeDo: [
-			GitEnable := self gitSettings.
-			self initializeNoteToolBar ].
+	self settings whenGitEnableChangeDo: [ :newValue |
+			GitEnable := newValue.
+			self initializeNoteToolBar.
+			layout := self defaultLayout ].
 	self initializeNoteToolBar.
 	statusBar := SpStatusBarPresenter new
 ]
