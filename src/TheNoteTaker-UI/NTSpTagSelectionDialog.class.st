@@ -32,7 +32,7 @@ NTSpTagSelectionDialog >> allowTagCreation [
 		whenSubmitDo: [ :newTagName | self addTagNamed: newTagName ]
 ]
 
-{ #category : 'adding' }
+{ #category : 'layout' }
 NTSpTagSelectionDialog >> defaultLayout [
 
 	^ SpBoxLayout newTopToBottom
@@ -41,7 +41,7 @@ NTSpTagSelectionDialog >> defaultLayout [
 		  yourself
 ]
 
-{ #category : 'adding' }
+{ #category : 'filtering' }
 NTSpTagSelectionDialog >> filteredTagsFor: aString [
 	"Answer a <Collection> of <NTNoteObject> whose names match aString"
 
@@ -61,7 +61,7 @@ NTSpTagSelectionDialog >> initializePresenters [
 		                       yourself
 ]
 
-{ #category : 'adding' }
+{ #category : 'selection' }
 NTSpTagSelectionDialog >> selectedItems: aTagNameCollection [
 
 	selectedItems addAll: aTagNameCollection

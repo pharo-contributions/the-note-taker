@@ -20,8 +20,7 @@ NTSpEditorFilePresenterTest >> setUp [
 	fileReference := memoryFS / 'aFileReference.md'.
 	fileReference writeStreamDo: [ :stream | stream nextPutAll: text ].
 
-	app initializeMainPresenter.
-	editorPresenter := app mainPresenter notesEditorPresenter.
+	editorPresenter := NTSpEditorPresenter newApplication: app.
 
 	note := NTNote newFromFileReference: fileReference
 ]

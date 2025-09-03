@@ -3,7 +3,10 @@ I represent a NTNoteObject.
 "
 Class {
 	#name : 'NTNotePresenter',
-	#superclass : 'SpPresenterWithModel',
+	#superclass : 'SpPresenter',
+	#instVars : [
+		'note'
+	],
 	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
 	#tag : 'Core'
@@ -19,26 +22,21 @@ NTNotePresenter >> defaultLayout [
 		  yourself
 ]
 
-{ #category : 'layout' }
+{ #category : 'initialization' }
 NTNotePresenter >> initializePresenter [ 
 
 	self note: NTNote new
 ]
 
-{ #category : 'layout' }
-NTNotePresenter >> modelChanged [
-
-	layout := self defaultLayout
-]
-
-{ #category : 'layout' }
+{ #category : 'accessing' }
 NTNotePresenter >> note [
 
-	^ self model
+	^ note
 ]
 
-{ #category : 'layout' }
-NTNotePresenter >> note: aNTNoteObject [ 
+{ #category : 'accessing' }
+NTNotePresenter >> note: aNTNoteObject [
 
-	self setModel: aNTNoteObject.
+	note := aNTNoteObject.
+	layout := self defaultLayout
 ]

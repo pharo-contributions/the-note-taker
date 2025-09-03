@@ -13,8 +13,11 @@ In addition my contents can be save into file.
 Class {
 	#name : 'NTLog',
 	#superclass : 'Object',
+	#traits : 'TObservable',
+	#classTraits : 'TObservable classTrait',
 	#instVars : [
-		'logFileReference'
+		'#logFileReference',
+		'#lastLogString => ObservableSlot'
 	],
 	#category : 'TheNoteTaker',
 	#package : 'TheNoteTaker'
@@ -38,6 +41,14 @@ NTLog >> add: aNTNoteObjet tag: aNTTag [
 NTLog >> create: aNTNoteObjet [
 
 	^ self write: 'file ' , aNTNoteObjet fileName , ' has been created'
+]
+
+{ #category : 'initialization' }
+NTLog >> initialize [
+
+	self class initializeSlots: self.
+	super initialize.
+	lastLogString := ''
 ]
 
 { #category : 'accessing' }
@@ -72,6 +83,14 @@ NTLog >> save: aNTNoteObjet [
 	^ self write: 'file ' , aNTNoteObjet fileName , ' has been saved'
 ]
 
+{ #category : 'events' }
+NTLog >> whenWriteDo: aBlock [
+
+	self
+		property: #lastLogString
+		whenChangedDo: [ aBlock cull: lastLogString ]
+]
+
 { #category : 'actions' }
 NTLog >> write: aString [
 
@@ -82,5 +101,6 @@ NTLog >> write: aString [
 				nextPutAll: ', ';
 				nextPutAll: aString;
 				nextPut: Character cr ].
+	lastLogString := aString.
 	^ aString
 ]

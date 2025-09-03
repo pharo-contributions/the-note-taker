@@ -43,13 +43,13 @@ NTSpRemoveTagCommand >> execute [
 		items: (tagList asArray collect: [ :each | each tagName ]);
 		display: #asString;
 		onAccept: [ :dialog |
-				dialog presenter selectedItems do: [ :tagName | |tag|
-					tag := self noteTakerContainer ensureTagNamed: tagName.
+				dialog presenter selectedItems do: [ :tagName |
+							| tag |
+							tag := self noteTakerContainer ensureTagNamed: tagName.
 							self selectedNotes do: [ :note |
 										note removeTag: tag.
 										note save.
-										self context owner statusBar pushMessage:
-												(self application log remove: note tag: tag) ] ] ];
+										self application log remove: note tag: tag ] ] ];
 		openModalWithParent: context window.
 	self context updatePresenter
 ]

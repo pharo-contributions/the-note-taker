@@ -60,12 +60,6 @@ NTSpNoteTakerMainUI class >> buildNTContextualGroupWith: presenterInstance [
 		  register: (NTSpSettingsCommand forSpec context: presenterInstance)
 ]
 
-{ #category : 'initialization' }
-NTSpNoteTakerMainUI >> addNote: aNTNoteObject [
-
-	self notesIndexPresenter addNote: aNTNoteObject
-]
-
 { #category : 'accessing' }
 NTSpNoteTakerMainUI >> applicationTitle [
 
@@ -80,6 +74,14 @@ NTSpNoteTakerMainUI >> connectPresenters [
 		transform: [ :aNotePresenter |
 		aNotePresenter ifNotNil: [ aNotePresenter note ] ].
 
+	self application log whenWriteDo: [ :string |
+		statusBar pushMessage: string ].
+
+	notesEditorPresenter whenNoteSavedDo: [ :note |
+			(notesIndexPresenter notes includes: note) ifFalse: [
+				notesIndexPresenter addNote: note ].
+			(self application log save: note) ].
+
 	notesEditorPresenter whenNoteChangedDo: [ :note |
 			notesIndexPresenter refreshSelectedItem.
 			self window ifNotNil: [ :window |
@@ -93,7 +95,7 @@ NTSpNoteTakerMainUI >> defaultLayout [
 	^ self noteLayout
 ]
 
-{ #category : 'layout' }
+{ #category : 'accessing' }
 NTSpNoteTakerMainUI >> gitSettings [
 
 	^ self settings gitEnable
@@ -218,7 +220,7 @@ NTSpNoteTakerMainUI >> setTitleTo: aSpWindowPresenter [
 
 ]
 
-{ #category : 'layout' }
+{ #category : 'accessing' }
 NTSpNoteTakerMainUI >> settings [
 
 	^ self application settings
@@ -239,19 +241,13 @@ NTSpNoteTakerMainUI >> todoLayout [
 		  yourself
 ]
 
-{ #category : 'layout' }
+{ #category : 'accessing' }
 NTSpNoteTakerMainUI >> toolbarHeight [
 
 	^ self class toolbarHeight
 ]
 
-{ #category : 'event handling' }
-NTSpNoteTakerMainUI >> updateContents [
-
-	notesEditorPresenter newEmptyNote
-]
-
-{ #category : 'layout' }
+{ #category : 'activation' }
 NTSpNoteTakerMainUI >> updatePresenter [
 
 	self notesIndexPresenter updatePresenter
