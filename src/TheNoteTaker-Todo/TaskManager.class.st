@@ -25,11 +25,18 @@ Class {
 	#superclass : 'Object',
 	#instVars : [
 		'tasks',
-		'tags'
+		'tags',
+		'fileReference'
 	],
 	#category : 'TheNoteTaker-Todo',
 	#package : 'TheNoteTaker-Todo'
 }
+
+{ #category : 'ston-core' }
+TaskManager class >> stonAllInstVarNames [
+
+	^ self allInstVarNames copyWithout: #fileReference
+]
 
 { #category : 'accessing - notes' }
 TaskManager >> addTagNamed: aString [
@@ -55,6 +62,24 @@ TaskManager >> ensureTagNamed: aString [
 	^ self tags
 		  detect: [ :n | n tagName = aString ]
 		  ifNone: [ self addTagNamed: aString ]
+]
+
+{ #category : 'removing - notes' }
+TaskManager >> fileName [
+
+	^ 'taskManager.txt'
+]
+
+{ #category : 'removing - notes' }
+TaskManager >> fileReference [
+
+	^ fileReference
+]
+
+{ #category : 'removing - notes' }
+TaskManager >> folderReference: aFileReference [
+
+	fileReference := aFileReference / self fileName
 ]
 
 { #category : 'adding - notes' }
@@ -128,8 +153,22 @@ TaskManager >> initialize [
 
 	tasks := OrderedCollection new.
 	tags := OrderedCollection new.
+	fileReference := FileLocator workingDirectory / self fileName
 
 	"self getDefaultTask"
+]
+
+{ #category : 'removing - notes' }
+TaskManager >> load [
+
+	| loadTaskManager |
+	fileReference exists ifFalse: [ ^ self ].
+	loadTaskManager := [ STON fromString: fileReference contents ]
+		                   on: STONReaderError
+		                   do: [ ^ self ].
+	(loadTaskManager isKindOf: self class) ifFalse: [ ^ self ].
+	self tags: loadTaskManager tags.
+	self tasks: loadTaskManager tasks
 ]
 
 { #category : 'removing - notes' }
@@ -144,6 +183,12 @@ TaskManager >> removetasks: aCollectionOfNTTodo [
 	"Remove the note aNTNoteObject from the receiver's notes. Answer the receiver"
 	
 	self tasks removeAll: aCollectionOfNTTodo
+]
+
+{ #category : 'removing - notes' }
+TaskManager >> save [
+
+	fileReference writeStreamDo: [ :str | str << (STON toString: self) ]
 ]
 
 { #category : 'accessing' }
