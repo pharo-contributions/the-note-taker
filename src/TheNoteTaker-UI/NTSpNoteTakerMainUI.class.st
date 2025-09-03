@@ -60,12 +60,6 @@ NTSpNoteTakerMainUI class >> buildNTContextualGroupWith: presenterInstance [
 		  register: (NTSpSettingsCommand forSpec context: presenterInstance)
 ]
 
-{ #category : 'initialization' }
-NTSpNoteTakerMainUI >> addNote: aNTNoteObject [
-
-	self notesIndexPresenter addNote: aNTNoteObject
-]
-
 { #category : 'accessing' }
 NTSpNoteTakerMainUI >> applicationTitle [
 
@@ -79,6 +73,11 @@ NTSpNoteTakerMainUI >> connectPresenters [
 		transmitTo: notesEditorPresenter
 		transform: [ :aNotePresenter |
 		aNotePresenter ifNotNil: [ aNotePresenter note ] ].
+
+	notesEditorPresenter whenNoteSavedDo: [ :note |
+			(notesIndexPresenter notes includes: note) ifFalse: [
+				notesIndexPresenter addNote: note ].
+			statusBar pushMessage: (self application log save: note) ].
 
 	notesEditorPresenter whenNoteChangedDo: [ :note |
 			notesIndexPresenter refreshSelectedItem.
@@ -243,12 +242,6 @@ NTSpNoteTakerMainUI >> todoLayout [
 NTSpNoteTakerMainUI >> toolbarHeight [
 
 	^ self class toolbarHeight
-]
-
-{ #category : 'event handling' }
-NTSpNoteTakerMainUI >> updateContents [
-
-	notesEditorPresenter newEmptyNote
 ]
 
 { #category : 'layout' }

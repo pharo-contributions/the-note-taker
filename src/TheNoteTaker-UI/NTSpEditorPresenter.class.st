@@ -10,17 +10,18 @@ Class {
 	#name : 'NTSpEditorPresenter',
 	#superclass : 'SpPresenter',
 	#instVars : [
-		'textInput',
-		'composer',
-		'model',
-		'renderedText',
-		'isRenderedButton',
-		'worker',
-		'isNewNote'
+		'#textInput',
+		'#composer',
+		'#model',
+		'#renderedText',
+		'#isRenderedButton',
+		'#worker',
+		'#isNewNote',
+		'#isSaved => ObservableSlot'
 	],
 	#classVars : [
-		'AutoSave',
-		'isRenderedEnable'
+		'#AutoSave',
+		'#IsRenderedEnable'
 	],
 	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
@@ -66,7 +67,7 @@ NTSpEditorPresenter >> defaultLayout [
 
 	| panedLayout |
 	panedLayout := self isRenderedEnable
-		               ifTrue: [ self layoutWitRenderedText ]
+		               ifTrue: [ self layoutWithRenderedText ]
 		               ifFalse: [ self layoutWithoutRenderedText ].
 
 	^ SpOverlayLayout new
@@ -123,19 +124,18 @@ NTSpEditorPresenter >> initializePresenters [
 { #category : 'actions' }
 NTSpEditorPresenter >> isRenderedButtonClick [
 
-	isRenderedEnable := isRenderedEnable not.
+	IsRenderedEnable := IsRenderedEnable not.
 	layout := self defaultLayout
 ]
 
 { #category : 'accessing' }
 NTSpEditorPresenter >> isRenderedEnable [
 
-	isRenderedEnable ifNil: [ isRenderedEnable := true ].
-	^ isRenderedEnable
+	^ IsRenderedEnable ifNil: [ IsRenderedEnable := true ]
 ]
 
 { #category : 'layout' }
-NTSpEditorPresenter >> layoutWitRenderedText [
+NTSpEditorPresenter >> layoutWithRenderedText [
 
 	^ SpPanedLayout newLeftToRight
 		  add: textInput;
@@ -166,9 +166,7 @@ NTSpEditorPresenter >> model [
 { #category : 'api' }
 NTSpEditorPresenter >> newEmptyNote [
 
-	| nt |
-	nt := NTNote new.
-	model := nt.
+	model := NTNote new.
 	isNewNote := true.
 	self emptyInputText
 ]
@@ -177,10 +175,8 @@ NTSpEditorPresenter >> newEmptyNote [
 NTSpEditorPresenter >> renderDocument [
 	"RENDER button is pressed: render input to output text"
 
-	worker schedule: [ | document text |
-		document := Microdown parse: self textInputText.
-		text := composer visit: document.
-		renderedText text: text]
+	worker schedule: [
+			renderedText text: (composer asRichText: self textInputText) ]
 ]
 
 { #category : 'accessing' }
@@ -192,12 +188,15 @@ NTSpEditorPresenter >> renderedText [
 { #category : 'actions' }
 NTSpEditorPresenter >> saveFile [
 
-	isNewNote ifTrue: [ textInput text ifEmpty: [ ^ self ].
-			isNewNote := false.
-			self owner addNote: self model ].
+	isNewNote ifTrue: [
+			textInput text ifEmpty: [ ^ self ].
+			isNewNote := false ].
+		
+	"Dumb assert for activate the whenNoteSavedDo:"
+	isSaved := nil.
+
 	self model isDirty ifFalse: [ ^ self ].
 	self model save.
-	self owner ifNotNil: [ :owner | owner statusBar pushMessage: (self application log save: model)]
 ]
 
 { #category : 'accessing - model' }
@@ -233,4 +232,10 @@ NTSpEditorPresenter >> textInputText: aString [
 NTSpEditorPresenter >> whenNoteChangedDo: aBlock [
 
 	textInput whenTextChangedDo: [ aBlock cull: self model ]
+]
+
+{ #category : 'api' }
+NTSpEditorPresenter >> whenNoteSavedDo: aBlock [
+
+	self property: #isSaved whenChangedDo: [ aBlock cull: self model ]
 ]
