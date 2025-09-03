@@ -38,9 +38,9 @@ BaselineOfTheNoteTaker >> baseline: spec [
 			spec
 				group: 'Core' with: #( 'TheNoteTaker' );
 				group: 'UI' with: #( 'TheNoteTaker-UI' );
-				group: 'Tests' with: #( 'Core' 'TheNoteTaker-Tests' 'TheNoteTaker-UI-Tests' 'TheNoteTaker-Todo-Tests' );
-				group: 'Release' with: #( 'Core' 'UI' 'TheNoteTaker-Release' );
-				group: 'default' with: #( 'Core' 'Tests' 'UI' ) ]
+				group: 'Tests' with: #( 'TheNoteTaker-Tests' 'TheNoteTaker-UI-Tests' 'TheNoteTaker-Todo-Tests' );
+				group: 'Release' with: #( 'TheNoteTaker-Release' );
+				group: 'default' with: #( 'Tests' 'UI' ) ]
 ]
 
 { #category : 'baselines' }
