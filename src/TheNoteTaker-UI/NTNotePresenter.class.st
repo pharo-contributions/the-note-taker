@@ -22,19 +22,19 @@ NTNotePresenter >> defaultLayout [
 		  yourself
 ]
 
-{ #category : 'layout' }
+{ #category : 'initialization' }
 NTNotePresenter >> initializePresenter [ 
 
 	self note: NTNote new
 ]
 
-{ #category : 'layout' }
+{ #category : 'accessing' }
 NTNotePresenter >> note [
 
 	^ note
 ]
 
-{ #category : 'layout' }
+{ #category : 'accessing' }
 NTNotePresenter >> note: aNTNoteObject [
 
 	note := aNTNoteObject.

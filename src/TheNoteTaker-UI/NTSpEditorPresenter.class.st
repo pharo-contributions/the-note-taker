@@ -56,7 +56,7 @@ NTSpEditorPresenter class >> settingsOn: aBuilder [
 When disabled, you need to manually save your note. '
 ]
 
-{ #category : 'actions' }
+{ #category : 'transmission' }
 NTSpEditorPresenter >> defaultInputPort [
 
 	^ SpModelPort newPresenter: self
@@ -157,7 +157,7 @@ NTSpEditorPresenter >> mayLoseEdits [
 	^ self textInputText isNotEmpty and: [ model isDirty ]
 ]
 
-{ #category : 'accessing' }
+{ #category : 'accessing - model' }
 NTSpEditorPresenter >> model [
 
 	^ model ifNil: [ self newEmptyNote ]
@@ -227,13 +227,13 @@ NTSpEditorPresenter >> textInputText: aString [
 	textInput text: aString asString.
 ]
 
-{ #category : 'api' }
+{ #category : 'api - events' }
 NTSpEditorPresenter >> whenNoteChangedDo: aBlock [
 
 	textInput whenTextChangedDo: [ aBlock cull: self model ]
 ]
 
-{ #category : 'api' }
+{ #category : 'api - events' }
 NTSpEditorPresenter >> whenNoteSavedDo: aBlock [
 
 	self property: #isSaved whenChangedDo: [ aBlock cull: self model ]

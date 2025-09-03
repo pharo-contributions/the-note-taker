@@ -95,7 +95,7 @@ NTSpNoteTakerMainUI >> defaultLayout [
 	^ self noteLayout
 ]
 
-{ #category : 'layout' }
+{ #category : 'accessing' }
 NTSpNoteTakerMainUI >> gitSettings [
 
 	^ self settings gitEnable
@@ -220,7 +220,7 @@ NTSpNoteTakerMainUI >> setTitleTo: aSpWindowPresenter [
 
 ]
 
-{ #category : 'layout' }
+{ #category : 'accessing' }
 NTSpNoteTakerMainUI >> settings [
 
 	^ self application settings
@@ -241,13 +241,13 @@ NTSpNoteTakerMainUI >> todoLayout [
 		  yourself
 ]
 
-{ #category : 'layout' }
+{ #category : 'accessing' }
 NTSpNoteTakerMainUI >> toolbarHeight [
 
 	^ self class toolbarHeight
 ]
 
-{ #category : 'layout' }
+{ #category : 'activation' }
 NTSpNoteTakerMainUI >> updatePresenter [
 
 	self notesIndexPresenter updatePresenter

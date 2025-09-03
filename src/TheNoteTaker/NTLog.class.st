@@ -83,7 +83,7 @@ NTLog >> save: aNTNoteObjet [
 	^ self write: 'file ' , aNTNoteObjet fileName , ' has been saved'
 ]
 
-{ #category : 'actions' }
+{ #category : 'events' }
 NTLog >> whenWriteDo: aBlock [
 
 	self

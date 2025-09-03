@@ -82,19 +82,19 @@ NTSpApplication >> applicationTitle [
 	^ self class applicationTitle 
 ]
 
-{ #category : 'running' }
+{ #category : 'accessing' }
 NTSpApplication >> configFileLocation [
 
 	^ self currentFolder / 'TNTSettings.config'
 ]
 
-{ #category : 'running' }
+{ #category : 'accessing' }
 NTSpApplication >> currentFolder [
 
 	^ settings currentFolder
 ]
 
-{ #category : 'running' }
+{ #category : 'accessing' }
 NTSpApplication >> currentFolder: aFileReference [
 
 	settings currentFolder: aFileReference
@@ -145,13 +145,13 @@ NTSpApplication >> log [
 	^ log
 ]
 
-{ #category : 'running' }
+{ #category : 'accessing' }
 NTSpApplication >> mainPresenter [
 
 	^ mainPresenter
 ]
 
-{ #category : 'running' }
+{ #category : 'accessing' }
 NTSpApplication >> mainPresenter: aNtSpNoteTakerMainUI [
 
 	mainPresenter := aNtSpNoteTakerMainUI
@@ -163,7 +163,7 @@ NTSpApplication >> noteTakerContainer [
 	^ noteTakerContainer
 ]
 
-{ #category : 'initialization' }
+{ #category : 'accessing' }
 NTSpApplication >> settings [
 
 	^ settings
@@ -186,13 +186,13 @@ NTSpApplication >> startFullScreen [
 	self importSettings
 ]
 
-{ #category : 'running' }
+{ #category : 'accessing' }
 NTSpApplication >> taskContainer [
 
 	^ taskContainer
 ]
 
-{ #category : 'accessing' }
+{ #category : 'update' }
 NTSpApplication >> updateApplication [
 
 	log logFileReference: self currentFolder.

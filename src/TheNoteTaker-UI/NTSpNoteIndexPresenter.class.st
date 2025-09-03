@@ -46,7 +46,7 @@ NTSpNoteIndexPresenter class >> buildNoteTakerOperationsGroupWith: presenterInst
 		  yourself
 ]
 
-{ #category : 'layout' }
+{ #category : 'api' }
 NTSpNoteIndexPresenter >> addNote: aNTNoteObject [
 
 	aNTNoteObject folderReference: self application currentFolder.
@@ -73,7 +73,7 @@ NTSpNoteIndexPresenter >> connectPresenters [
 	tagsFilterButton whenActivatedDo: [ self filter ]
 ]
 
-{ #category : 'layout' }
+{ #category : 'api' }
 NTSpNoteIndexPresenter >> createNoteNamed: aString [
 
 	aString ifNotEmpty: [ self addNote: (NTNote content: aString) ]
@@ -92,7 +92,7 @@ NTSpNoteIndexPresenter >> defaultLayout [
 		  yourself
 ]
 
-{ #category : 'layout' }
+{ #category : 'transmission' }
 NTSpNoteIndexPresenter >> defaultOutputPort [
 
 	^ SpDropListSelectionPort newPresenter: self
@@ -186,7 +186,7 @@ NTSpNoteIndexPresenter >> modelChanged [
 	self model ifNotNil: [ self items: self notes ]
 ]
 
-{ #category : 'opening' }
+{ #category : 'accessing' }
 NTSpNoteIndexPresenter >> notes [
 
 	^ self model notes
@@ -216,7 +216,7 @@ NTSpNoteIndexPresenter >> refreshSelectedItem [
 	componentList selectedItem ifNotNil: [ :item | item updatePresenter ]
 ]
 
-{ #category : 'layout' }
+{ #category : 'api' }
 NTSpNoteIndexPresenter >> removeNotes: aNoteCollection [
 
 	self notes removeAll: aNoteCollection.
@@ -229,20 +229,20 @@ NTSpNoteIndexPresenter >> searchBar [
 	^ searchBar
 ]
 
-{ #category : 'accessing' }
+{ #category : 'selection' }
 NTSpNoteIndexPresenter >> selectNote: aNTNoteObject [
 
 	componentList selectItem:
 		(componentList items detect: [ :each | each note = aNTNoteObject ])
 ]
 
-{ #category : 'accessing' }
+{ #category : 'selection' }
 NTSpNoteIndexPresenter >> selectedNote [
 
 	^ componentList selectedItem note
 ]
 
-{ #category : 'accessing' }
+{ #category : 'selection' }
 NTSpNoteIndexPresenter >> selectedNotes [
 
 	^ componentList selectedItems collect: [ :each | each note ]
@@ -254,7 +254,7 @@ NTSpNoteIndexPresenter >> tagsFilterButton [
 	^ tagsFilterButton
 ]
 
-{ #category : 'callbacks' }
+{ #category : 'api - events' }
 NTSpNoteIndexPresenter >> whenSelectionChangedDo: aBlock [
 
 	componentList whenSelectionChangedDo: aBlock
