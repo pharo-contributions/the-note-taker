@@ -191,12 +191,11 @@ NTSpEditorPresenter >> saveFile [
 	isNewNote ifTrue: [
 			textInput text ifEmpty: [ ^ self ].
 			isNewNote := false ].
-		
+	self model isDirty ifFalse: [ ^ self ].
+	
 	"Dumb assert for activate the whenNoteSavedDo:"
 	isSaved := nil.
-
-	self model isDirty ifFalse: [ ^ self ].
-	self model save.
+	self model save
 ]
 
 { #category : 'accessing - model' }

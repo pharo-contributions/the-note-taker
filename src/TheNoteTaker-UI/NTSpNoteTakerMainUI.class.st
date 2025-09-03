@@ -74,10 +74,13 @@ NTSpNoteTakerMainUI >> connectPresenters [
 		transform: [ :aNotePresenter |
 		aNotePresenter ifNotNil: [ aNotePresenter note ] ].
 
+	self application log whenWriteDo: [ :string |
+		statusBar pushMessage: string ].
+
 	notesEditorPresenter whenNoteSavedDo: [ :note |
 			(notesIndexPresenter notes includes: note) ifFalse: [
 				notesIndexPresenter addNote: note ].
-			statusBar pushMessage: (self application log save: note) ].
+			(self application log save: note) ].
 
 	notesEditorPresenter whenNoteChangedDo: [ :note |
 			notesIndexPresenter refreshSelectedItem.
