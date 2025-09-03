@@ -9,6 +9,8 @@ Class {
 	#name : 'NTDeploymentScript',
 	#superclass : 'Object',
 	#classVars : [
+		'Application',
+		'ApplicationInstance',
 		'DefaultDebuggerRank',
 		'Save'
 	],
@@ -47,11 +49,11 @@ NTDeploymentScript class >> askForConfirmationWhenQuitting [
 { #category : 'as yet unclassified' }
 NTDeploymentScript class >> closeAllWindows [
 	"We make sure we always close without asking for confirmation. It looks like #closeAllWindowsDiscardingChanges doesn't work as a startup action."
+
 	[ World closeAllWindowsDiscardingChanges ]
 		on: ProvideAnswerNotification
 		do: [ :err | err return: false ].
 	World submorphs do: #delete.
-	NTSpApplication default closeAllWindows.
 ]
 
 { #category : 'as yet unclassified' }
@@ -146,7 +148,9 @@ NTDeploymentScript class >> dontRaiseWarningForMissingChangesOrSourcesFiles [
 
 { #category : 'as yet unclassified' }
 NTDeploymentScript class >> initialize [
-	Save := false
+
+	Save := false.
+	Application := NTSpApplication 
 ]
 
 { #category : 'as yet unclassified' }
@@ -157,17 +161,17 @@ NTDeploymentScript class >> initializeLibgit [
 { #category : 'as yet unclassified' }
 NTDeploymentScript class >> isDeployed [
 
-	^ NTSpApplication isDeployed
+	^ Application isDeployed
 ]
 
 { #category : 'as yet unclassified' }
 NTDeploymentScript class >> launcherStartUp [
 
 	self isDeployed ifFalse: [ ^ self ].
-	
+
 	Smalltalk isInteractiveGraphic
 		ifTrue: [ self closeWindowsAndOpenLauncher ]
-		ifFalse: [ NTSpApplication default ]
+		ifFalse: [ ApplicationInstance ]
 ]
 
 { #category : 'as yet unclassified' }
@@ -178,18 +182,19 @@ NTDeploymentScript class >> launcherStartUpPriority [
 { #category : 'as yet unclassified' }
 NTDeploymentScript class >> makeDeployed [
 
-	NTSpApplication beDeployed
+	Application beDeployed
 ]
 
 { #category : 'as yet unclassified' }
 NTDeploymentScript class >> makeUndeployed [
 
-	NTSpApplication beUndeployed
+	Application beUndeployed
 ]
 
 { #category : 'as yet unclassified' }
 NTDeploymentScript class >> openLauncher [
-	NTSpApplication openFull
+
+	ApplicationInstance := Application openFull
 ]
 
 { #category : 'as yet unclassified' }
