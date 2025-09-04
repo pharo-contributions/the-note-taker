@@ -51,5 +51,5 @@ NTSpRemoveTagCommand >> execute [
 										note save.
 										self application log remove: note tag: tag ] ] ];
 		openModalWithParent: context window.
-	self context updatePresenter
+	self context refreshSelectedItem
 ]
