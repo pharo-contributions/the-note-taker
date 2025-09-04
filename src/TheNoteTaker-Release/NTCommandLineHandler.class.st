@@ -38,9 +38,11 @@ NTCommandLineHandler class >> generateApplication [
 
 { #category : 'building' }
 NTCommandLineHandler class >> iconFile [
-
-	IceRepository repositories asString traceCr.
-	^ (IceRepository repositoryNamed: 'the-note-taker') location / 'ressources' / 'logo.icns'
+	"We use workingDirectory for the build in github be able to find the logo icons.
+	In reality, the icons are at location:
+	^ (IceRepository repositoryNamed: 'the-note-taker') location / 'ressources' / 'logo.icns'"
+	
+	^ FileLocator workingDirectory / 'ressources' / 'logo.icns'	
 ]
 
 { #category : 'activation' }
