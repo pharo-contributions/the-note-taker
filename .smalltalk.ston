@@ -4,7 +4,8 @@ SmalltalkCISpec {
     SCIMetacelloLoadSpec {
       #baseline : 'TheNoteTaker',
       #directory : 'src',
-      #platforms : [ #pharo ]
+      #platforms : [ #pharo ],
+      #registerInIceberg : true
     }
   ],
   #testing : {
