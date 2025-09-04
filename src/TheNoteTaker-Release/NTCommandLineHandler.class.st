@@ -39,8 +39,7 @@ NTCommandLineHandler class >> generateApplication [
 { #category : 'building' }
 NTCommandLineHandler class >> iconFile [
 
-	^ (IceRepository repositoryNamed: 'the-note-taker') location
-	  / 'ressources' / 'logo.icns'
+	^ FileLocator localDirectory / 'iceberg' / 'moufort' / 'the-note-taker' / 'ressources' / 'logo.icns'
 ]
 
 { #category : 'activation' }
