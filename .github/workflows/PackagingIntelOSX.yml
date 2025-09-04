@@ -26,10 +26,6 @@ jobs:
           brew update
           brew install create-dmg
 
-      - name: Install tree
-        run: sudo apt-get update && sudo apt-get install -y tree
-
-
       - name: Create Package
         run: |
           chmod 700 ./buildOSX.sh
