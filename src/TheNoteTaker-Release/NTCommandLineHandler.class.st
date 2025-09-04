@@ -39,7 +39,7 @@ NTCommandLineHandler class >> generateApplication [
 { #category : 'building' }
 NTCommandLineHandler class >> iconFile [
 
-	^ FileLocator localDirectory / 'iceberg' / 'moufort' / 'the-note-taker' / 'ressources' / 'logo.icns'
+	^ FileLocator workingDirectory / 'ressources' / 'logo.icns'
 ]
 
 { #category : 'activation' }
