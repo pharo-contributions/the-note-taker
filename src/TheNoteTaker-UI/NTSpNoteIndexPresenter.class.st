@@ -9,7 +9,8 @@ Class {
 		'componentList',
 		'searchBar',
 		'tagsFilterButton',
-		'filteredTagsSelection'
+		'filteredTagsSelection',
+		'noteCreateActionBlock'
 	],
 	#category : 'TheNoteTaker-UI-Core',
 	#package : 'TheNoteTaker-UI',
@@ -67,8 +68,9 @@ NTSpNoteIndexPresenter >> connectPresenters [
 	searchBar
 		whenTextChangedDo: [ self filter ];
 		whenSubmitDo: [ :newNoteName |
+				searchBar clearContent.
 				self createNoteNamed: newNoteName.
-				searchBar clearContent ].
+				noteCreateActionBlock value ].
 
 	tagsFilterButton whenActivatedDo: [ self filter ]
 ]
@@ -186,6 +188,12 @@ NTSpNoteIndexPresenter >> modelChanged [
 	self model ifNotNil: [ self items: self notes ]
 ]
 
+{ #category : 'api - events' }
+NTSpNoteIndexPresenter >> noteCreateActionBlock [
+
+	^ noteCreateActionBlock
+]
+
 { #category : 'accessing' }
 NTSpNoteIndexPresenter >> notes [
 
@@ -252,6 +260,12 @@ NTSpNoteIndexPresenter >> selectedNotes [
 NTSpNoteIndexPresenter >> tagsFilterButton [
 
 	^ tagsFilterButton
+]
+
+{ #category : 'api - events' }
+NTSpNoteIndexPresenter >> whenNoteCreatedDo: aBlock [
+
+	noteCreateActionBlock := aBlock
 ]
 
 { #category : 'api - events' }
