@@ -14,6 +14,27 @@ NTSpAddTagCommandTest >> setUp [
 ]
 
 { #category : 'running' }
+NTSpAddTagCommandTest >> testAddTagDontDeselectNotes [
+
+	| tagCollection |
+	indexPresenter selectNote: ressources getNote1.
+
+	tagCollection := ressources getNote1 tags collect: [ :each |
+		                 each tagName ].
+
+	self assert: tagCollection size equals: 2.
+
+	SpWindowSimulateOpenModal
+		value: [ :aDialogPresenter |
+				aDialogPresenter presenter selectedItems: tagCollection.
+				aDialogPresenter presenter accept ]
+		during: [ command execute ].
+
+	self assert:
+		(indexPresenter selectedNotes includes: ressources getNote1)
+]
+
+{ #category : 'running' }
 NTSpAddTagCommandTest >> testAddTagOfSelectedNotes [
 
 	| tagCollection |
