@@ -76,14 +76,6 @@ NTSettings class >> settingsOn: aBuilder [
 		description: 'All TNT related settings';
 		noOrdering;
 		with: [
-				(aBuilder setting: #CurrentFolder)
-					label: 'Project Path';
-					type: #Directory;
-					ghostHelp:
-						'/Users/ducasse/Workspace/FirstCircle/Writing/Working/researchnotes';
-					description:
-						'Enter your local or remote path where notes will be committed. It can be empty'.
-
 				(aBuilder group: #tnt_note)
 					label: 'Note section parameter';
 					with: [
@@ -93,7 +85,14 @@ NTSettings class >> settingsOn: aBuilder [
 								order: 60;
 								label: 'enable git command';
 								description: 'When enabled, show git command button.
-When disabled, hide git command button. ' ] ]
+When disabled, hide git command button. '.
+							(aBuilder setting: #CurrentFolder)
+								label: 'Project Path';
+								type: #Directory;
+								ghostHelp:
+									'/Users/ducasse/Workspace/FirstCircle/Writing/Working/researchnotes';
+								description:
+									'Enter your local or remote path where notes will be committed. It can be empty' ] ]
 ]
 
 { #category : 'enumerating' }
