@@ -83,12 +83,6 @@ NTSpApplication >> applicationTitle [
 ]
 
 { #category : 'accessing' }
-NTSpApplication >> configFileLocation [
-
-	^ self currentFolder / 'TNTSettings.config'
-]
-
-{ #category : 'accessing' }
 NTSpApplication >> currentFolder [
 
 	^ settings currentFolder
@@ -107,14 +101,16 @@ NTSpApplication >> exportSettings [
 		:tntNode |
 		settingPersistence storeSettingNodes: tntNode allChildren ].
 
-	self currentFolder / 'TNTSettings.old.txt' deleteIfAbsent: [ ]
+	"self preferencesFileLocation parent / 'TNTSettings.old.txt'
+		deleteIfAbsent: [ ]"
 ]
 
 { #category : 'running' }
 NTSpApplication >> importSettings [
 
-	self configFileLocation ifAbsent: [ ^ self ].
-	(SettingBrowser currentTree nodeNamed: #tnt_note) ifNotNil: [ :tntNode |
+	self preferencesFileLocation ifAbsent: [ ^ self ].
+	(SettingBrowser currentTree nodeNamed: #tnt_note) ifNotNil: [
+		:tntNode |
 		settingPersistence updateSettingNodes: tntNode allChildren ]
 ]
 
@@ -123,12 +119,20 @@ NTSpApplication >> initialize [
 
 	super initialize.
 	settings := NTSettings new.
+	"Preference file is either in the preference folder and it does not exist in the app."
+	
+	settingPersistence := SystemSettingsPersistence new fileReference:
+		                      self preferencesFileLocation.
+
+	self preferencesFileLocation exists
+		ifTrue: [ self importSettings ]
+		ifFalse: [ self exportSettings ].
+
 	noteTakerContainer := NTContainer new importFolder:
 		                      self currentFolder.
+
 	taskContainer := TaskManager new.
 	log := NTLog newWithFolder: self currentFolder.
-	settingPersistence := SystemSettingsPersistence new fileReference:
-		                      self configFileLocation.
 	settings whenCurrentFolderChangeDo: [ :newFolder :oldFolder |
 		newFolder = oldFolder ifFalse: [ self updateApplication ] ]
 ]
@@ -164,6 +168,12 @@ NTSpApplication >> noteTakerContainer [
 ]
 
 { #category : 'accessing' }
+NTSpApplication >> preferencesFileLocation [
+
+	^ (FileLocator preferences / 'TheNoteTaker' / 'TNTSettings.config') asFileReference
+]
+
+{ #category : 'accessing' }
 NTSpApplication >> settings [
 
 	^ settings
@@ -174,7 +184,7 @@ NTSpApplication >> start [
 
 	self initializeMainPresenter.
 	mainPresenter open.
-	self importSettings
+
 ]
 
 { #category : 'running' }
@@ -183,7 +193,7 @@ NTSpApplication >> startFullScreen [
 
 	self initializeMainPresenter.
 	mainPresenter asWorldWindow open.
-	self importSettings
+
 ]
 
 { #category : 'accessing' }
@@ -196,10 +206,9 @@ NTSpApplication >> taskContainer [
 NTSpApplication >> updateApplication [
 
 	log logFileReference: self currentFolder.
-	settingPersistence fileReference: self configFileLocation.
 	noteTakerContainer replaceFolder: self currentFolder.
 	mainPresenter ifNotNil: [ :main | main updatePresenter ].
-	self importSettings
+	
 ]
 
 { #category : 'windows' }
