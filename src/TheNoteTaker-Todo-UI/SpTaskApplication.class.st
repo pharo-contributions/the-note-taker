@@ -1,10 +1,8 @@
 "
-This is the main Notes Taker Spec2 application class which:
+This is the todo application class which:
 
-- Handles the notes container: A class which acts as a repository of notes.
-- Provides convenience methods to retrieve notes and its metadata.
+- Handles the task container: A class which acts as a repository of notes.
 - Handles the application initialization: See the `NtSpApplication>>start` method.
-- Creates a new entry for this application in the World menu.
 
 
 "

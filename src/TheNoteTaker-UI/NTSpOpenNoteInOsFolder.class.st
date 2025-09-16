@@ -1,3 +1,8 @@
+"
+Open the actual folder use by the application with the OS browser
+
+( actually not use )
+"
 Class {
 	#name : 'NTSpOpenNoteInOsFolder',
 	#superclass : 'NTSpAbstractCommand',

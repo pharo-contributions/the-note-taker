@@ -1,10 +1,20 @@
 "
-A little editor for Microdown. 
+I'm a editor of note. I have 3 presenter:
 
-Todo: 
-- menu
-- cmd+s should save and render
-- when typing at space we can render?
+- A presenter for write note contents and modificate it.
+- A presenter for show the render of the note contents in Microdown
+- a bouton at top right, for show or not the render prensenter.
+
+We use a note like a model, we can save a note by use Cmd+s or by activate the autosave, who save the note when we modificate it.
+We also render when we modificate the note.
+
+We have two event we handle: when we change a note (whenNoteChangeDo:) and when we save a note: (WhenNoteSavedDo:)
+
+When a new note is created in the Editor, if we save it when he's empty, nothing change, else we add it to index prensenter.
+
+In renderDocument, we use worker scedule:. We use it for increase performance: when we render, if we render again when the first is not finish, then he should cancel the first render and use only the last one.
+
+
 "
 Class {
 	#name : 'NTSpEditorPresenter',

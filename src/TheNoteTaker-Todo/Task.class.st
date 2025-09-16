@@ -1,3 +1,15 @@
+"
+I represent a task. I have:
+
+- a name
+- a description
+- a limitDate
+- a tags list
+- isDone, a boolean for represent a finish task
+- isTrash, a boolean for represent a task in a trash
+- isRecurrent, a boolean for represent if a task need to be done everyday
+( the isReccurent can be changed for a period, like day, weeks or another)
+"
 Class {
 	#name : 'Task',
 	#superclass : 'Object',

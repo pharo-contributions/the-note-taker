@@ -1,5 +1,10 @@
 "
-Presents a table with basic metadata information about saved notes in the system.
+He's the taskFilterPresenter.
+
+He has many button for filtering when we click on, like trashTask,DoneTask,todayTask...
+We also have a search bar for filter by their title, and a button for filter by their tags like in the NTSpIndexPresenter.
+
+We have a events for do an action when we change the filteredItem with whenFilteredItemChangeDo: 
 
 "
 Class {
@@ -20,7 +25,7 @@ Class {
 	#tag : 'Core'
 }
 
-{ #category : 'initialization' }
+{ #category : 'adding' }
 SpTaskFilterPresenter >> addTask [
 
 	| task |
@@ -108,13 +113,13 @@ SpTaskFilterPresenter >> initializePresenters [
 		               action: [ self filteredItem: self model getTrashTask ]
 ]
 
-{ #category : 'filtering' }
+{ #category : 'accessing' }
 SpTaskFilterPresenter >> tasks [ 
 
 	^ self model tasks
 ]
 
-{ #category : 'filtering' }
+{ #category : 'api - events' }
 SpTaskFilterPresenter >> whenFilteredItemChangeDo: aBlock [
 
 	self

@@ -1,3 +1,10 @@
+"
+He represent the taskListPresenter.
+
+We give him a list of task, he changed them in SpTaskPresenter for displya them.
+
+We have an event for when we change the selectedItem with whenSelectedItemChangedDo:  
+"
 Class {
 	#name : 'SpTaskListPresenter',
 	#superclass : 'SpPresenterWithModel',
@@ -65,7 +72,7 @@ SpTaskListPresenter >> items [
 	^ componentList items collect: [ :each | each task ]
 ]
 
-{ #category : 'api' }
+{ #category : 'accessing' }
 SpTaskListPresenter >> items: aCollection [
 
 	aCollection ifNil: [ ^ self ].
@@ -86,7 +93,7 @@ SpTaskListPresenter >> modelChanged [
 	self model ifNotNil: [ self items: self model ]
 ]
 
-{ #category : 'initialization' }
+{ #category : 'api - events' }
 SpTaskListPresenter >> whenSelectedItemChangedDo: aBlock [
 	"Inform when an item was selected (a real object in the items list).
 	 `aBlock` receives one argument (the new selected element)"

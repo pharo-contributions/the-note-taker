@@ -1,6 +1,10 @@
 "
-I hold notes and a list of all possible tags.
-Usually the list of tags does not have duplicates.
+I am a container who hold notes and tags.
+Usually the list of tags does not have duplicates names.
+
+I can load a folder of notes and generates all the notes and their tags.
+
+I have method for create notes and tags, and for searching by their contents/names
 "
 Class {
 	#name : 'NTContainer',

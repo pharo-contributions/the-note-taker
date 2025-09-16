@@ -1,3 +1,13 @@
+"
+Represent a Task presenter use by the taskListPresenter.
+
+he has a task, who is showing in the middle of the presenter. We have a done button and a remove button.
+
+The clickDone and clickRemove are used in test for simulating a click on this button.
+
+We have event like whenRemovedDo: aBlock for do an action when the task is removed
+(maybe add an event for click on Done button)
+"
 Class {
 	#name : 'SpTaskPresenter',
 	#superclass : 'SpPresenter',
@@ -11,13 +21,13 @@ Class {
 	#tag : 'Core'
 }
 
-{ #category : 'accessing' }
+{ #category : 'simulating' }
 SpTaskPresenter >> clickDone [
 
 	doneButton click
 ]
 
-{ #category : 'accessing' }
+{ #category : 'simulating' }
 SpTaskPresenter >> clickRemove [
 
 	removeButton click 
@@ -60,7 +70,7 @@ SpTaskPresenter >> task: aTask [
 	task := aTask 
 ]
 
-{ #category : 'accessing' }
+{ #category : 'api - events' }
 SpTaskPresenter >> whenRemovedDo: aBlock [
 
 	removeButton whenActivatedDo: aBlock

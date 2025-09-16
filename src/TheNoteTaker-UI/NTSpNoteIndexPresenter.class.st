@@ -1,5 +1,13 @@
 "
-Presents a table with basic metadata information about saved notes in the system.
+I'm a presenter composed of two part.
+
+the first part is a search bar, use for filter notes by their contents, and a filter tags button, who filter notes by their tags.
+
+The second part is a liste of NTNotePresenter, we can select for change the note display in editor, or for use the context menu ( right click ) for add/ remove tags, remove notes...
+
+When a note list is pass in items: method, we change them to NTNotePresenter, use for display a note in the list like we want. When you want to use a selectedNote, dont forget to take the note in the NotePresenter.
+
+When we submit the search bar with a new note name, we add a note in the list. (in method connect Presenter )
 
 "
 Class {

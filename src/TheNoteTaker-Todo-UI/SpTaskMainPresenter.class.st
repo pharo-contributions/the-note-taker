@@ -1,5 +1,5 @@
 "
-Presents a table with basic metadata information about saved notes in the system.
+Main presenter who have the taskFilterPresenter and the taskListPresenter and connect them
 
 "
 Class {
