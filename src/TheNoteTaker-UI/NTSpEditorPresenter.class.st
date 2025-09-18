@@ -216,6 +216,12 @@ NTSpEditorPresenter >> setModel: aNTNoteObject [
 ]
 
 { #category : 'accessing' }
+NTSpEditorPresenter >> textInput [
+
+	^ textInput
+]
+
+{ #category : 'accessing' }
 NTSpEditorPresenter >> textInputText [
 
 	^ textInput text
