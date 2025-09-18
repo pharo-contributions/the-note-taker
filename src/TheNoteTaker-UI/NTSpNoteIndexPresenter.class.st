@@ -224,6 +224,12 @@ NTSpNoteIndexPresenter >> refreshSelectedItem [
 	componentList selectedItem ifNotNil: [ :item | item updatePresenter ]
 ]
 
+{ #category : 'accessing' }
+NTSpNoteIndexPresenter >> refreshSelectedItems [
+
+	componentList selectedItems do: [ :item | item updatePresenter ]
+]
+
 { #category : 'api' }
 NTSpNoteIndexPresenter >> removeNotes: aNoteCollection [
 

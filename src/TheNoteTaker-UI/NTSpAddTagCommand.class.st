@@ -50,6 +50,5 @@ NTSpAddTagCommand >> execute [
 										note save.
 										self application log add: note tag: tag ] ] ];
 		openModalWithParent: context window.
-
-	self context updatePresenter
+	self context refreshSelectedItems
 ]
