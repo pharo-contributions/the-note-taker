@@ -1,18 +1,19 @@
 "
-A note tag object contains the necessary attributes and methods to represent a tag associated with notes.
+A task tag object contains the necessary attributes and methods to represent a tag associated with tasks.
+(Similar to NTTag, who is the same object for the note, maybe refactor by make a generic object Tag for all object)  
 
 ## Attributes
 
 - tagName: A string representing the name or label of the tag.
-- notes: A collection (list, set, or other data structure) of notes associated with the tag.
+- tasks: A collection (list, set, or other data structure) of tasks associated with the tag.
 
 ## Main methods
 
-- Add Note: To associate a note with the tag.
-- Remove Note: To disassociate a note from the tag.
+- Add Task: To associate a task with the tag.
+- Remove Task To disassociate a task from the tag.
 - Rename Tag: To change the name of the tag.
 - Delete Tag: To remove the tag entirely.
-- Get Notes: To retrieve all notes associated with the tag.
+- Get Tasks: To retrieve all tasks associated with the tag.
 - Accesss tag name: To retrieve the name of the tag.
 
 "

@@ -2,6 +2,7 @@
 UI class for the note taker application.
 This coordinates main events and layout of the main window.
 
+Has the GitEnable settings. If it is enabled, the git button will be available, otherwise it will not be
 "
 Class {
 	#name : 'NTSpNoteTakerMainUI',

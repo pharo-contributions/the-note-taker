@@ -1,5 +1,9 @@
 "
 Open a presenter with a search bar and a list of tag.
+We can use the search bar for filter the tags.
+We can select multiple tags.
+
+When we click on accept, return the selected tags.
 
 If we use allowTagCreation, so when we submit the text in searchBar ( Enter character ), a new Tag is created
 "

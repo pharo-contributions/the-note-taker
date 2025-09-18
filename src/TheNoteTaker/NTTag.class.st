@@ -1,5 +1,6 @@
 "
 A note tag object contains the necessary attributes and methods to represent a tag associated with notes.
+(Similar to NTTag, who is the same object for the note, maybe refactor by make a generic object Tag for all object)
 
 ## Attributes
 

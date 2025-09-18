@@ -1,3 +1,10 @@
+"
+I'm the class with speficication for generate the executable application.
+
+In my instance side, i have the method activate, where i define the application toolbar for each OS.$
+
+In my class side, I have the propertys of the executable
+"
 Class {
 	#name : 'NTCommandLineHandler',
 	#superclass : 'CommandLineHandler',

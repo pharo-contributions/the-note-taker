@@ -1,3 +1,13 @@
+"
+I declare settings use by the application.
+
+I have event for execute an action when a one of the settings change.
+
+For now, I have event for:
+
+- currentFolder, with whenCurrentFolderChangeDo:
+- gitEnable, with whenGitEnableChangeDo:
+"
 Class {
 	#name : 'NTSettings',
 	#superclass : 'Object',

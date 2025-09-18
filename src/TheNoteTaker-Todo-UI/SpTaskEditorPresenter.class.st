@@ -1,3 +1,6 @@
+"
+represent the task edition window, with field for change the title, the description, the date and other information.
+"
 Class {
 	#name : 'SpTaskEditorPresenter',
 	#superclass : 'SpAbstractCancelableMessageDialog',

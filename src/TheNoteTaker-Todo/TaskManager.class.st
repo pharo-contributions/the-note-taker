@@ -1,24 +1,17 @@
 "
-Represents a singleton pattern implementation for managing a centralized instance of `NTNoteObject` notes container.
+I represent a task manager for the application.
+I hold a tasks list and a tags list, for ensure tags are not duplicated.
 
-The singleton ensures that there is only one instance of the container throughout the application's lifecycle, providing global access to the collection of notes. It is useful for scenarios where a single instance of a class needs to be shared and accessed globally across multiple parts of the application.
+I have the tags and task filter matching, for search tags or tasks by their name.
 
-## Usage
+I have some filter for the application like:
 
-To access the unique instance of the Notes container, use the class method 'uniqueInstance'. For example:
-
-```
-| notesContainer |
-notesContainer := NTSingleton uniqueInstance.
-```
-
-### Responsibilities
-
-- Providing a centralized and globally accessible instance of Notes.
-- Ensuring that only one instance of the notes container exists within the application.
-
-Note: It is recommended to use the `uniqueInstance` method to access the singleton rather than instantiating it directly.
-
+- GetDoneTask
+- getInBoxTask
+- getLateTask
+- getTodayTask
+- getTrashTask
+- getWeekTask
 "
 Class {
 	#name : 'TaskManager',
@@ -85,23 +78,26 @@ TaskManager >> folderReference: aFileReference [
 { #category : 'adding - notes' }
 TaskManager >> getDefaultTask [
 
+	"This was a test method, i use it for generate test manually
+	He not used anymore"
+
 	| maison machin reviser machin1 machin2 machin3 |
-	
+	self flag: #ToDelete.
 	maison := self ensureTagNamed: 'Maison'.
 	machin := self ensureTagNamed: 'Machin'.
-	
+
 	self addTask: (Task new title: 'Chercher le pain').
 	reviser := self addTask: (Task new
-			 title: 'Reviser';
-			 isRecurrent: true).
+			            title: 'Reviser';
+			            isRecurrent: true).
 	machin1 := self addTask: (Task new title: 'Machin 1 ').
 	machin2 := self addTask: (Task new title: 'Machin 2 ').
 	machin3 := self addTask: (Task new title: 'Machin 3').
-	
+
 	maison addTask: reviser.
 	machin addTask: machin1.
 	machin addTask: machin2.
-	machin addTask: machin3.
+	machin addTask: machin3
 ]
 
 { #category : 'accessing' }
@@ -143,9 +139,9 @@ TaskManager >> getTrashTask [
 
 { #category : 'accessing' }
 TaskManager >> getWeekTask [
-
+self flag: #Unused.
 	^ self tasks select: [ :t |
-		 (t limitDate asDate weeks = Date today weeks) and: t isTrash not ]
+		  t limitDate asDate weeks = Date today weeks and: t isTrash not ]
 ]
 
 { #category : 'accessing - notes' }
@@ -206,7 +202,7 @@ TaskManager >> tags: aCollection [
 
 { #category : 'accessing - notes' }
 TaskManager >> tagsNameMatching: aString [
-	"Answer a <Collection> with <NoteObject> objects whose title matched named aString"
+	"Answer a <Collection> with <TodoTag> objects whose title matched named aString"
 
 	| pattern |
 	pattern := '*' , aString , '*'.
@@ -227,7 +223,7 @@ TaskManager >> tasks: aCollection [
 
 { #category : 'accessing - notes' }
 TaskManager >> tasksTitleMatching: aString [
-	"Answer a <Collection> with <NoteObject> objects whose title matched named aString"
+	"Answer a <Collection> with <Task> objects whose title matched named aString"
 
 	| pattern |
 	pattern := '*' , aString , '*'.

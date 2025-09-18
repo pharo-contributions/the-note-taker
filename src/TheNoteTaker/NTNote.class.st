@@ -1,5 +1,17 @@
 "
-It represents a single note. A note is composed of a title and its content, both of them a `String`.
+It represents a single note. A note is composed of :
+
+- A contents
+- A fileReference
+- A creationDate
+- A modificationDate
+- A tags list
+
+The note has a title representing the first contents line.
+When we saved a note, we create metadata by Microdown with the modificationDate, creationDate and the tags list, and we put it in the start of the note file. Then we complete with the contents
+
+
+
 "
 Class {
 	#name : 'NTNote',

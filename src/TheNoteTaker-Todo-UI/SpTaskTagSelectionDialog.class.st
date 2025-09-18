@@ -2,6 +2,8 @@
 Open a presenter with a search bar and a list of tag.
 
 If we use allowTagCreation, so when we submit the text in searchBar ( Enter character ), a new Tag is created
+
+( He's the same than NTSpTagSelectionDialog in TheNoteTaker-UI )
 "
 Class {
 	#name : 'SpTaskTagSelectionDialog',
