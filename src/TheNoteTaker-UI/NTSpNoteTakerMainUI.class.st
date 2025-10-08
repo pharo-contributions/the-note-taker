@@ -130,10 +130,12 @@ NTSpNoteTakerMainUI >> initializeNoteToolBar [
 	notesToolbarPresenter := self newToolbar fillWith:
 		                         self rootCommandsGroup / 'Toolbar'.
 		
+	
+	"For now comment out the todo app.
 	notesToolbarPresenter add: (SpToolbarButtonPresenter new
 			 icon: (self iconNamed: #refreshCircling);
 			 label: 'Change to Todo list';
-			 action: [ layout := self todoLayout ]) yourself
+			 action: [ layout := self todoLayout ]) yourself"
 ]
 
 { #category : 'initialization' }
