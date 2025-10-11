@@ -114,9 +114,12 @@ BaselineOfTheNoteTaker >> toplo: spec [
 			spec baseline: 'Toplo' with: [ spec repository: 'github://pharo-graphics/Toplo:v0.6.0/src' ].
 			]."
 		
+	"missing component for Spec on Toplo
+	
 	spec
 		baseline: 'Toplo'
 		with: [ 
 			spec baseline: 'SpecToplo' with: [ spec repository: 'github://pharo-graphics/Spec-Toplo:master/src' ].
 			].
+	"
 ]

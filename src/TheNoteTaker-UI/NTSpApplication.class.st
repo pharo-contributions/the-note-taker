@@ -180,6 +180,7 @@ NTSpApplication >> settings [
 { #category : 'running' }
 NTSpApplication >> start [
 
+   "self useBackend: #Toplo."
 	self initializeMainPresenter.
 	mainPresenter open.
 
