@@ -97,9 +97,8 @@ NTSpApplication >> currentFolder: aFileReference [
 { #category : 'running' }
 NTSpApplication >> exportSettings [
 
-	(SettingBrowser currentTree nodeNamed: #tnt_note) ifNotNil: [
-		:tntNode |
-		settingPersistence storeSettingNodes: tntNode allChildren ].
+	(SettingBrowser currentTree nodeNamed: #tnt_note) 
+	   ifNotNil: [ :tntNode | settingPersistence storeSettingNodes: tntNode allChildren ].
 
 	"self preferencesFileLocation parent / 'TNTSettings.old.txt'
 		deleteIfAbsent: [ ]"
@@ -128,8 +127,7 @@ NTSpApplication >> initialize [
 		ifTrue: [ self importSettings ]
 		ifFalse: [ self exportSettings ].
 
-	noteTakerContainer := NTContainer new importFolder:
-		                      self currentFolder.
+	noteTakerContainer := NTContainer new importFolder: self currentFolder.
 
 	taskContainer := TaskManager new.
 	log := NTLog newWithFolder: self currentFolder.

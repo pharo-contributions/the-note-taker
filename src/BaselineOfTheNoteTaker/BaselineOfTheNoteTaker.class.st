@@ -23,11 +23,12 @@ BaselineOfTheNoteTaker >> baseline: spec [
 			self osWinSubprocess: spec.
 			self osSubprocess: spec.
 			self microdown: spec.
+			self toplo: spec.
 			self applicationGenerator: spec.
 			self objcbridge: spec.
 			spec
 				package: 'TheNoteTaker' with: [ spec requires: #( Microdown ) ];
-				package: 'TheNoteTaker-UI' with: [ spec requires: #( TheNoteTaker OSSubprocess OSWinSubprocess 'TheNoteTaker-Todo-UI' ) ];
+				package: 'TheNoteTaker-UI' with: [ spec requires: #( TheNoteTaker OSSubprocess OSWinSubprocess 'TheNoteTaker-Todo-UI' 'Toplo' ) ];
 				package: 'TheNoteTaker-Release' with: [ spec requires: #( 'TheNoteTaker-UI' 'ApplicationGenerator' 'ObjCBridge' ) ];
 				package: 'TheNoteTaker-Tests' with: [ spec requires: #( TheNoteTaker ) ];
 				package: 'TheNoteTaker-UI-Tests' with: [ spec requires: #( 'TheNoteTaker-Tests' 'TheNoteTaker-UI' ) ];
@@ -102,4 +103,20 @@ BaselineOfTheNoteTaker >> preload: loader package: packageSpec [
 			at: #BaselineOfMicrodown 
 			ifPresent: [ :c | c removeFromSystem ].
 	
+]
+
+{ #category : 'baselines' }
+BaselineOfTheNoteTaker >> toplo: spec [
+
+	"spec
+		baseline: 'Toplo'
+		with: [ 
+			spec baseline: 'Toplo' with: [ spec repository: 'github://pharo-graphics/Toplo:v0.6.0/src' ].
+			]."
+		
+	spec
+		baseline: 'Toplo'
+		with: [ 
+			spec baseline: 'SpecToplo' with: [ spec repository: 'github://pharo-graphics/Spec-Toplo:master/src' ].
+			].
 ]
