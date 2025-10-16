@@ -37,27 +37,50 @@ NTCommandLineHandler class >> generateApplication [
 				(#IconSetFile -> self iconFile).
 				(#DisplayName -> 'Note Taker').
 				(#CommandLineHandler -> 'noteTaker').
-				(#CompanyName -> 'INRIA').
-				(#VMType -> 'Spur') } asDictionary;
+				(#CompanyName -> 'INRIA') } asDictionary;
 		outputDirectory: FileLocator workingDirectory / 'build';
+		addExternalFile: self iconPng;
 		generate
 ]
 
 { #category : 'building' }
 NTCommandLineHandler class >> iconFile [
-	"We use workingDirectory for the build in github be able to find the logo icons.
-	In reality, the icons are at location:
-	^ (IceRepository repositoryNamed: 'the-note-taker') location / 'ressources' / 'logo.icns'"
-	
-	^ FileLocator workingDirectory / 'ressources' / 'logo.icns'	
+
+	^ (IceRepository repositoryNamed: 'the-note-taker') location / 'ressources' / 'logo.icns'
+
+]
+
+{ #category : 'building' }
+NTCommandLineHandler class >> iconForm [
+
+	^ ImageReadWriter formFromFileNamed:
+		  FileLocator imageDirectory / 'logo.png'
+]
+
+{ #category : 'building' }
+NTCommandLineHandler class >> iconPng [
+
+	^ (IceRepository repositoryNamed: 'the-note-taker') location / 'ressources' / 'logo.png'
 ]
 
 { #category : 'activation' }
 NTCommandLineHandler >> activate [
+	
+	"We terminate the UI process if there is no around"
+	MorphicUIManager uiProcess ifNotNil: [:aProcess | aProcess terminate].
+	
+	AppGeneratorSupport errorHandler: AppGeneratorSDLMessageErrorHandler new.
 
-	AppGeneratorSupport errorHandler:
-		AppGeneratorSDLMessageErrorHandler new.
-	OSWindowDriver current startUp: true.
+	AppGeneratorSupport windowTitle: 'The Note Taker'.
+	"We set it to nothing, to avoid the default world to set the image as 
+	a document associated with the window in OSX. You can do that if you wish:
+	
+	https://developer.apple.com/documentation/appkit/nswindow/settitlewithrepresentedfilename(_:)?language=objc
+	"
+	AppGeneratorSupport whenWorldWindowTitleChangedDo: [ :driver :osWindw | "We do nothing" ].
+	
+	
+	AppGeneratorSupport worldIcon: self class iconForm.
 
 	OSPlatform current isMacOSX
 		ifTrue: [
@@ -77,5 +100,13 @@ NTCommandLineHandler >> activate [
 							shortcut: '' ].
 				main setAsMainMenu.
 				NTSpApplication new startFullScreen ]
-		ifFalse: [ self inform: 'Not OSX' ]
+		ifFalse: [ self inform: 'Not OSX' ].
+		
+		"We open the world forcing the OSWorldRenderer. As we are opening in headless, to control the flow"
+		
+		World worldState doFullRepaint.
+		World worldState worldRenderer: (OSWorldRenderer forWorld: World).
+
+		MorphicUIManager new spawnNewProcess.
+		
 ]
