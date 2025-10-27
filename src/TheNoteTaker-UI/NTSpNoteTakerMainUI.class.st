@@ -48,10 +48,10 @@ NTSpNoteTakerMainUI class >> buildNTContextualGroupWith: presenterInstance [
 	| commandGroup |
 	commandGroup := (CmCommandGroup named: 'Toolbar') asSpecGroup
 		                beRoot;
-		                register: (NTSpImportFolderCommand forSpec context:
+		                "register: (NTSpImportFolderCommand forSpec context:
 					                 presenterInstance notesIndexPresenter);
 		                register: (NTSpOpenFolderCommand forSpec context:
-					                 presenterInstance notesIndexPresenter);
+					                 presenterInstance notesIndexPresenter);"
 		                yourself.
 	self GitEnable ifTrue: [
 			commandGroup register:
