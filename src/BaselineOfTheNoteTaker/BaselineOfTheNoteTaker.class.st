@@ -28,7 +28,7 @@ BaselineOfTheNoteTaker >> baseline: spec [
 			self objcbridge: spec.
 			spec
 				package: 'TheNoteTaker' with: [ spec requires: #( Microdown ) ];
-				package: 'TheNoteTaker-UI' with: [ spec requires: #( TheNoteTaker OSSubprocess OSWinSubprocess 'TheNoteTaker-Todo-UI' 'Toplo' ) ];
+				package: 'TheNoteTaker-UI' with: [ spec requires: #( TheNoteTaker OSSubprocess OSWinSubprocess 'TheNoteTaker-Todo-UI') ];
 				package: 'TheNoteTaker-Release' with: [ spec requires: #( 'TheNoteTaker-UI' 'ApplicationGenerator' 'ObjCBridge' ) ];
 				package: 'TheNoteTaker-Tests' with: [ spec requires: #( TheNoteTaker ) ];
 				package: 'TheNoteTaker-UI-Tests' with: [ spec requires: #( 'TheNoteTaker-Tests' 'TheNoteTaker-UI' ) ];
