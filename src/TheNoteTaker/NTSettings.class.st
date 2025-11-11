@@ -1,12 +1,12 @@
 "
-I declare settings use by the application.
+I declare and hold settings used by the application.
 
-I have event for execute an action when a one of the settings change.
+I have event for execute an action when one of the settings changes.
 
 For now, I have event for:
 
-- currentFolder, with whenCurrentFolderChangeDo:
-- gitEnable, with whenGitEnableChangeDo:
+- currentFolder, with `whenCurrentFolderChangeDo:`
+- gitEnable, with `whenGitEnableChangeDo:`
 "
 Class {
 	#name : 'NTSettings',

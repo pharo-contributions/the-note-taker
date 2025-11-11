@@ -107,7 +107,7 @@ NTSpApplication >> exportSettings [
 { #category : 'running' }
 NTSpApplication >> importSettings [
 
-	self preferencesFileLocation ifAbsent: [ ^ self ].
+	self preferencesFileLocation exists ifFalse: [ ^ self ].
 	(SettingBrowser currentTree nodeNamed: #tnt_note) ifNotNil: [
 		:tntNode |
 		settingPersistence updateSettingNodes: tntNode allChildren ]
