@@ -218,13 +218,6 @@ NTSettings >> gitEnable: aBoolean [
 	gitEnable := aBoolean
 ]
 
-{ #category : 'initialization' }
-NTSettings >> initialize [
-
-	self class initializeSlots: self.
-	super initialize.
-]
-
 { #category : 'enumerating' }
 NTSettings >> whenCurrentFolderChangeDo: aBlock [
 
