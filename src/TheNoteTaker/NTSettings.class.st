@@ -98,7 +98,7 @@ NTSettings class >> new [
 
 { #category : 'settings' }
 NTSettings class >> notetakersettings [
-	<settingPragmaProcessor>
+	"<settingPragmaProcessor>"
 ]
 
 { #category : 'settings' }
@@ -140,7 +140,7 @@ NTSettings class >> settingsNodes [
 NTSettings class >> settingsOn: aBuilder [
 
 	<systemsettings>
-	<notetakersettings>
+	"<notetakersettings>"
 	
 	(aBuilder group: #tnt)
 		label: 'The Note Taker';
@@ -216,6 +216,13 @@ NTSettings >> gitEnable [
 NTSettings >> gitEnable: aBoolean [
 
 	gitEnable := aBoolean
+]
+
+{ #category : 'initialization' }
+NTSettings >> initialize [
+
+	self class initializeSlots: self.
+	super initialize.
 ]
 
 { #category : 'enumerating' }
