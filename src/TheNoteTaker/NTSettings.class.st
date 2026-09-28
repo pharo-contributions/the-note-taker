@@ -26,18 +26,6 @@ Class {
 }
 
 { #category : 'private' }
-NTSettings class >> currentFolder [
-
-	^ self default currentFolder
-]
-
-{ #category : 'private' }
-NTSettings class >> currentFolder: aFileReference [
-
-	self default currentFolder: aFileReference
-]
-
-{ #category : 'private' }
 NTSettings class >> default [
 
 	^ Default ifNil: [ Default := self new ]
@@ -62,15 +50,11 @@ NTSettings class >> gitEnable: aBoolean [
 ]
 
 { #category : 'settings xp' }
-NTSettings class >> load [ 
-	"self load"
+NTSettings class >> load [
 	
 	| storedSettings |
-	"I over pass all the machenery of Persistence for now because I need to understand it better"
-	
-	storedSettings := (SystemSettingsPersistence new fileReference: self preferencesFileLocation) allStoredSettings collect: [ :each | (each settingNodeIdentifier splitOn: '#') last ].
-	
-	storedSettings := (SystemSettingsPersistence new fileReference: self preferencesFileLocation).
+	storedSettings := (SystemSettingsPersistence new fileReference: self preferencesFileLocation)
+	settingsNodesFromIdentifiers: #('GitEnable' 'CurrentFolder')
 ]
 
 { #category : 'setting io' }
@@ -116,12 +100,12 @@ NTSettings class >> reset [
 
 { #category : 'settings xp' }
 NTSettings class >> settings [
-	"Argh we have to get a tree to be able to load and save setting...."
 	"self settings"
-	
+
 	| builder |
 	builder := SettingTreeBuilder new.
-	(Pragma allNamed: #systemsettings in: self class) collect: [ :each | builder buildPragma: each ].
+	(Pragma allNamed: #systemsettings in: self class) collect: [ :each |
+		builder buildPragma: each ].
 	^ builder nodeList collect: [ :each | each item ]
 ]
 
@@ -218,17 +202,12 @@ NTSettings >> gitEnable: aBoolean [
 	gitEnable := aBoolean
 ]
 
-{ #category : 'initialization' }
-NTSettings >> initialize [
-
-	self class initializeSlots: self.
-	super initialize.
-]
-
 { #category : 'enumerating' }
 NTSettings >> whenCurrentFolderChangeDo: aBlock [
 
-	self property: #currentFolder whenChangedDo: aBlock
+	self 
+		property: #currentFolder 
+		whenChangedDo: aBlock
 ]
 
 { #category : 'enumerating' }
