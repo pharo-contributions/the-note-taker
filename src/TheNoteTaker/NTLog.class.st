@@ -1,5 +1,6 @@
 "
-I represent a log of actions for tracing the tool behavior. 
+The user of the Notetaker may want to know if a given note was effectively saved to a file. 
+So this is why each action is logged and I represent a log of actions for tracing the tool behavior. 
 Here are the actions that are logged:
 
 - addition of a tag to a note
@@ -8,7 +9,7 @@ Here are the actions that are logged:
 - removal of a tag
 - save of a note
 
-In addition my contents can be save into file.
+In addition my contents can be saved into file.
 "
 Class {
 	#name : 'NTLog',
@@ -26,8 +27,9 @@ Class {
 { #category : 'instance creation' }
 NTLog class >> newWithFolder: aFileReference [
 
-	^ self new logFileReference:
-		aFileReference
+	^ self new 
+		logFileReference: aFileReference;
+		yourself
 ]
 
 { #category : 'actions' }
