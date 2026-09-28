@@ -5,17 +5,17 @@ Class {
 	#package : 'TheNoteTaker-Todo-Tests'
 }
 
-{ #category : 'as yet unclassified' }
+{ #category : 'tasks' }
 TodoRessourcesTest >> doneTodayTask [
 
 	^ Task new
-		  title: 'DoneTask';
-		  description: 'This is a done task';
+		title: 'DoneTask';
+		description: 'This is a done task';
 		limitDate: Date today;
-		  isDone: true
+		isDone: true
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'tasks' }
 TodoRessourcesTest >> generateTaskManager [
 
 	| taskManager tag1 tag2 tag3 task1 task2 task3 |
@@ -28,6 +28,7 @@ TodoRessourcesTest >> generateTaskManager [
 	task1 := taskManager addTask: self doneTodayTask.
 	task2 := taskManager addTask: self trashTask.
 	task3 := taskManager addTask: self lateTask.
+	taskManager addTask: self inBoxTask.
 
 	tag1 addTask: task1.
 	tag2 addTask: task1.
@@ -36,20 +37,28 @@ TodoRessourcesTest >> generateTaskManager [
 	^ taskManager
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'tasks' }
+TodoRessourcesTest >> inBoxTask [
+
+	^ Task new
+		title: 'InBoxTask';
+		description: 'This is an in box task'
+]
+
+{ #category : 'tasks' }
 TodoRessourcesTest >> lateTask [
 
 	^ Task new
-		  title: 'LateTask';
-		  description: 'This is a late task';
+		title: 'LateTask';
+		description: 'This is a late task';
 		limitDate: Date yesterday
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'tasks' }
 TodoRessourcesTest >> trashTask [
 
 	^ Task new
-		  title: 'TrashTask';
-		  description: 'This is a trash task';
+		title: 'TrashTask';
+		description: 'This is a trash task';
 		isTrash: true
 ]

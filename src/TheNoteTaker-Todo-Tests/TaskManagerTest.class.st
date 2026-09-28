@@ -59,7 +59,7 @@ TaskManagerTest >> testGetTodayTask [
 TaskManagerTest >> testGetTrashTask [
 
 	| trashTasks |
-	trashTasks := taskManager getTrashTask .
+	trashTasks := taskManager getTrashTask.
 	self assert: trashTasks size equals: 1.
 	self assert: trashTasks first isTrash
 ]
@@ -165,7 +165,7 @@ TaskManagerTest >> testTagsNameMatching [
 { #category : 'tests' }
 TaskManagerTest >> testTaskTitleMatching [
 
-	self assert: (taskManager tasksTitleMatching: 'Task') size equals: 3.
+	self assert: (taskManager tasksTitleMatching: 'Task') size equals: 4.
 	self assert: (taskManager tasksTitleMatching: 'Done') size equals: 1.
 	self assert: (taskManager tasksTitleMatching: 'ZZZ') size equals: 0
 ]
