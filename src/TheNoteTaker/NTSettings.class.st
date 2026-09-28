@@ -26,39 +26,39 @@ Class {
 }
 
 { #category : 'private' }
-NTSettings class >> CurrentFolder [
+NTSettings class >> currentFolder [
 
-	^ self Default currentFolder
+	^ self default currentFolder
 ]
 
 { #category : 'private' }
-NTSettings class >> CurrentFolder: aFileReference [
+NTSettings class >> currentFolder: aFileReference [
 
-	self Default currentFolder: aFileReference
+	self default currentFolder: aFileReference
 ]
 
 { #category : 'private' }
-NTSettings class >> Default [
+NTSettings class >> default [
 
 	^ Default ifNil: [ Default := self new ]
 ]
 
 { #category : 'private' }
-NTSettings class >> Default: aNTSettings [
+NTSettings class >> default: aNTSettings [
 
 	Default := aNTSettings
 ]
 
 { #category : 'commands' }
-NTSettings class >> GitEnable [
+NTSettings class >> gitEnable [
 
-	^ self Default gitEnable
+	^ self default gitEnable
 ]
 
 { #category : 'commands' }
-NTSettings class >> GitEnable: aBoolean [
+NTSettings class >> gitEnable: aBoolean [
 
-	self Default gitEnable: aBoolean
+	self default gitEnable: aBoolean
 ]
 
 { #category : 'settings xp' }
@@ -150,14 +150,14 @@ NTSettings class >> settingsOn: aBuilder [
 				(aBuilder group: #tnt_note)
 					label: 'Note section parameter';
 					with: [
-							(aBuilder setting: #GitEnable)
+							(aBuilder setting: #gitEnable)
 								parent: #tnt_note;
 								target: self;
 								order: 60;
 								label: 'enable git command';
 								description: 'When enabled, show git command button.
 When disabled, hide git command button. '.
-							(aBuilder setting: #CurrentFolder)
+							(aBuilder setting: #currentFolder)
 								label: 'Project Path';
 								target: self;
 								type: #Directory;

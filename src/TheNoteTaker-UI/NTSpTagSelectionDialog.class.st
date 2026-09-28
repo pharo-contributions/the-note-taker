@@ -31,7 +31,7 @@ NTSpTagSelectionDialog >> allowTagCreation [
 
 	searchTextPresenter
 		help:
-			'Search a tag by just typing a name. Create it if he doesn t exist';
+			'Search a tag by just typing a name. Create it if it doesn''t exist';
 		placeholder: 'Type note to search or create';
 		whenSubmitDo: [ :newTagName | self addTagNamed: newTagName ]
 ]
@@ -56,13 +56,13 @@ NTSpTagSelectionDialog >> filteredTagsFor: aString [
 NTSpTagSelectionDialog >> initializePresenters [
 
 	super initializePresenters.
-
 	searchTextPresenter := self newTextInput
-		                       help: 'Search a tag by just typing a name.';
-		                       placeholder: 'Type note to search';
-		                       whenTextChangedDo: [ :text |
-			                       self items: (self filteredTagsFor: text) ];
-		                       yourself
+		help: 'Search a tag by just typing a name.';
+		placeholder: 'Type note to search';
+		whenTextChangedDo: [ :text |
+			self 
+				items: (self filteredTagsFor: text) ];
+		yourself
 ]
 
 { #category : 'selection' }

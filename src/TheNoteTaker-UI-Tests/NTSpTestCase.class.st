@@ -21,7 +21,6 @@ NTSpTestCase class >> shouldInheritSelectors [
 NTSpTestCase >> setUp [
 
 	super setUp.
-
 	memoryFS := FileSystem memory.
 
 	app := NTSpApplication new.

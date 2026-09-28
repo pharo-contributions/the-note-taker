@@ -24,18 +24,6 @@ Class {
 }
 
 { #category : 'nil' }
-NTSpNoteTakerMainUI class >> GitEnable [
-
-	^ GitEnable
-]
-
-{ #category : 'nil' }
-NTSpNoteTakerMainUI class >> GitEnable: aBoolean [
-
-	GitEnable := aBoolean
-]
-
-{ #category : 'nil' }
 NTSpNoteTakerMainUI class >> buildCommandsGroupWith: presenterInstance forRoot: rootCommandGroup [
 
 	rootCommandGroup register:
@@ -53,12 +41,24 @@ NTSpNoteTakerMainUI class >> buildNTContextualGroupWith: presenterInstance [
 		                register: (NTSpOpenFolderCommand forSpec context:
 					                 presenterInstance notesIndexPresenter);"
 		                yourself.
-	self GitEnable ifTrue: [
+	self gitEnable ifTrue: [
 			commandGroup register:
 				(NTSpGitCommand forSpec context: presenterInstance) ].
 	^ commandGroup
 		  register: (NTSpLogCommand forSpec context: presenterInstance);
 		  register: (NTSpSettingsCommand forSpec context: presenterInstance)
+]
+
+{ #category : 'nil' }
+NTSpNoteTakerMainUI class >> gitEnable [
+
+	^ GitEnable
+]
+
+{ #category : 'nil' }
+NTSpNoteTakerMainUI class >> gitEnable: aBoolean [
+
+	GitEnable := aBoolean
 ]
 
 { #category : 'accessing' }
