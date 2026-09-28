@@ -16,8 +16,8 @@ NTSpRemoveNoteCommandTest >> setUp [
 { #category : 'tests' }
 NTSpRemoveNoteCommandTest >> testRemoveSelectedNotes [
 
-	indexPresenter selectNote: ressources getNote1.
-	indexPresenter selectNote: ressources getNote2.
+	indexPresenter selectNote: ressources note1.
+	indexPresenter selectNote: ressources note2.
 
 	self assert: indexPresenter items size equals: 3.
 

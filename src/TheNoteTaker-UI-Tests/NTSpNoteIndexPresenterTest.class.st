@@ -102,12 +102,12 @@ NTSpNoteIndexPresenterTest >> testFilterWithNoteAndTag [
 	self assert: indexPresenter items size equals: 0.
 	indexPresenter filteredTagsSelection removeAll.
 
-	indexPresenter filteredTagsSelection add: ressources getTag1.
+	indexPresenter filteredTagsSelection add: ressources tag1.
 	indexPresenter searchBar text: 'note'.
 	self assert: indexPresenter items size equals: 1.
 	indexPresenter filteredTagsSelection removeAll.
 
-	indexPresenter filteredTagsSelection add: ressources getTag1.
+	indexPresenter filteredTagsSelection add: ressources tag1.
 	indexPresenter searchBar text: 'ZZZ'.
 	self assert: indexPresenter items size equals: 0
 ]
@@ -133,15 +133,15 @@ NTSpNoteIndexPresenterTest >> testFilterWithoutNoteAndWithTag [
 
 	self assert: indexPresenter items size equals: 3.
 
-	ressources getNote2 addTag: ressources getTag1.
-	ressources getNote3 addTag: ressources getTag1.
+	ressources note2 addTag: ressources tag1.
+	ressources note3 addTag: ressources tag1.
 
-	indexPresenter filteredTagsSelection add: ressources getTag1.
+	indexPresenter filteredTagsSelection add: ressources tag1.
 	indexPresenter filter.
 	self assert: indexPresenter items size equals: 3.
 	indexPresenter filteredTagsSelection removeAll.
 
-	indexPresenter filteredTagsSelection add: ressources getTag2.
+	indexPresenter filteredTagsSelection add: ressources tag2.
 	indexPresenter filter.
 	self assert: indexPresenter items size equals: 1.
 	indexPresenter filteredTagsSelection removeAll.
@@ -156,7 +156,7 @@ NTSpNoteIndexPresenterTest >> testFilterWithoutNoteAndWithTag [
 NTSpNoteIndexPresenterTest >> testHasSelectedNotes [
 
 	self deny: indexPresenter hasSelectedNote.
-	indexPresenter selectNote: ressources getNote1.
+	indexPresenter selectNote: ressources note1.
 	self assert: indexPresenter hasSelectedNote
 ]
 
@@ -164,31 +164,31 @@ NTSpNoteIndexPresenterTest >> testHasSelectedNotes [
 NTSpNoteIndexPresenterTest >> testNotesAreFilteredByModificationDate [
 
 	| orderedItems |
-	ressources getNote1 modificationDate: Date yesterday.
-	ressources getNote2 modificationDate: Date today.
-	ressources getNote3 modificationDate: Date tomorrow.
+	ressources note1 modificationDate: Date yesterday.
+	ressources note2 modificationDate: Date today.
+	ressources note3 modificationDate: Date tomorrow.
 
 	indexPresenter items: noteContainer notes.
 	orderedItems := indexPresenter items.
-	self assert: orderedItems first equals: ressources getNote3.
-	self assert: orderedItems second equals: ressources getNote2.
-	self assert: orderedItems third equals: ressources getNote1
+	self assert: orderedItems first equals: ressources note3.
+	self assert: orderedItems second equals: ressources note2.
+	self assert: orderedItems third equals: ressources note1
 ]
 
 { #category : 'tests' }
 NTSpNoteIndexPresenterTest >> testSelectNote [
 
-	indexPresenter selectNote: ressources getNote1.
+	indexPresenter selectNote: ressources note1.
 
 	self assert: indexPresenter selectedNotes size equals: 1.
-	self assert: indexPresenter selectedNotes first equals: ressources getNote1
+	self assert: indexPresenter selectedNotes first equals: ressources note1
 ]
 
 { #category : 'tests' }
 NTSpNoteIndexPresenterTest >> testSelectNotes [
 
-	indexPresenter selectNote: ressources getNote1.
-	indexPresenter selectNote: ressources getNote2.
+	indexPresenter selectNote: ressources note1.
+	indexPresenter selectNote: ressources note2.
 
 	self assert: indexPresenter selectedNotes size equals: 2
 ]
@@ -212,7 +212,7 @@ NTSpNoteIndexPresenterTest >> testUpdatePresenterRemoveDeletedNote [
 	| sizeNotesBeforeAddNote |
 	sizeNotesBeforeAddNote := indexPresenter items size.
 	noteContainer removeNotes: (OrderedCollection new
-			 add: ressources getNote2;
+			 add: ressources note2;
 			 yourself).
 	indexPresenter updatePresenter.
 	self

@@ -1,10 +1,9 @@
 "
-I am a container who hold notes and tags.
-Usually the list of tags does not have duplicates names.
+I am a container who hold notes and tags. Usually the list of tags does not have duplicates names.
 
 I can load a folder of notes and generates all the notes and their tags.
 
-I have method for create notes and tags, and for searching by their contents/names
+I have methods to create notes and tags, and for searching by their contents/names.
 "
 Class {
 	#name : 'NTContainer',
@@ -26,10 +25,12 @@ NTContainer >> addNote: aNTNoteObject [
 
 { #category : 'adding - notes' }
 NTContainer >> addNoteFromFileReference: aFileReference [
-	"Add a new note with title aString to the receiver's notes. Answer the receiver"
+	"Add a new note with title aString to the receiver's notes"
 
 	| newNote |
-	self notes detect: [ :note | note fileReference = aFileReference ] ifFound: [ :note | ^ note]. 
+	self notes 
+		detect: [ :note | note fileReference = aFileReference ] 
+		ifFound: [ :note | ^ note]. 
 	newNote := NTNote newFromFileReference: aFileReference.
 	self loadFileContents: aFileReference contents for: newNote.
 	self addNote: newNote.

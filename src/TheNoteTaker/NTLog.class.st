@@ -20,8 +20,9 @@ Class {
 		'#logFileReference',
 		'#lastLogString => ObservableSlot'
 	],
-	#category : 'TheNoteTaker',
-	#package : 'TheNoteTaker'
+	#category : 'TheNoteTaker-Log',
+	#package : 'TheNoteTaker',
+	#tag : 'Log'
 }
 
 { #category : 'instance creation' }

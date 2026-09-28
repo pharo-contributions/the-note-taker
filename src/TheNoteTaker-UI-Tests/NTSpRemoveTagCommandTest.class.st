@@ -17,9 +17,9 @@ NTSpRemoveTagCommandTest >> setUp [
 NTSpRemoveTagCommandTest >> testRemoveTagDontDeselectNotes [
 
 	| tagCollection |
-	indexPresenter selectNote: ressources getNote1.
+	indexPresenter selectNote: ressources note1.
 
-	tagCollection := ressources getNote1 tags collect: [ :each |
+	tagCollection := ressources note1 tags collect: [ :each |
 		                 each tagName ].
 
 	self assert: tagCollection size equals: 2.
@@ -30,16 +30,16 @@ NTSpRemoveTagCommandTest >> testRemoveTagDontDeselectNotes [
 				aDialogPresenter presenter accept ]
 		during: [ command execute ].
 		
-	self assert: (indexPresenter selectedNotes includes: ressources getNote1).
+	self assert: (indexPresenter selectedNotes includes: ressources note1).
 ]
 
 { #category : 'running' }
 NTSpRemoveTagCommandTest >> testRemoveTagOfSelectedNotes [
 
 	| tagCollection |
-	indexPresenter selectNote: ressources getNote1.
+	indexPresenter selectNote: ressources note1.
 
-	tagCollection := ressources getNote1 tags collect: [ :each |
+	tagCollection := ressources note1 tags collect: [ :each |
 		                 each tagName ].
 
 	self assert: tagCollection size equals: 2.
@@ -50,5 +50,5 @@ NTSpRemoveTagCommandTest >> testRemoveTagOfSelectedNotes [
 				aDialogPresenter presenter accept ]
 		during: [ command execute ].
 
-	self assertEmpty: ressources getNote1 tags
+	self assertEmpty: ressources note1 tags
 ]

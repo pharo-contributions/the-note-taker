@@ -17,9 +17,9 @@ NTSpAddTagCommandTest >> setUp [
 NTSpAddTagCommandTest >> testAddTagDontDeselectNotes [
 
 	| tagCollection |
-	indexPresenter selectNote: ressources getNote1.
+	indexPresenter selectNote: ressources note1.
 
-	tagCollection := ressources getNote1 tags collect: [ :each |
+	tagCollection := ressources note1 tags collect: [ :each |
 		                 each tagName ].
 
 	self assert: tagCollection size equals: 2.
@@ -31,16 +31,16 @@ NTSpAddTagCommandTest >> testAddTagDontDeselectNotes [
 		during: [ command execute ].
 
 	self assert:
-		(indexPresenter selectedNotes includes: ressources getNote1)
+		(indexPresenter selectedNotes includes: ressources note1)
 ]
 
 { #category : 'running' }
 NTSpAddTagCommandTest >> testAddTagOfSelectedNotes [
 
 	| tagCollection |
-	indexPresenter selectNote: ressources getNote3.
+	indexPresenter selectNote: ressources note3.
 
-	tagCollection := ressources getNote3 tags.
+	tagCollection := ressources note3 tags.
 
 	self assertEmpty: tagCollection.
 

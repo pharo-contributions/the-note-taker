@@ -216,8 +216,8 @@ NTContainerTest >> testLoadNoteWithAllMetadata [
 	ressources addingNotesAndTagsTo: noteTakerContainer.
 	noteFile := memoryFS / '2024-06-12_newNote.md'.
 	tags := OrderedCollection new
-		        add: ressources getTag1;
-		        add: ressources getTag2;
+		        add: ressources tag1;
+		        add: ressources tag2;
 		        yourself.
 	metadata := NTNoteTest new
 		            generateMetaDataWithCreationDate:
@@ -334,8 +334,8 @@ NTContainerTest >> testRemoveNotes [
 	
 	self assert: noteTakerContainer notesCount equals: 3.
 	noteTakerContainer removeNotes: (OrderedCollection new
-			 add: ressources getNote1;
-			 add: ressources getNote2;
+			 add: ressources note1;
+			 add: ressources note2;
 			 yourself).
 	self assert: noteTakerContainer notesCount equals: 1
 ]
@@ -381,23 +381,23 @@ NTContainerTest >> testSelectNotesWithTags [
 	result := noteTakerContainer
 		          notes: noteTakerContainer notes
 		          withTags: (OrderedCollection new
-				           add: ressources getTag1;
+				           add: ressources tag1;
 				           yourself).
 	self assert: result size equals: 1.
 	
 	result := noteTakerContainer
 		          notes: noteTakerContainer notes
 		          withTags: (OrderedCollection new
-				           add: ressources getTag1;
-							  add: ressources getTag2;
+				           add: ressources tag1;
+							  add: ressources tag2;
 				           yourself).
 	self assert: result size equals: 0.
 	
 	result := noteTakerContainer
 		          notes: noteTakerContainer notes
 		          withTags: (OrderedCollection new
-				           add: ressources getTag1;
-							  add: ressources getTag3;
+				           add: ressources tag1;
+							  add: ressources tag3;
 				           yourself).
 	self assert: result size equals: 1
 ]
@@ -409,11 +409,11 @@ NTContainerTest >> testTagNamed [
 
 	self
 		assert: (noteTakerContainer ensureTagNamed: 'tag1')
-		equals: ressources getTag1.
+		equals: ressources tag1.
 
 	self
 		assert: (noteTakerContainer ensureTagNamed: 'tag3')
-		equals: ressources getTag3
+		equals: ressources tag3
 ]
 
 { #category : 'tests - tags' }

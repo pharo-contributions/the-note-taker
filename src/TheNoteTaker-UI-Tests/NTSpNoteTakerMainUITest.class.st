@@ -36,7 +36,7 @@ NTSpNoteTakerMainUITest >> tearDown [
 NTSpNoteTakerMainUITest >> testAddContent [
 
 	| tempNote note |
-	note := ressources getNote1.
+	note := ressources note1.
 	editorPresenter setModel: note.
 
 	editorPresenter textInputText: 'It''s just a test'.
@@ -82,9 +82,9 @@ NTSpNoteTakerMainUITest >> testAddNoteByItsName [
 NTSpNoteTakerMainUITest >> testAddTagSaveNote [
 
 	| tag newNote note |
-	note := ressources getNote3.
+	note := ressources note3.
 	note folderReference: memoryFS workingDirectory.
-	tag := ressources getTag1.
+	tag := ressources tag1.
 	indexPresenter selectNote: note.
 
 	SpWindowSimulateOpenModal
@@ -103,9 +103,9 @@ NTSpNoteTakerMainUITest >> testAddTagSaveNote [
 NTSpNoteTakerMainUITest >> testAddTagToMultipleNotes [
 
 	| tag note3 note2 tagsNoteSize |
-	note2 := ressources getNote2.
-	note3 := ressources getNote3.
-	tag := ressources getTag1.
+	note2 := ressources note2.
+	note3 := ressources note3.
+	tag := ressources tag1.
 	tagsNoteSize := tag notes size.
 	indexPresenter selectNote: note3.
 	indexPresenter selectNote: note2.
@@ -128,8 +128,8 @@ NTSpNoteTakerMainUITest >> testAddTagToMultipleNotes [
 NTSpNoteTakerMainUITest >> testAddTagToSingleNote [
 
 	| tag note |
-	note := ressources getNote3.
-	tag := ressources getTag1.
+	note := ressources note3.
+	tag := ressources tag1.
 	indexPresenter selectNote: note.
 
 	SpWindowSimulateOpenModal
@@ -150,7 +150,7 @@ NTSpNoteTakerMainUITest >> testChangeNoteTitleInEditorUpdateIndexSelectedNoteTit
 
 	| string note |
 	string := 'title windows test'.
-	note := ressources getNote1.
+	note := ressources note1.
 	
 	self deny: note title equals: string. 
 	
@@ -187,7 +187,7 @@ NTSpNoteTakerMainUITest >> testFilterNotesWithToolbarSetIndexItems [
 NTSpNoteTakerMainUITest >> testIndexSelectNoteSendItToEditor [
 
 	| note |
-	note := ressources getNote1.
+	note := ressources note1.
 	indexPresenter selectNote: note.
 
 	self assert: editorPresenter model equals: note
@@ -213,7 +213,7 @@ NTSpNoteTakerMainUITest >> testModifiedUnselectedNoteInEditorSelectIt [
 NTSpNoteTakerMainUITest >> testNameNoteIsInISOFormat [
 
 	| date tempNote note |
-	note := ressources getNote1.
+	note := ressources note1.
 	editorPresenter setModel: note.
 
 	date := DateAndTime now asDate yyyymmdd.
@@ -230,9 +230,9 @@ NTSpNoteTakerMainUITest >> testNameNoteIsInISOFormat [
 NTSpNoteTakerMainUITest >> testRemoveTagSaveNote [
 
 	| tag newNote note |
-	note := ressources getNote2.
+	note := ressources note2.
 	note folderReference: memoryFS workingDirectory.
-	tag := ressources getTag2.
+	tag := ressources tag2.
 	indexPresenter selectNote: note.
 
 	SpWindowSimulateOpenModal
@@ -251,9 +251,9 @@ NTSpNoteTakerMainUITest >> testRemoveTagSaveNote [
 NTSpNoteTakerMainUITest >> testRemoveTagToMultipleNotes [
 
 	| tag note3 note2 |
-	note3 := ressources getNote3.
-	note2 := ressources getNote2.
-	tag := ressources getTag2.
+	note3 := ressources note3.
+	note2 := ressources note2.
+	tag := ressources tag2.
 	note3 addTag: tag.
 	indexPresenter selectNote: note3.
 	indexPresenter selectNote: note2.
@@ -274,8 +274,8 @@ NTSpNoteTakerMainUITest >> testRemoveTagToMultipleNotes [
 NTSpNoteTakerMainUITest >> testRemoveTagToSingleNote [
 
 	| tag note |
-	note := ressources getNote2.
-	tag := ressources getTag2.
+	note := ressources note2.
+	tag := ressources tag2.
 	indexPresenter selectNote: note.
 
 	SpWindowSimulateOpenModal
@@ -293,9 +293,9 @@ NTSpNoteTakerMainUITest >> testRemoveTagToSingleNote [
 { #category : 'tests' }
 NTSpNoteTakerMainUITest >> testSelectANote [
 
-	indexPresenter selectNote: ressources getNote1.
+	indexPresenter selectNote: ressources note1.
 
 	self
 		assert: editorPresenter textInputText
-		equals: ressources getNote1 contents
+		equals: ressources note1 contents
 ]
