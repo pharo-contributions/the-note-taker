@@ -18,7 +18,9 @@ Class {
 		'#gitEnable => ObservableSlot'
 	],
 	#classVars : [
-		'#Default'
+		'#CurrentFolder',
+		'#Default',
+		'#GitEnable'
 	],
 	#category : 'TheNoteTaker-Core',
 	#package : 'TheNoteTaker',
@@ -26,27 +28,29 @@ Class {
 }
 
 { #category : 'private' }
-NTSettings class >> default [
+NTSettings class >> currentFolder [
 
-	^ Default ifNil: [ Default := self new ]
+	^ CurrentFolder ifNil: [
+			  CurrentFolder := (FileLocator documents / 'noteTaker')
+				                   asFileReference ensureCreateDirectory ]
 ]
 
 { #category : 'private' }
-NTSettings class >> default: aNTSettings [
+NTSettings class >> currentFolder: aFolder [
 
-	Default := aNTSettings
+	CurrentFolder := aFolder
 ]
 
 { #category : 'commands' }
 NTSettings class >> gitEnable [
 
-	^ self default gitEnable
+	^ GitEnable
 ]
 
 { #category : 'commands' }
 NTSettings class >> gitEnable: aBoolean [
 
-	self default gitEnable: aBoolean
+	GitEnable := aBoolean
 ]
 
 { #category : 'settings xp' }
@@ -69,15 +73,6 @@ NTSettings class >> loadSettings [
 		aSetDec := settingDeclarations 
 			detect: [ :each | (aStoredSetting settingNodeIdentifier splitOn: '#') last = each name ].
 		aSetDec realValue: aStoredSetting realValue ].
-]
-
-{ #category : 'commands' }
-NTSettings class >> new [
-
-	| instance |
-	instance := super new.
-	Default := instance.
-	^ instance
 ]
 
 { #category : 'settings' }
@@ -112,30 +107,31 @@ NTSettings class >> settings [
 { #category : 'setting io' }
 NTSettings class >> settingsNodes [
 	"Argh we have to get a tree to be able to load and save setting...."
-	"self settings"
-	
+
+	"self settingsNodes"
+
 	| builder |
 	builder := SettingTreeBuilder new.
-	(Pragma allNamed: #systemsettings in: self class) collect: [ :each | builder buildPragma: each ].
-	^ builder nodeList 
+	(Pragma allNamed: #systemsettings in: self class) 
+		collect: [ :each | builder buildPragma: each ].
+	^ builder nodeList
 ]
 
 { #category : 'settings' }
 NTSettings class >> settingsOn: aBuilder [
+	"<notetakersettings>"
 
 	<systemsettings>
-	"<notetakersettings>"
-	
 	(aBuilder group: #tnt)
 		label: 'The Note Taker';
 		description: 'All TNT related settings';
 		noOrdering;
 		with: [
-				(aBuilder group: #tnt_note)
+				(aBuilder group: #tntNote)
 					label: 'Note section parameter';
 					with: [
 							(aBuilder setting: #gitEnable)
-								parent: #tnt_note;
+								parent: #tntNote;
 								target: self;
 								order: 60;
 								label: 'enable git command';
@@ -179,27 +175,28 @@ NTSettings class >> storeSetting [
 { #category : 'enumerating' }
 NTSettings >> currentFolder [
 
-	^ currentFolder ifNil: [
-			  currentFolder := (FileLocator documents / 'noteTaker')
-				                   asFileReference ensureCreateDirectory ]
+	"we use the class and not directly the sharedVariable because there is a lazy initialize
+	for the default location."
+	
+	^ self class currentFolder
 ]
 
 { #category : 'enumerating' }
 NTSettings >> currentFolder: aFileReference [
-	
-	currentFolder := aFileReference
+
+	CurrentFolder := aFileReference
 ]
 
 { #category : 'enumerating' }
 NTSettings >> gitEnable [
 
-	^ gitEnable ifNil: [ gitEnable := false ]
+	^ GitEnable ifNil: [ GitEnable := false ]
 ]
 
 { #category : 'enumerating' }
 NTSettings >> gitEnable: aBoolean [
 
-	gitEnable := aBoolean
+	GitEnable := aBoolean
 ]
 
 { #category : 'enumerating' }

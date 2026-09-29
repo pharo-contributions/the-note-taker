@@ -118,7 +118,7 @@ NTApplication >> importSettings [
 NTApplication >> initialize [
 
 	super initialize.
-	settings := NTSettings default.
+	settings := NTSettings new.
 	"Preference file is either in the preference folder 
 	and it does not exist in the app."
 
