@@ -121,13 +121,13 @@ NTNote >> fileReference [
 NTNote >> fileReferenceContents [
 
 	| fileContentsPart aString |
-	
 	aString := self fileReference contents.
-	(self fileReference contents beginsWith: '{')
-		ifTrue: [
-				fileContentsPart := aString substrings: '}'.
-				^ fileContentsPart second withoutPrefix: String crlf , String crlf].
-		^ aString
+	(self fileReference contents beginsWith: '{') ifTrue: [
+			fileContentsPart := aString substrings: '}'.
+			"I suspect a bug here where a doc contains another } and we lose what is left
+			so fileContentsPart allButFirst looks better"
+			^ fileContentsPart second withoutPrefix: String crlf , String crlf ].
+	^ aString
 ]
 
 { #category : 'accessing' }

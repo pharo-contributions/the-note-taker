@@ -1,5 +1,5 @@
 "
-I am a container who hold notes and tags. Usually the list of tags does not have duplicates names.
+I am a container which holds notes and tags. Usually the list of tags does not have duplicated names.
 
 I can load a folder of notes and generates all the notes and their tags.
 
@@ -89,6 +89,8 @@ NTContainer >> loadFileContents: aString for: aNTNote [
 	| fileContentsPart |
 	(aString beginsWith: '{') ifFalse: [ ^ self ].
 	fileContentsPart := aString substrings: '}'.
+	"duplicated logic with NTNote fileReferenceContents and same bug
+	what will happen if we have a note with an extra }"
 	aNTNote contents:
 		(fileContentsPart second withoutPrefix: String crlf , String crlf).
 	self loadMetaData: fileContentsPart first for: aNTNote
