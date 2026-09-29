@@ -5,7 +5,7 @@ This coordinates main events and layout of the main window.
 Has the GitEnable settings. If it is enabled, the git button will be available, otherwise it will not be
 "
 Class {
-	#name : 'NTSpNoteTakerMainUI',
+	#name : 'NTNoteTakerMainUI',
 	#superclass : 'SpPresenter',
 	#instVars : [
 		'notesToolbarPresenter',
@@ -24,14 +24,14 @@ Class {
 }
 
 { #category : 'nil' }
-NTSpNoteTakerMainUI class >> buildCommandsGroupWith: presenterInstance forRoot: rootCommandGroup [
+NTNoteTakerMainUI class >> buildCommandsGroupWith: presenterInstance forRoot: rootCommandGroup [
 
 	rootCommandGroup register:
 		(self buildNTContextualGroupWith: presenterInstance)
 ]
 
 { #category : 'commands' }
-NTSpNoteTakerMainUI class >> buildNTContextualGroupWith: presenterInstance [
+NTNoteTakerMainUI class >> buildNTContextualGroupWith: presenterInstance [
 
 	| commandGroup |
 	commandGroup := (CmCommandGroup named: 'Toolbar') asSpecGroup
@@ -50,25 +50,25 @@ NTSpNoteTakerMainUI class >> buildNTContextualGroupWith: presenterInstance [
 ]
 
 { #category : 'nil' }
-NTSpNoteTakerMainUI class >> gitEnable [
+NTNoteTakerMainUI class >> gitEnable [
 
 	^ GitEnable
 ]
 
 { #category : 'nil' }
-NTSpNoteTakerMainUI class >> gitEnable: aBoolean [
+NTNoteTakerMainUI class >> gitEnable: aBoolean [
 
 	GitEnable := aBoolean
 ]
 
 { #category : 'accessing' }
-NTSpNoteTakerMainUI >> applicationTitle [
+NTNoteTakerMainUI >> applicationTitle [
 
 	^ self application applicationTitle
 ]
 
 { #category : 'initialization' }
-NTSpNoteTakerMainUI >> connectPresenters [
+NTNoteTakerMainUI >> connectPresenters [
 
 	notesIndexPresenter
 		transmitTo: notesEditorPresenter
@@ -94,38 +94,38 @@ NTSpNoteTakerMainUI >> connectPresenters [
 ]
 
 { #category : 'layout' }
-NTSpNoteTakerMainUI >> defaultLayout [
+NTNoteTakerMainUI >> defaultLayout [
 
 	^ self noteLayout
 ]
 
 { #category : 'accessing' }
-NTSpNoteTakerMainUI >> gitSettings [
+NTNoteTakerMainUI >> gitSettings [
 
 	^ self settings gitEnable
 ]
 
 { #category : 'testing' }
-NTSpNoteTakerMainUI >> hasSelectedNote [
+NTNoteTakerMainUI >> hasSelectedNote [
 
 	^ notesIndexPresenter hasSelectedNote 
 ]
 
 { #category : 'initialization' }
-NTSpNoteTakerMainUI >> initialExtentForWindow [
+NTNoteTakerMainUI >> initialExtentForWindow [
 
 	^ (900 @ 600) scaledByDisplayScaleFactor
 ]
 
 { #category : 'initialization' }
-NTSpNoteTakerMainUI >> initialize [
+NTNoteTakerMainUI >> initialize [
 
 	super initialize.
 	statusBar pushMessage: 'note'
 ]
 
 { #category : 'initialization' }
-NTSpNoteTakerMainUI >> initializeNoteToolBar [
+NTNoteTakerMainUI >> initializeNoteToolBar [
 
 	notesToolbarPresenter := self newToolbar fillWith:
 		                         self rootCommandsGroup / 'Toolbar'.
@@ -139,13 +139,13 @@ NTSpNoteTakerMainUI >> initializeNoteToolBar [
 ]
 
 { #category : 'initialization' }
-NTSpNoteTakerMainUI >> initializePresenters [
+NTNoteTakerMainUI >> initializePresenters [
 
-	notesIndexPresenter := self instantiate: NTSpNoteIndexPresenter.
+	notesIndexPresenter := self instantiate: NTNoteIndexPresenter.
 	notesIndexPresenter model: self noteTakerContainer.
 	notesIndexPresenter updatePresenter.
 
-	notesEditorPresenter := self instantiate: NTSpEditorPresenter.
+	notesEditorPresenter := self instantiate: NTEditorPresenter.
 
 	taskMainPresener := self instantiate: SpTaskMainPresenter.
 	todoToolbarPresenter := self newToolbar
@@ -164,7 +164,7 @@ NTSpNoteTakerMainUI >> initializePresenters [
 ]
 
 { #category : 'initialization' }
-NTSpNoteTakerMainUI >> initializeWindow: aSpWindowPresenter [
+NTNoteTakerMainUI >> initializeWindow: aSpWindowPresenter [
 
 	super initializeWindow: aSpWindowPresenter.
 
@@ -174,7 +174,7 @@ NTSpNoteTakerMainUI >> initializeWindow: aSpWindowPresenter [
 ]
 
 { #category : 'layout' }
-NTSpNoteTakerMainUI >> noteLayout [
+NTNoteTakerMainUI >> noteLayout [
 
 	^ SpBoxLayout newTopToBottom
 		add: notesToolbarPresenter height: self toolbarHeight;
@@ -188,58 +188,58 @@ NTSpNoteTakerMainUI >> noteLayout [
 ]
 
 { #category : 'accessing' }
-NTSpNoteTakerMainUI >> noteTakerContainer [
+NTNoteTakerMainUI >> noteTakerContainer [
 
 	^ self application noteTakerContainer
 ]
 
 { #category : 'accessing' }
-NTSpNoteTakerMainUI >> notesEditorPresenter [
+NTNoteTakerMainUI >> notesEditorPresenter [
 
 	^ notesEditorPresenter
 ]
 
 { #category : 'accessing' }
-NTSpNoteTakerMainUI >> notesIndexPresenter [
+NTNoteTakerMainUI >> notesIndexPresenter [
 
 	^ notesIndexPresenter
 ]
 
 { #category : 'accessing' }
-NTSpNoteTakerMainUI >> notesToolbarPresenter [
+NTNoteTakerMainUI >> notesToolbarPresenter [
 	"This is the getter of the notes toolbar"
 	
 	^ notesToolbarPresenter 
 ]
 
 { #category : 'showing' }
-NTSpNoteTakerMainUI >> open [ 
+NTNoteTakerMainUI >> open [ 
 
 	super open.
 	self centered
 ]
 
 { #category : 'setter' }
-NTSpNoteTakerMainUI >> setTitleTo: aSpWindowPresenter [
+NTNoteTakerMainUI >> setTitleTo: aSpWindowPresenter [
 
 	aSpWindowPresenter title: self applicationTitle
 
 ]
 
 { #category : 'accessing' }
-NTSpNoteTakerMainUI >> settings [
+NTNoteTakerMainUI >> settings [
 
 	^ self application settings
 ]
 
 { #category : 'accessing' }
-NTSpNoteTakerMainUI >> statusBar [
+NTNoteTakerMainUI >> statusBar [
 
 	^ statusBar
 ]
 
 { #category : 'layout' }
-NTSpNoteTakerMainUI >> todoLayout [
+NTNoteTakerMainUI >> todoLayout [
 
 	^ SpBoxLayout newTopToBottom
 		  add: todoToolbarPresenter height: self toolbarHeight;
@@ -248,19 +248,19 @@ NTSpNoteTakerMainUI >> todoLayout [
 ]
 
 { #category : 'accessing' }
-NTSpNoteTakerMainUI >> toolbarHeight [
+NTNoteTakerMainUI >> toolbarHeight [
 
 	^ self class toolbarHeight
 ]
 
 { #category : 'activation' }
-NTSpNoteTakerMainUI >> updatePresenter [
+NTNoteTakerMainUI >> updatePresenter [
 
 	self notesIndexPresenter updatePresenter
 ]
 
 { #category : 'activation' }
-NTSpNoteTakerMainUI >> updateWindowTitle [
+NTNoteTakerMainUI >> updateWindowTitle [
 
 	self withWindowDo: [ : w |
 		self hasSelectedNote

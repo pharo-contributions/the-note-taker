@@ -17,7 +17,7 @@ In renderDocument, we use worker schedule:. We use it for increase performance: 
 
 "
 Class {
-	#name : 'NTSpEditorPresenter',
+	#name : 'NTEditorPresenter',
 	#superclass : 'SpPresenter',
 	#instVars : [
 		'#textInput',
@@ -39,7 +39,7 @@ Class {
 }
 
 { #category : 'as yet unclassified' }
-NTSpEditorPresenter class >> AutoSave [
+NTEditorPresenter class >> AutoSave [
 
 	^ AutoSave ifNil: [AutoSave := true] 
 	
@@ -47,13 +47,13 @@ NTSpEditorPresenter class >> AutoSave [
 ]
 
 { #category : 'as yet unclassified' }
-NTSpEditorPresenter class >> AutoSave: aBoolean [
+NTEditorPresenter class >> AutoSave: aBoolean [
 
 	AutoSave := aBoolean
 ]
 
 { #category : 'settings' }
-NTSpEditorPresenter class >> settingsOn: aBuilder [
+NTEditorPresenter class >> settingsOn: aBuilder [
 
 	<systemsettings>
 	(aBuilder setting: #AutoSave)
@@ -67,13 +67,13 @@ When disabled, you need to manually save your note. '
 ]
 
 { #category : 'transmission' }
-NTSpEditorPresenter >> defaultInputPort [
+NTEditorPresenter >> defaultInputPort [
 
 	^ SpModelPort newPresenter: self
 ]
 
 { #category : 'layout' }
-NTSpEditorPresenter >> defaultLayout [
+NTEditorPresenter >> defaultLayout [
 
 	| panedLayout |
 	panedLayout := self isRenderedEnable
@@ -90,7 +90,7 @@ NTSpEditorPresenter >> defaultLayout [
 ]
 
 { #category : 'actions' }
-NTSpEditorPresenter >> emptyInputText [
+NTEditorPresenter >> emptyInputText [
 	"CLEAN button is pressed: erase both input and output text content"
 
 	self textInputText: ''.
@@ -98,7 +98,7 @@ NTSpEditorPresenter >> emptyInputText [
 ]
 
 { #category : 'initialization' }
-NTSpEditorPresenter >> initialize [
+NTEditorPresenter >> initialize [
 
 	super initialize.
 	worker := TKTLocalProcessTaskRunner new.
@@ -106,7 +106,7 @@ NTSpEditorPresenter >> initialize [
 ]
 
 { #category : 'initialization' }
-NTSpEditorPresenter >> initializePresenters [
+NTEditorPresenter >> initializePresenters [
 	"in initialize it is called after so defeat textInputText: logic"
 
 	composer := MicRichTextComposer new.
@@ -132,20 +132,20 @@ NTSpEditorPresenter >> initializePresenters [
 ]
 
 { #category : 'actions' }
-NTSpEditorPresenter >> isRenderedButtonClick [
+NTEditorPresenter >> isRenderedButtonClick [
 
 	IsRenderedEnable := IsRenderedEnable not.
 	layout := self defaultLayout
 ]
 
 { #category : 'accessing' }
-NTSpEditorPresenter >> isRenderedEnable [
+NTEditorPresenter >> isRenderedEnable [
 
 	^ IsRenderedEnable ifNil: [ IsRenderedEnable := true ]
 ]
 
 { #category : 'layout' }
-NTSpEditorPresenter >> layoutWithRenderedText [
+NTEditorPresenter >> layoutWithRenderedText [
 
 	^ SpPanedLayout newLeftToRight
 		  add: textInput;
@@ -154,7 +154,7 @@ NTSpEditorPresenter >> layoutWithRenderedText [
 ]
 
 { #category : 'layout' }
-NTSpEditorPresenter >> layoutWithoutRenderedText [
+NTEditorPresenter >> layoutWithoutRenderedText [
 
 	^ SpBoxLayout newTopToBottom
 		  add: textInput;
@@ -162,19 +162,19 @@ NTSpEditorPresenter >> layoutWithoutRenderedText [
 ]
 
 { #category : 'testing' }
-NTSpEditorPresenter >> mayLoseEdits [
+NTEditorPresenter >> mayLoseEdits [
 
 	^ self textInputText isNotEmpty and: [ model isDirty ]
 ]
 
 { #category : 'accessing - model' }
-NTSpEditorPresenter >> model [
+NTEditorPresenter >> model [
 
 	^ model ifNil: [ self newEmptyNote ]
 ]
 
 { #category : 'api' }
-NTSpEditorPresenter >> newEmptyNote [
+NTEditorPresenter >> newEmptyNote [
 
 	model := NTNote new.
 	isNewNote := true.
@@ -182,7 +182,7 @@ NTSpEditorPresenter >> newEmptyNote [
 ]
 
 { #category : 'actions' }
-NTSpEditorPresenter >> renderDocument [
+NTEditorPresenter >> renderDocument [
 	"RENDER button is pressed: render input to output text"
 
 	worker schedule: [
@@ -190,13 +190,13 @@ NTSpEditorPresenter >> renderDocument [
 ]
 
 { #category : 'accessing' }
-NTSpEditorPresenter >> renderedText [
+NTEditorPresenter >> renderedText [
 
 	^ renderedText text
 ]
 
 { #category : 'actions' }
-NTSpEditorPresenter >> saveFile [
+NTEditorPresenter >> saveFile [
 
 	isNewNote ifTrue: [
 			textInput text ifEmpty: [ ^ self ].
@@ -209,7 +209,7 @@ NTSpEditorPresenter >> saveFile [
 ]
 
 { #category : 'accessing - model' }
-NTSpEditorPresenter >> setModel: aNTNoteObject [
+NTEditorPresenter >> setModel: aNTNoteObject [
 
 	isNewNote := false.
 	
@@ -226,31 +226,31 @@ NTSpEditorPresenter >> setModel: aNTNoteObject [
 ]
 
 { #category : 'accessing' }
-NTSpEditorPresenter >> textInput [
+NTEditorPresenter >> textInput [
 
 	^ textInput
 ]
 
 { #category : 'accessing' }
-NTSpEditorPresenter >> textInputText [
+NTEditorPresenter >> textInputText [
 
 	^ textInput text
 ]
 
 { #category : 'accessing' }
-NTSpEditorPresenter >> textInputText: aString [
+NTEditorPresenter >> textInputText: aString [
 
 	textInput text: aString asString.
 ]
 
 { #category : 'api - events' }
-NTSpEditorPresenter >> whenNoteChangedDo: aBlock [
+NTEditorPresenter >> whenNoteChangedDo: aBlock [
 
 	textInput whenTextChangedDo: [ aBlock cull: self model ]
 ]
 
 { #category : 'api - events' }
-NTSpEditorPresenter >> whenNoteSavedDo: aBlock [
+NTEditorPresenter >> whenNoteSavedDo: aBlock [
 
 	self property: #isSaved whenChangedDo: [ aBlock cull: self model ]
 ]

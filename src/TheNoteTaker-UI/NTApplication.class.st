@@ -9,7 +9,7 @@ This is the main Notes Taker Spec2 application class which:
 
 "
 Class {
-	#name : 'NTSpApplication',
+	#name : 'NTApplication',
 	#superclass : 'SpApplication',
 	#instVars : [
 		'noteTakerContainer',
@@ -28,74 +28,74 @@ Class {
 }
 
 { #category : 'private' }
-NTSpApplication class >> applicationTitle [
+NTApplication class >> applicationTitle [
 
 	^ 'The Note Taker'
 ]
 
 { #category : 'private' }
-NTSpApplication class >> beDeployed [
+NTApplication class >> beDeployed [
 	IsDeployed := true
 ]
 
 { #category : 'private' }
-NTSpApplication class >> beUndeployed [
+NTApplication class >> beUndeployed [
 	IsDeployed := false
 ]
 
 { #category : 'private' }
-NTSpApplication class >> isDeployed [
+NTApplication class >> isDeployed [
 
 	^ IsDeployed ifNil: [ IsDeployed := false ]
 ]
 
 { #category : 'private' }
-NTSpApplication class >> menuNoteTakersOn: aBuilder [
+NTApplication class >> menuNoteTakersOn: aBuilder [
 	<worldMenu>
 
 	(aBuilder item: #NoteTaker)
 		parent: #Tools;
 		label: self applicationTitle;
 		icon: (self iconNamed: #catalog);
-		action: [ NTSpApplication new run ];
+		action: [ NTApplication new run ];
 		help: 'The Note Taker';
 		order: 630
 ]
 
 { #category : 'private' }
-NTSpApplication class >> openFull [ 
+NTApplication class >> openFull [ 
 	<script>
 	
 	^ self new startFullScreen 
 ]
 
 { #category : 'private' }
-NTSpApplication class >> openIt [
+NTApplication class >> openIt [
 
 	<script>
 	self new run
 ]
 
 { #category : 'private' }
-NTSpApplication >> applicationTitle [ 
+NTApplication >> applicationTitle [ 
 
 	^ self class applicationTitle 
 ]
 
 { #category : 'accessing' }
-NTSpApplication >> currentFolder [
+NTApplication >> currentFolder [
 
 	^ settings currentFolder
 ]
 
 { #category : 'accessing' }
-NTSpApplication >> currentFolder: aFileReference [
+NTApplication >> currentFolder: aFileReference [
 
 	settings currentFolder: aFileReference
 ]
 
 { #category : 'running' }
-NTSpApplication >> exportSettings [
+NTApplication >> exportSettings [
 
 	(SettingBrowser currentTree nodeNamed: #tnt_note) 
 		ifNotNil: [ :tntNode |
@@ -106,7 +106,7 @@ NTSpApplication >> exportSettings [
 ]
 
 { #category : 'running' }
-NTSpApplication >> importSettings [
+NTApplication >> importSettings [
 
 	self preferencesFileLocation exists ifFalse: [ ^ self ].
 	(SettingBrowser currentTree nodeNamed: #tnt_note) 
@@ -115,7 +115,7 @@ NTSpApplication >> importSettings [
 ]
 
 { #category : 'initialization' }
-NTSpApplication >> initialize [
+NTApplication >> initialize [
 
 	super initialize.
 	settings := NTSettings default.
@@ -146,49 +146,49 @@ NTSpApplication >> initialize [
 ]
 
 { #category : 'initialization' }
-NTSpApplication >> initializeMainPresenter [
+NTApplication >> initializeMainPresenter [
 
-	mainPresenter := NTSpNoteTakerMainUI newApplication: self.
+	mainPresenter := NTNoteTakerMainUI newApplication: self.
 ]
 
 { #category : 'accessing' }
-NTSpApplication >> log [
+NTApplication >> log [
 
 	^ log
 ]
 
 { #category : 'accessing' }
-NTSpApplication >> mainPresenter [
+NTApplication >> mainPresenter [
 
 	^ mainPresenter
 ]
 
 { #category : 'accessing' }
-NTSpApplication >> mainPresenter: aNtSpNoteTakerMainUI [
+NTApplication >> mainPresenter: aNtSpNoteTakerMainUI [
 
 	mainPresenter := aNtSpNoteTakerMainUI
 ]
 
 { #category : 'accessing' }
-NTSpApplication >> noteTakerContainer [
+NTApplication >> noteTakerContainer [
 
 	^ noteTakerContainer
 ]
 
 { #category : 'accessing' }
-NTSpApplication >> preferencesFileLocation [
+NTApplication >> preferencesFileLocation [
 
 	^ (FileLocator preferences / 'TheNoteTaker' / 'TNTSettings.config') asFileReference
 ]
 
 { #category : 'accessing' }
-NTSpApplication >> settings [
+NTApplication >> settings [
 
 	^ settings
 ]
 
 { #category : 'running' }
-NTSpApplication >> start [
+NTApplication >> start [
 
    "self useBackend: #Toplo."
 	self initializeMainPresenter.
@@ -197,7 +197,7 @@ NTSpApplication >> start [
 ]
 
 { #category : 'running' }
-NTSpApplication >> startFullScreen [
+NTApplication >> startFullScreen [
 	" Private - Open the main application window in full screen, intended for the release version "
 
 	self initializeMainPresenter.
@@ -206,13 +206,13 @@ NTSpApplication >> startFullScreen [
 ]
 
 { #category : 'accessing' }
-NTSpApplication >> taskContainer [
+NTApplication >> taskContainer [
 
 	^ taskContainer
 ]
 
 { #category : 'update' }
-NTSpApplication >> updateApplication [
+NTApplication >> updateApplication [
 
 	log logFileReference: self currentFolder.
 	noteTakerContainer replaceFolder: self currentFolder.
@@ -221,7 +221,7 @@ NTSpApplication >> updateApplication [
 ]
 
 { #category : 'windows' }
-NTSpApplication >> windowClosed: aWindowPresenter [
+NTApplication >> windowClosed: aWindowPresenter [
 
 	super windowClosed: aWindowPresenter.
 	Transcript show: 'Should be saving settings... see windowClosed: in NTSpApplication';cr.

@@ -8,7 +8,7 @@ When we click on accept, return the selected tags.
 If we use allowTagCreation, so when we submit the text in searchBar ( Enter character ), a new Tag is created
 "
 Class {
-	#name : 'NTSpTagSelectionDialog',
+	#name : 'NTTagSelectionDialog',
 	#superclass : 'SpSelectMultipleDialog',
 	#instVars : [
 		'searchTextPresenter'
@@ -19,7 +19,7 @@ Class {
 }
 
 { #category : 'adding' }
-NTSpTagSelectionDialog >> addTagNamed: aString [
+NTTagSelectionDialog >> addTagNamed: aString [
 
 	self application noteTakerContainer ensureTagNamed: aString.
 	searchTextPresenter text: ''.
@@ -27,7 +27,7 @@ NTSpTagSelectionDialog >> addTagNamed: aString [
 ]
 
 { #category : 'initialization' }
-NTSpTagSelectionDialog >> allowTagCreation [
+NTTagSelectionDialog >> allowTagCreation [
 
 	searchTextPresenter
 		help:
@@ -37,7 +37,7 @@ NTSpTagSelectionDialog >> allowTagCreation [
 ]
 
 { #category : 'layout' }
-NTSpTagSelectionDialog >> defaultLayout [
+NTTagSelectionDialog >> defaultLayout [
 
 	^ SpBoxLayout newTopToBottom
 		  add: searchTextPresenter expand: false;
@@ -46,14 +46,14 @@ NTSpTagSelectionDialog >> defaultLayout [
 ]
 
 { #category : 'filtering' }
-NTSpTagSelectionDialog >> filteredTagsFor: aString [
+NTTagSelectionDialog >> filteredTagsFor: aString [
 	"Answer a <Collection> of <NTNoteObject> whose names match aString"
 
 	^ (self application noteTakerContainer tagsNameMatching: aString) collect: [ :each | each tagName ]
 ]
 
 { #category : 'initialization' }
-NTSpTagSelectionDialog >> initializePresenters [
+NTTagSelectionDialog >> initializePresenters [
 
 	super initializePresenters.
 	searchTextPresenter := self newTextInput
@@ -66,7 +66,7 @@ NTSpTagSelectionDialog >> initializePresenters [
 ]
 
 { #category : 'selection' }
-NTSpTagSelectionDialog >> selectedItems: aTagNameCollection [
+NTTagSelectionDialog >> selectedItems: aTagNameCollection [
 
 	selectedItems addAll: aTagNameCollection
 ]
