@@ -38,8 +38,7 @@ NTSpAddTagCommand >> execute [
 		allowTagCreation;
 		title: 'tag name';
 		items:
-			(self noteTakerContainer tags asOrderedCollection collect: [ :each |
-					 each tagName ]);
+			(self noteTakerContainer tags asOrderedCollection collect: [ :each | each tagName ]);
 		display: #asString;
 		onAccept: [ :dialog |
 				dialog presenter selectedItems do: [ :tagName |
@@ -50,5 +49,6 @@ NTSpAddTagCommand >> execute [
 										note save.
 										self application log add: note tag: tag ] ] ];
 		openModalWithParent: context window.
+	self flag: #SD. "items logic should be in the notecontainer and be named tagNames"
 	self context refreshSelectedItems
 ]
