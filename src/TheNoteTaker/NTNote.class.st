@@ -58,7 +58,9 @@ NTNote class >> newFromFileReference: aFileReference [
 { #category : 'accessing - tags' }
 NTNote >> addTag: aNTTag [
 
-	self tags detect: [ :tag | tag tagName = aNTTag tagName ] ifNone: [
+	self tags 
+		detect: [ :tag | tag tagName = aNTTag tagName ] 
+		ifNone: [
 			self tags add: aNTTag.
 			aNTTag addNote: self ]
 ]

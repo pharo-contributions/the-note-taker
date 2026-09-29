@@ -98,7 +98,8 @@ NTSpApplication >> currentFolder: aFileReference [
 NTSpApplication >> exportSettings [
 
 	(SettingBrowser currentTree nodeNamed: #tnt_note) 
-	   ifNotNil: [ :tntNode | settingPersistence storeSettingNodes: tntNode allChildren ].
+		ifNotNil: [ :tntNode |
+			settingPersistence storeSettingNodes: tntNode allChildren ]
 
 	"self preferencesFileLocation parent / 'TNTSettings.old.txt'
 		deleteIfAbsent: [ ]"
@@ -108,8 +109,8 @@ NTSpApplication >> exportSettings [
 NTSpApplication >> importSettings [
 
 	self preferencesFileLocation exists ifFalse: [ ^ self ].
-	(SettingBrowser currentTree nodeNamed: #tnt_note) ifNotNil: [
-		:tntNode |
+	(SettingBrowser currentTree nodeNamed: #tnt_note) 
+		ifNotNil: [ :tntNode |
 		settingPersistence updateSettingNodes: tntNode allChildren ]
 ]
 
@@ -117,20 +118,29 @@ NTSpApplication >> importSettings [
 NTSpApplication >> initialize [
 
 	super initialize.
-	settings := NTSettings new.
-	"Preference file is either in the preference folder and it does not exist in the app."
-	
+	settings := NTSettings default.
+	"Preference file is either in the preference folder 
+	and it does not exist in the app."
+
+	"
+	All this logic is arcane
 	settingPersistence := SystemSettingsPersistence new fileReference:
 		                      self preferencesFileLocation.
 
 	self preferencesFileLocation exists
 		ifTrue: [ self importSettings ]
 		ifFalse: [ self exportSettings ].
+	"
+	"let us hardcode something for now."
 
-	noteTakerContainer := NTContainer new importFolder: self currentFolder.
+	"settings currentFolder: (FileSystem disk referenceTo:
+			 '/Users/ducasse/Workspace/FirstCircle/Writing/Working/notes')."
+
+	noteTakerContainer := NTContainer new importFolder:
+		                      settings currentFolder.
 
 	taskContainer := TaskManager new.
-	log := NTLog newWithFolder: self currentFolder.
+	log := NTLog newWithFolder: settings currentFolder.
 	settings whenCurrentFolderChangeDo: [ :newFolder :oldFolder |
 		newFolder = oldFolder ifFalse: [ self updateApplication ] ]
 ]
@@ -214,6 +224,6 @@ NTSpApplication >> updateApplication [
 NTSpApplication >> windowClosed: aWindowPresenter [
 
 	super windowClosed: aWindowPresenter.
-
-	self windows ifEmpty: [self exportSettings]
+	Transcript show: 'Should be saving settings... see windowClosed: in NTSpApplication';cr.
+	"self windows ifEmpty: [self exportSettings]"
 ]

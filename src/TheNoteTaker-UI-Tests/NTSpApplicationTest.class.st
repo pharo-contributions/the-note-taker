@@ -13,11 +13,15 @@ NTSpApplicationTest >> testChangeCurrentFolderImportIt [
 	noteFile := memoryFS / 'test' / '2024-06-12_newNote.md'.
 	noteFile writeStreamDo: [ :stream |
 		stream nextPutAll: 'This is just a new note' ].
-	
 	self assertEmpty: noteContainer notes.
-	
-	app currentFolder: (memoryFS / 'test').
-	
-	self assert: noteContainer notesCount equals: 1.
-	self assert: (noteContainer notesContentsMatching: 'This is just a new note') size equals: 1
+
+	"now we set a new working folder to the app and it imports the notes its contains."
+	app currentFolder: memoryFS / 'test'.
+
+	self 
+		assert: noteContainer notesCount 
+		equals: 1.
+	self
+		assert: (noteContainer notesContentsMatching: 'This is just a new note') size
+		equals: 1
 ]
