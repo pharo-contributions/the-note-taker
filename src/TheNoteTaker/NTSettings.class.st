@@ -13,14 +13,10 @@ Class {
 	#superclass : 'Object',
 	#traits : 'TObservable',
 	#classTraits : 'TObservable classTrait',
-	#instVars : [
-		'#currentFolder => ObservableSlot',
-		'#gitEnable => ObservableSlot'
-	],
 	#classVars : [
-		'#CurrentFolder',
-		'#Default',
-		'#GitEnable'
+		'CurrentFolder',
+		'Default',
+		'GitEnable'
 	],
 	#category : 'TheNoteTaker-Core',
 	#package : 'TheNoteTaker',
@@ -199,7 +195,7 @@ NTSettings >> gitEnable: aBoolean [
 	GitEnable := aBoolean
 ]
 
-{ #category : 'enumerating' }
+{ #category : 'initialization' }
 NTSettings >> initialize [
 
 	"this is mandatory for the observableSlots"
