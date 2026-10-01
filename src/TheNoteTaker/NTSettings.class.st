@@ -195,14 +195,6 @@ NTSettings >> gitEnable: aBoolean [
 	GitEnable := aBoolean
 ]
 
-{ #category : 'initialization' }
-NTSettings >> initialize [
-
-	"this is mandatory for the observableSlots"
-	self class initializeSlots: self.
-	super initialize
-]
-
 { #category : 'enumerating' }
 NTSettings >> whenCurrentFolderChangeDo: aBlock [
 

@@ -20,6 +20,8 @@ Class {
 		'settings'
 	],
 	#classVars : [
+		'CurrentFolder',
+		'GitEnable',
 		'IsDeployed'
 	],
 	#category : 'TheNoteTaker-UI-Core',
@@ -43,10 +45,62 @@ NTApplication class >> beUndeployed [
 	IsDeployed := false
 ]
 
+{ #category : 'settings' }
+NTApplication class >> currentFolder [
+
+	^ CurrentFolder ifNil: [
+			  CurrentFolder := (FileLocator documents / 'noteTaker')
+				                   asFileReference ensureCreateDirectory ]
+]
+
+{ #category : 'settings' }
+NTApplication class >> currentFolder: aFolder [
+
+	CurrentFolder := aFolder 
+]
+
+{ #category : 'settings' }
+NTApplication class >> gitEnable [
+
+	^ GitEnable
+]
+
+{ #category : 'settings' }
+NTApplication class >> gitEnable: aBoolean [
+
+	GitEnable := aBoolean
+]
+
 { #category : 'private' }
 NTApplication class >> isDeployed [
 
 	^ IsDeployed ifNil: [ IsDeployed := false ]
+]
+
+{ #category : 'settings - io' }
+NTApplication class >> load [
+
+	| storedSettings |
+	storedSettings := (SystemSettingsPersistence new fileReference:
+		                   self preferencesFileLocation)
+		                  settingsNodesFromIdentifiers:
+		                  #( 'GitEnable' 'CurrentFolder' )
+]
+
+{ #category : 'settings - io' }
+NTApplication class >> loadSettings [
+
+	| reader storedSettings settingDeclarations |
+	reader := SettingsStonReader new stream:
+		          self preferencesFileLocation readStream.
+	storedSettings := reader load.
+	settingDeclarations := self settings.
+	storedSettings do: [ :aStoredSetting |
+			| aSetDec |
+			aSetDec := settingDeclarations detect: [ :each |
+				           (aStoredSetting settingNodeIdentifier splitOn: '#')
+					           last = each name ].
+			aSetDec realValue: aStoredSetting realValue ]
 ]
 
 { #category : 'private' }
@@ -60,6 +114,13 @@ NTApplication class >> menuNoteTakersOn: aBuilder [
 		action: [ NTApplication new run ];
 		help: 'The Note Taker';
 		order: 630
+]
+
+{ #category : 'settings - io' }
+NTApplication class >> notetakersettings [
+	"<settingPragmaProcessor>"
+
+	
 ]
 
 { #category : 'private' }
@@ -76,6 +137,88 @@ NTApplication class >> openIt [
 	self new run
 ]
 
+{ #category : 'settings - io' }
+NTApplication class >> settings [
+	"self settings"
+
+	| builder |
+	builder := SettingTreeBuilder new.
+	(Pragma allNamed: #systemsettings in: self class) collect: [ :each |
+		builder buildPragma: each ].
+	^ builder nodeList collect: [ :each | each item ]
+]
+
+{ #category : 'settings - io' }
+NTApplication class >> settingsNodes [
+	"Argh we have to get a tree to be able to load and save setting...."
+
+	"self settingsNodes"
+
+	| builder |
+	builder := SettingTreeBuilder new.
+	(Pragma allNamed: #systemsettings in: self class) collect: [ :each |
+		builder buildPragma: each ].
+	^ builder nodeList
+]
+
+{ #category : 'settings - io' }
+NTApplication class >> settingsOn: aBuilder [
+	"<notetakersettings>"
+
+	<systemsettings>
+	(aBuilder group: #tnt)
+		label: 'The Note Taker';
+		description: 'All TNT related settings';
+		noOrdering;
+		with: [
+				(aBuilder group: #tntNote)
+					label: 'Note section parameter';
+					with: [
+							(aBuilder setting: #gitEnable)
+								parent: #tntNote;
+								target: self;
+								order: 60;
+								label: 'enable git command';
+								description: 'When enabled, show git command button.
+When disabled, hide git command button. '.
+							(aBuilder setting: #currentFolder)
+								label: 'Project Path';
+								target: self;
+								type: #Directory;
+								ghostHelp:
+									'/Users/ducasse/Workspace/FirstCircle/Writing/Working/researchnotes';
+								description:
+									'Enter your local or remote path where notes will be committed. It can be empty' ] ]
+]
+
+{ #category : 'settings - io' }
+NTApplication class >> settingsTree [
+	"Argh we have to get a tree to be able to load and save setting...."
+
+	"self settingsTree"
+
+	| builder |
+	builder := SettingTreeBuilder new.
+	(Pragma allNamed: #systemsettings in: self class) collect: [ :each |
+		builder buildPragma: each ].
+	(SettingTree acceptableKeywords: #( #notetakersettings ))
+		settingTreeRoots.
+
+	^ builder inspect
+]
+
+{ #category : 'settings - io' }
+NTApplication class >> storeSetting [
+
+	| writer |
+	writer := SettingsStonWriter new.
+	writer stream: self preferencesFileLocation writeStream.
+	writer addSettings:
+		(StoredSettingsFactory new fromSettingNodes: self settingsNodes).
+	writer store.
+	writer stream flush
+]
+
 { #category : 'private' }
 NTApplication >> applicationTitle [ 
 
@@ -84,17 +227,19 @@ NTApplication >> applicationTitle [
 
 { #category : 'accessing' }
 NTApplication >> currentFolder [
+	"we use the class and not directly the sharedVariable because there is a lazy initialize
+	for the default location."
 
-	^ settings currentFolder
+	^ self class currentFolder
 ]
 
 { #category : 'accessing' }
 NTApplication >> currentFolder: aFileReference [
 
-	settings currentFolder: aFileReference
+	CurrentFolder := aFileReference
 ]
 
-{ #category : 'running' }
+{ #category : 'old' }
 NTApplication >> exportSettings [
 
 	(SettingBrowser currentTree nodeNamed: #tnt_note) 
@@ -106,43 +251,59 @@ NTApplication >> exportSettings [
 ]
 
 { #category : 'running' }
+NTApplication >> exportSettings2 [
+
+	"(SettingBrowser currentTree nodeNamed: #tnt_note) ifNotNil: [
+		:tntNode | self preferencesFileLocation parent / 'TNTSettings.old.txt'
+		deleteIfAbsent: [ ]
+		settingPersistence storeSettingNodes: tntNode allChildren ]"
+	
+	(FileLocator preferences / 'TheNoteTaker' / 'TNTPreferences.ston') asFileReference writeStreamDo: 
+		[ :str | 
+			| dict |
+			dict := Dictionary new. 
+			dict at: #currentFolder put: CurrentFolder fullName. 
+			STON put: dict onStreamPretty: str 
+			]
+		
+]
+
+{ #category : 'accessing' }
+NTApplication >> gitEnable [
+
+	^ GitEnable ifNil: [ GitEnable := false ]
+]
+
+{ #category : 'accessing' }
+NTApplication >> gitEnable: aBoolean [
+
+	GitEnable := aBoolean
+]
+
+{ #category : 'old' }
 NTApplication >> importSettings [
 
 	self preferencesFileLocation exists ifFalse: [ ^ self ].
-	(SettingBrowser currentTree nodeNamed: #tnt_note) 
-		ifNotNil: [ :tntNode |
+	(SettingBrowser currentTree nodeNamed: #tnt_note) ifNotNil: [
+		:tntNode |
 		settingPersistence updateSettingNodes: tntNode allChildren ]
 ]
 
-{ #category : 'initialization' }
-NTApplication >> initialize [
+{ #category : 'running' }
+NTApplication >> importSettings2 [
 
-	super initialize.
-	settings := NTSettings new.
-	"Preference file is either in the preference folder 
-	and it does not exist in the app."
-
-	"
-	All this logic is arcane
-	settingPersistence := SystemSettingsPersistence new fileReference:
-		                      self preferencesFileLocation.
-
-	self preferencesFileLocation exists
-		ifTrue: [ self importSettings ]
-		ifFalse: [ self exportSettings ].
-	"
-	"let us hardcode something for now."
-
-	"settings currentFolder: (FileSystem disk referenceTo:
-			 '/Users/ducasse/Workspace/FirstCircle/Writing/Working/notes')."
-
-	noteTakerContainer := NTContainer new importFolder:
-		                      settings currentFolder.
-
-	taskContainer := TaskManager new.
-	log := NTLog newWithFolder: settings currentFolder.
-	settings whenCurrentFolderChangeDo: [ :newFolder :oldFolder |
-		newFolder = oldFolder ifFalse: [ self updateApplication ] ]
+	self preferencesFileLocation exists ifFalse: [ ^ self ].
+	(FileLocator preferences / 'TheNoteTaker' / 'TNTPreferences.ston')
+		asFileReference readStreamDo: [ :str |
+			[
+				| dict |
+				dict := STON fromStream: str.
+				CurrentFolder := (dict at: #currentFolder) asFileReference ]
+				on: Error
+				do: [ :e | "should have a better way to communicate error"
+						Transcript
+							show: 'Corrupted Preferences file.';
+							cr ] ]
 ]
 
 { #category : 'initialization' }
@@ -189,11 +350,16 @@ NTApplication >> settings [
 
 { #category : 'running' }
 NTApplication >> start [
+	"self useBackend: #Toplo."
 
-   "self useBackend: #Toplo."
+	self importSettings2.
+	noteTakerContainer := NTContainer new importFolder:
+		                      self currentFolder.
+
+	taskContainer := TaskManager new.
+	log := NTLog newWithFolder: self currentFolder.
 	self initializeMainPresenter.
-	mainPresenter open.
-
+	mainPresenter open
 ]
 
 { #category : 'running' }
