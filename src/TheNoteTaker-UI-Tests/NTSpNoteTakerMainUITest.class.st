@@ -196,7 +196,7 @@ NTSpNoteTakerMainUITest >> testIndexSelectNoteSendItToEditor [
 { #category : 'tests' }
 NTSpNoteTakerMainUITest >> testLaunchingAppAddContainerNoteToIndexPresenter [
 
-	app start.
+	app initializeMainPresenter.
 	self assert: indexPresenter componentListCount equals: noteContainer notesCount
 ]
 

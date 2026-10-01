@@ -120,17 +120,14 @@ NTSpApplication >> initialize [
 	settings := NTSettings new.
 	"Preference file is either in the preference folder and it does not exist in the app."
 	
-	settingPersistence := SystemSettingsPersistence new fileReference:
-		                      self preferencesFileLocation.
-
-	self preferencesFileLocation exists
-		ifTrue: [ self importSettings ]
-		ifFalse: [ self exportSettings ].
-
-	noteTakerContainer := NTContainer new importFolder: self currentFolder.
-
+	settingPersistence := SystemSettingsPersistence new fileReference:  self preferencesFileLocation.
+	
+	self currentFolder:  self preferencesFileLocation.
+	noteTakerContainer := NTContainer new. 	                     
+	
 	taskContainer := TaskManager new.
 	log := NTLog newWithFolder: self currentFolder.
+	
 	settings whenCurrentFolderChangeDo: [ :newFolder :oldFolder |
 		newFolder = oldFolder ifFalse: [ self updateApplication ] ]
 ]
@@ -181,6 +178,15 @@ NTSpApplication >> settings [
 NTSpApplication >> start [
 
    "self useBackend: #Toplo."
+
+	self preferencesFileLocation exists
+		ifTrue: [ self importSettings ]
+		ifFalse: [ self exportSettings ].
+
+	self currentFolder ifNil: [ self currentFolder: self preferencesFileLocation ].
+	
+	noteTakerContainer importFolder: self currentFolder.
+
 	self initializeMainPresenter.
 	mainPresenter open.
 
