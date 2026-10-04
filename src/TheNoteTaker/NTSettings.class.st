@@ -49,6 +49,12 @@ NTSettings class >> default: aNTSettings [
 	Default := aNTSettings
 ]
 
+{ #category : 'settings' }
+NTSettings class >> defaultPreferencesFile [
+
+	^ (FileLocator preferences / 'TheNoteTaker' / 'TNTSettings.config') asFileReference
+]
+
 { #category : 'commands' }
 NTSettings class >> gitEnable [
 
@@ -68,16 +74,18 @@ NTSettings class >> load [
 	| storedSettings |
 	"I over pass all the machenery of Persistence for now because I need to understand it better"
 	
-	storedSettings := (SystemSettingsPersistence new fileReference: self preferencesFileLocation) allStoredSettings collect: [ :each | (each settingNodeIdentifier splitOn: '#') last ].
+	storedSettings := (SystemSettingsPersistence new fileReference: self defaultPreferencesFile) allStoredSettings collect: [ :each | (each settingNodeIdentifier splitOn: '#') last ].
 	
-	storedSettings := (SystemSettingsPersistence new fileReference: self preferencesFileLocation).
+	storedSettings := (SystemSettingsPersistence new fileReference: self defaultPreferencesFile).
 ]
 
 { #category : 'setting io' }
 NTSettings class >> loadSettings [
-
+	"self loadSettings"
+	
 	| reader storedSettings settingDeclarations |
-	reader := SettingsStonReader new stream: self preferencesFileLocation readStream.
+	self halt.
+	reader := SettingsStonReader new stream: self defaultPreferencesFile readStream.
 	storedSettings := reader load. 
 	settingDeclarations := self settings.
 	storedSettings do: [ :aStoredSetting |
@@ -99,12 +107,6 @@ NTSettings class >> new [
 { #category : 'settings' }
 NTSettings class >> notetakersettings [
 	"<settingPragmaProcessor>"
-]
-
-{ #category : 'settings' }
-NTSettings class >> preferencesFileLocation [
-
-	^ (FileLocator preferences / 'TheNoteTaker' / 'TNTSettings.config') asFileReference
 ]
 
 { #category : 'settings' }
@@ -185,7 +187,7 @@ NTSettings class >> storeSetting [
 
 	| writer |
 	writer := SettingsStonWriter new.
-	writer stream: self preferencesFileLocation writeStream.
+	writer stream: self preferencesFile writeStream.
 	writer addSettings: (StoredSettingsFactory new fromSettingNodes: self settingsNodes).
 	writer store.
 	writer stream flush.
@@ -196,14 +198,19 @@ NTSettings class >> storeSetting [
 NTSettings >> currentFolder [
 
 	^ currentFolder ifNil: [
-			  currentFolder := (FileLocator documents / 'noteTaker')
-				                   asFileReference ensureCreateDirectory ]
+			  currentFolder := self defaultDocumentFolder ensureDirectory ]
 ]
 
 { #category : 'enumerating' }
 NTSettings >> currentFolder: aFileReference [
 	
 	currentFolder := aFileReference
+]
+
+{ #category : 'enumerating' }
+NTSettings >> defaultDocumentFolder [
+
+	^ (FileLocator documents / 'noteTaker') asFileReference 
 ]
 
 { #category : 'enumerating' }

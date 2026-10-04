@@ -17,7 +17,8 @@ Class {
 		'settingPersistence',
 		'mainPresenter',
 		'taskContainer',
-		'settings'
+		'settings',
+		'preferenceFile'
 	],
 	#classVars : [
 		'IsDeployed'
@@ -94,23 +95,44 @@ NTSpApplication >> currentFolder: aFileReference [
 	settings currentFolder: aFileReference
 ]
 
+{ #category : 'accessing preferences' }
+NTSpApplication >> defaultPreferencesFile [
+
+	^ (FileLocator preferences / 'TheNoteTaker' / 'TNTSettings.config') asFileReference
+]
+
 { #category : 'running' }
 NTSpApplication >> exportSettings [
 
 	(SettingBrowser currentTree nodeNamed: #tnt_note) 
 	   ifNotNil: [ :tntNode | settingPersistence storeSettingNodes: tntNode allChildren ].
 
-	"self preferencesFileLocation parent / 'TNTSettings.old.txt'
-		deleteIfAbsent: [ ]"
 ]
 
 { #category : 'running' }
 NTSpApplication >> importSettings [
 
-	self preferencesFileLocation exists ifFalse: [ ^ self ].
-	(SettingBrowser currentTree nodeNamed: #tnt_note) ifNotNil: [
-		:tntNode |
-		settingPersistence updateSettingNodes: tntNode allChildren ]
+	self preferencesFile exists ifFalse: [ ^ self ].
+	(SettingBrowser currentTree nodeNamed: #tnt_note) 
+		ifNotNil: [ :tntNode |
+			settingPersistence updateSettingNodes: tntNode allChildren ]
+]
+
+{ #category : 'running' }
+NTSpApplication >> importSettings2 [
+	"self new importSettings2"
+	
+	| reader storedSettings settingDeclarations |
+	self preferencesFile exists 
+		ifFalse: [ ^ self ].
+	reader := SettingsStonReader new stream: self preferencesFile readStream.
+	storedSettings := reader load. 
+	settingDeclarations := self settings.
+	storedSettings do: [ :aStoredSetting |
+		| aSetDec |
+		aSetDec := settingDeclarations 
+			detect: [ :each | (aStoredSetting settingNodeIdentifier splitOn: '#') last = each name ].
+		aSetDec realValue: aStoredSetting realValue ].
 ]
 
 { #category : 'initialization' }
@@ -120,9 +142,9 @@ NTSpApplication >> initialize [
 	settings := NTSettings new.
 	"Preference file is either in the preference folder and it does not exist in the app."
 	
-	settingPersistence := SystemSettingsPersistence new fileReference:  self preferencesFileLocation.
+	settingPersistence := SystemSettingsPersistence new fileReference:  self preferencesFile.
 	
-	self currentFolder:  self preferencesFileLocation.
+	self currentFolder:  settings defaultDocumentFolder.
 	noteTakerContainer := NTContainer new. 	                     
 	
 	taskContainer := TaskManager new.
@@ -162,13 +184,19 @@ NTSpApplication >> noteTakerContainer [
 	^ noteTakerContainer
 ]
 
-{ #category : 'accessing' }
-NTSpApplication >> preferencesFileLocation [
+{ #category : 'accessing preferences' }
+NTSpApplication >> preferencesFile [
 
-	^ (FileLocator preferences / 'TheNoteTaker' / 'TNTSettings.config') asFileReference
+	^ preferenceFile ifNil: [ preferenceFile := self defaultPreferencesFile asFileReference ]
 ]
 
-{ #category : 'accessing' }
+{ #category : 'accessing preferences' }
+NTSpApplication >> preferencesFile: aFileReference [
+
+	preferenceFile := aFileReference
+]
+
+{ #category : 'accessing preferences' }
 NTSpApplication >> settings [
 
 	^ settings
@@ -179,11 +207,11 @@ NTSpApplication >> start [
 
    "self useBackend: #Toplo."
 
-	self preferencesFileLocation exists
-		ifTrue: [ self importSettings ]
+	self preferencesFile exists
+		ifTrue: [ self importSettings2 ]
 		ifFalse: [ self exportSettings ].
 
-	self currentFolder ifNil: [ self currentFolder: self preferencesFileLocation ].
+	self currentFolder ifNil: [ self currentFolder: self preferencesFile ].
 	
 	noteTakerContainer importFolder: self currentFolder.
 
@@ -220,6 +248,5 @@ NTSpApplication >> updateApplication [
 NTSpApplication >> windowClosed: aWindowPresenter [
 
 	super windowClosed: aWindowPresenter.
-
-	self windows ifEmpty: [self exportSettings]
+	self exportSettings
 ]
