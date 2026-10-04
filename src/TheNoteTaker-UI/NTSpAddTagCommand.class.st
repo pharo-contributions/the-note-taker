@@ -34,7 +34,7 @@ NTSpAddTagCommand >> asSpecCommand [
 NTSpAddTagCommand >> execute [
 	"execute"
 
-	(NTSpTagSelectionDialog newApplication: self application)
+	(NTTagSelectionDialog newApplication: self application)
 		allowTagCreation;
 		title: 'tag name';
 		items:

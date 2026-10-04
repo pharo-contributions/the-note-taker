@@ -9,7 +9,7 @@ This is the main Notes Taker Spec2 application class which:
 
 "
 Class {
-	#name : 'NTSpApplication',
+	#name : 'NTApplication',
 	#superclass : 'SpApplication',
 	#instVars : [
 		'noteTakerContainer',
@@ -29,29 +29,29 @@ Class {
 }
 
 { #category : 'private' }
-NTSpApplication class >> applicationTitle [
+NTApplication class >> applicationTitle [
 
 	^ 'The Note Taker'
 ]
 
 { #category : 'private' }
-NTSpApplication class >> beDeployed [
+NTApplication class >> beDeployed [
 	IsDeployed := true
 ]
 
 { #category : 'private' }
-NTSpApplication class >> beUndeployed [
+NTApplication class >> beUndeployed [
 	IsDeployed := false
 ]
 
 { #category : 'private' }
-NTSpApplication class >> isDeployed [
+NTApplication class >> isDeployed [
 
 	^ IsDeployed ifNil: [ IsDeployed := false ]
 ]
 
 { #category : 'private' }
-NTSpApplication class >> menuNoteTakersOn: aBuilder [
+NTApplication class >> menuNoteTakersOn: aBuilder [
 	<worldMenu>
 
 	(aBuilder item: #NoteTaker)
@@ -64,45 +64,45 @@ NTSpApplication class >> menuNoteTakersOn: aBuilder [
 ]
 
 { #category : 'private' }
-NTSpApplication class >> openFull [ 
+NTApplication class >> openFull [ 
 	<script>
 	
 	^ self new startFullScreen 
 ]
 
 { #category : 'private' }
-NTSpApplication class >> openIt [
+NTApplication class >> openIt [
 
 	<script>
 	self new run
 ]
 
 { #category : 'private' }
-NTSpApplication >> applicationTitle [ 
+NTApplication >> applicationTitle [ 
 
 	^ self class applicationTitle 
 ]
 
 { #category : 'accessing' }
-NTSpApplication >> currentFolder [
+NTApplication >> currentFolder [
 
 	^ settings currentFolder
 ]
 
 { #category : 'accessing' }
-NTSpApplication >> currentFolder: aFileReference [
+NTApplication >> currentFolder: aFileReference [
 
 	settings currentFolder: aFileReference
 ]
 
 { #category : 'accessing preferences' }
-NTSpApplication >> defaultPreferencesFile [
+NTApplication >> defaultPreferencesFile [
 
 	^ (FileLocator preferences / 'TheNoteTaker' / 'TNTSettings.config') asFileReference
 ]
 
 { #category : 'running' }
-NTSpApplication >> exportSettings [
+NTApplication >> exportSettings [
 
 	(SettingBrowser currentTree nodeNamed: #tnt_note) 
 	   ifNotNil: [ :tntNode | settingPersistence storeSettingNodes: tntNode allChildren ].
@@ -110,7 +110,7 @@ NTSpApplication >> exportSettings [
 ]
 
 { #category : 'running' }
-NTSpApplication >> importSettings [
+NTApplication >> importSettings [
 
 	self preferencesFile exists ifFalse: [ ^ self ].
 	(SettingBrowser currentTree nodeNamed: #tnt_note) 
@@ -119,7 +119,7 @@ NTSpApplication >> importSettings [
 ]
 
 { #category : 'running' }
-NTSpApplication >> importSettings2 [
+NTApplication >> importSettings2 [
 	"self new importSettings2"
 	
 	| reader storedSettings settingDeclarations |
@@ -136,7 +136,7 @@ NTSpApplication >> importSettings2 [
 ]
 
 { #category : 'initialization' }
-NTSpApplication >> initialize [
+NTApplication >> initialize [
 
 	super initialize.
 	settings := NTSettings new.
@@ -155,55 +155,55 @@ NTSpApplication >> initialize [
 ]
 
 { #category : 'initialization' }
-NTSpApplication >> initializeMainPresenter [
+NTApplication >> initializeMainPresenter [
 
-	mainPresenter := NTSpNoteTakerMainUI newApplication: self.
+	mainPresenter := NTNoteTakerMainUI newApplication: self.
 ]
 
 { #category : 'accessing' }
-NTSpApplication >> log [
+NTApplication >> log [
 
 	^ log
 ]
 
 { #category : 'accessing' }
-NTSpApplication >> mainPresenter [
+NTApplication >> mainPresenter [
 
 	^ mainPresenter
 ]
 
 { #category : 'accessing' }
-NTSpApplication >> mainPresenter: aNtSpNoteTakerMainUI [
+NTApplication >> mainPresenter: aNtSpNoteTakerMainUI [
 
 	mainPresenter := aNtSpNoteTakerMainUI
 ]
 
 { #category : 'accessing' }
-NTSpApplication >> noteTakerContainer [
+NTApplication >> noteTakerContainer [
 
 	^ noteTakerContainer
 ]
 
 { #category : 'accessing preferences' }
-NTSpApplication >> preferencesFile [
+NTApplication >> preferencesFile [
 
 	^ preferenceFile ifNil: [ preferenceFile := self defaultPreferencesFile asFileReference ]
 ]
 
 { #category : 'accessing preferences' }
-NTSpApplication >> preferencesFile: aFileReference [
+NTApplication >> preferencesFile: aFileReference [
 
 	preferenceFile := aFileReference
 ]
 
 { #category : 'accessing preferences' }
-NTSpApplication >> settings [
+NTApplication >> settings [
 
 	^ settings
 ]
 
 { #category : 'running' }
-NTSpApplication >> start [
+NTApplication >> start [
 
    "self useBackend: #Toplo."
 
@@ -221,7 +221,7 @@ NTSpApplication >> start [
 ]
 
 { #category : 'running' }
-NTSpApplication >> startFullScreen [
+NTApplication >> startFullScreen [
 	" Private - Open the main application window in full screen, intended for the release version "
 
 	self initializeMainPresenter.
@@ -230,13 +230,13 @@ NTSpApplication >> startFullScreen [
 ]
 
 { #category : 'accessing' }
-NTSpApplication >> taskContainer [
+NTApplication >> taskContainer [
 
 	^ taskContainer
 ]
 
 { #category : 'update' }
-NTSpApplication >> updateApplication [
+NTApplication >> updateApplication [
 
 	log logFileReference: self currentFolder.
 	noteTakerContainer replaceFolder: self currentFolder.
@@ -245,7 +245,7 @@ NTSpApplication >> updateApplication [
 ]
 
 { #category : 'windows' }
-NTSpApplication >> windowClosed: aWindowPresenter [
+NTApplication >> windowClosed: aWindowPresenter [
 
 	super windowClosed: aWindowPresenter.
 	self exportSettings

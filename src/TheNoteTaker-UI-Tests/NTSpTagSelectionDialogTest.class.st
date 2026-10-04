@@ -13,7 +13,7 @@ NTSpTagSelectionDialogTest >> setUp [
 
 	super setUp.
 
-	presenter := NTSpTagSelectionDialog newApplication: app.
+	presenter := NTTagSelectionDialog newApplication: app.
 
 	ressources addingNotesAndTagsTo: noteContainer
 ]
