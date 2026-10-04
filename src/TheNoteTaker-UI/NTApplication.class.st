@@ -92,13 +92,16 @@ NTApplication >> currentFolder [
 { #category : 'accessing' }
 NTApplication >> currentFolder: aFileReference [
 
-	settings currentFolder: aFileReference
+	aFileReference ensureCreateDirectory.
+	settings currentFolder: aFileReference 
 ]
 
 { #category : 'accessing preferences' }
 NTApplication >> defaultPreferencesFile [
 
 	^ (FileLocator preferences / 'TheNoteTaker' / 'TNTSettings.config') asFileReference
+	
+
 ]
 
 { #category : 'running' }
@@ -121,18 +124,17 @@ NTApplication >> importSettings [
 { #category : 'running' }
 NTApplication >> importSettings2 [
 	"self new importSettings2"
-	
+
 	| reader storedSettings settingDeclarations |
-	self preferencesFile exists 
-		ifFalse: [ ^ self ].
+	self preferencesFile exists ifFalse: [ ^ self ].
 	reader := SettingsStonReader new stream: self preferencesFile readStream.
-	storedSettings := reader load. 
-	settingDeclarations := self settings.
+	storedSettings := reader load.
+	settingDeclarations := self settings class settings.
 	storedSettings do: [ :aStoredSetting |
-		| aSetDec |
-		aSetDec := settingDeclarations 
-			detect: [ :each | (aStoredSetting settingNodeIdentifier splitOn: '#') last = each name ].
-		aSetDec realValue: aStoredSetting realValue ].
+			| aSetDec |
+			aSetDec := settingDeclarations detect: [ :each | (aStoredSetting settingNodeIdentifier splitOn: '#') last = each name ] ifNone: [ nil ].
+			aSetDec ifNotNil: [  
+				aSetDec realValue: aStoredSetting realValue ]]
 ]
 
 { #category : 'initialization' }
@@ -144,7 +146,9 @@ NTApplication >> initialize [
 	
 	settingPersistence := SystemSettingsPersistence new fileReference:  self preferencesFile.
 	
+	settings defaultDocumentFolder ensureCreateDirectory.
 	self currentFolder:  settings defaultDocumentFolder.
+	
 	noteTakerContainer := NTContainer new. 	                     
 	
 	taskContainer := TaskManager new.

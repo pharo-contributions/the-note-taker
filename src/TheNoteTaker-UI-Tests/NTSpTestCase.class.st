@@ -22,10 +22,10 @@ NTSpTestCase >> setUp [
 
 	super setUp.
 	memoryFS := FileSystem memory.
-
+	
 	app := NTApplication new.
 	app currentFolder: memoryFS workingDirectory.
-	
+
 	noteContainer := app noteTakerContainer.
 	ressources := NTTestResource new.
 	ressources useFolder: memoryFS

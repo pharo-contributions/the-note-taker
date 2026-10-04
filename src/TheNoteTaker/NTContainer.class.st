@@ -68,10 +68,11 @@ NTContainer >> ensureTagNamed: aString [
 { #category : 'loading - note' }
 NTContainer >> importFolder: aFolder [
 
+	aFolder ensureCreateDirectory.
 	aFolder allFiles
 		select: [ :fileRef |
 			{ 'txt'. 'md' .'text' } includes: fileRef extension asLowercase ]
-		thenDo: [ :fileRef | "this test should be grouped somewhere else!"
+		thenDo: [ :fileRef | 
 			self addNoteFromFileReference: fileRef ].
 ]
 

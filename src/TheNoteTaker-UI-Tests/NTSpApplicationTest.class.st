@@ -9,24 +9,42 @@ Class {
 NTSpApplicationTest >> contentsOfConfigFile [
 
 	^ '[
-	StoredSetting {
-		#settingNodeIdentifier : ''#tnt_note#GithubPathString'',
-		#realValue : ''''
-	},
-	StoredSetting {
-		#settingNodeIdentifier : ''#tnt_note#gitEnable'',
-		#realValue : false
-	},
 	AbsolutePathStoredSetting {
 		#settingNodeIdentifier : ''#tnt_note#currentFolder'',
 		#realValue : [
 			''Users'',
 			''ducasse'',
-			''Library'',
-			''Preferences'',
-			''TheNoteTaker'',
-			''TNTSettings.config''
+			''Documents'',
+			''TheNoteTaker''
 		]
+	},
+	StoredSetting {
+		#settingNodeIdentifier : ''#tnt_note#gitEnable'',
+		#realValue : false
+	},
+	StoredSetting {
+		#settingNodeIdentifier : ''#tnt_note#AutoSave'',
+		#realValue : true
+	}
+]'
+]
+
+{ #category : 'tests' }
+NTSpApplicationTest >> contentsOfConfigFile2 [
+
+	^ '[
+	AbsolutePathStoredSetting {
+		#settingNodeIdentifier : ''#tnt_note#currentFolder'',
+		#realValue : [
+			''Users'',
+			''ducasse'',
+			''Documents'',
+			''NewTheNoteTaker''
+		]
+	},
+	StoredSetting {
+		#settingNodeIdentifier : ''#tnt_note#gitEnable'',
+		#realValue : false
 	},
 	StoredSetting {
 		#settingNodeIdentifier : ''#tnt_note#AutoSave'',
@@ -58,12 +76,30 @@ NTSpApplicationTest >> testPreferenceFile [
 	| preferenceFile |
 	(memoryFS / 'test') ensureCreateDirectory.
 	preferenceFile := memoryFS / 'test' / 'settings.config'.
-	preferenceFile writeStreamDo: [ :stream |
-		stream nextPutAll: self contentsOfConfigFile ].
-	app preferencesFile: preferenceFile.
-	app importSettings.
+	preferenceFile writeStreamDo: [ :stream | stream nextPutAll: self contentsOfConfigFile ].
+	(memoryFS / 'ducasse') ensureCreateDirectory.
+	(memoryFS / 'ducasse' / 'Documents') ensureCreateDirectory.
+	(memoryFS / 'ducasse' / 'Documents' /'TheNoteTaker') ensureCreateDirectory.
 	
-	self 
-		assert: app currentFolder fullName 
-		equals: '/Users/ducasse/Documents/noteTaker' 
+	app preferencesFile: preferenceFile.
+	app importSettings2.
+
+	self assert: app currentFolder fullName equals: '/Users/ducasse/Documents/TheNoteTaker'
+]
+
+{ #category : 'tests' }
+NTSpApplicationTest >> testPreferenceFile2 [
+
+	| preferenceFile |
+	(memoryFS / 'test') ensureCreateDirectory.
+	preferenceFile := memoryFS / 'test' / 'settings.config'.
+	preferenceFile writeStreamDo: [ :stream | stream nextPutAll: self contentsOfConfigFile2 ].
+	(memoryFS / 'ducasse') ensureCreateDirectory.
+	(memoryFS / 'ducasse' / 'Documents') ensureCreateDirectory.
+	(memoryFS / 'ducasse' / 'Documents' / 'TheNoteTaker') ensureCreateDirectory.
+
+	app preferencesFile: preferenceFile.
+	app importSettings2.
+
+	self assert: app currentFolder fullName equals: '/Users/ducasse/Documents/NewTheNoteTaker'
 ]

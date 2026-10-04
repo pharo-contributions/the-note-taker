@@ -140,10 +140,9 @@ NTSettings class >> settingsNodes [
 
 { #category : 'settings' }
 NTSettings class >> settingsOn: aBuilder [
+	"<notetakersettings>"
 
 	<systemsettings>
-	"<notetakersettings>"
-	
 	(aBuilder group: #tnt)
 		label: 'The Note Taker';
 		description: 'All TNT related settings';
@@ -163,10 +162,8 @@ When disabled, hide git command button. '.
 								label: 'Project Path';
 								target: self;
 								type: #Directory;
-								ghostHelp:
-									'/Users/ducasse/Workspace/FirstCircle/Writing/Working/researchnotes';
-								description:
-									'Enter your local or remote path where notes will be committed. It can be empty' ] ]
+								ghostHelp: '/Users/ducasse/Workspace/FirstCircle/Writing/Working/researchnotes/';
+								description: 'Enter your local or remote path where notes will be committed. It can be empty' ] ]
 ]
 
 { #category : 'settings xp' }
