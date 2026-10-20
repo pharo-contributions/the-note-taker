@@ -56,6 +56,20 @@ NTContainer >> addTagNamed: aString [
 	^ tag 
 ]
 
+{ #category : 'loading - note' }
+NTContainer >> dateAt: aKey in: aMetaData ifAbsent: aBlock [
+	"Answer the <DateAndTime> stored under aKey in aMetaData, or the value of aBlock when missing"
+
+	| value |
+	self flag: #SD.
+	"why can we have both a string or a date and time and all this logic 
+	looks suspicious"
+	value := aMetaData at: aKey ifAbsent: [ ^ aBlock value asDateAndTime ].
+	^ value isString
+		  ifTrue: [ DateAndTime fromString: value ]
+		  ifFalse: [ value asDateAndTime ]
+]
+
 { #category : 'accessing - tags' }
 NTContainer >> ensureTagNamed: aString [
 	"Add a tag if it not already present"
