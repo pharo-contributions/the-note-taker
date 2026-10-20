@@ -134,6 +134,19 @@ NTContainerTest >> testImportFolder [
 ]
 
 { #category : 'tests - tags' }
+NTContainerTest >> testImportFolderIgnoresTrash [
+
+	| folderReference |
+	folderReference := memoryFS / 'folder' / 'note'.
+	(folderReference / 'aFileReference1.md') ensureCreateFile.
+	(folderReference / '.trash' / 'aTrashedNote.md') ensureCreateFile.
+
+	noteTakerContainer importFolder: folderReference.
+
+	self assert: noteTakerContainer notesCount equals: 1
+]
+
+{ #category : 'tests - tags' }
 NTContainerTest >> testImportFolderTwice [
 
 	| folderReference fileReference1 fileReference2 fileReference3 |
@@ -221,8 +234,8 @@ NTContainerTest >> testLoadNoteWithAllMetadata [
 		        yourself.
 	metadata := NTNoteTest new
 		            generateMetaDataWithCreationDate:
-		            '2025-01-01' asDateAndTime
-		            modificationDate: '2024-01-01' asDateAndTime
+		            (DateAndTime fromString: '2025-01-01')
+		            modificationDate: (DateAndTime fromString: '2024-01-01')
 		            tags: tags.
 	noteFile writeStreamDo: [ :stream |
 			stream
@@ -237,8 +250,8 @@ NTContainerTest >> testLoadNoteWithAllMetadata [
 	self assert: note contents equals: 'This is just a new note'.
 	self assert: note fileName equals: '2024-06-12_newNote.md'.
 	self assert: note title equals: 'This is just a new note'.
-	self assert: note creationDate equals: '2025-01-01' asDateAndTime.
-	self assert: note modificationDate equals: '2024-01-01' asDateAndTime.
+	self assert: note creationDate equals: (DateAndTime fromString: '2025-01-01').
+	self assert: note modificationDate equals: (DateAndTime fromString: '2024-01-01').
 	self assert: (note tags includesAll: tags)
 ]
 
@@ -265,8 +278,8 @@ NTContainerTest >> testLoadNoteWithMetadataWithMissingTags [
 	noteFile := memoryFS / '2024-06-12_newNote.md'.
 	metadata := NTNoteTest new
 		            generateMetaDataWithCreationDate:
-		            '2025-01-01' asDateAndTime
-		            modificationDate: '2024-01-01' asDateAndTime.
+		            (DateAndTime fromString: '2025-01-01')
+		            modificationDate: (DateAndTime fromString: '2024-01-01').
 	noteFile writeStreamDo: [ :stream |
 			stream
 				nextPutAll: metadata;
@@ -280,8 +293,8 @@ NTContainerTest >> testLoadNoteWithMetadataWithMissingTags [
 	self assert: note contents equals: 'This is just a new note'.
 	self assert: note fileName equals: '2024-06-12_newNote.md'.
 	self assert: note title equals: 'This is just a new note'.
-	self assert: note creationDate equals: '2025-01-01' asDateAndTime.
-	self assert: note modificationDate equals: '2024-01-01' asDateAndTime
+	self assert: note creationDate equals: (DateAndTime fromString: '2025-01-01').
+	self assert: note modificationDate equals: (DateAndTime fromString: '2024-01-01')
 ]
 
 { #category : 'tests - note' }
@@ -338,6 +351,29 @@ NTContainerTest >> testRemoveNotes [
 			 add: ressources note2;
 			 yourself).
 	self assert: noteTakerContainer notesCount equals: 1
+]
+
+{ #category : 'tests - tags' }
+NTContainerTest >> testRemoveTagFromNoteRemovesUnusedTag [
+
+	| note other shared single |
+	shared := noteTakerContainer ensureTagNamed: 'shared'.
+	single := noteTakerContainer ensureTagNamed: 'single'.
+	note := NTNote content: 'note'.
+	other := NTNote content: 'other'.
+	shared
+		addNote: note;
+		addNote: other.
+	single addNote: note.
+	noteTakerContainer
+		addNote: note;
+		addNote: other.
+
+	noteTakerContainer removeTag: single fromNote: note.
+	noteTakerContainer removeTag: shared fromNote: note.
+
+	self assert: (noteTakerContainer tags collect: [ :t | t tagName ]) asArray equals: #( 'shared' ).
+	self assertEmpty: note tags
 ]
 
 { #category : 'tests - note' }
@@ -440,4 +476,66 @@ NTContainerTest >> testTagsNameMatching [
 	self
 		assert: (noteTakerContainer tagsNameMatching: '3') size
 		equals: 1
+]
+
+{ #category : 'tests - note' }
+NTContainerTest >> testTrashNoteMovesFileToTrashFolder [
+
+	| note trashedFile |
+	note := NTNote content: 'Trash me'.
+	note folderReference: memoryFS.
+	note save.
+	noteTakerContainer addNote: note.
+
+	noteTakerContainer trashNote: note.
+
+	trashedFile := memoryFS / '.trash' / note fileName.
+	self assert: noteTakerContainer notesCount equals: 0.
+	self deny: (memoryFS / note fileName) exists.
+	self assert: trashedFile exists.
+	self assert: (trashedFile contents endsWith: 'Trash me')
+]
+
+{ #category : 'tests - tags' }
+NTContainerTest >> testTrashNoteRemovesUnusedTags [
+
+	| note other shared single |
+	shared := noteTakerContainer ensureTagNamed: 'shared'.
+	single := noteTakerContainer ensureTagNamed: 'single'.
+	note := NTNote content: 'note'.
+	other := NTNote content: 'other'.
+	note folderReference: memoryFS.
+	other folderReference: memoryFS.
+	shared
+		addNote: note;
+		addNote: other.
+	single addNote: note.
+	note save.
+	noteTakerContainer
+		addNote: note;
+		addNote: other.
+
+	noteTakerContainer trashNote: note.
+
+	self assert: (noteTakerContainer tags collect: [ :t | t tagName ]) asArray equals: #( 'shared' ).
+	self deny: (shared hasNote: note)
+]
+
+{ #category : 'tests - note' }
+NTContainerTest >> testTrashNoteWithTakenNameInTrashAddsSuffix [
+
+	| note1 note2 |
+	note1 := NTNote content: 'Same'.
+	note1 folderReference: memoryFS.
+	note1 save.
+	noteTakerContainer addNote: note1.
+	noteTakerContainer trashNote: note1.
+
+	note2 := NTNote content: 'Same'.
+	note2 folderReference: memoryFS.
+	note2 save.
+	noteTakerContainer addNote: note2.
+	noteTakerContainer trashNote: note2.
+
+	self assert: (memoryFS / '.trash') children size equals: 2
 ]

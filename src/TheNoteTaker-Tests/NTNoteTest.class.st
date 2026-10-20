@@ -91,8 +91,8 @@ NTNoteTest >> testGenerateMetaDataElementsWithTags [
 
 	| creationDate modificationDate |
 	note := NTNote content: 'Ceci est un test'.
-	creationDate := '2025-01-01' asDateAndTime.
-	modificationDate := '2025-01-02' asDateAndTime.
+	creationDate := (DateAndTime fromString: '2025-01-01').
+	modificationDate := (DateAndTime fromString: '2025-01-02').
 	note creationDate: creationDate.
 	note modificationDate: modificationDate.
 
@@ -112,8 +112,8 @@ NTNoteTest >> testGenerateMetaDataElementsWithoutTags [
 
 	| creationDate modificationDate |
 	note contents: 'Ceci est un test'.
-	creationDate := '2025-01-01' asDateAndTime.
-	modificationDate := '2025-01-02' asDateAndTime.
+	creationDate := (DateAndTime fromString: '2025-01-01').
+	modificationDate := (DateAndTime fromString: '2025-01-02').
 	note creationDate: creationDate.
 	note modificationDate: modificationDate.
 
@@ -125,7 +125,7 @@ NTNoteTest >> testGenerateMetaDataElementsWithoutTags [
 { #category : 'tests' }
 NTNoteTest >> testGenerateNewFileName [
 
-	note creationDate: '2024-01-01' asDateAndTime.
+	note creationDate: (DateAndTime fromString: '2024-01-01').
 
 	note contents: 'Test'.
 	self assert: note fileName equals: '2024-01-01_Test.md'.
@@ -289,6 +289,31 @@ NTNoteTest >> testSaveNoteWithLessContents [
 	finalContents := metadata , String crlf , String crlf , 'Ceci'.
 
 	self assert: note fileReference contents equals: finalContents
+]
+
+{ #category : 'tests - saving' }
+NTNoteTest >> testSaveNoteWithTakenFileNameAddsSuffix [
+
+	| other third |
+	note creationDate: (DateAndTime fromString: '2024-01-01').
+	note contents: 'Test'.
+	note save.
+
+	other := NTNote new folderReference: memoryFS.
+	other creationDate: (DateAndTime fromString: '2024-01-01').
+	other contents: 'Test'.
+	other save.
+
+	third := NTNote new folderReference: memoryFS.
+	third creationDate: (DateAndTime fromString: '2024-01-01').
+	third contents: 'Test'.
+	third save.
+
+	self assert: note fileName equals: '2024-01-01_Test.md'.
+	self assert: other fileName equals: '2024-01-01_Test_2.md'.
+	self assert: third fileName equals: '2024-01-01_Test_3.md'.
+	self assert: (note fileReference contents endsWith: 'Test').
+	self assert: (memoryFS / '2024-01-01_Test_2.md') exists
 ]
 
 { #category : 'tests' }

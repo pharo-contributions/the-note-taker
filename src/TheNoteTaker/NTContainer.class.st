@@ -71,9 +71,9 @@ NTContainer >> importFolder: aFolder [
 	aFolder ensureCreateDirectory.
 	aFolder allFiles
 		select: [ :fileRef |
-			{ 'txt'. 'md' .'text' } includes: fileRef extension asLowercase ]
-		thenDo: [ :fileRef | 
-			self addNoteFromFileReference: fileRef ].
+				({ 'txt'. 'md'. 'text' } includes: fileRef extension asLowercase) and: [
+					(fileRef path segments includes: self trashFolderName) not ] ]
+		thenDo: [ :fileRef | self addNoteFromFileReference: fileRef ]
 ]
 
 { #category : 'initialization' }
@@ -100,17 +100,11 @@ NTContainer >> loadMetaData: aString for: aNTNote [
 
 	| metaData tagsString |
 	metaData := (MicrodownParser parse: aString) metaDataElement.
-	aNTNote creationDate: (metaData
-			 at: 'creationDate'
-			 ifAbsent: aNTNote fileReference creationTime) asDateAndTime.
-	aNTNote modificationDate: (metaData
-			 at: 'lastModificationDate'
-			 ifAbsent: aNTNote fileReference modificationTime) asDateAndTime.
+	aNTNote creationDate: (self dateAt: 'creationDate' in: metaData ifAbsent: [ aNTNote fileReference creationTime ]).
+	aNTNote modificationDate: (self dateAt: 'lastModificationDate' in: metaData ifAbsent: [ aNTNote fileReference modificationTime ]).
 	tagsString := metaData at: 'tags' ifAbsent: [ ^ self ].
 
-	tagsString ifNotNil: [
-			(tagsString substrings: ',') do: [ :each |
-				(self ensureTagNamed: each) addNote: aNTNote ] ]
+	tagsString ifNotNil: [ (tagsString substrings: ',') do: [ :each | (self ensureTagNamed: each) addNote: aNTNote ] ]
 ]
 
 { #category : 'accessing - notes' }
@@ -167,6 +161,14 @@ NTContainer >> removeNotes: aCollectionOfNTNoteObject [
 	self notes removeAll: aCollectionOfNTNoteObject
 ]
 
+{ #category : 'accessing - tags' }
+NTContainer >> removeTag: aNTTag fromNote: aNTNote [
+	"Remove aNTTag from aNTNote, and from the receiver when no note uses it anymore"
+
+	aNTNote removeTag: aNTTag.
+	aNTTag notes ifEmpty: [ self tags remove: aNTTag ifAbsent: [ ] ]
+]
+
 { #category : 'loading - note' }
 NTContainer >> replaceFolder: aFolder [
 
@@ -189,4 +191,24 @@ NTContainer >> tagsNameMatching: aString [
 	| pattern |
 	pattern := '*' , aString , '*'.
 	^ self tags select: [ :n | pattern match: n tagName ]
+]
+
+{ #category : 'removing - notes' }
+NTContainer >> trashFolderName [
+	"Answer the name of the folder, next to a note, in which the note is moved when trashed"
+
+	^ '.trash'
+]
+
+{ #category : 'removing - notes' }
+NTContainer >> trashNote: aNTNote [
+	"Move the file of aNTNote in the trash folder next to it and remove the note from the receiver"
+
+	| trashFolder |
+	aNTNote exists ifTrue: [
+			trashFolder := aNTNote folderReference / self trashFolderName.
+			trashFolder ensureCreateDirectory.
+			aNTNote fileReference moveTo: trashFolder / (NTISOFileNamer new uniqueName: aNTNote fileName in: trashFolder) ].
+	aNTNote tags copy do: [ :tag | self removeTag: tag fromNote: aNTNote ].
+	self removeNotes: { aNTNote }
 ]

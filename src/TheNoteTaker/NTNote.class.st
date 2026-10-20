@@ -99,9 +99,9 @@ NTNote >> exists [
 NTNote >> fileName [
 
 	fileName ifNil: [
-			self fileName: (NTISOFileNamer new
-					 date: creationDate asDate;
-					 newNameBasedOn: self title) ].
+			| namer |
+			namer := NTISOFileNamer new date: creationDate asDate.
+			self fileName: (namer uniqueName: (namer newNameBasedOn: self title) in: self folderReference) ].
 	^ fileName
 ]
 

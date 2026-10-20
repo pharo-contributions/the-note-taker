@@ -86,3 +86,20 @@ NTISOFileNamer >> separatorString [
 
 	^ '_'
 ]
+
+{ #category : 'accessing' }
+NTISOFileNamer >> uniqueName: aString in: aFolder [
+	"Answer aString, or aString with a numeric suffix (_2, _3...) when a file with this name already exists in aFolder"
+
+	| base extension candidate index |
+	(aFolder / aString) exists ifFalse: [ ^ aString ].
+	base := aString asFileReference basenameWithoutExtension.
+	extension := aString asFileReference extension.
+	index := 1.
+	[
+		index := index + 1.
+		candidate := base , self separatorString , index printString.
+		extension ifNotEmpty: [ candidate := candidate , '.' , extension ].
+		(aFolder / candidate) exists ] whileTrue.
+	^ candidate
+]
