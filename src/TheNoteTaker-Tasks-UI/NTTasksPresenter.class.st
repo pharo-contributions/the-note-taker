@@ -287,7 +287,7 @@ NTTasksPresenter >> requestNewTask [
 
 	(self application newRequest
 		 title: 'New task';
-		 label: 'Title of the new task';
+		 message: 'Title of the new task';
 		 openModal) ifNotNil: [ :title | self newTaskTitled: title ]
 ]
 
