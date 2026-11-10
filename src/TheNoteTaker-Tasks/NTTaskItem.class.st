@@ -148,6 +148,15 @@ NTTaskItem >> description: aString [
 	description := aString
 ]
 
+{ #category : 'printing' }
+NTTaskItem >> displayAnnotations [
+	"Answer my annotations as written in the file, without @done (shown by a checkbox) and @created (bookkeeping)."
+
+	^ String space join: (annotations
+			   reject: [ :each | each isKey and: [ #( 'done' 'created' ) includes: each name ] ]
+			   thenCollect: [ :each | each fileSyntax ])
+]
+
 { #category : 'accessing - known keys' }
 NTTaskItem >> doneDate [
 

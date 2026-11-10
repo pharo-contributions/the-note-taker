@@ -51,7 +51,21 @@ NTTaskUITestCase >> setUp [
 
 	super setUp.
 	repository := NTTaskRepository on: FileSystem memory root / 'todos'.
-	application := NTTasksApplication new
+	application := NTTasksApplication new.
+	application today: (self nov: 10)
+]
+
+{ #category : 'helpers' }
+NTTaskUITestCase >> task: aTitle section: aSection lines: itemLines [
+	"Create and save a task whose items are read from checkbox lines."
+
+	| task reader |
+	reader := NTTaskReader new.
+	task := repository newTaskTitled: aTitle at: (self timeOn: 4).
+	task section: aSection.
+	itemLines do: [ :each | task addItem: (reader readItemLine: each) ].
+	repository save: task at: (self timeOn: 4).
+	^ task
 ]
 
 { #category : 'running' }

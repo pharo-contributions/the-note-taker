@@ -5,7 +5,8 @@ I manage the tasks stored in one folder: one task per `.md` file.
 
 - I load every task file of my folder, save a task to its file (updating its status and modification date first), and create and delete task files.
 - I name new task files with an ISO date prefix and the title (`2026-11-04_pharo14_release.md`); files never move afterwards.
-- I answer the sections of the open tasks (alphabetically, then 'Unsorted') and the closed tasks (finished or abandoned).
+- I answer the sections of the open tasks (alphabetically, then 'Unsorted'), the open tasks in file name order, and the closed tasks (finished or abandoned).
+- I read and save the views of the folder in `views.md`, falling back to the default views when it is missing or cannot be read.
 
 ## Collaborators: 
 
@@ -18,7 +19,8 @@ I manage the tasks stored in one folder: one task per `.md` file.
 
 - `NTTaskRepository on: aFolderReference`
 - `tasks`, `reload`, `save: aTask`, `newTaskTitled:`, `newTaskTitled:on:`, `remove: aTask`
-- `sectionNames`, `openTasksInSection: aString`, `closedTasks`, `allTags`
+- `sectionNames`, `openTasks`, `openTasksInSection: aString`, `closedTasks`, `allTags`
+- `views` (an `NTItemViewSet`), `saveViews`, `viewsError`
 
 ```
 | repository |
@@ -34,10 +36,11 @@ See `NTTaskRepository class >> #exampleInMemory`.
 - `folder`: a FileReference.
 - `tasks`: an OrderedCollection of `NTTask`, loaded lazily.
 - `noteDirectory`: an `NTNoteDirectory`.
+- `views`: the `NTItemViewSet`, loaded lazily; `viewsError`: the `NTViewsFormatError` of views.md, or nil.
 
 ### Implementation Points
 
-- `views.md` is reserved for view configurations (step 3) and is not read as a task.
+- `views.md` holds the view configurations and is not read as a task. `reload` reads it again on next use.
 - Files that cannot be parsed are skipped by `reload`; `unreadableFiles` lists them with their error.
 "
 Class {
@@ -47,11 +50,12 @@ Class {
 		'folder',
 		'tasks',
 		'noteDirectory',
-		'unreadableFiles'
+		'unreadableFiles',
+		'views',
+		'viewsError'
 	],
-	#category : 'TheNoteTaker-Tasks-Storage',
-	#package : 'TheNoteTaker-Tasks',
-	#tag : 'Storage'
+	#category : 'TheNoteTaker-Tasks',
+	#package : 'TheNoteTaker-Tasks'
 }
 
 { #category : 'examples' }
@@ -147,6 +151,34 @@ NTTaskRepository >> isFileTaken: aFileReference [
 	^ aFileReference exists or: [ self tasks anySatisfy: [ :each | each fileReference = aFileReference ] ]
 ]
 
+{ #category : 'loading' }
+NTTaskRepository >> loadTasks [
+	"Read every task file of the folder, in file name order. Files that cannot be read are skipped and listed in unreadableFiles."
+
+	tasks := OrderedCollection new.
+	unreadableFiles := OrderedCollection new.
+	folder exists ifFalse: [ ^ self ].
+	(self taskFiles sorted: [ :a :b | a basename <= b basename ]) do: [ :file |
+			[
+				tasks add: ((NTTaskReader read: file contents)
+						 fileReference: file;
+						 yourself) ]
+				on: NTTaskParseError
+				do: [ :error | unreadableFiles add: file -> error ] ]
+]
+
+{ #category : 'views' }
+NTTaskRepository >> loadViews [
+
+	viewsError := nil.
+	self viewsFile exists ifFalse: [ ^ NTItemViewSet defaults ].
+	^ [ NTItemViewSet fromText: self viewsFile contents ]
+		  on: NTViewsFormatError
+		  do: [ :error |
+				  viewsError := error.
+				  NTItemViewSet defaults ]
+]
+
 { #category : 'private' }
 NTTaskRepository >> newFileForTitle: aString on: aDate [
 	"Answer an unused file named yyyy-mm-dd_words_of_the_title.md, adding _2, _3... when the name is taken."
@@ -197,6 +229,13 @@ NTTaskRepository >> noteDirectory: aNoteDirectory [
 ]
 
 { #category : 'queries' }
+NTTaskRepository >> openTasks [
+	"Answer the open tasks in file name order, the order of the folder."
+
+	^ (self tasks select: [ :each | each isOpen ]) sorted: [ :a :b | a fileReference basename <= b fileReference basename ]
+]
+
+{ #category : 'queries' }
 NTTaskRepository >> openTasksInSection: aSectionName [
 
 	^ self tasks select: [ :each | each isOpen and: [ each sectionName = aSectionName ] ]
@@ -204,18 +243,10 @@ NTTaskRepository >> openTasksInSection: aSectionName [
 
 { #category : 'loading' }
 NTTaskRepository >> reload [
-	"Read every task file of the folder again, in file name order. Files that cannot be read are skipped and listed in unreadableFiles."
+	"Read every task file of the folder again, and views.md on next use."
 
-	tasks := OrderedCollection new.
-	unreadableFiles := OrderedCollection new.
-	folder exists ifFalse: [ ^ self ].
-	(self taskFiles sorted: [ :a :b | a basename <= b basename ]) do: [ :file |
-			[
-				tasks add: ((NTTaskReader read: file contents)
-						 fileReference: file;
-						 yourself) ]
-				on: NTTaskParseError
-				do: [ :error | unreadableFiles add: file -> error ] ]
+	views := nil.
+	self loadTasks
 ]
 
 { #category : 'tasks' }
@@ -248,6 +279,16 @@ NTTaskRepository >> save: aTask at: aDateAndTime [
 	file writeStreamDo: [ :stream | stream nextPutAll: (NTTaskWriter write: aTask) ]
 ]
 
+{ #category : 'views' }
+NTTaskRepository >> saveViews [
+	"Write the views in views.md."
+
+	folder ensureCreateDirectory.
+	self viewsFile ensureDelete.
+	self viewsFile writeStreamDo: [ :stream | stream nextPutAll: self views text ].
+	viewsError := nil
+]
+
 { #category : 'queries' }
 NTTaskRepository >> sectionNames [
 	"Answer the sections of the open tasks, alphabetically, with 'Unsorted' last."
@@ -270,7 +311,7 @@ NTTaskRepository >> taskFiles [
 { #category : 'accessing' }
 NTTaskRepository >> tasks [
 
-	tasks ifNil: [ self reload ].
+	tasks ifNil: [ self loadTasks ].
 	^ tasks
 ]
 
@@ -280,4 +321,24 @@ NTTaskRepository >> unreadableFiles [
 
 	self tasks.
 	^ unreadableFiles
+]
+
+{ #category : 'views' }
+NTTaskRepository >> views [
+	"Answer the views of the folder, read from views.md, or the default views when there is no views.md or it cannot be read (see viewsError)."
+
+	^ views ifNil: [ views := self loadViews ]
+]
+
+{ #category : 'views' }
+NTTaskRepository >> viewsError [
+	"Answer the NTViewsFormatError of views.md when it could not be read, or nil."
+
+	^ viewsError
+]
+
+{ #category : 'views' }
+NTTaskRepository >> viewsFile [
+
+	^ folder / self class viewsFileName
 ]

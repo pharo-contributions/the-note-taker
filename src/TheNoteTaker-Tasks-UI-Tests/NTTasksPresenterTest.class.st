@@ -8,6 +8,12 @@ Class {
 	#package : 'TheNoteTaker-Tasks-UI-Tests'
 }
 
+{ #category : 'tests - views' }
+NTTasksPresenterTest >> presenter [
+
+	^ NTTasksPresenter newApplication: application model: repository
+]
+
 { #category : 'tests' }
 NTTasksPresenterTest >> testChildrenOfClosedSection [
 
@@ -41,6 +47,20 @@ NTTasksPresenterTest >> testDeleteSelectedTask [
 	self assert: presenter editor model isNil
 ]
 
+{ #category : 'tests - views' }
+NTTasksPresenterTest >> testDeleteSelectedView [
+
+	| presenter today |
+	presenter := self presenter.
+	today := repository views viewNamed: 'Today'.
+	presenter selectView: today.
+	presenter deleteSelectedView.
+	self deny: (presenter viewsList items includes: today).
+	self assert: (repository views viewNamed: 'Today') isNil.
+	self deny: ((repository folder / 'views.md') contents includesSubstring: '"Today"').
+	self assert: presenter detailPresenter equals: presenter editor
+]
+
 { #category : 'tests' }
 NTTasksPresenterTest >> testDisplayOfClosedTasks [
 
@@ -62,6 +82,21 @@ NTTasksPresenterTest >> testDisplayOfSectionAndOpenTask [
 	presenter := NTTasksPresenter newApplication: application model: repository.
 	self assert: (presenter displayStringOf: 'Pharo') equals: 'Pharo'.
 	self assert: (presenter displayStringOf: ci) equals: 'Fix CI  1/2'
+]
+
+{ #category : 'tests - views' }
+NTTasksPresenterTest >> testEditViewFromForm [
+
+	| presenter form today |
+	presenter := self presenter.
+	today := repository views viewNamed: 'Today'.
+	presenter selectView: today.
+	form := presenter viewFormOn: today.
+	form nameInput text: 'Now'.
+	self assert: form accept.
+	self assert: (presenter displayStringOfView: today) equals: 'Now  0'.
+	self assert: presenter viewPresenter titleLabel label equals: 'Now  (0)'.
+	self assert: ((repository folder / 'views.md') contents includesSubstring: '"Now"')
 ]
 
 { #category : 'tests' }
@@ -98,6 +133,20 @@ NTTasksPresenterTest >> testNewTaskWithEmptyTitleDoesNothing [
 	self assert: repository tasks isEmpty
 ]
 
+{ #category : 'tests - views' }
+NTTasksPresenterTest >> testNewViewFromForm [
+
+	| presenter form |
+	presenter := self presenter.
+	form := presenter viewFormOn: nil.
+	form nameInput text: 'Pharo only'.
+	form sectionsList selectItems: #( 'Unsorted' ).
+	self assert: form accept.
+	self assert: presenter viewsList items last name equals: 'Pharo only'.
+	self assert: presenter viewsList selectedItem name equals: 'Pharo only'.
+	self assert: ((repository folder / 'views.md') contents includesSubstring: '"Pharo only"')
+]
+
 { #category : 'tests' }
 NTTasksPresenterTest >> testNoClosedSectionWithoutClosedTasks [
 
@@ -130,6 +179,29 @@ NTTasksPresenterTest >> testReloadReadsNewFiles [
 	self assert: presenter roots asArray equals: #( 'Unsorted' )
 ]
 
+{ #category : 'tests - views' }
+NTTasksPresenterTest >> testReloadRereadsViews [
+
+	| presenter |
+	presenter := self presenter.
+	repository folder ensureCreateDirectory.
+	repository folder / 'views.md' writeStreamDo: [ :s | s nextPutAll: '{ "views" : [ { "name" : "Mine" } ] }' ].
+	presenter reload.
+	self assert: (presenter viewsList items collect: [ :each | each name ] as: Array) equals: #( 'Mine' )
+]
+
+{ #category : 'tests - views' }
+NTTasksPresenterTest >> testRequestTaskFromViewSelectsIt [
+
+	| presenter task |
+	task := self task: 'Release' section: 'Pharo' lines: #( '- [ ] notes @due(2026-11-10)' ).
+	presenter := self presenter.
+	presenter selectView: (repository views viewNamed: 'Today').
+	presenter viewPresenter requestTaskOf: presenter viewPresenter entries first.
+	self assert: presenter selectedTask equals: task.
+	self assert: presenter detailPresenter equals: presenter editor
+]
+
 { #category : 'tests' }
 NTTasksPresenterTest >> testRootsAreSectionsThenClosedSection [
 
@@ -154,6 +226,19 @@ NTTasksPresenterTest >> testSelectSectionShowsNoTask [
 	self assert: presenter editor model isNil
 ]
 
+{ #category : 'tests - views' }
+NTTasksPresenterTest >> testSelectTaskAfterViewShowsEditor [
+
+	| presenter task |
+	task := self task: 'Release' section: 'Pharo' lines: #( '- [ ] notes' ).
+	presenter := self presenter.
+	presenter selectView: (repository views viewNamed: 'Today').
+	presenter selectTask: task.
+	self assert: presenter detailPresenter equals: presenter editor.
+	self assert: presenter editor model equals: task.
+	self assert: presenter viewsList selectedItem isNil
+]
+
 { #category : 'tests' }
 NTTasksPresenterTest >> testSelectTaskShowsItInEditor [
 
@@ -165,6 +250,40 @@ NTTasksPresenterTest >> testSelectTaskShowsItInEditor [
 	self assert: presenter editor model equals: ci
 ]
 
+{ #category : 'tests - views' }
+NTTasksPresenterTest >> testSelectViewAfterTaskUnselectsTask [
+
+	| presenter task |
+	task := self task: 'Release' section: 'Pharo' lines: #( '- [ ] notes' ).
+	presenter := self presenter.
+	presenter selectTask: task.
+	presenter selectView: (repository views viewNamed: 'Today').
+	self assert: presenter selectedTask isNil.
+	self assert: presenter detailPresenter equals: presenter viewPresenter
+]
+
+{ #category : 'tests - views' }
+NTTasksPresenterTest >> testSelectViewShowsIt [
+
+	| presenter today |
+	presenter := self presenter.
+	today := repository views viewNamed: 'Today'.
+	presenter selectView: today.
+	self assert: presenter detailPresenter equals: presenter viewPresenter.
+	self assert: presenter viewPresenter model equals: today
+]
+
+{ #category : 'tests - views' }
+NTTasksPresenterTest >> testTaskSavedRefreshesCounts [
+
+	| presenter task |
+	task := self task: 'Release' section: 'Pharo' lines: #( '- [ ] notes @due(2026-11-10)' ).
+	presenter := self presenter.
+	presenter selectTask: task.
+	presenter editor itemsPresenter toggle: task items first.
+	self assert: (presenter displayStringOfView: (repository views viewNamed: 'Today')) equals: 'Today  0'
+]
+
 { #category : 'tests' }
 NTTasksPresenterTest >> testTasksHaveNoChildren [
 
@@ -172,4 +291,46 @@ NTTasksPresenterTest >> testTasksHaveNoChildren [
 	ci := self newTask: 'Fix CI' section: 'Pharo' items: #( 'a' ).
 	presenter := NTTasksPresenter newApplication: application model: repository.
 	self assert: (presenter childrenOf: ci) isEmpty
+]
+
+{ #category : 'tests - views' }
+NTTasksPresenterTest >> testTickInViewRefreshesTreeAndCounts [
+
+	| presenter task |
+	task := self task: 'Release' section: 'Pharo' lines: #( '- [ ] notes @due(2026-11-10)' '- [ ] slides' ).
+	presenter := self presenter.
+	presenter selectView: (repository views viewNamed: 'Today').
+	presenter viewPresenter toggle: presenter viewPresenter entries first.
+	self assert: (presenter displayStringOf: task) equals: 'Release  1/2'.
+	self assert: (presenter displayStringOfView: (repository views viewNamed: 'Today')) equals: 'Today  0'
+]
+
+{ #category : 'tests - errors' }
+NTTasksPresenterTest >> testUnreadableViewsFileIsReported [
+
+	| presenter |
+	repository folder ensureCreateDirectory.
+	repository folder / 'views.md' writeStreamDo: [ :s | s nextPutAll: '{ "views" : [ { "period" : "today" } ] }' ].
+	repository reload.
+	presenter := self presenter.
+	self assert: presenter viewsLabel label equals: 'Views (views.md not read: a view has no name)'
+]
+
+{ #category : 'tests - views' }
+NTTasksPresenterTest >> testViewsLabel [
+
+	self assert: self presenter viewsLabel label equals: 'Views'
+]
+
+{ #category : 'tests - views' }
+NTTasksPresenterTest >> testViewsListShowsViewsWithCounts [
+
+	| presenter |
+	self task: 'Release' section: 'Pharo' lines: #( '- [ ] notes @due(2026-11-10)' '- [ ] slides @due(2026-11-12)' ).
+	presenter := self presenter.
+	self
+		assert: (presenter viewsList items collect: [ :each | each name ] as: Array)
+		equals: #( 'Today' 'This week' 'Monthly review' 'Late' 'Waiting for others' ).
+	self assert: (presenter displayStringOfView: (repository views viewNamed: 'Today')) equals: 'Today  1'.
+	self assert: (presenter displayStringOfView: (repository views viewNamed: 'This week')) equals: 'This week  2'
 ]

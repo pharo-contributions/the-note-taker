@@ -69,13 +69,10 @@ NTTaskItemsPresenter >> addItemTitled: aString [
 	^ item
 ]
 
-{ #category : 'accessing' }
+{ #category : 'private' }
 NTTaskItemsPresenter >> annotationsStringOf: anItem [
-	"The annotations shown in the table: @done is shown by the checkbox and @created is bookkeeping."
 
-	^ String space join: (anItem annotations
-			   reject: [ :each | each isKey and: [ #( 'done' 'created' ) includes: each name ] ]
-			   thenCollect: [ :each | each fileSyntax ])
+	^ anItem displayAnnotations
 ]
 
 { #category : 'initialization' }

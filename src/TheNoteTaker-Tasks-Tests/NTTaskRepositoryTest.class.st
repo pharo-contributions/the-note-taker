@@ -126,6 +126,19 @@ NTTaskRepositoryTest >> testNonMarkdownFilesAreIgnored [
 ]
 
 { #category : 'tests' }
+NTTaskRepositoryTest >> testOpenTasksAreInFileNameOrder [
+
+	| zebra apple done |
+	zebra := repository newTaskTitled: 'Zebra' at: (self timeOn: 4).
+	done := repository newTaskTitled: 'Done' at: (self timeOn: 4).
+	done abandon.
+	apple := repository newTaskTitled: 'Apple' at: (self timeOn: 4).
+	self assert: repository openTasks asArray equals: {
+			apple.
+			zebra }
+]
+
+{ #category : 'tests' }
 NTTaskRepositoryTest >> testOpenTasksInSection [
 
 	| ci release |
@@ -143,6 +156,15 @@ NTTaskRepositoryTest >> testOpenTasksInUnsorted [
 	cables := self newTask: 'Buy cables' section: nil.
 	self newTask: 'Fix CI' section: 'Pharo'.
 	self assert: (repository openTasksInSection: 'Unsorted') asArray equals: { cables }
+]
+
+{ #category : 'tests - views' }
+NTTaskRepositoryTest >> testReadingTasksKeepsViews [
+
+	| views |
+	views := repository views.
+	repository tasks.
+	self assert: repository views identicalTo: views
 ]
 
 { #category : 'tests' }
@@ -168,6 +190,16 @@ NTTaskRepositoryTest >> testReloadReadsSavedTasks [
 	self assert: other tasks first title equals: 'Fix CI'.
 	self assert: other tasks first items first title equals: 'Update the image'.
 	self assert: other tasks first fileReference equals: task fileReference
+]
+
+{ #category : 'tests - views' }
+NTTaskRepositoryTest >> testReloadRereadsViewsFile [
+
+	repository views.
+	folder ensureCreateDirectory.
+	folder / 'views.md' writeStreamDo: [ :s | s nextPutAll: '{ "views" : [ { "name" : "Mine" } ] }' ].
+	repository reload.
+	self assert: (repository views views collect: [ :each | each name ] as: Array) equals: #( 'Mine' )
 ]
 
 { #category : 'tests' }
@@ -206,6 +238,14 @@ NTTaskRepositoryTest >> testSaveUpdatesStatus [
 	self finish: task.
 	self assert: task isFinished.
 	self assert: (task fileReference contents includesSubstring: '"status" : "finished"')
+]
+
+{ #category : 'tests - views' }
+NTTaskRepositoryTest >> testSaveViewsWritesViewsFile [
+
+	repository views add: (NTItemView named: 'Pharo only').
+	repository saveViews.
+	self assert: (folder / 'views.md') contents equals: repository views text
 ]
 
 { #category : 'tests' }
@@ -269,11 +309,42 @@ NTTaskRepositoryTest >> testUnreadableFileIsSkipped [
 	self assert: (repository unreadableFiles collect: [ :each | each key basename ] as: Array) equals: #( '2026-11-07_bad.md' )
 ]
 
-{ #category : 'tests' }
+{ #category : 'tests - errors' }
+NTTaskRepositoryTest >> testUnreadableViewsFileGivesDefaultsAndError [
+
+	| other |
+	folder ensureCreateDirectory.
+	folder / 'views.md' writeStreamDo: [ :s | s nextPutAll: '{ "views" : [ { "period" : "today" } ] }' ].
+	other := NTTaskRepository on: folder.
+	self assert: other views views size equals: NTItemViewSet defaults views size.
+	self assert: other viewsError messageText equals: 'a view has no name'
+]
+
+{ #category : 'tests - views' }
+NTTaskRepositoryTest >> testViewsAreDefaultsWithoutViewsFile [
+
+	self
+		assert: (repository views views collect: [ :each | each name ] as: Array)
+		equals: (NTItemViewSet defaults views collect: [ :each | each name ] as: Array).
+	self deny: (folder / 'views.md') exists
+]
+
+{ #category : 'tests - views' }
+NTTaskRepositoryTest >> testViewsAreReadFromViewsFile [
+
+	folder ensureCreateDirectory.
+	folder / 'views.md' writeStreamDo: [ :s | s nextPutAll: '{ "views" : [ { "name" : "Mine", "period" : "week" } ] }' ].
+	self assert: ((NTTaskRepository on: folder) views viewNamed: 'Mine') period equals: 'week'
+]
+
+{ #category : 'tests - views' }
 NTTaskRepositoryTest >> testViewsFileIsNotATask [
 
-	self write: '{ "views" : [ ] }' to: 'views.md'.
-	self assert: repository tasks isEmpty
+	repository views add: (NTItemView named: 'Pharo only').
+	repository saveViews.
+	repository reload.
+	self assert: repository tasks isEmpty.
+	self assert: repository unreadableFiles isEmpty
 ]
 
 { #category : 'helpers' }

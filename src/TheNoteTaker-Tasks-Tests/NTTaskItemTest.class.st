@@ -30,6 +30,18 @@ NTTaskItemTest >> testAddTagTwiceKeepsOne [
 ]
 
 { #category : 'tests' }
+NTTaskItemTest >> testDisplayAnnotationsHideDoneAndCreated [
+
+	| item |
+	item := NTTaskItem title: 'Send slides'.
+	item createdDate: (self nov: 4).
+	item due: (self nov: 12).
+	item markDoneOn: (self nov: 8).
+	item addTag: 'work'.
+	self assert: item displayAnnotations equals: '@due(2026-11-12) #work'
+]
+
+{ #category : 'tests' }
 NTTaskItemTest >> testDue [
 
 	| item |

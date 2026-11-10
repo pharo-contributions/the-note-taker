@@ -29,12 +29,14 @@ Run `NTTasksApplication class >> #scriptOpenOnExampleTasks` for a demo on an in-
 
 - `TasksFolder`: a class variable holding the folder (a FileReference or FileLocator), nil means the default.
 - `repository`: the `NTTaskRepository` shown, created from `TasksFolder` on first use.
+- `today`: the day views are computed for; nil means `Date today` (tests and demos fix it with `today:`).
 "
 Class {
 	#name : 'NTTasksApplication',
 	#superclass : 'SpApplication',
 	#instVars : [
-		'repository'
+		'repository',
+		'today'
 	],
 	#classVars : [
 		'TasksFolder'
@@ -131,4 +133,18 @@ NTTasksApplication >> repository: aTaskRepository [
 NTTasksApplication >> start [
 
 	(NTTasksPresenter newApplication: self model: self repository) open
+]
+
+{ #category : 'accessing' }
+NTTasksApplication >> today [
+	"Answer the day views are computed for: today, unless a fixed day was given with today:."
+
+	^ today ifNil: [ Date today ]
+]
+
+{ #category : 'accessing' }
+NTTasksApplication >> today: aDateOrNil [
+	"Fix the day used by views, for tests and demos; nil means the real today."
+
+	today := aDateOrNil
 ]
