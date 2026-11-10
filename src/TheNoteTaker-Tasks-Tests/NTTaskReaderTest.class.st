@@ -233,8 +233,8 @@ NTTaskReaderTest >> testReadMetadata [
 	self assert: task title equals: 'Pharo 14 release'.
 	self assert: task section equals: 'Pharo'.
 	self assert: task isOpen.
-	self assert: task creationDate equals: '2026-11-04T10:00:00+01:00' asDateAndTime.
-	self assert: task lastModificationDate equals: '2026-11-09T18:20:00+01:00' asDateAndTime
+	self assert: task creationDate equals: (DateAndTime fromString: '2026-11-04T10:00:00+01:00').
+	self assert: task lastModificationDate equals: (DateAndTime fromString: '2026-11-09T18:20:00+01:00')
 ]
 
 { #category : 'tests' }

@@ -27,3 +27,17 @@ NTTaskTestCase >> text: aString [
 
 	^ aString withUnixLineEndings
 ]
+
+{ #category : 'helpers' }
+NTTaskTestCase >> timeOn: aDay [
+	"Answer a fixed time on that day of November 2026."
+
+	^ DateAndTime
+		  year: 2026
+		  month: 11
+		  day: aDay
+		  hour: 10
+		  minute: 0
+		  second: 0
+		  offset: 1 hour
+]

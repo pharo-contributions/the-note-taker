@@ -172,7 +172,7 @@ NTTaskWriterTest >> testWriteMetadataKeyOrder [
 	| task |
 	task := NTTask title: 'Move office'.
 	task otherMetadata at: 'owner' put: 'Stef'.
-	task creationDate: '2026-10-01T09:00:00+02:00' asDateAndTime.
+	task creationDate: (DateAndTime fromString: '2026-10-01T09:00:00+02:00').
 	task section: 'Admin'.
 	task status: #finished.
 	task finishedDate: (Date year: 2026 month: 10 day: 21).

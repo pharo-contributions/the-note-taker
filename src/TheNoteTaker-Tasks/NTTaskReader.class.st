@@ -134,7 +134,7 @@ NTTaskReader >> atMetadata [
 { #category : 'private - metadata' }
 NTTaskReader >> dateAndTimeFrom: aString [
 
-	^ [ aString asDateAndTime ]
+	^ [ DateAndTime fromString: aString ]
 		  on: Error
 		  do: [ nil ]
 ]

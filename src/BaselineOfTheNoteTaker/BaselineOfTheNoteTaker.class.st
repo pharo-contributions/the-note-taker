@@ -36,13 +36,15 @@ BaselineOfTheNoteTaker >> baseline: spec [
 				package: 'TheNoteTaker-Todo-Tests' with: [ spec requires: #( 'TheNoteTaker-Todo' ) ];
 				package: 'TheNoteTaker-Todo-UI' with: [ spec requires: #( 'TheNoteTaker-Todo' ) ];
 				package: 'TheNoteTaker-Tasks';
-				package: 'TheNoteTaker-Tasks-Tests' with: [ spec requires: #( 'TheNoteTaker-Tasks' ) ].
+				package: 'TheNoteTaker-Tasks-Tests' with: [ spec requires: #( 'TheNoteTaker-Tasks' ) ];
+				package: 'TheNoteTaker-Tasks-UI' with: [ spec requires: #( 'TheNoteTaker-Tasks' ) ];
+				package: 'TheNoteTaker-Tasks-UI-Tests' with: [ spec requires: #( 'TheNoteTaker-Tasks-UI' 'TheNoteTaker-Tasks-Tests' ) ].
 
 			spec
 				group: 'Core' with: #( 'TheNoteTaker' );
 				group: 'UI' with: #( 'TheNoteTaker-UI' );
-				group: 'Tasks' with: #( 'TheNoteTaker-Tasks' 'TheNoteTaker-Tasks-Tests' );
-				group: 'Tests' with: #( 'TheNoteTaker-Tests' 'TheNoteTaker-UI-Tests' 'TheNoteTaker-Todo-Tests' 'TheNoteTaker-Tasks-Tests' );
+				group: 'Tasks' with: #( 'TheNoteTaker-Tasks' 'TheNoteTaker-Tasks-Tests' 'TheNoteTaker-Tasks-UI' 'TheNoteTaker-Tasks-UI-Tests' );
+				group: 'Tests' with: #( 'TheNoteTaker-Tests' 'TheNoteTaker-UI-Tests' 'TheNoteTaker-Todo-Tests' 'TheNoteTaker-Tasks-Tests' 'TheNoteTaker-Tasks-UI-Tests' );
 				group: 'Release' with: #( 'TheNoteTaker-Release' );
 				group: 'default' with: #( 'Tests' 'UI' ) ]
 ]

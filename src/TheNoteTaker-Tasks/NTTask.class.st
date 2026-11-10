@@ -70,6 +70,13 @@ Class {
 	#tag : 'Model'
 }
 
+{ #category : 'accessing' }
+NTTask class >> closedSectionName [
+	"The special section that lists finished and abandoned tasks."
+
+	^ 'Finished / Abandoned'
+]
+
 { #category : 'examples' }
 NTTask class >> exampleFinished [
 
@@ -316,6 +323,20 @@ NTTask >> reopen [
 
 	status := #open.
 	finishedDate := nil
+]
+
+{ #category : 'copying' }
+NTTask >> replaceContentsFrom: aTask [
+	"Take the contents of aTask (typically read back from the Text tab), keeping my identity and my file."
+
+	title := aTask title.
+	section := aTask section.
+	status := aTask status.
+	finishedDate := aTask finishedDate.
+	creationDate := aTask creationDate ifNil: [ creationDate ].
+	lastModificationDate := aTask lastModificationDate ifNil: [ lastModificationDate ].
+	items := aTask items copy.
+	otherMetadata := aTask otherMetadata copy
 ]
 
 { #category : 'accessing' }

@@ -68,6 +68,12 @@ NTTaskTest >> testAllTags [
 ]
 
 { #category : 'tests' }
+NTTaskTest >> testClosedSectionName [
+
+	self assert: NTTask closedSectionName equals: 'Finished / Abandoned'
+]
+
+{ #category : 'tests' }
 NTTaskTest >> testDoneCount [
 
 	| task |
@@ -166,6 +172,27 @@ NTTaskTest >> testReopenAbandonedTask [
 	task abandon.
 	task reopen.
 	self assert: task isOpen
+]
+
+{ #category : 'tests' }
+NTTaskTest >> testReplaceContentsFromKeepsIdentityAndFile [
+	"Applying a parsed version of a task (from the Text tab) keeps the task object and its file."
+
+	| task file parsed |
+	task := NTTask title: 'Old'.
+	file := FileSystem memory root / 'a.md'.
+	task fileReference: file.
+	task addItemTitled: 'old item' on: (self nov: 1).
+	parsed := NTTask title: 'New'.
+	parsed section: 'Pharo'.
+	parsed otherMetadata at: 'owner' put: 'Stef'.
+	parsed addItemTitled: 'new item' on: (self nov: 2).
+	task replaceContentsFrom: parsed.
+	self assert: task title equals: 'New'.
+	self assert: task section equals: 'Pharo'.
+	self assert: (task otherMetadata at: 'owner') equals: 'Stef'.
+	self assert: (task items collect: [ :each | each title ] as: Array) equals: #( 'new item' ).
+	self assert: task fileReference equals: file
 ]
 
 { #category : 'tests' }
