@@ -111,6 +111,15 @@ Views are configurations, with no query language. They are stored in `<tasks fol
 - Items with a future `@start` are hidden. Finished and abandoned tasks are excluded.
 - A plain text filter field (a word or a `#tag`) narrows the current display. It is never saved.
 
+Details settled while building step 3:
+
+- `week` runs Monday to Sunday. `next N days` is today and the N-1 following days. `overdue` only looks at `@due`.
+- `done: true` means "also show done items", not "only done items".
+- Without `sortBy`, items keep the file order: tasks by file name, then items in task order. When sorting, items with no value go last.
+- `groupBy: waitingOthers` puts `@waitingOthers` without a name under "Someone".
+- `views.md` is written one view per line, and fields with their default value are left out. Unknown fields are ignored. If the file can't be read, the default views are used and the reason is shown above the list.
+- The filter field is in the view pane only; the task tree is not filtered.
+
 ## UI
 
 ```
@@ -162,10 +171,12 @@ TheNoteTaker-Tasks
   NTTaskReader      text  -> NTTask (signals NTTaskParseError with the line number)
   NTTaskWriter      NTTask -> text (LF line endings)
   NTItemView        one view configuration; select/group/sort items
-  NTItemViewSet     views.md read/write, the default views
+  NTViewEntry       an item with its task, as listed by a view; the filter
+  NTItemViewSet     views.md read/write, the default views (NTViewsFormatError)
   NTTaskCommitter   batched git commits
   NTNoteDirectory   protocol for the notes (+ "no notes" implementation)
-TheNoteTaker-Tasks-UI      Spec presenters
+TheNoteTaker-Tasks-UI      Spec presenters: NTTasksApplication, NTTasksPresenter, NTTaskEditorPresenter,
+                           NTTaskItemsPresenter, NTTaskItemPresenter, NTItemViewPresenter, NTItemViewFormPresenter
 TheNoteTaker-Tasks-Tests   round trips, status rules, views, repository on FileSystem memory
 ```
 
