@@ -29,9 +29,9 @@ Class {
 		'lineNumber',
 		'line'
 	],
-	#category : 'TheNoteTaker-Tasks-Format',
+	#category : 'TheNoteTaker-Tasks-In-Out',
 	#package : 'TheNoteTaker-Tasks',
-	#tag : 'Format'
+	#tag : 'In-Out'
 }
 
 { #category : 'examples' }

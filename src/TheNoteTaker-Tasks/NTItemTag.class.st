@@ -1,5 +1,5 @@
 "
-I represent one tag annotation of a task item, written `#release` in a task file.
+I represent one tag annotation of a task item, written `#` name in a task file.
 
 ## Responsibility:
 

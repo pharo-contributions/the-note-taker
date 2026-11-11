@@ -1,5 +1,6 @@
 "
 I write an `NTTask` as the text of its task file.
+When Microdown will be upgraded to support - [] and @syntax the writer should use the microdownBuilder
 
 ## Responsibility:
 
@@ -34,9 +35,9 @@ Class {
 	#instVars : [
 		'stream'
 	],
-	#category : 'TheNoteTaker-Tasks-Format',
+	#category : 'TheNoteTaker-Tasks-In-Out',
 	#package : 'TheNoteTaker-Tasks',
-	#tag : 'Format'
+	#tag : 'In-Out'
 }
 
 { #category : 'examples' }

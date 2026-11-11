@@ -54,8 +54,9 @@ Class {
 		'views',
 		'viewsError'
 	],
-	#category : 'TheNoteTaker-Tasks',
-	#package : 'TheNoteTaker-Tasks'
+	#category : 'TheNoteTaker-Tasks-Model',
+	#package : 'TheNoteTaker-Tasks',
+	#tag : 'Model'
 }
 
 { #category : 'examples' }
