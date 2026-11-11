@@ -195,7 +195,7 @@ NTSettings class >> storeSetting [
 NTSettings >> currentFolder [
 
 	^ currentFolder ifNil: [
-			  currentFolder := self defaultDocumentFolder ensureDirectory ]
+			  currentFolder := self defaultDocumentFolder ensureCreateDirectory ]
 ]
 
 { #category : 'enumerating' }
