@@ -30,6 +30,15 @@ NTSettingsTest >> setUp [
 ]
 
 { #category : 'tests' }
+NTSettingsTest >> testFolderSettingHintIsDefaultDocumentFolder [
+	| builder declaration |
+	builder := SettingTreeBuilder new.
+	NTSettings settingsOn: builder.
+	declaration := (builder nodeList detect: [ :each | each item name = #currentFolder ]) item.
+	self assert: declaration ghostHelp equals: settings defaultDocumentFolder fullName
+]
+
+{ #category : 'tests' }
 NTSettingsTest >> testLoadFromBrokenFileKeepsGitDisabled [
 	self writeFile: '[ this is not STON'.
 	settings loadFrom: file.

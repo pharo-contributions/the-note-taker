@@ -143,7 +143,7 @@ When disabled, hide git command button. '.
 								label: 'Project Path';
 								target: self;
 								type: #Directory;
-								ghostHelp: '/Users/ducasse/Workspace/FirstCircle/Writing/Working/researchnotes/';
+								ghostHelp: self new defaultDocumentFolder fullName;
 								description: 'Enter your local or remote path where notes will be committed. It can be empty' ] ]
 ]
 
