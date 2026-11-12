@@ -94,9 +94,11 @@ NTNote >> contents [
 ]
 
 { #category : 'accessing' }
-NTNote >> contents: anObject [
+NTNote >> contents: aString [
+	"Set the text of the note. The modification date only changes when the text really changes"
 
-	contents := anObject.
+	aString = contents ifTrue: [ ^ self ].
+	contents := aString.
 	self modificationDate: DateAndTime now.
 	self generateTitle
 ]

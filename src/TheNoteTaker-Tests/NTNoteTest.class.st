@@ -325,6 +325,26 @@ NTNoteTest >> testSetFileNameDoesntChangeIt [
 	
 ]
 
+{ #category : 'tests' }
+NTNoteTest >> testSettingNewContentsUpdatesModificationDate [
+	| date |
+	note contents: 'Old text'.
+	date := DateAndTime fromString: '2025-01-01T10:00:00'.
+	note modificationDate: date.
+	note contents: 'New text'.
+	self assert: note modificationDate > date
+]
+
+{ #category : 'tests' }
+NTNoteTest >> testSettingSameContentsKeepsModificationDate [
+	| date |
+	note contents: 'Same text'.
+	date := DateAndTime fromString: '2025-01-01T10:00:00'.
+	note modificationDate: date.
+	note contents: 'Same text'.
+	self assert: note modificationDate equals: date
+]
+
 { #category : 'tests - file format' }
 NTNoteTest >> testSplitFileContentsWithMultiLineMetaData [
 	| fileContents |
