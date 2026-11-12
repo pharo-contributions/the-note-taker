@@ -103,3 +103,8 @@ NTSpApplicationTest >> testPreferenceFile2 [
 
 	self assert: app currentFolder fullName equals: '/Users/ducasse/Documents/NewTheNoteTaker'
 ]
+
+{ #category : 'tests' }
+NTSpApplicationTest >> testPreferencesFileIsNotTheUserOne [
+	self deny: app preferencesFile equals: NTSettings defaultPreferencesFile
+]

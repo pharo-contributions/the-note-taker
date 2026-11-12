@@ -100,13 +100,10 @@ NTContainer >> initialize [
 
 { #category : 'loading - note' }
 NTContainer >> loadFileContents: aString for: aNTNote [
-
-	| fileContentsPart |
-	(aString beginsWith: '{') ifFalse: [ ^ self ].
-	fileContentsPart := aString substrings: '}'.
-	aNTNote contents:
-		(fileContentsPart second withoutPrefix: String crlf , String crlf).
-	self loadMetaData: fileContentsPart first for: aNTNote
+	NTNote splitFileContents: aString into: [ :metaData :fileContents |
+		metaData ifNil: [ ^ self ].
+		aNTNote contents: fileContents.
+		self loadMetaData: metaData for: aNTNote ]
 ]
 
 { #category : 'loading - note' }

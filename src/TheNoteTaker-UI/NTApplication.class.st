@@ -16,7 +16,6 @@ Class {
 		'log',
 		'settingPersistence',
 		'mainPresenter',
-		'taskContainer',
 		'settings',
 		'preferenceFile'
 	],
@@ -106,10 +105,7 @@ NTApplication >> defaultPreferencesFile [
 
 { #category : 'running' }
 NTApplication >> exportSettings [
-
-	(SettingBrowser currentTree nodeNamed: #tnt_note) 
-	   ifNotNil: [ :tntNode | settingPersistence storeSettingNodes: tntNode allChildren ].
-
+	settings saveTo: self preferencesFile
 ]
 
 { #category : 'running' }
@@ -123,37 +119,19 @@ NTApplication >> importSettings [
 
 { #category : 'running' }
 NTApplication >> importSettings2 [
-	"self new importSettings2"
-
-	| reader storedSettings settingDeclarations |
-	self preferencesFile exists ifFalse: [ ^ self ].
-	reader := SettingsStonReader new stream: self preferencesFile readStream.
-	storedSettings := reader load.
-	settingDeclarations := self settings class settings.
-	storedSettings do: [ :aStoredSetting |
-			| aSetDec |
-			aSetDec := settingDeclarations detect: [ :each | (aStoredSetting settingNodeIdentifier splitOn: '#') last = each name ] ifNone: [ nil ].
-			aSetDec ifNotNil: [  
-				aSetDec realValue: aStoredSetting realValue ]]
+	settings loadFrom: self preferencesFile
 ]
 
 { #category : 'initialization' }
 NTApplication >> initialize [
-
 	super initialize.
 	settings := NTSettings new.
 	"Preference file is either in the preference folder and it does not exist in the app."
-	
-	settingPersistence := SystemSettingsPersistence new fileReference:  self preferencesFile.
-	
+	settingPersistence := SystemSettingsPersistence new fileReference: self preferencesFile.
 	settings defaultDocumentFolder ensureCreateDirectory.
-	self currentFolder:  settings defaultDocumentFolder.
-	
-	noteTakerContainer := NTContainer new. 	                     
-	
-	taskContainer := TaskManager new.
+	self currentFolder: settings defaultDocumentFolder.
+	noteTakerContainer := NTContainer new.
 	log := NTLog newWithFolder: self currentFolder.
-	
 	settings whenCurrentFolderChangeDo: [ :newFolder :oldFolder |
 		newFolder = oldFolder ifFalse: [ self updateApplication ] ]
 ]
@@ -231,12 +209,6 @@ NTApplication >> startFullScreen [
 	self initializeMainPresenter.
 	mainPresenter asWorldWindow open.
 
-]
-
-{ #category : 'accessing' }
-NTApplication >> taskContainer [
-
-	^ taskContainer
 ]
 
 { #category : 'update' }

@@ -324,3 +324,39 @@ NTNoteTest >> testSetFileNameDoesntChangeIt [
 
 	
 ]
+
+{ #category : 'tests - file format' }
+NTNoteTest >> testSplitFileContentsWithMultiLineMetaData [
+	| fileContents |
+	fileContents := String streamContents: [ :stream |
+		stream
+			nextPutAll: '{'; cr;
+			nextPutAll: '"tags" : "a"'; cr;
+			nextPutAll: '}'; crlf; crlf;
+			nextPutAll: 'Title'; cr;
+			nextPutAll: '} not metadata' ].
+	NTNote splitFileContents: fileContents into: [ :metaData :contents |
+		self assert: metaData lines equals: #( '{' '"tags" : "a"' '}' ).
+		self assert: contents lines equals: #( 'Title' '} not metadata' ) ]
+]
+
+{ #category : 'tests - file format' }
+NTNoteTest >> testSplitFileContentsWithOneLineMetaData [
+	| fileContents |
+	fileContents := String streamContents: [ :stream |
+		stream
+			nextPutAll: '{"tags" : "a"}'; crlf; crlf;
+			nextPutAll: 'Title } more' ].
+	NTNote splitFileContents: fileContents into: [ :metaData :contents |
+		self assert: metaData equals: '{"tags" : "a"}'.
+		self assert: contents equals: 'Title } more' ]
+]
+
+{ #category : 'tests - file format' }
+NTNoteTest >> testSplitFileContentsWithoutMetaData [
+	NTNote
+		splitFileContents: 'Just a note } with a brace'
+		into: [ :metaData :contents |
+			self assert: metaData isNil.
+			self assert: contents equals: 'Just a note } with a brace' ]
+]

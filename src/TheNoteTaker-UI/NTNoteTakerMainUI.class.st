@@ -11,9 +11,7 @@ Class {
 		'notesToolbarPresenter',
 		'notesIndexPresenter',
 		'notesEditorPresenter',
-		'statusBar',
-		'taskMainPresener',
-		'todoToolbarPresenter'
+		'statusBar'
 	],
 	#classVars : [
 		'GitEnable'
@@ -126,39 +124,20 @@ NTNoteTakerMainUI >> initialize [
 
 { #category : 'initialization' }
 NTNoteTakerMainUI >> initializeNoteToolBar [
-
-	notesToolbarPresenter := self newToolbar fillWith:
-		                         self rootCommandsGroup / 'Toolbar'.
-		
-	
-	"For now comment out the todo app.
-	notesToolbarPresenter add: (SpToolbarButtonPresenter new
-			 icon: (self iconNamed: #refreshCircling);
-			 label: 'Change to Todo list';
-			 action: [ layout := self todoLayout ]) yourself"
+	notesToolbarPresenter := self newToolbar fillWith: self rootCommandsGroup / 'Toolbar'
 ]
 
 { #category : 'initialization' }
 NTNoteTakerMainUI >> initializePresenters [
-
 	notesIndexPresenter := self instantiate: NTNoteIndexPresenter.
 	notesIndexPresenter model: self noteTakerContainer.
 	notesIndexPresenter updatePresenter.
-
 	notesEditorPresenter := self instantiate: NTEditorPresenter.
-
-	taskMainPresener := self instantiate: SpTaskMainPresenter.
-	todoToolbarPresenter := self newToolbar
-		                        add: (SpToolbarButtonPresenter new
-				                         icon: (self iconNamed: #refreshCircling);
-				                         label: 'Change to note';
-				                         action: [ layout := self noteLayout ]);
-		                        yourself.
 	GitEnable := self gitSettings.
 	self settings whenGitEnableChangeDo: [ :newValue |
-			GitEnable := newValue.
-			self initializeNoteToolBar.
-			layout := self defaultLayout ].
+		GitEnable := newValue.
+		self initializeNoteToolBar.
+		layout := self defaultLayout ].
 	self initializeNoteToolBar.
 	statusBar := SpStatusBarPresenter new
 ]
@@ -236,15 +215,6 @@ NTNoteTakerMainUI >> settings [
 NTNoteTakerMainUI >> statusBar [
 
 	^ statusBar
-]
-
-{ #category : 'layout' }
-NTNoteTakerMainUI >> todoLayout [
-
-	^ SpBoxLayout newTopToBottom
-		  add: todoToolbarPresenter height: self toolbarHeight;
-		  add: taskMainPresener;
-		  yourself
 ]
 
 { #category : 'accessing' }

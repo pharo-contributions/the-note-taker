@@ -55,6 +55,30 @@ NTNote class >> newFromFileReference: aFileReference [
 		  yourself
 ]
 
+{ #category : 'file format' }
+NTNote class >> splitFileContents: aString into: aBlock [
+	"Separate the metadata block that starts a note file from the note contents.
+	Evaluate aBlock with the metadata string (nil when there is none) and the contents.
+	The metadata block ends at the first line ending with a closing brace, so braces in the contents are kept."
+
+	(aString beginsWith: '{') ifFalse: [ ^ aBlock value: nil value: aString ].
+	aString lineIndicesDo: [ :start :endWithoutDelimiters :end |
+		((aString copyFrom: start to: endWithoutDelimiters) trimRight endsWith: '}') ifTrue: [
+			^ aBlock
+				  value: (aString copyFrom: 1 to: endWithoutDelimiters)
+				  value: (self withoutLeadingLineBreak: (aString allButFirst: end)) ] ].
+	^ aBlock value: nil value: aString
+]
+
+{ #category : 'private - file format' }
+NTNote class >> withoutLeadingLineBreak: aString [
+	"Remove the empty line written between the metadata block and the contents"
+
+	(aString beginsWith: String crlf) ifTrue: [ ^ aString allButFirst: 2 ].
+	((aString beginsWith: String cr) or: [ aString beginsWith: String lf ]) ifTrue: [ ^ aString allButFirst ].
+	^ aString
+]
+
 { #category : 'accessing - tags' }
 NTNote >> addTag: aNTTag [
 
@@ -119,15 +143,11 @@ NTNote >> fileReference [
 
 { #category : 'accessing' }
 NTNote >> fileReferenceContents [
+	"Answer the contents of the note as saved in its file, without the metadata"
 
-	| fileContentsPart aString |
-	
-	aString := self fileReference contents.
-	(self fileReference contents beginsWith: '{')
-		ifTrue: [
-				fileContentsPart := aString substrings: '}'.
-				^ fileContentsPart second withoutPrefix: String crlf , String crlf].
-		^ aString
+	^ self class
+		  splitFileContents: self fileReference contents
+		  into: [ :metaData :fileContents | fileContents ]
 ]
 
 { #category : 'accessing' }

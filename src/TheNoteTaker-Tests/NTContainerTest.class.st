@@ -256,6 +256,38 @@ NTContainerTest >> testLoadNoteWithAllMetadata [
 ]
 
 { #category : 'tests - note' }
+NTContainerTest >> testLoadNoteWithClosingBraceInContentsIsNotDirty [
+	| note loadedNote |
+	note := NTNote new
+		folderReference: memoryFS;
+		contents: (String streamContents: [ :stream |
+			stream
+				nextPutAll: 'A note with code'; cr;
+				nextPutAll: '[ :x | x } value: 3' ]);
+		yourself.
+	note save.
+	loadedNote := NTContainer new addNoteFromFileReference: note fileReference.
+	self deny: loadedNote isDirty
+]
+
+{ #category : 'tests - note' }
+NTContainerTest >> testLoadNoteWithClosingBraceInContentsKeepsAllContents [
+	| contents note loadedNote |
+	contents := String streamContents: [ :stream |
+		stream
+			nextPutAll: 'A note with code'; cr;
+			nextPutAll: '[ :x | x } value: 3'; cr;
+			nextPutAll: 'The last line' ].
+	note := NTNote new
+		folderReference: memoryFS;
+		contents: contents;
+		yourself.
+	note save.
+	loadedNote := NTContainer new addNoteFromFileReference: note fileReference.
+	self assert: loadedNote contents equals: contents
+]
+
+{ #category : 'tests - note' }
 NTContainerTest >> testLoadNoteWithExistingTagDontDuplicateIt [
 
 	| note tag nbTags |
