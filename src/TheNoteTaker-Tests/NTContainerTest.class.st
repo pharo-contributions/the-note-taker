@@ -146,6 +146,21 @@ NTContainerTest >> testImportFolderIgnoresTrash [
 	self assert: noteTakerContainer notesCount equals: 1
 ]
 
+{ #category : 'tests - note' }
+NTContainerTest >> testImportFolderSkipsUnreadableFolder [
+	| folder locked |
+	folder := FileLocator temp asFileReference / ('NTContainerTest-' , UUID new asString).
+	locked := folder / 'locked'.
+	[
+	locked ensureCreateDirectory.
+	(folder / '2026-11-12_note.md') writeStreamDo: [ :stream | stream nextPutAll: 'A note' ].
+	locked permissions: (FileSystemPermission posixPermissions: 0).
+	noteTakerContainer importFolder: folder.
+	self assert: noteTakerContainer notesCount equals: 1 ] ensure: [
+		locked permissions: (FileSystemPermission posixPermissions: 8r755).
+		folder deleteAll ]
+]
+
 { #category : 'tests - tags' }
 NTContainerTest >> testImportFolderTwice [
 

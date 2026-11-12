@@ -81,13 +81,8 @@ NTContainer >> ensureTagNamed: aString [
 
 { #category : 'loading - note' }
 NTContainer >> importFolder: aFolder [
-
 	aFolder ensureCreateDirectory.
-	aFolder allFiles
-		select: [ :fileRef |
-				({ 'txt'. 'md'. 'text' } includes: fileRef extension asLowercase) and: [
-					(fileRef path segments includes: self trashFolderName) not ] ]
-		thenDo: [ :fileRef | self addNoteFromFileReference: fileRef ]
+	self noteFilesIn: aFolder do: [ :fileRef | self addNoteFromFileReference: fileRef ]
 ]
 
 { #category : 'initialization' }
@@ -96,6 +91,11 @@ NTContainer >> initialize [
 	super initialize.
 	self notes: OrderedCollection new.
 	self rawTags: OrderedCollection new
+]
+
+{ #category : 'private - loading' }
+NTContainer >> isNoteFile: aFileReference [
+	^ #( 'txt' 'md' 'text' ) includes: aFileReference extension asLowercase
 ]
 
 { #category : 'loading - note' }
@@ -116,6 +116,19 @@ NTContainer >> loadMetaData: aString for: aNTNote [
 	tagsString := metaData at: 'tags' ifAbsent: [ ^ self ].
 
 	tagsString ifNotNil: [ (tagsString substrings: ',') do: [ :each | (self ensureTagNamed: each) addNote: aNTNote ] ]
+]
+
+{ #category : 'private - loading' }
+NTContainer >> noteFilesIn: aFolder do: aBlock [
+	"Evaluate aBlock with each note file in aFolder and its subfolders.
+	Trash folders and folders that cannot be read are skipped"
+
+	| entries |
+	entries := [ aFolder children ] on: FileException do: [ ^ self ].
+	entries do: [ :each |
+		each isDirectory
+			ifTrue: [ each basename = self trashFolderName ifFalse: [ self noteFilesIn: each do: aBlock ] ]
+			ifFalse: [ (self isNoteFile: each) ifTrue: [ aBlock value: each ] ] ]
 ]
 
 { #category : 'accessing - notes' }
