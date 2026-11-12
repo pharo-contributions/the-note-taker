@@ -108,7 +108,7 @@ NTApplication >> exportSettings [
 ]
 
 { #category : 'running' }
-NTApplication >> importSettings2 [
+NTApplication >> importSettings [
 	settings loadFrom: self preferencesFile
 ]
 
@@ -178,7 +178,7 @@ NTApplication >> start [
    "self useBackend: #Toplo."
 
 	self preferencesFile exists
-		ifTrue: [ self importSettings2 ]
+		ifTrue: [ self importSettings ]
 		ifFalse: [ self exportSettings ].
 
 	self currentFolder ifNil: [ self currentFolder: self preferencesFile ].

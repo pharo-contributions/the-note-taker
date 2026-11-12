@@ -82,7 +82,7 @@ NTSpApplicationTest >> testPreferenceFile [
 	(memoryFS / 'ducasse' / 'Documents' /'TheNoteTaker') ensureCreateDirectory.
 	
 	app preferencesFile: preferenceFile.
-	app importSettings2.
+	app importSettings.
 
 	self assert: app currentFolder fullName equals: '/Users/ducasse/Documents/TheNoteTaker'
 ]
@@ -99,7 +99,7 @@ NTSpApplicationTest >> testPreferenceFile2 [
 	(memoryFS / 'ducasse' / 'Documents' / 'TheNoteTaker') ensureCreateDirectory.
 
 	app preferencesFile: preferenceFile.
-	app importSettings2.
+	app importSettings.
 
 	self assert: app currentFolder fullName equals: '/Users/ducasse/Documents/NewTheNoteTaker'
 ]
