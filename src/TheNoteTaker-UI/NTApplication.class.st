@@ -14,7 +14,6 @@ Class {
 	#instVars : [
 		'noteTakerContainer',
 		'log',
-		'settingPersistence',
 		'mainPresenter',
 		'settings',
 		'preferenceFile'
@@ -109,15 +108,6 @@ NTApplication >> exportSettings [
 ]
 
 { #category : 'running' }
-NTApplication >> importSettings [
-
-	self preferencesFile exists ifFalse: [ ^ self ].
-	(SettingBrowser currentTree nodeNamed: #tnt_note) 
-		ifNotNil: [ :tntNode |
-			settingPersistence updateSettingNodes: tntNode allChildren ]
-]
-
-{ #category : 'running' }
 NTApplication >> importSettings2 [
 	settings loadFrom: self preferencesFile
 ]
@@ -126,8 +116,6 @@ NTApplication >> importSettings2 [
 NTApplication >> initialize [
 	super initialize.
 	settings := NTSettings new.
-	"Preference file is either in the preference folder and it does not exist in the app."
-	settingPersistence := SystemSettingsPersistence new fileReference: self preferencesFile.
 	settings defaultDocumentFolder ensureCreateDirectory.
 	self currentFolder: settings defaultDocumentFolder.
 	noteTakerContainer := NTContainer new.
