@@ -115,6 +115,17 @@ NTNote >> creationDate: aDateAndTime [
 	creationDate := aDateAndTime
 ]
 
+{ #category : 'accessing' }
+NTNote >> displayTitle [
+	"Answer the title to show in lists: the first line without its leading Markdown heading marks, or 'unnamed' when nothing is left"
+
+	| line |
+	line := self title trimBoth.
+	[ line beginsWith: '#' ] whileTrue: [ line := line allButFirst ].
+	line := line trimBoth.
+	^ line ifEmpty: [ 'unnamed' ]
+]
+
 { #category : 'testing' }
 NTNote >> exists [
 

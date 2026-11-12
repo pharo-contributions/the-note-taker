@@ -86,6 +86,20 @@ NTNoteTest >> testAddTwoTagsWithSameName [
 	self assert: note tags size equals: 1
 ]
 
+{ #category : 'tests - title' }
+NTNoteTest >> testDisplayTitleOfEmptyTitleIsUnnamed [
+
+	note contents: (String cr join: #( '#   ' 'body' )).
+	self assert: note displayTitle equals: 'unnamed'
+]
+
+{ #category : 'tests - title' }
+NTNoteTest >> testDisplayTitleRemovesHeadingMarks [
+
+	note contents: (String cr join: #( '## My title' 'body' )).
+	self assert: note displayTitle equals: 'My title'
+]
+
 { #category : 'tests -generate' }
 NTNoteTest >> testGenerateMetaDataElementsWithTags [
 
