@@ -54,6 +54,15 @@ NT3TagChoiceTest >> testAddTagNamedRemovesCommas [
 ]
 
 { #category : 'tests' }
+NT3TagChoiceTest >> testAddTagNamedRemovesQuotesAndBackslashes [
+
+	| choice |
+	choice := self choiceFor: { old }.
+	choice addTagNamed: 'say "hi"\'.
+	self assert: (choice stateOf: 'say hi') equals: #all
+]
+
+{ #category : 'tests' }
 NT3TagChoiceTest >> testCheckedTagsAreAdded [
 
 	| choice |

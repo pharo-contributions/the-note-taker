@@ -16,6 +16,48 @@ NTContainerTest class >> resources [
 	^ { NTTestResource }
 ]
 
+{ #category : 'helpers' }
+NTContainerTest >> noteFileWithTagsLine: aString [
+	"Write a note file whose metadata has aString as tags value, as a person or another tool could write it"
+
+	| file |
+	file := memoryFS / 'hand.md'.
+	file writeStreamDo: [ :stream |
+			stream
+				nextPutAll: '{';
+				nextPutAll: String crlf;
+				nextPutAll: '"tags" : "';
+				nextPutAll: aString;
+				nextPutAll: '"';
+				nextPutAll: String crlf;
+				nextPutAll: '}';
+				nextPutAll: String crlf;
+				nextPutAll: String crlf;
+				nextPutAll: 'Hand' ].
+	^ file
+]
+
+{ #category : 'helpers' }
+NTContainerTest >> reloadedTagNamesOf: aNote [
+	"Answer the tag names of aNote as read again from its file by a new container"
+
+	| container |
+	container := NTContainer new.
+	container importFolder: memoryFS.
+	^ (container notes detect: [ :each | each fileName = aNote fileName ]) tags collect: [ :each | each tagName ] as: Set
+]
+
+{ #category : 'helpers' }
+NTContainerTest >> savedNoteTagged: aCollectionOfNames [
+
+	| note |
+	note := NTNote content: 'Groceries'.
+	note folderReference: memoryFS.
+	aCollectionOfNames do: [ :each | note addTag: (NTTag newNamed: each) ].
+	note save.
+	^ note
+]
+
 { #category : 'running' }
 NTContainerTest >> setUp [
 
@@ -362,6 +404,35 @@ NTContainerTest >> testLoadNoteWithoutMetadata [
 	self assert: note modificationDate equals: noteFile modificationTime asDateAndTime
 ]
 
+{ #category : 'tests - tag persistence' }
+NTContainerTest >> testLoadingIgnoresEmptyTagNames [
+
+	self noteFileWithTagsLine: 'spec,, ,pharo,'.
+	noteTakerContainer importFolder: memoryFS.
+	self assert: (noteTakerContainer notes first tags collect: [ :each | each tagName ] as: Set) equals: #( 'pharo' 'spec' ) asSet
+]
+
+{ #category : 'tests - tag persistence' }
+NTContainerTest >> testLoadingTrimsTagNames [
+
+	self noteFileWithTagsLine: 'spec, pharo ,  books'.
+	noteTakerContainer importFolder: memoryFS.
+	self
+		assert: (noteTakerContainer notes first tags collect: [ :each | each tagName ] as: Set)
+		equals: #( 'books' 'pharo' 'spec' ) asSet
+]
+
+{ #category : 'tests - tag persistence' }
+NTContainerTest >> testNoteWithoutTagsHasNoTagsInItsFile [
+
+	| note |
+	note := self savedNoteTagged: #( 'home' ).
+	note removeTag: note tags anyOne.
+	note save.
+	self deny: (note fileReference contents includesSubstring: '"tags"').
+	self assertEmpty: (self reloadedTagNamesOf: note)
+]
+
 { #category : 'tests - scenarios' }
 NTContainerTest >> testNotesContentMatching [
 
@@ -423,6 +494,16 @@ NTContainerTest >> testRemoveTagFromNoteRemovesUnusedTag [
 	self assertEmpty: note tags
 ]
 
+{ #category : 'tests - tag persistence' }
+NTContainerTest >> testRemovedTagsAreNotLoadedBack [
+
+	| note |
+	note := self savedNoteTagged: #( 'home' 'shopping' ).
+	note removeTag: (note tags detect: [ :each | each tagName = 'home' ]).
+	note save.
+	self assert: (self reloadedTagNamesOf: note) equals: #( 'shopping' ) asSet
+]
+
 { #category : 'tests - note' }
 NTContainerTest >> testSaveNoteLoadedWithoutMetadata [
 
@@ -446,6 +527,14 @@ NTContainerTest >> testSaveNoteLoadedWithoutMetadata [
 	                 , 'This is just a new note'.
 
 	self assert: note fileReference contents equals: finalContents
+]
+
+{ #category : 'tests - tag persistence' }
+NTContainerTest >> testSavedTagsAreLoadedBack [
+
+	| note |
+	note := self savedNoteTagged: #( 'home' 'Shopping list' 'café' ).
+	self assert: (self reloadedTagNamesOf: note) equals: #( 'home' 'Shopping list' 'café' ) asSet
 ]
 
 { #category : 'tests - scenarios' }
@@ -509,6 +598,30 @@ NTContainerTest >> testTagNamedCreateTagWhenDoesntExist [
 	noteTakerContainer ensureTagNamed: 'Tag3'.
 
 	self assert: noteTakerContainer tags size equals: 2
+]
+
+{ #category : 'tests - tag persistence' }
+NTContainerTest >> testTagWithQuotesAndBackslashIsLoadedBackWithoutThem [
+	"Quotes and backslashes would break the metadata of the file and lose all the tags of the note"
+
+	| note |
+	note := self savedNoteTagged: #( 'say "hi"' 'back\slash' 'home' ).
+	self assert: (self reloadedTagNamesOf: note) equals: #( 'say hi' 'backslash' 'home' ) asSet
+]
+
+{ #category : 'tests - tag persistence' }
+NTContainerTest >> testTagsAreWrittenInAStableOrder [
+	"The same tags give the same file, whatever the order they were added in, so that versions of the file differ only by real changes"
+
+	| first second |
+	first := (self savedNoteTagged: #( 'spec' 'books' 'pharo' )) fileReference contents.
+	second := (NTNote content: 'Groceries')
+		          creationDate: (DateAndTime fromString: '2026-01-01T00:00:00');
+		          modificationDate: (DateAndTime fromString: '2026-01-01T00:00:00');
+		          yourself.
+	#( 'pharo' 'spec' 'books' ) do: [ :each | second addTag: (NTTag newNamed: each) ].
+	self assert: (first includesSubstring: '"tags" : "books,pharo,spec"').
+	self assert: (second generateMetaDataElements includesSubstring: '"tags" : "books,pharo,spec"')
 ]
 
 { #category : 'tests - tags' }

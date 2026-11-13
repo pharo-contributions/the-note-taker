@@ -72,11 +72,11 @@ NTContainer >> dateAt: aKey in: aMetaData ifAbsent: aBlock [
 
 { #category : 'accessing - tags' }
 NTContainer >> ensureTagNamed: aString [
-	"Add a tag if it not already present"
-	
-	^ self tags
-		  detect: [ :n | n tagName = aString ]
-		  ifNone: [ self addTagNamed: aString ]
+	"Answer the tag named aString, once cleaned (see NTTag class>>#cleanName:), adding it when not already present"
+
+	| name |
+	name := NTTag cleanName: aString.
+	^ self tags detect: [ :each | each tagName = name ] ifNone: [ self addTagNamed: name ]
 ]
 
 { #category : 'loading - note' }
@@ -114,8 +114,9 @@ NTContainer >> loadMetaData: aString for: aNTNote [
 	aNTNote creationDate: (self dateAt: 'creationDate' in: metaData ifAbsent: [ aNTNote fileReference creationTime ]).
 	aNTNote modificationDate: (self dateAt: 'lastModificationDate' in: metaData ifAbsent: [ aNTNote fileReference modificationTime ]).
 	tagsString := metaData at: 'tags' ifAbsent: [ ^ self ].
-
-	tagsString ifNotNil: [ (tagsString substrings: ',') do: [ :each | (self ensureTagNamed: each) addNote: aNTNote ] ]
+	tagsString ifNil: [ ^ self ].
+	((tagsString substrings: ',') collect: [ :each | NTTag cleanName: each ] thenReject: [ :each | each isEmpty ]) do: [ :each |
+		(self ensureTagNamed: each) addNote: aNTNote ]
 ]
 
 { #category : 'private - loading' }

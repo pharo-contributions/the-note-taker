@@ -67,10 +67,10 @@ NT3TagChoice class >> notes: aCollectionOfNotes tagNames: aCollectionOfStrings [
 
 { #category : 'choosing' }
 NT3TagChoice >> addTagNamed: aString [
-	"Check the tag named aString, offering it when it is new. Commas separate tags in the note files, so they are dropped"
+	"Check the tag named aString, offering it when it is new. The name is cleaned as for any tag (see NTTag class>>#cleanName:)"
 
 	| name |
-	name := (aString copyWithout: $,) trimBoth.
+	name := NTTag cleanName: aString.
 	name ifEmpty: [ ^ self ].
 	name := states keys detect: [ :each | each asLowercase = name asLowercase ] ifNone: [ name ].
 	states at: name put: #all

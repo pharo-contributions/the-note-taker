@@ -90,3 +90,29 @@ NTTagTest >> testRenameTag [
 
 	self assert: tag tagName equals: newName
 ]
+
+{ #category : 'tests - name' }
+NTTagTest >> testTagNameDropsCommas [
+	"Commas separate the tags in the metadata of a note file"
+
+	self assert: (NTTag newNamed: 'to,do') tagName equals: 'todo'
+]
+
+{ #category : 'tests - name' }
+NTTagTest >> testTagNameDropsQuotesAndBackslashes [
+	"They break the metadata of a note file (see the Microdown backlog)"
+
+	self assert: (NTTag newNamed: 'say "hi" back\slash') tagName equals: 'say hi backslash'
+]
+
+{ #category : 'tests - name' }
+NTTagTest >> testTagNameIsTrimmed [
+
+	self assert: (NTTag newNamed: '  spec ') tagName equals: 'spec'
+]
+
+{ #category : 'tests - name' }
+NTTagTest >> testTagNameKeepsOtherCharacters [
+
+	self assert: (NTTag newNamed: 'Shopping list café #1') tagName equals: 'Shopping list café #1'
+]
