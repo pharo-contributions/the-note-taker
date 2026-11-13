@@ -4,7 +4,8 @@ I am one row of the note list: a separator, or a note with its title and, unless
 ## Responsibility:
 
 - I show a separator label in bold and dimmed.
-- I show the display title of a note (dimmed when the note has none, after a bullet when it is unsaved) and its detail line: relative date and start of the text.
+- I show the display title of a note (dimmed when the note has none, after a bullet when it is unsaved) and its detail line: relative date, first tags when shown, and start of the text.
+- I show at most two tags, coloured with the `ntTag` style, then `+N` for the others; hovering `+N` shows all the tags of the note.
 - I compute relative dates from `today`.
 
 ## Collaborators:
@@ -15,8 +16,8 @@ I am one row of the note list: a separator, or a note with its title and, unless
 ## Public API and Key Messages
 
 - `model:` a note or an `NT3ListSeparator`.
-- `showsDetails:`, `today:`, `isUnsavedBlock:`.
-- `titleText`, `detailText`, `showsDetailLine`, `isSeparatorRow` (for tests).
+- `showsDetails:`, `showsTags:`, `today:`, `isUnsavedBlock:`.
+- `titleText`, `detailText`, `showsDetailLine`, `showsTagLabels`, `shownTagsLabel`, `hiddenTagsLabel`, `isSeparatorRow` (for tests).
 
 ```
 NT3NoteRowPresenter example open
@@ -24,18 +25,23 @@ NT3NoteRowPresenter example open
 
 ## Internal Representation
 
-- `titleLabel`, `detailLabel`: labels; my layout holds one or both.
-- `showsDetails`: a Boolean; `today`: a `Date`; `isUnsavedBlock`: a block answering whether a note is unsaved.
+- `titleLabel`: a label; `detailLine`: a left-to-right layout of the labels `dateLabel`, `shownTagsLabel`, `hiddenTagsLabel` (its help lists all the tags) and `excerptLabel`, holding only those with something to show. My layout holds the title and, unless compact, the detail line.
+- `showsDetails`, `showsTags`: Booleans; `today`: a `Date`; `isUnsavedBlock`: a block answering whether a note is unsaved.
 "
 Class {
 	#name : 'NT3NoteRowPresenter',
 	#superclass : 'SpEasyAbstractRowPresenter',
 	#instVars : [
 		'titleLabel',
-		'detailLabel',
 		'showsDetails',
 		'today',
-		'isUnsavedBlock'
+		'isUnsavedBlock',
+		'dateLabel',
+		'shownTagsLabel',
+		'hiddenTagsLabel',
+		'excerptLabel',
+		'detailLine',
+		'showsTags'
 	],
 	#category : 'TheNoteTaker-UI3',
 	#package : 'TheNoteTaker-UI3'
@@ -59,19 +65,30 @@ NT3NoteRowPresenter >> defaultLayout [
 
 { #category : 'accessing' }
 NT3NoteRowPresenter >> detailText [
+	"Answer the text of the detail line as shown, its parts separated by a space"
 
-	^ detailLabel label
+	^ ' ' join: (detailLine children collect: [ :each | each label ])
+]
+
+{ #category : 'accessing - presenters' }
+NT3NoteRowPresenter >> hiddenTagsLabel [
+
+	^ hiddenTagsLabel
 ]
 
 { #category : 'initialization' }
 NT3NoteRowPresenter >> initializePresenters [
 
 	titleLabel := self newLabel.
-	detailLabel := self newLabel
-		               addStyle: 'ntDetail';
-		               addStyle: 'dim';
-		               yourself.
+	dateLabel := self newDetailLabel.
+	excerptLabel := self newDetailLabel.
+	shownTagsLabel := self newTagLabel.
+	hiddenTagsLabel := self newTagLabel.
+	detailLine := SpBoxLayout newLeftToRight
+		              spacing: 0;
+		              yourself.
 	showsDetails := true.
+	showsTags := false.
 	isUnsavedBlock := [ :note | false ].
 	today := Date today
 ]
@@ -100,10 +117,33 @@ NT3NoteRowPresenter >> layoutWith: aCollectionOfPresenters [
 	^ box
 ]
 
+{ #category : 'initialization' }
+NT3NoteRowPresenter >> newDetailLabel [
+
+	^ self newLabel
+		  addStyle: 'ntDetail';
+		  addStyle: 'dim';
+		  yourself
+]
+
+{ #category : 'initialization' }
+NT3NoteRowPresenter >> newTagLabel [
+
+	^ self newLabel
+		  addStyle: 'ntTag';
+		  yourself
+]
+
+{ #category : 'accessing - presenters' }
+NT3NoteRowPresenter >> shownTagsLabel [
+
+	^ shownTagsLabel
+]
+
 { #category : 'testing' }
 NT3NoteRowPresenter >> showsDetailLine [
 
-	^ self layout presenters includes: detailLabel
+	^ self layout children includes: detailLine
 ]
 
 { #category : 'accessing' }
@@ -111,6 +151,25 @@ NT3NoteRowPresenter >> showsDetails: aBoolean [
 	"Set whether a note row shows the second line (date and start of the text)"
 
 	showsDetails := aBoolean
+]
+
+{ #category : 'testing' }
+NT3NoteRowPresenter >> showsTagLabels [
+
+	^ self showsDetailLine and: [ detailLine children includes: shownTagsLabel ]
+]
+
+{ #category : 'accessing' }
+NT3NoteRowPresenter >> showsTags [
+
+	^ showsTags
+]
+
+{ #category : 'accessing' }
+NT3NoteRowPresenter >> showsTags: aBoolean [
+	"Set whether the detail line of a note row shows the first tags of the note"
+
+	showsTags := aBoolean
 ]
 
 { #category : 'accessing' }
@@ -124,6 +183,31 @@ NT3NoteRowPresenter >> today: aDate [
 	"Set the day relative dates are computed from"
 
 	today := aDate
+]
+
+{ #category : 'updating' }
+NT3NoteRowPresenter >> updateDetailLine [
+	"The detail line holds the relative date, the first tags and the count of the others (whose help lists all the tags), then the start of the text"
+
+	| preview presenters excerpt |
+	preview := NT3NotePreview note: self model today: today.
+	presenters := OrderedCollection with: dateLabel.
+	dateLabel label: preview relativeDate.
+	(showsTags and: [ preview shownTagsText isNotEmpty ]) ifTrue: [
+			dateLabel label: preview relativeDate , ' ·'.
+			shownTagsLabel label: preview shownTagsText.
+			presenters add: shownTagsLabel.
+			preview hiddenTagsText ifNotEmpty: [ :hidden |
+					hiddenTagsLabel
+						label: hidden;
+						help: preview allTagsText.
+					presenters add: hiddenTagsLabel ] ].
+	excerpt := preview excerpt.
+	excerpt ifNotEmpty: [
+			excerptLabel label: '· ' , excerpt.
+			presenters add: excerptLabel ].
+	detailLine removeAll.
+	presenters do: [ :each | detailLine add: each expand: false ]
 ]
 
 { #category : 'updating' }
@@ -142,10 +226,10 @@ NT3NoteRowPresenter >> updateNoteRow [
 		ifTrue: [ titleLabel addStyle: 'dim' ]
 		ifFalse: [ titleLabel removeStyle: 'dim' ].
 	showsDetails ifFalse: [ ^ self layout: (self layoutWith: { titleLabel }) ].
-	detailLabel label: (NT3NotePreview note: self model today: today) detailLine.
+	self updateDetailLine.
 	self layout: (self layoutWith: {
 				 titleLabel.
-				 detailLabel })
+				 detailLine })
 ]
 
 { #category : 'initialization' }

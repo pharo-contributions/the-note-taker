@@ -57,6 +57,19 @@ NT3NoteTakerPresenterTest >> selectNote: aNote [
 	application runDeferred
 ]
 
+{ #category : 'helpers' }
+NT3NoteTakerPresenterTest >> selectNotes: aCollectionOfNotes [
+	"Select the rows of the notes, in this order, as successive Cmd-clicks do"
+
+	| entries indexes |
+	entries := presenter noteList entries.
+	indexes := OrderedCollection new.
+	aCollectionOfNotes do: [ :each |
+			indexes add: (entries indexOf: each).
+			presenter noteList noteList selectIndexes: indexes copy.
+			application runDeferred ]
+]
+
 { #category : 'running' }
 NT3NoteTakerPresenterTest >> setUp [
 
@@ -66,6 +79,52 @@ NT3NoteTakerPresenterTest >> setUp [
 	groceries := self noteWith: #( 'Groceries' 'bread' ) tagNames: #(  ) daysAgo: 2.
 	old := self noteWith: #( 'Old spec notes' 'toplo' ) tagNames: #( 'spec' ) daysAgo: 30.
 	presenter := NT3NoteTakerPresenter newApplication: application
+]
+
+{ #category : 'tests - tags' }
+NT3NoteTakerPresenterTest >> testApplyingATagChoiceKeepsTheSelection [
+
+	| choice |
+	self selectNotes: {
+			specNote.
+			groceries }.
+	choice := presenter tagChoiceForSelectedNotes.
+	choice addTagNamed: 'todo'.
+	presenter applyTagChoice: choice.
+	self assert: presenter noteList selectedNotes asSet equals: {
+			specNote.
+			groceries } asSet.
+	self assert: presenter editor note identicalTo: groceries
+]
+
+{ #category : 'tests - tags' }
+NT3NoteTakerPresenterTest >> testApplyingATagChoiceTagsTheSelectedNotes [
+
+	| choice |
+	self selectNotes: {
+			specNote.
+			groceries }.
+	choice := presenter tagChoiceForSelectedNotes.
+	choice
+		addTagNamed: 'todo';
+		toggle: 'spec'.
+	presenter applyTagChoice: choice.
+	self assert: (specNote tags collect: [ :each | each tagName ] as: Set) equals: #( 'spec' 'todo' ) asSet.
+	self assert: (groceries tags collect: [ :each | each tagName ] as: Set) equals: #( 'spec' 'todo' ) asSet.
+	self assert: (old tags collect: [ :each | each tagName ] as: Set) equals: #( 'spec' ) asSet
+]
+
+{ #category : 'tests - tags' }
+NT3NoteTakerPresenterTest >> testApplyingATagChoiceUpdatesTheEditorInfo [
+
+	| choice |
+	self selectNotes: {
+			specNote.
+			groceries }.
+	choice := presenter tagChoiceForSelectedNotes.
+	choice addTagNamed: 'todo'.
+	presenter applyTagChoice: choice.
+	self assert: (presenter editor infoText includesSubstring: '#todo')
 ]
 
 { #category : 'tests' }
@@ -108,6 +167,15 @@ NT3NoteTakerPresenterTest >> testEditingTheNoteMarksItInTheList [
 	self selectNote: groceries.
 	presenter editor textEditor text: 'Groceries!'.
 	self assert: (presenter noteList isUnsaved: groceries)
+]
+
+{ #category : 'tests - tags' }
+NT3NoteTakerPresenterTest >> testEditorShowsTheLastSelectedNote [
+
+	self selectNotes: {
+			specNote.
+			groceries }.
+	self assert: presenter editor note identicalTo: groceries
 ]
 
 { #category : 'tests - creation' }
@@ -170,6 +238,13 @@ NT3NoteTakerPresenterTest >> testHidingTheEditedNoteSavesItAndEmptiesTheEditor [
 	self assert: presenter editor note isNil
 ]
 
+{ #category : 'tests - tags' }
+NT3NoteTakerPresenterTest >> testListHasATagsAction [
+
+	self assert: presenter tagsAction name equals: 'Tags…'.
+	self assert: presenter tagsAction shortcutKey equals: $t actionModifier
+]
+
 { #category : 'tests' }
 NT3NoteTakerPresenterTest >> testListShowsTheNotesOfTheApplication [
 
@@ -230,4 +305,38 @@ NT3NoteTakerPresenterTest >> testSelectingAnotherNoteSavesTheEditedOne [
 	self selectNote: specNote.
 	self deny: (application isUnsaved: groceries).
 	self assert: groceries fileReferenceContents equals: 'Groceries and more'
+]
+
+{ #category : 'tests - tags' }
+NT3NoteTakerPresenterTest >> testTagChoiceIsOnTheSelectedNotes [
+
+	| choice |
+	self selectNotes: {
+			specNote.
+			groceries }.
+	choice := presenter tagChoiceForSelectedNotes.
+	self assert: choice notes asSet equals: {
+			specNote.
+			groceries } asSet.
+	self assert: (choice stateOf: 'spec') equals: #some
+]
+
+{ #category : 'tests - tags' }
+NT3NoteTakerPresenterTest >> testTagChoiceOffersTheTagsOfAllTheNotes [
+
+	application container addNote: (NT3Application
+			 noteTitled: 'Books'
+			 body: ''
+			 modifiedAt: DateAndTime now
+			 tagNames: #( 'books' )).
+	self selectNote: groceries.
+	self assert: (presenter tagChoiceForSelectedNotes tagNames includesAll: #( 'books' 'spec' ))
+]
+
+{ #category : 'tests - tags' }
+NT3NoteTakerPresenterTest >> testTagsActionIsDisabledWithoutSelectedNote [
+
+	self deny: presenter tagsAction isEnabled.
+	self selectNote: groceries.
+	self assert: presenter tagsAction isEnabled
 ]

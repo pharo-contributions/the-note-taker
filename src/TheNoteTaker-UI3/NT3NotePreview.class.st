@@ -6,6 +6,7 @@ I compute the texts describing a note: the detail line in the list and the infor
 - I give the modification date relative to today, without time: today, yesterday, 3 days ago, then Thu 5.
 - I give the start of the text after the title line, without Markdown markup, on one line, cut with an ellipsis.
 - I join both into the detail line, and give the information line: unsaved bullet, tags, modification date and time, creation date.
+- I give the tags of the note alphabetically ignoring case: all of them, the first two shown in a list row, and the count of the others (`+2`).
 
 ## Collaborators:
 
@@ -16,6 +17,7 @@ I compute the texts describing a note: the detail line in the list and the infor
 
 - `NT3NotePreview note: aNote today: aDate`
 - `relativeDate`, `excerpt`, `detailLine`, `infoLineUnsaved:`
+- `tagNames`, `allTagsText`, `shownTagsText`, `hiddenTagsText`; `NT3NotePreview maximumShownTags`
 
 ```
 (NT3NotePreview note: NT3Application sampleNotes first today: Date today) detailLine
@@ -51,6 +53,13 @@ NT3NotePreview class >> maximumExcerptSize [
 	^ 80
 ]
 
+{ #category : 'accessing' }
+NT3NotePreview class >> maximumShownTags [
+	"Answer how many tags a note row shows before the count of the others"
+
+	^ 2
+]
+
 { #category : 'instance creation' }
 NT3NotePreview class >> note: aNote today: aDate [
 
@@ -58,6 +67,13 @@ NT3NotePreview class >> note: aNote today: aDate [
 		  note: aNote;
 		  today: aDate;
 		  yourself
+]
+
+{ #category : 'tags' }
+NT3NotePreview >> allTagsText [
+	"Answer all the tags of the note, as #name separated by spaces"
+
+	^ self tagsTextOf: self tagNames
 ]
 
 { #category : 'private' }
@@ -104,6 +120,16 @@ NT3NotePreview >> excerpt [
 				  nextPut: $… ]
 ]
 
+{ #category : 'tags' }
+NT3NotePreview >> hiddenTagsText [
+	"Answer the number of tags not shown in a note row, as +2, or an empty string when all are shown"
+
+	| hidden |
+	hidden := self tagNames size - self class maximumShownTags.
+	hidden > 0 ifFalse: [ ^ '' ].
+	^ '+' , hidden printString
+]
+
 { #category : 'private' }
 NT3NotePreview >> hoursAndMinutesOf: aDateAndTime [
 
@@ -119,19 +145,21 @@ NT3NotePreview >> infoLineUnsaved: isUnsaved [
 	"Answer the line shown above the editor: a bullet when the note is unsaved, its tags,
 	when it was modified (relative date and time) and when it was created"
 
-	| tagNames |
-	tagNames := (note tags collect: [ :each | each tagName ] as: Array) sort: [ :a :b | a asLowercase <= b asLowercase ].
+	| tags |
+	tags := self allTagsText.
 	^ String streamContents: [ :stream |
-		  isUnsaved ifTrue: [ stream nextPutAll: '• ' ].
-		  tagNames do: [ :each | stream nextPut: $#; nextPutAll: each ] separatedBy: [ stream space ].
-		  tagNames ifNotEmpty: [ stream nextPutAll: ' · ' ].
-		  stream
-			  nextPutAll: 'modified ';
-			  nextPutAll: self relativeDate;
-			  space;
-			  nextPutAll: (self hoursAndMinutesOf: note modificationDate);
-			  nextPutAll: ' · created ';
-			  nextPutAll: (self dayMonthYearOf: note creationDate) ]
+			  isUnsaved ifTrue: [ stream nextPutAll: '• ' ].
+			  tags ifNotEmpty: [
+					  stream
+						  nextPutAll: tags;
+						  nextPutAll: ' · ' ].
+			  stream
+				  nextPutAll: 'modified ';
+				  nextPutAll: self relativeDate;
+				  space;
+				  nextPutAll: (self hoursAndMinutesOf: note modificationDate);
+				  nextPutAll: ' · created ';
+				  nextPutAll: (self dayMonthYearOf: note creationDate) ]
 ]
 
 { #category : 'private' }
@@ -191,6 +219,28 @@ NT3NotePreview >> relativeDate [
 							  nextPutAll: (date dayOfWeekName first: 3);
 							  space;
 							  print: date dayOfMonth ] ]
+]
+
+{ #category : 'tags' }
+NT3NotePreview >> shownTagsText [
+	"Answer the tags shown in a note row: the first ones, at most the maximum number of shown tags"
+
+	| names |
+	names := self tagNames.
+	^ self tagsTextOf: (names first: (names size min: self class maximumShownTags))
+]
+
+{ #category : 'tags' }
+NT3NotePreview >> tagNames [
+	"Answer the names of the tags of the note, alphabetically ignoring case"
+
+	^ (note tags collect: [ :each | each tagName ] as: Array) sort: [ :a :b | a asLowercase <= b asLowercase ]
+]
+
+{ #category : 'private' }
+NT3NotePreview >> tagsTextOf: aCollectionOfTagNames [
+
+	^ ' ' join: (aCollectionOfTagNames collect: [ :each | '#' , each ])
 ]
 
 { #category : 'accessing' }

@@ -5,7 +5,7 @@ I am the application of the new TheNoteTaker UI (UI3): I open the note taker win
 
 - I hold the `NTContainer` of the notes and load it from the notes folder (`~/Documents/Notes` by default).
 - I know which notes have unsaved edits, save them 10 seconds after the last edit, on demand, or all at once, and tell my listeners when a note is saved.
-- I remember the mode of the note list for the session and declare the styles of the UI3 presenters (`ntSeparator`, `ntDetail`).
+- I remember the mode of the note list and whether it shows tags for the session, and declare the styles of the UI3 presenters (`ntSeparator`, `ntDetail`, `ntTag` coloured with the theme `urlColor`).
 
 ## Collaborators:
 
@@ -17,8 +17,9 @@ I am the application of the new TheNoteTaker UI (UI3): I open the note taker win
 
 - `notesFolder` / `notesFolder:` (before `start`), `loadNotes`, `container`.
 - `newNoteTitled:tagNames:` creates, adds and saves a note.
+- `tagNames`, `tagNotes:adding:removing:` adds and removes tags of several notes and saves them.
 - `noteEdited:`, `isUnsaved:`, `saveNote:`, `saveAll`, `whenNoteSavedDo:`.
-- `listMode` / `listMode:`.
+- `listMode` / `listMode:`, `showsTags` / `showsTags:`.
 - `start` loads the notes and opens the note taker.
 
 ```
@@ -29,7 +30,7 @@ NT3Application example start
 
 - `container`: an `NTContainer`; `notesFolder`: a `FileReference` or `FileLocator`.
 - `unsavedNotes`: an `IdentitySet` of notes; `noteSavedBlocks`: the listeners.
-- `autosaveTimer`: an `NT3Timer` (a manual timer in tests); `listMode`: an `NT3ListMode`.
+- `autosaveTimer`: an `NT3Timer` (a manual timer in tests); `listMode`: an `NT3ListMode`; `showsTags`: a Boolean, true by default.
 
 ### Implementation Points
 
@@ -44,7 +45,8 @@ Class {
 		'notesFolder',
 		'unsavedNotes',
 		'autosaveTimer',
-		'noteSavedBlocks'
+		'noteSavedBlocks',
+		'showsTags'
 	],
 	#category : 'TheNoteTaker-UI3',
 	#package : 'TheNoteTaker-UI3'
@@ -162,13 +164,15 @@ NT3Application >> initialize [
 	super initialize.
 	container := NTContainer new.
 	listMode := NT3ByDateListMode new.
+	showsTags := true.
 	unsavedNotes := IdentitySet new.
 	noteSavedBlocks := OrderedCollection new.
 	autosaveTimer := NT3Timer application: self.
 	self addStyleSheetFromString: '.application [
 		.label [
 			.ntSeparator [ Font { #bold: true } ],
-			.ntDetail [ Font { #name: EnvironmentFont(#default), #size: 9 } ] ] ]'
+			.ntDetail [ Font { #name: EnvironmentFont(#default), #size: 9 } ],
+			.ntTag [ Font { #name: EnvironmentFont(#default), #size: 9 }, Draw { #color: EnvironmentColor(#url) } ] ] ]'
 ]
 
 { #category : 'testing' }
@@ -250,12 +254,45 @@ NT3Application >> saveNote: aNote [
 	noteSavedBlocks do: [ :each | each value: aNote ]
 ]
 
+{ #category : 'accessing' }
+NT3Application >> showsTags [
+	"Answer whether the note list shows the first tags of the notes, kept for the session"
+
+	^ showsTags
+]
+
+{ #category : 'accessing' }
+NT3Application >> showsTags: aBoolean [
+
+	showsTags := aBoolean
+]
+
 { #category : 'running' }
 NT3Application >> start [
 	"Load the notes of the notes folder and open the note taker window"
 
 	self loadNotes.
 	(self instantiate: NT3NoteTakerPresenter) open
+]
+
+{ #category : 'notes' }
+NT3Application >> tagNames [
+	"Answer the names of the tags of all the notes, each once"
+
+	^ (container notes flatCollect: [ :note | note tags collect: [ :tag | tag tagName ] ]) asSet asArray
+]
+
+{ #category : 'notes' }
+NT3Application >> tagNotes: aCollectionOfNotes adding: addedTagNames removing: removedTagNames [
+	"Add the tags named in addedTagNames to each note and remove those named in removedTagNames, then save the notes.
+	A tag that no note uses any more is removed from the container"
+
+	aCollectionOfNotes do: [ :note |
+			addedTagNames do: [ :each | note addTag: (container ensureTagNamed: each) ].
+			removedTagNames do: [ :each |
+				note tags detect: [ :tag | tag tagName = each ] ifFound: [ :tag | container removeTag: tag fromNote: note ] ].
+			unsavedNotes add: note.
+			self saveNote: note ]
 ]
 
 { #category : 'events' }

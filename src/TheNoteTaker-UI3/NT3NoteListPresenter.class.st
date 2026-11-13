@@ -1,11 +1,11 @@
 "
-I show a list of notes in one of three modes, with a tag search bar and the mode buttons below the list.
+I show a list of notes in one of three modes, with a tag search bar and the mode buttons below the list, followed by the `#` button that shows or hides the tags in the rows.
 
 ## Responsibility:
 
 - I list the notes by date (month separators), by tag (one group per tag, then ""No tag"") or titles only, as my `NT3ListMode` says.
 - I filter the notes by the exact tag names typed in the search bar (several names: any of them), completing tag names.
-- I keep one note selected: separators cannot be selected, and the selection survives mode and filter changes when the note is still listed; a selected note hidden by a filter is selected again once it is listed again.
+- I let several notes be selected (Cmd-click, Shift-click) and know which one was selected last, the one to show in the editor. A separator cannot be selected alone, and the selection survives mode and filter changes for the notes still listed; the last selected note hidden by a filter is selected again once it is listed again.
 
 ## Collaborators:
 
@@ -17,7 +17,8 @@ I show a list of notes in one of three modes, with a tag search bar and the mode
 
 - `notes:` sets the notes; `refresh` after a note changed (I do not track changes).
 - `mode` / `mode:`; the buttons and Cmd+1/2/3 also change it.
-- `selectedNote`, `selectNote:`, `selectFirstNote`, `whenNoteSelectedDo:` (the block receives the note, or nil).
+- `showsTags` / `showsTags:`, also changed by the `#` button (`tagsButton`), which is disabled in titles only mode; the application remembers it for the session.
+- `selectedNotes`; `selectedNote` (the note selected last), `selectNote:` (selects only that note), `selectFirstNote`, `whenNoteSelectedDo:` (the block receives the note selected last, or nil, when it changes).
 - `isUnsaved:` (asked to the application): unsaved notes show a bullet before their title.
 - `tagSearchText:`, `clearTagSearch` (Escape), `submitTagSearch` (Enter).
 
@@ -30,8 +31,9 @@ I show a list of notes in one of three modes, with a tag search bar and the mode
 ## Internal Representation
 
 - `noteList`: an `SpEasyListViewPresenter` whose items are notes and `NT3ListSeparator`s.
-- `tagSearchInput`, `modeButtons` (toggle buttons in the order of `NT3ListMode modes`).
-- `lastSelectedIndex`, `isAdjustingSelection`: to move the selection off separators.
+- `tagSearchInput`, `modeButtons` (toggle buttons in the order of `NT3ListMode modes`), `tagsButton` (a toggle button).
+- `currentNote`: the note selected last; `lastSelectedIndex`: its row; `selectedIndexes`: the selected rows, to find the rows the user just added.
+- `isAdjustingSelection`: to change the selection without reacting to it.
 - `hiddenNote`: the selected note that a filter hides, to select it again.
 - `textBeforeCompletion`: the search text when the completion list opened.
 
@@ -52,7 +54,10 @@ Class {
 		'lastSelectedIndex',
 		'isAdjustingSelection',
 		'textBeforeCompletion',
-		'hiddenNote'
+		'hiddenNote',
+		'selectedIndexes',
+		'currentNote',
+		'tagsButton'
 	],
 	#category : 'TheNoteTaker-UI3',
 	#package : 'TheNoteTaker-UI3'
@@ -98,6 +103,16 @@ NT3NoteListPresenter >> clearTagSearch [
 	self tagSearchText: ''
 ]
 
+{ #category : 'private' }
+NT3NoteListPresenter >> configureRow: aRowPresenter [
+	"Tell a new row how the list shows the notes"
+
+	aRowPresenter
+		showsDetails: mode showsDetails;
+		showsTags: self showsTags;
+		isUnsavedBlock: [ :note | self isUnsaved: note ]
+]
+
 { #category : 'initialization' }
 NT3NoteListPresenter >> connectModes [
 	"Each mode button, and Cmd+1/2/3 in the list, switch to its mode"
@@ -114,11 +129,9 @@ NT3NoteListPresenter >> connectModes [
 NT3NoteListPresenter >> connectPresenters [
 
 	noteList
-		whenRowPresenterInstantiatedDo: [ :row |
-			row
-				showsDetails: mode showsDetails;
-				isUnsavedBlock: [ :note | self isUnsaved: note ] ];
+		whenRowPresenterInstantiatedDo: [ :row | self configureRow: row ];
 		whenSelectionChangedDo: [ self noteListSelectionChanged ].
+	tagsButton whenChangedDo: [ :state | self showsTags: state ].
 	self
 		connectModes;
 		connectTagSearch
@@ -144,6 +157,7 @@ NT3NoteListPresenter >> defaultLayout [
 		           spacing: 2;
 		           yourself.
 	modeButtons do: [ :each | buttons add: each expand: false ].
+	buttons addLast: tagsButton expand: false.
 	^ SpBoxLayout newTopToBottom
 		  spacing: 4;
 		  add: noteList;
@@ -165,11 +179,13 @@ NT3NoteListPresenter >> initializePresenters [
 	notes := #(  ).
 	noteSelectedBlocks := OrderedCollection new.
 	lastSelectedIndex := 0.
+	selectedIndexes := #(  ).
 	isAdjustingSelection := false.
 	textBeforeCompletion := ''.
 	mode := self application listMode.
 	noteList := self newEasyListView
 		            rowPresenterClass: NT3NoteRowPresenter;
+		            beMultipleSelection;
 		            yourself.
 	tagSearchInput := self newTextInput
 		                  placeholder: 'Tags, e.g. pharo spec';
@@ -181,6 +197,11 @@ NT3NoteListPresenter >> initializePresenters [
 				               help: each help;
 				               yourself ].
 	modeButtons first associatedToggleButtons: modeButtons allButFirst.
+	tagsButton := self newToggleButton
+		              label: '#';
+		              help: 'Show tags';
+		              state: self application showsTags;
+		              yourself.
 	self updateModeButtons
 ]
 
@@ -197,6 +218,19 @@ NT3NoteListPresenter >> initializeWindow: aWindowPresenter [
 NT3NoteListPresenter >> isUnsaved: aNote [
 
 	^ self application isUnsaved: aNote
+]
+
+{ #category : 'private' }
+NT3NoteListPresenter >> keepCurrentNoteAmong: indexes [
+	"Notes were only unselected: keep the current note when still selected, otherwise take the last selected one"
+
+	| noteIndexes |
+	noteIndexes := indexes asArray sort select: [ :each | (noteList items at: each) isNote ].
+	noteIndexes ifEmpty: [
+			lastSelectedIndex := 0.
+			^ currentNote := nil ].
+	lastSelectedIndex := noteIndexes detect: [ :each | (noteList items at: each) == currentNote ] ifNone: [ noteIndexes last ].
+	currentNote := noteList items at: lastSelectedIndex
 ]
 
 { #category : 'accessing' }
@@ -245,25 +279,22 @@ NT3NoteListPresenter >> noteList [
 
 { #category : 'private' }
 NT3NoteListPresenter >> noteListSelectionChanged [
-	"Separators cannot be selected: a move by one row onto a separator goes on to the next note in that direction,
-	any other selection of a separator (a click) restores the previous selection.
-	The list ignores selection changes made while it announces one, so the correction is deferred"
+	"Separators cannot be selected alone: see separatorSelectedAt:.
+	Otherwise the selected note becomes the note the user just added to the selection, or stays the same when still selected"
 
-	| index previousIndex target |
+	| indexes added previous |
 	isAdjustingSelection ifTrue: [ ^ self ].
-	index := noteList selectedIndex.
-	previousIndex := lastSelectedIndex.
-	((index between: 1 and: noteList items size) and: [ (noteList items at: index) isNote not ]) ifFalse: [
-			lastSelectedIndex := index.
-			^ self announceSelectedNote ].
-	target := self noteIndexMovingFrom: previousIndex to: index.
-	self defer: [
-			self adjustingSelectionDo: [
-					target = 0
-						ifTrue: [ noteList unselectAll ]
-						ifFalse: [ noteList selectIndex: target ] ].
-			lastSelectedIndex := noteList selectedIndex.
-			target = previousIndex ifFalse: [ self announceSelectedNote ] ]
+	indexes := noteList selection selectedIndexes asArray.
+	(indexes size = 1 and: [ (noteList items at: indexes first) isNote not ]) ifTrue: [ ^ self separatorSelectedAt: indexes first ].
+	added := indexes select: [ :each | (selectedIndexes includes: each) not and: [ (noteList items at: each) isNote ] ].
+	selectedIndexes := indexes.
+	previous := currentNote.
+	added
+		ifEmpty: [ self keepCurrentNoteAmong: indexes ]
+		ifNotEmpty: [ "the row farthest from the previous one is the clicked row of a Shift-click range"
+				lastSelectedIndex := added detectMax: [ :each | (each - lastSelectedIndex) abs ].
+				currentNote := noteList items at: lastSelectedIndex ].
+	currentNote == previous ifFalse: [ self announceSelectedNote ]
 ]
 
 { #category : 'accessing' }
@@ -276,19 +307,19 @@ NT3NoteListPresenter >> notes: aCollectionOfNotes [
 
 { #category : 'updating' }
 NT3NoteListPresenter >> refresh [
-	"Rebuild the rows from the notes, the mode and the searched tags, keeping the selected note when it is still listed.
+	"Rebuild the rows from the notes, the mode and the searched tags, keeping the selected notes that are still listed.
 	A selected note that a filter hides is remembered and selected again once it is listed again"
 
-	| previous selected entries |
-	previous := self selectedNote.
+	| previous selected entries kept |
+	previous := currentNote.
 	selected := previous ifNil: [ hiddenNote ].
+	kept := self selectedNotes.
+	selected ifNotNil: [ kept := kept copyWith: selected ].
 	entries := mode entriesFor: notes searchedTagNames: self tagQuery searchedTagNames.
 	hiddenNote := (selected isNotNil and: [ (entries includes: selected) not ]) ifTrue: [ selected ].
-	self adjustingSelectionDo: [
-			noteList items: entries.
-			(selected isNotNil and: [ hiddenNote isNil ]) ifTrue: [ noteList selectIndex: (entries indexOf: selected) ] ].
-	lastSelectedIndex := noteList selectedIndex.
-	self selectedNote == previous ifFalse: [ self announceSelectedNote ]
+	currentNote := hiddenNote ifNil: [ selected ] ifNotNil: [ nil ].
+	self showEntries: entries selecting: kept.
+	currentNote == previous ifFalse: [ self announceSelectedNote ]
 ]
 
 { #category : 'selection' }
@@ -303,17 +334,76 @@ NT3NoteListPresenter >> selectFirstNote [
 
 { #category : 'selection' }
 NT3NoteListPresenter >> selectNote: aNote [
-	"Select the first row of aNote, when it is listed"
+	"Select only the first row of aNote, when it is listed"
 
 	| index |
 	index := noteList items indexOf: aNote.
-	index > 0 ifTrue: [ noteList selectIndex: index ]
+	index > 0 ifTrue: [ noteList selectIndexes: { index } ]
 ]
 
 { #category : 'selection' }
 NT3NoteListPresenter >> selectedNote [
+	"Answer the note the user selected last among the selected ones: the note shown in the editor"
 
-	^ noteList selectedItem ifNotNil: [ :entry | entry isNote ifTrue: [ entry ] ]
+	^ currentNote
+]
+
+{ #category : 'selection' }
+NT3NoteListPresenter >> selectedNotes [
+	"Answer the selected notes in the order of the list, each once even when it is listed several times"
+
+	^ ((noteList selection selectedIndexes asArray sort collect: [ :each | noteList items at: each ]) select: [ :each | each isNote ])
+		  asOrderedCollection removeDuplicates
+]
+
+{ #category : 'private' }
+NT3NoteListPresenter >> separatorSelectedAt: separatorIndex [
+	"A move by one row onto a separator goes on to the next note in that direction,
+	any other selection of a separator (a click) restores the previous selection.
+	The list ignores selection changes made while it announces one, so the correction is deferred"
+
+	| previousIndex previousIndexes target |
+	previousIndex := lastSelectedIndex.
+	previousIndexes := selectedIndexes.
+	target := self noteIndexMovingFrom: previousIndex to: separatorIndex.
+	self defer: [
+			self adjustingSelectionDo: [
+					noteList selectIndexes: (target = previousIndex
+							 ifTrue: [ previousIndexes ]
+							 ifFalse: [ { target } ]) ].
+			selectedIndexes := noteList selection selectedIndexes asArray.
+			target = previousIndex ifFalse: [
+					lastSelectedIndex := target.
+					currentNote := noteList items at: target.
+					self announceSelectedNote ] ]
+]
+
+{ #category : 'private' }
+NT3NoteListPresenter >> showEntries: entries selecting: aCollectionOfNotes [
+	"List entries and select the first row of each note of aCollectionOfNotes that is listed, without reacting to it"
+
+	self adjustingSelectionDo: [
+			noteList items: entries.
+			noteList selectIndexes:
+				((aCollectionOfNotes collect: [ :each | entries indexOf: each ]) reject: [ :each | each = 0 ]) asSet asArray sort ].
+	selectedIndexes := noteList selection selectedIndexes asArray.
+	lastSelectedIndex := currentNote ifNil: [ 0 ] ifNotNil: [ entries indexOf: currentNote ]
+]
+
+{ #category : 'accessing' }
+NT3NoteListPresenter >> showsTags [
+	"Answer whether the rows show the first tags of the notes; the application keeps it for the session"
+
+	^ self application showsTags
+]
+
+{ #category : 'accessing' }
+NT3NoteListPresenter >> showsTags: aBoolean [
+
+	aBoolean = self showsTags ifTrue: [ ^ self ].
+	self application showsTags: aBoolean.
+	tagsButton state: aBoolean.
+	self refresh
 ]
 
 { #category : 'tag search' }
@@ -377,10 +467,18 @@ NT3NoteListPresenter >> tagSearchText: aString [
 	tagSearchInput text: aString
 ]
 
+{ #category : 'accessing - presenters' }
+NT3NoteListPresenter >> tagsButton [
+
+	^ tagsButton
+]
+
 { #category : 'private' }
 NT3NoteListPresenter >> updateModeButtons [
+	"Show the current mode; the tags button is disabled in the mode without detail line, but keeps its state"
 
-	NT3ListMode modes with: modeButtons do: [ :each :button | button state: each class = mode class ]
+	NT3ListMode modes with: modeButtons do: [ :each :button | button state: each class = mode class ].
+	tagsButton enabled: mode showsDetails
 ]
 
 { #category : 'selection' }

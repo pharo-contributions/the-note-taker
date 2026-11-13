@@ -24,12 +24,37 @@ NT3NoteRowPresenterTest >> note [
 ]
 
 { #category : 'helpers' }
+NT3NoteRowPresenterTest >> noteTagged: aCollection body: aString [
+
+	^ NT3Application
+		  noteTitled: 'Meeting'
+		  body: aString
+		  modifiedAt: (DateAndTime
+				   year: 2026
+				   month: 11
+				   day: 12
+				   hour: 9
+				   minute: 0)
+		  tagNames: aCollection
+]
+
+{ #category : 'helpers' }
 NT3NoteRowPresenterTest >> rowShowingDetails: aBoolean on: anEntry [
 
 	^ NT3NoteRowPresenter new
 		  showsDetails: aBoolean;
 		  today: (Date year: 2026 month: 11 day: 12);
 		  model: anEntry;
+		  yourself
+]
+
+{ #category : 'helpers' }
+NT3NoteRowPresenterTest >> rowShowingTagsOn: aNote [
+
+	^ NT3NoteRowPresenter new
+		  showsTags: true;
+		  today: (Date year: 2026 month: 11 day: 12);
+		  model: aNote;
 		  yourself
 ]
 
@@ -42,6 +67,47 @@ NT3NoteRowPresenterTest >> testCompactNoteRowShowsOnlyTheTitle [
 	self deny: row showsDetailLine
 ]
 
+{ #category : 'tests - tags' }
+NT3NoteRowPresenterTest >> testCompactRowShowsNoTags [
+
+	| row |
+	row := NT3NoteRowPresenter new
+		       showsDetails: false;
+		       showsTags: true;
+		       model: self note;
+		       yourself.
+	self deny: row showsDetailLine.
+	self deny: row showsTagLabels
+]
+
+{ #category : 'tests - tags' }
+NT3NoteRowPresenterTest >> testDetailLineShowsTheTagsBetweenDateAndText [
+
+	self assert: (self rowShowingTagsOn: self note) detailText equals: 'today · #spec · About the new list'
+]
+
+{ #category : 'tests - tags' }
+NT3NoteRowPresenterTest >> testDetailLineShowsTwoTagsAndTheHiddenCount [
+
+	| row |
+	row := self rowShowingTagsOn: (self noteTagged: #( 'talks' 'spec' 'books' 'pharo' ) body: 'Slides').
+	self assert: row detailText equals: 'today · #books #pharo +2 · Slides'
+]
+
+{ #category : 'tests - tags' }
+NT3NoteRowPresenterTest >> testDetailLineWithTagsAndNoText [
+
+	self assert: (self rowShowingTagsOn: (self noteTagged: #( 'spec' ) body: '')) detailText equals: 'today · #spec'
+]
+
+{ #category : 'tests - tags' }
+NT3NoteRowPresenterTest >> testHiddenCountHasAllTheTagsAsHelp [
+
+	| row |
+	row := self rowShowingTagsOn: (self noteTagged: #( 'talks' 'spec' 'books' 'pharo' ) body: 'Slides').
+	self assert: row hiddenTagsLabel help equals: '#books #pharo #spec #talks'
+]
+
 { #category : 'tests' }
 NT3NoteRowPresenterTest >> testNoteRowShowsTitleAndDetailLine [
 
@@ -50,6 +116,15 @@ NT3NoteRowPresenterTest >> testNoteRowShowsTitleAndDetailLine [
 	self assert: row titleText equals: 'Meeting'.
 	self assert: row detailText equals: 'today · About the new list'.
 	self assert: row showsDetailLine
+]
+
+{ #category : 'tests - tags' }
+NT3NoteRowPresenterTest >> testNoteWithoutTagsHasNoTagLabels [
+
+	| row |
+	row := self rowShowingTagsOn: (self noteTagged: #(  ) body: 'Slides').
+	self assert: row detailText equals: 'today · Slides'.
+	self deny: row showsTagLabels
 ]
 
 { #category : 'tests' }
@@ -66,6 +141,24 @@ NT3NoteRowPresenterTest >> testSeparatorRowShowsItsLabel [
 	self assert: row titleText equals: 'November 2026'.
 	self deny: row showsDetailLine.
 	self assert: row isSeparatorRow
+]
+
+{ #category : 'tests - tags' }
+NT3NoteRowPresenterTest >> testTagLabelsHaveTheTagStyle [
+
+	| row |
+	row := self rowShowingTagsOn: (self noteTagged: #( 'talks' 'spec' 'books' 'pharo' ) body: 'Slides').
+	self assert: (row shownTagsLabel styles includes: 'ntTag').
+	self assert: (row hiddenTagsLabel styles includes: 'ntTag')
+]
+
+{ #category : 'tests - tags' }
+NT3NoteRowPresenterTest >> testTagsAreHiddenWhenNotShown [
+
+	| row |
+	row := self rowShowingDetails: true on: self note.
+	self assert: row detailText equals: 'today · About the new list'.
+	self deny: row showsTagLabels
 ]
 
 { #category : 'tests' }

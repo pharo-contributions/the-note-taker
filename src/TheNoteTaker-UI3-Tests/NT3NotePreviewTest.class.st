@@ -37,9 +37,21 @@ NT3NotePreviewTest >> previewOf: aContents modifiedAt: aDateAndTime [
 ]
 
 { #category : 'helpers' }
+NT3NotePreviewTest >> previewTagged: aCollection [
+
+	^ self infoPreviewTagged: aCollection modifiedAt: '2026-11-12T09:00:00'
+]
+
+{ #category : 'helpers' }
 NT3NotePreviewTest >> relativeDateOf: aDateAndTime [
 
 	^ (self previewOf: 'Title' modifiedAt: aDateAndTime) relativeDate
+]
+
+{ #category : 'tests - tags' }
+NT3NotePreviewTest >> testAllTagsTextListsEveryTag [
+
+	self assert: (self previewTagged: #( 'talks' 'spec' 'books' 'pharo' )) allTagsText equals: '#books #pharo #spec #talks'
 ]
 
 { #category : 'tests' }
@@ -82,6 +94,12 @@ NT3NotePreviewTest >> testExcerptRemovesMarkdownAndLineBreaks [
 		equals: 'Bold text with code a link and more'
 ]
 
+{ #category : 'tests - tags' }
+NT3NotePreviewTest >> testHiddenTagsAreCounted [
+
+	self assert: (self previewTagged: #( 'talks' 'spec' 'books' 'pharo' )) hiddenTagsText equals: '+2'
+]
+
 { #category : 'tests - info line' }
 NT3NotePreviewTest >> testInfoLineOfUnsavedNoteStartsWithABullet [
 
@@ -115,6 +133,12 @@ NT3NotePreviewTest >> testLongExcerptIsCutWithEllipsis [
 				            (String new: 500 withAll: $a) }).
 	self assert: excerpt size equals: NT3NotePreview maximumExcerptSize.
 	self assert: excerpt last equals: $…
+]
+
+{ #category : 'tests - tags' }
+NT3NotePreviewTest >> testNoHiddenTagsGivesNoCount [
+
+	self assert: (self previewTagged: #( 'spec' 'pharo' )) hiddenTagsText equals: ''
 ]
 
 { #category : 'tests - date' }
@@ -173,4 +197,23 @@ NT3NotePreviewTest >> testRelativeDateOfRecentDays [
 					  hour: 8
 					  minute: 0))
 		equals: '6 days ago'
+]
+
+{ #category : 'tests - tags' }
+NT3NotePreviewTest >> testShownTagsAreTheFirstTwo [
+
+	self assert: (self previewTagged: #( 'talks' 'spec' 'books' 'pharo' )) shownTagsText equals: '#books #pharo'
+]
+
+{ #category : 'tests - tags' }
+NT3NotePreviewTest >> testShownTagsOfANoteWithFewTags [
+
+	self assert: (self previewTagged: #( 'spec' )) shownTagsText equals: '#spec'.
+	self assert: (self previewTagged: #(  )) shownTagsText equals: ''
+]
+
+{ #category : 'tests - tags' }
+NT3NotePreviewTest >> testTagNamesAreSortedIgnoringCase [
+
+	self assert: (self previewTagged: #( 'spec' 'Books' 'pharo' )) tagNames asArray equals: #( 'Books' 'pharo' 'spec' )
 ]

@@ -5,18 +5,21 @@ I am the note taker window: a search bar on top, the note list on the left and t
 
 - I filter the list with the words of the search bar and give them to the editor to highlight.
 - On Enter in the search bar I open the note having that title, or create a note with that title and the searched tags.
+- With Cmd+T or the list menu 'Tags…', I open `NT3TagsPresenter` to add and remove tags of all the selected notes at once.
 - I save the note being edited when another note is selected, when it is hidden by a filter and when I am closed, and I refresh the list when the title, the unsaved mark or the order of a note changes.
 
 ## Collaborators:
 
 - `NT3NoteListPresenter`: the list with its tag search bar and mode buttons.
-- `NT3NoteEditorPresenter`: the editor; `NT3TextQuery`: the search.
+- `NT3NoteEditorPresenter`: the editor, showing the note selected last; `NT3TextQuery`: the search.
+- `NT3TagsPresenter` and `NT3TagChoice`: the tags dialog and the choice it edits.
 - `NT3Application`: the notes, their saving and creation.
 
 ## Public API and Key Messages
 
 - `searchText` / `searchText:`, `clearSearch` (Escape), `openOrCreateNote` (Enter).
 - `focusSearch` (Cmd+F anywhere), `focusList` (Down in the search bar); Enter in the list goes to the editor.
+- `editTagsOfSelectedNotes` (Cmd+T), `tagChoiceForSelectedNotes`, `applyTagChoice:`, `tagsAction`.
 - `noteList`, `editor`, `searchInput`.
 
 ```
@@ -26,6 +29,7 @@ NT3NoteTakerPresenter example open
 ## Internal Representation
 
 - `searchInput`: an `SpSearchInputFieldPresenter`; `noteList`, `editor`: my two panes.
+- `tagsAction`: the `SpAction` of the list (context menu and Cmd+T), enabled when notes are selected.
 - `listedState`: the title and unsaved mark of the edited note as the list shows them, to refresh it only when they change.
 "
 Class {
@@ -35,7 +39,8 @@ Class {
 		'searchInput',
 		'noteList',
 		'editor',
-		'listedState'
+		'listedState',
+		'tagsAction'
 	],
 	#category : 'TheNoteTaker-UI3',
 	#package : 'TheNoteTaker-UI3'
@@ -55,6 +60,13 @@ NT3NoteTakerPresenter class >> scriptOpen [
 
 	<example>
 	^ self example open
+]
+
+{ #category : 'tags' }
+NT3NoteTakerPresenter >> applyTagChoice: aTagChoice [
+	"Add and remove the tags of the notes of aTagChoice and save them; the list and the editor show the new tags"
+
+	self application tagNotes: aTagChoice notes adding: aTagChoice addedTagNames removing: aTagChoice removedTagNames
 ]
 
 { #category : 'search' }
@@ -136,6 +148,16 @@ NT3NoteTakerPresenter >> defaultLayout [
 		  yourself
 ]
 
+{ #category : 'tags' }
+NT3NoteTakerPresenter >> editTagsOfSelectedNotes [
+	"Open the dialog to check and uncheck the tags of the selected notes; Apply changes the notes"
+
+	| choice |
+	noteList selectedNotes ifEmpty: [ ^ self ].
+	choice := self tagChoiceForSelectedNotes.
+	(self application instantiate: NT3TagsPresenter on: choice) openDialog okAction: [ self applyTagChoice: choice ]
+]
+
 { #category : 'accessing' }
 NT3NoteTakerPresenter >> editor [
 
@@ -165,6 +187,14 @@ NT3NoteTakerPresenter >> initializePresenters [
 		               yourself.
 	noteList := self instantiate: NT3NoteListPresenter.
 	editor := self instantiate: NT3NoteEditorPresenter.
+	tagsAction := SpAction new
+		              name: 'Tags…';
+		              description: 'Add or remove tags of the selected notes';
+		              shortcutKey: $t actionModifier;
+		              action: [ self editTagsOfSelectedNotes ];
+		              actionEnabled: [ noteList selectedNotes isNotEmpty ];
+		              yourself.
+	noteList noteList addAction: tagsAction.
 	self updateSearch
 ]
 
@@ -259,6 +289,19 @@ NT3NoteTakerPresenter >> searchText [
 NT3NoteTakerPresenter >> searchText: aString [
 
 	searchInput text: aString
+]
+
+{ #category : 'tags' }
+NT3NoteTakerPresenter >> tagChoiceForSelectedNotes [
+	"Answer the choice of tags for the selected notes, offering the tags of all the notes"
+
+	^ NT3TagChoice notes: noteList selectedNotes tagNames: self application tagNames
+]
+
+{ #category : 'accessing' }
+NT3NoteTakerPresenter >> tagsAction [
+
+	^ tagsAction
 ]
 
 { #category : 'search' }
