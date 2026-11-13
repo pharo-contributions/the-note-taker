@@ -86,13 +86,27 @@ NTNoteTest >> testAddTwoTagsWithSameName [
 	self assert: note tags size equals: 1
 ]
 
+{ #category : 'tests - title' }
+NTNoteTest >> testDisplayTitleOfEmptyTitleIsUnnamed [
+
+	note contents: (String cr join: #( '#   ' 'body' )).
+	self assert: note displayTitle equals: 'unnamed'
+]
+
+{ #category : 'tests - title' }
+NTNoteTest >> testDisplayTitleRemovesHeadingMarks [
+
+	note contents: (String cr join: #( '## My title' 'body' )).
+	self assert: note displayTitle equals: 'My title'
+]
+
 { #category : 'tests -generate' }
 NTNoteTest >> testGenerateMetaDataElementsWithTags [
 
 	| creationDate modificationDate |
 	note := NTNote content: 'Ceci est un test'.
-	creationDate := '2025-01-01' asDateAndTime.
-	modificationDate := '2025-01-02' asDateAndTime.
+	creationDate := (DateAndTime fromString: '2025-01-01').
+	modificationDate := (DateAndTime fromString: '2025-01-02').
 	note creationDate: creationDate.
 	note modificationDate: modificationDate.
 
@@ -112,8 +126,8 @@ NTNoteTest >> testGenerateMetaDataElementsWithoutTags [
 
 	| creationDate modificationDate |
 	note contents: 'Ceci est un test'.
-	creationDate := '2025-01-01' asDateAndTime.
-	modificationDate := '2025-01-02' asDateAndTime.
+	creationDate := (DateAndTime fromString: '2025-01-01').
+	modificationDate := (DateAndTime fromString: '2025-01-02').
 	note creationDate: creationDate.
 	note modificationDate: modificationDate.
 
@@ -125,7 +139,7 @@ NTNoteTest >> testGenerateMetaDataElementsWithoutTags [
 { #category : 'tests' }
 NTNoteTest >> testGenerateNewFileName [
 
-	note creationDate: '2024-01-01' asDateAndTime.
+	note creationDate: (DateAndTime fromString: '2024-01-01').
 
 	note contents: 'Test'.
 	self assert: note fileName equals: '2024-01-01_Test.md'.
@@ -291,6 +305,31 @@ NTNoteTest >> testSaveNoteWithLessContents [
 	self assert: note fileReference contents equals: finalContents
 ]
 
+{ #category : 'tests - saving' }
+NTNoteTest >> testSaveNoteWithTakenFileNameAddsSuffix [
+
+	| other third |
+	note creationDate: (DateAndTime fromString: '2024-01-01').
+	note contents: 'Test'.
+	note save.
+
+	other := NTNote new folderReference: memoryFS.
+	other creationDate: (DateAndTime fromString: '2024-01-01').
+	other contents: 'Test'.
+	other save.
+
+	third := NTNote new folderReference: memoryFS.
+	third creationDate: (DateAndTime fromString: '2024-01-01').
+	third contents: 'Test'.
+	third save.
+
+	self assert: note fileName equals: '2024-01-01_Test.md'.
+	self assert: other fileName equals: '2024-01-01_Test_2.md'.
+	self assert: third fileName equals: '2024-01-01_Test_3.md'.
+	self assert: (note fileReference contents endsWith: 'Test').
+	self assert: (memoryFS / '2024-01-01_Test_2.md') exists
+]
+
 { #category : 'tests' }
 NTNoteTest >> testSetFileNameDoesntChangeIt [
 
@@ -298,4 +337,60 @@ NTNoteTest >> testSetFileNameDoesntChangeIt [
 	self assert: note fileName equals: 'Toto'.
 
 	
+]
+
+{ #category : 'tests' }
+NTNoteTest >> testSettingNewContentsUpdatesModificationDate [
+	| date |
+	note contents: 'Old text'.
+	date := DateAndTime fromString: '2025-01-01T10:00:00'.
+	note modificationDate: date.
+	note contents: 'New text'.
+	self assert: note modificationDate > date
+]
+
+{ #category : 'tests' }
+NTNoteTest >> testSettingSameContentsKeepsModificationDate [
+	| date |
+	note contents: 'Same text'.
+	date := DateAndTime fromString: '2025-01-01T10:00:00'.
+	note modificationDate: date.
+	note contents: 'Same text'.
+	self assert: note modificationDate equals: date
+]
+
+{ #category : 'tests - file format' }
+NTNoteTest >> testSplitFileContentsWithMultiLineMetaData [
+	| fileContents |
+	fileContents := String streamContents: [ :stream |
+		stream
+			nextPutAll: '{'; cr;
+			nextPutAll: '"tags" : "a"'; cr;
+			nextPutAll: '}'; crlf; crlf;
+			nextPutAll: 'Title'; cr;
+			nextPutAll: '} not metadata' ].
+	NTNote splitFileContents: fileContents into: [ :metaData :contents |
+		self assert: metaData lines equals: #( '{' '"tags" : "a"' '}' ).
+		self assert: contents lines equals: #( 'Title' '} not metadata' ) ]
+]
+
+{ #category : 'tests - file format' }
+NTNoteTest >> testSplitFileContentsWithOneLineMetaData [
+	| fileContents |
+	fileContents := String streamContents: [ :stream |
+		stream
+			nextPutAll: '{"tags" : "a"}'; crlf; crlf;
+			nextPutAll: 'Title } more' ].
+	NTNote splitFileContents: fileContents into: [ :metaData :contents |
+		self assert: metaData equals: '{"tags" : "a"}'.
+		self assert: contents equals: 'Title } more' ]
+]
+
+{ #category : 'tests - file format' }
+NTNoteTest >> testSplitFileContentsWithoutMetaData [
+	NTNote
+		splitFileContents: 'Just a note } with a brace'
+		into: [ :metaData :contents |
+			self assert: metaData isNil.
+			self assert: contents equals: 'Just a note } with a brace' ]
 ]

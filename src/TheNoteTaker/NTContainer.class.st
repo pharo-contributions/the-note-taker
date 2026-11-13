@@ -1,5 +1,5 @@
 "
-I am a container which holds notes and tags. Usually the list of tags does not have duplicated names.
+I am a container who hold notes and tags. Usually the list of tags does not have duplicates names.
 
 I can load a folder of notes and generates all the notes and their tags.
 
@@ -56,6 +56,20 @@ NTContainer >> addTagNamed: aString [
 	^ tag 
 ]
 
+{ #category : 'loading - note' }
+NTContainer >> dateAt: aKey in: aMetaData ifAbsent: aBlock [
+	"Answer the <DateAndTime> stored under aKey in aMetaData, or the value of aBlock when missing"
+
+	| value |
+	self flag: #SD.
+	"why can we have both a string or a date and time and all this logic 
+	looks suspicious"
+	value := aMetaData at: aKey ifAbsent: [ ^ aBlock value asDateAndTime ].
+	^ value isString
+		  ifTrue: [ DateAndTime fromString: value ]
+		  ifFalse: [ value asDateAndTime ]
+]
+
 { #category : 'accessing - tags' }
 NTContainer >> ensureTagNamed: aString [
 	"Add a tag if it not already present"
@@ -67,12 +81,8 @@ NTContainer >> ensureTagNamed: aString [
 
 { #category : 'loading - note' }
 NTContainer >> importFolder: aFolder [
-
-	aFolder allFiles
-		select: [ :fileRef |
-			{ 'txt'. 'md' .'text' } includes: fileRef extension asLowercase ]
-		thenDo: [ :fileRef | "this test should be grouped somewhere else!"
-			self addNoteFromFileReference: fileRef ].
+	aFolder ensureCreateDirectory.
+	self noteFilesIn: aFolder do: [ :fileRef | self addNoteFromFileReference: fileRef ]
 ]
 
 { #category : 'initialization' }
@@ -83,17 +93,17 @@ NTContainer >> initialize [
 	self rawTags: OrderedCollection new
 ]
 
+{ #category : 'private - loading' }
+NTContainer >> isNoteFile: aFileReference [
+	^ #( 'txt' 'md' 'text' ) includes: aFileReference extension asLowercase
+]
+
 { #category : 'loading - note' }
 NTContainer >> loadFileContents: aString for: aNTNote [
-
-	| fileContentsPart |
-	(aString beginsWith: '{') ifFalse: [ ^ self ].
-	fileContentsPart := aString substrings: '}'.
-	"duplicated logic with NTNote fileReferenceContents and same bug
-	what will happen if we have a note with an extra }"
-	aNTNote contents:
-		(fileContentsPart second withoutPrefix: String crlf , String crlf).
-	self loadMetaData: fileContentsPart first for: aNTNote
+	NTNote splitFileContents: aString into: [ :metaData :fileContents |
+		metaData ifNil: [ ^ self ].
+		aNTNote contents: fileContents.
+		self loadMetaData: metaData for: aNTNote ]
 ]
 
 { #category : 'loading - note' }
@@ -101,17 +111,24 @@ NTContainer >> loadMetaData: aString for: aNTNote [
 
 	| metaData tagsString |
 	metaData := (MicrodownParser parse: aString) metaDataElement.
-	aNTNote creationDate: (metaData
-			 at: 'creationDate'
-			 ifAbsent: aNTNote fileReference creationTime) asDateAndTime.
-	aNTNote modificationDate: (metaData
-			 at: 'lastModificationDate'
-			 ifAbsent: aNTNote fileReference modificationTime) asDateAndTime.
+	aNTNote creationDate: (self dateAt: 'creationDate' in: metaData ifAbsent: [ aNTNote fileReference creationTime ]).
+	aNTNote modificationDate: (self dateAt: 'lastModificationDate' in: metaData ifAbsent: [ aNTNote fileReference modificationTime ]).
 	tagsString := metaData at: 'tags' ifAbsent: [ ^ self ].
 
-	tagsString ifNotNil: [
-			(tagsString substrings: ',') do: [ :each |
-				(self ensureTagNamed: each) addNote: aNTNote ] ]
+	tagsString ifNotNil: [ (tagsString substrings: ',') do: [ :each | (self ensureTagNamed: each) addNote: aNTNote ] ]
+]
+
+{ #category : 'private - loading' }
+NTContainer >> noteFilesIn: aFolder do: aBlock [
+	"Evaluate aBlock with each note file in aFolder and its subfolders.
+	Trash folders and folders that cannot be read are skipped"
+
+	| entries |
+	entries := [ aFolder children ] on: FileException do: [ ^ self ].
+	entries do: [ :each |
+		each isDirectory
+			ifTrue: [ each basename = self trashFolderName ifFalse: [ self noteFilesIn: each do: aBlock ] ]
+			ifFalse: [ (self isNoteFile: each) ifTrue: [ aBlock value: each ] ] ]
 ]
 
 { #category : 'accessing - notes' }
@@ -168,6 +185,14 @@ NTContainer >> removeNotes: aCollectionOfNTNoteObject [
 	self notes removeAll: aCollectionOfNTNoteObject
 ]
 
+{ #category : 'accessing - tags' }
+NTContainer >> removeTag: aNTTag fromNote: aNTNote [
+	"Remove aNTTag from aNTNote, and from the receiver when no note uses it anymore"
+
+	aNTNote removeTag: aNTTag.
+	aNTTag notes ifEmpty: [ self tags remove: aNTTag ifAbsent: [ ] ]
+]
+
 { #category : 'loading - note' }
 NTContainer >> replaceFolder: aFolder [
 
@@ -190,4 +215,24 @@ NTContainer >> tagsNameMatching: aString [
 	| pattern |
 	pattern := '*' , aString , '*'.
 	^ self tags select: [ :n | pattern match: n tagName ]
+]
+
+{ #category : 'removing - notes' }
+NTContainer >> trashFolderName [
+	"Answer the name of the folder, next to a note, in which the note is moved when trashed"
+
+	^ '.trash'
+]
+
+{ #category : 'removing - notes' }
+NTContainer >> trashNote: aNTNote [
+	"Move the file of aNTNote in the trash folder next to it and remove the note from the receiver"
+
+	| trashFolder |
+	aNTNote exists ifTrue: [
+			trashFolder := aNTNote folderReference / self trashFolderName.
+			trashFolder ensureCreateDirectory.
+			aNTNote fileReference moveTo: trashFolder / (NTISOFileNamer new uniqueName: aNTNote fileName in: trashFolder) ].
+	aNTNote tags copy do: [ :tag | self removeTag: tag fromNote: aNTNote ].
+	self removeNotes: { aNTNote }
 ]

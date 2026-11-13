@@ -63,7 +63,7 @@ self flag: 'LOOK'.
 	self closeAllWindows.
 	TaskbarMorph reset.
 	MenubarMorph reset.
-	Smalltalk tools openWorkspace presenter contents: 'NTSpApplication openIt'. 
+	Smalltalk tools openWorkspace presenter contents: 'NTApplication openIt'. 
 
 	"PanelMorph comes from use of #openWorldWithSpec"
 ]
@@ -150,7 +150,7 @@ NTDeploymentScript class >> dontRaiseWarningForMissingChangesOrSourcesFiles [
 NTDeploymentScript class >> initialize [
 
 	Save := false.
-	Application := NTSpApplication 
+	Application := NTApplication 
 ]
 
 { #category : 'as yet unclassified' }

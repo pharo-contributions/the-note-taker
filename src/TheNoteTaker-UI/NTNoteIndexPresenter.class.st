@@ -112,17 +112,13 @@ NTNoteIndexPresenter >> defaultOutputPort [
 NTNoteIndexPresenter >> filter [
 
 	| filteredItems |
-	filteredItems := searchBar text
-		                 ifEmpty: [ self notes ]
-		                 ifNotEmpty: [ :pattern |
-		                 self model notesContentsMatching: pattern ].
+	filteredItems := searchBar text 
+		ifEmpty: [ self notes ] 
+		ifNotEmpty: [ :pattern | self model notesContentsMatching: pattern ].
 
 	filteredItems := filteredTagsSelection
-		                 ifEmpty: [ filteredItems ]
-		                 ifNotEmpty: [ :pattern |
-			                 self model
-				                 notes: filteredItems
-				                 withTags: filteredTagsSelection ].
+		ifEmpty: [ filteredItems ]
+		ifNotEmpty: [ :pattern | self model notes: filteredItems withTags: filteredTagsSelection ].
 
 	self items: filteredItems
 ]
@@ -148,19 +144,18 @@ NTNoteIndexPresenter >> initializePresenters [
 		             yourself.
 
 	tagsFilterButton := self newButton
-		                    icon: (self iconNamed: #recentMessages);
-		                    addStyle: 'small';
-		                    action: [ self openTagsSearcher ];
-		                    help: 'Tags searcher';
-		                    yourself.
+		icon: (self iconNamed: #recentMessages);
+		addStyle: 'small';
+		action: [ self openTagsSearcher ];
+		help: 'Tags searcher';
+		yourself.
 
 	filteredTagsSelection := OrderedCollection new.
 
 	componentList := self instantiate: SpComponentListPresenter.
 	componentList
 		beMultipleSelection;
-		sortingBlock: [ :a :b |
-			a note modificationDate > b note modificationDate ];
+		sortingBlock: [ :a :b | a note modificationDate > b note modificationDate ];
 		"addShortcutWith: [ :action |
 				action
 					shortcutKey: KeyboardKey delete asKeyCombination;
@@ -168,9 +163,7 @@ NTNoteIndexPresenter >> initializePresenters [
 							NTSpRemoveNoteCommand new
 								context: self;
 								execute ] ];"
-		contextMenu: [
-				(self rootCommandsGroup / 'NTSelContextualMenu') beRoot
-					asMenuPresenter ]
+		contextMenu: [ (self rootCommandsGroup / 'NTSelContextualMenu') beRoot asMenuPresenter ]
 ]
 
 { #category : 'accessing' }

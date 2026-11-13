@@ -55,12 +55,34 @@ NTNote class >> newFromFileReference: aFileReference [
 		  yourself
 ]
 
+{ #category : 'file format' }
+NTNote class >> splitFileContents: aString into: aBlock [
+	"Separate the metadata block that starts a note file from the note contents.
+	Evaluate aBlock with the metadata string (nil when there is none) and the contents.
+	The metadata block ends at the first line ending with a closing brace, so braces in the contents are kept."
+
+	(aString beginsWith: '{') ifFalse: [ ^ aBlock value: nil value: aString ].
+	aString lineIndicesDo: [ :start :endWithoutDelimiters :end |
+		((aString copyFrom: start to: endWithoutDelimiters) trimRight endsWith: '}') ifTrue: [
+			^ aBlock
+				  value: (aString copyFrom: 1 to: endWithoutDelimiters)
+				  value: (self withoutLeadingLineBreak: (aString allButFirst: end)) ] ].
+	^ aBlock value: nil value: aString
+]
+
+{ #category : 'private - file format' }
+NTNote class >> withoutLeadingLineBreak: aString [
+	"Remove the empty line written between the metadata block and the contents"
+
+	(aString beginsWith: String crlf) ifTrue: [ ^ aString allButFirst: 2 ].
+	((aString beginsWith: String cr) or: [ aString beginsWith: String lf ]) ifTrue: [ ^ aString allButFirst ].
+	^ aString
+]
+
 { #category : 'accessing - tags' }
 NTNote >> addTag: aNTTag [
 
-	self tags 
-		detect: [ :tag | tag tagName = aNTTag tagName ] 
-		ifNone: [
+	self tags detect: [ :tag | tag tagName = aNTTag tagName ] ifNone: [
 			self tags add: aNTTag.
 			aNTTag addNote: self ]
 ]
@@ -72,9 +94,11 @@ NTNote >> contents [
 ]
 
 { #category : 'accessing' }
-NTNote >> contents: anObject [
+NTNote >> contents: aString [
+	"Set the text of the note. The modification date only changes when the text really changes"
 
-	contents := anObject.
+	aString = contents ifTrue: [ ^ self ].
+	contents := aString.
 	self modificationDate: DateAndTime now.
 	self generateTitle
 ]
@@ -91,6 +115,17 @@ NTNote >> creationDate: aDateAndTime [
 	creationDate := aDateAndTime
 ]
 
+{ #category : 'accessing' }
+NTNote >> displayTitle [
+	"Answer the title to show in lists: the first line without its leading Markdown heading marks, or 'unnamed' when nothing is left"
+
+	| line |
+	line := self title trimBoth.
+	[ line beginsWith: '#' ] whileTrue: [ line := line allButFirst ].
+	line := line trimBoth.
+	^ line ifEmpty: [ 'unnamed' ]
+]
+
 { #category : 'testing' }
 NTNote >> exists [
 
@@ -101,9 +136,9 @@ NTNote >> exists [
 NTNote >> fileName [
 
 	fileName ifNil: [
-			self fileName: (NTISOFileNamer new
-					 date: creationDate asDate;
-					 newNameBasedOn: self title) ].
+			| namer |
+			namer := NTISOFileNamer new date: creationDate asDate.
+			self fileName: (namer uniqueName: (namer newNameBasedOn: self title) in: self folderReference) ].
 	^ fileName
 ]
 
@@ -121,15 +156,11 @@ NTNote >> fileReference [
 
 { #category : 'accessing' }
 NTNote >> fileReferenceContents [
+	"Answer the contents of the note as saved in its file, without the metadata"
 
-	| fileContentsPart aString |
-	aString := self fileReference contents.
-	(self fileReference contents beginsWith: '{') ifTrue: [
-			fileContentsPart := aString substrings: '}'.
-			"I suspect a bug here where a doc contains another } and we lose what is left
-			so fileContentsPart allButFirst looks better"
-			^ fileContentsPart second withoutPrefix: String crlf , String crlf ].
-	^ aString
+	^ self class
+		  splitFileContents: self fileReference contents
+		  into: [ :metaData :fileContents | fileContents ]
 ]
 
 { #category : 'accessing' }

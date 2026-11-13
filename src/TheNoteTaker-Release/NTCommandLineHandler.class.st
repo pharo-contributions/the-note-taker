@@ -99,7 +99,7 @@ NTCommandLineHandler >> activate [
 							action: [ self inform: 'Help' ]
 							shortcut: '' ].
 				main setAsMainMenu.
-				NTSpApplication new startFullScreen ]
+				NTApplication new startFullScreen ]
 		ifFalse: [ self inform: 'Not OSX' ].
 		
 		"We open the world forcing the OSWorldRenderer. As we are opening in headless, to control the flow"

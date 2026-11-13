@@ -157,6 +157,15 @@ NTSpEditorFilePresenterTest >> testSaveWhenNoteNotDirty [
 ]
 
 { #category : 'tests' }
+NTSpEditorFilePresenterTest >> testSelectingNoteKeepsModificationDate [
+	| date |
+	date := DateAndTime fromString: '2025-01-01T10:00:00'.
+	note modificationDate: date.
+	editorPresenter setModel: note.
+	self assert: note modificationDate equals: date
+]
+
+{ #category : 'tests' }
 NTSpEditorFilePresenterTest >> testTextInputTextIsSpecify [
 
 	editorPresenter textInputText: 'test'.
