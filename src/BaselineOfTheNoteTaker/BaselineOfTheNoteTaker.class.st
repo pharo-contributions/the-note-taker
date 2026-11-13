@@ -28,13 +28,10 @@ BaselineOfTheNoteTaker >> baseline: spec [
 			self objcbridge: spec.
 			spec
 				package: 'TheNoteTaker' with: [ spec requires: #( Microdown ) ];
-				package: 'TheNoteTaker-UI' with: [ spec requires: #( TheNoteTaker OSSubprocess OSWinSubprocess 'TheNoteTaker-Todo-UI' ) ];
+				package: 'TheNoteTaker-UI' with: [ spec requires: #( TheNoteTaker OSSubprocess OSWinSubprocess ) ];
 				package: 'TheNoteTaker-Release' with: [ spec requires: #( 'TheNoteTaker-UI' 'ApplicationGenerator' 'ObjCBridge' ) ];
 				package: 'TheNoteTaker-Tests' with: [ spec requires: #( TheNoteTaker ) ];
 				package: 'TheNoteTaker-UI-Tests' with: [ spec requires: #( 'TheNoteTaker-Tests' 'TheNoteTaker-UI' ) ];
-				package: 'TheNoteTaker-Todo';
-				package: 'TheNoteTaker-Todo-Tests' with: [ spec requires: #( 'TheNoteTaker-Todo' ) ];
-				package: 'TheNoteTaker-Todo-UI' with: [ spec requires: #( 'TheNoteTaker-Todo' ) ];
 				package: 'TheNoteTaker-Tasks';
 				package: 'TheNoteTaker-Tasks-Tests' with: [ spec requires: #( 'TheNoteTaker-Tasks' ) ];
 				package: 'TheNoteTaker-Tasks-UI' with: [ spec requires: #( 'TheNoteTaker-Tasks' ) ];
@@ -48,7 +45,7 @@ BaselineOfTheNoteTaker >> baseline: spec [
 				group: 'Core' with: #( 'TheNoteTaker' );
 				group: 'UI' with: #( 'TheNoteTaker-UI' 'TheNoteTaker-UI2' 'TheNoteTaker-UI3' );
 				group: 'Tasks' with: #( 'TheNoteTaker-Tasks' 'TheNoteTaker-Tasks-Tests' 'TheNoteTaker-Tasks-UI' 'TheNoteTaker-Tasks-UI-Tests' );
-				group: 'Tests' with: #( 'TheNoteTaker-Tests' 'TheNoteTaker-UI-Tests' 'TheNoteTaker-Todo-Tests' 'TheNoteTaker-Tasks-Tests' 'TheNoteTaker-Tasks-UI-Tests' 'TheNoteTaker-UI2-Tests' 'TheNoteTaker-UI3-Tests' );
+				group: 'Tests' with: #( 'TheNoteTaker-Tests' 'TheNoteTaker-UI-Tests' 'TheNoteTaker-Tasks-Tests' 'TheNoteTaker-Tasks-UI-Tests' 'TheNoteTaker-UI2-Tests' 'TheNoteTaker-UI3-Tests' );
 				group: 'Release' with: #( 'TheNoteTaker-Release' );
 				group: 'default' with: #( 'Tests' 'UI' ) ]
 ]
