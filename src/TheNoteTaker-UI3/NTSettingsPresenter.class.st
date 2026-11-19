@@ -4,9 +4,9 @@ My fields are written into the settings only when I am accepted, so Cancel leave
 
 ## Life cycle: who creates me and who uses me
 
-1. `NTSpSettingsCommand>>#execute` creates me on the settings of its `NTApplication` (`self application instantiate: NTSettingsPresenter on: settings`) and opens me in a modal dialog.
+1. `NT3NoteListPresenter>>#openSettings` (the settings button of the note list) creates me on the settings of its `NT3Application` (`self application instantiate: NTSettingsPresenter on: settings`) and opens me in a modal dialog.
 2. `modelChanged` fills my fields from the settings.
-3. The Save button of my dialog sends me `accept`: I write my fields into the settings, then run the blocks given to `whenAcceptedDo:` (the command saves the preferences file of the application). Cancel closes me without writing.
+3. The Save button of my dialog sends me `accept`: I write my fields into the settings, then run the blocks given to `whenAcceptedDo:` (the note list then shows the new mode and tags). Cancel closes me without writing.
 
 ## Responsibility:
 
@@ -18,7 +18,7 @@ My fields are written into the settings only when I am accepted, so Cancel leave
 
 - `NTSettings`: my model.
 - `StOpenDirectoryPresenter`: lets the user choose the notes folder.
-- `NTSpSettingsCommand`: opens me from the toolbar of The Note Taker.
+- `NT3NoteListPresenter`: opens me from its settings button.
 
 ## Public API and Key Messages
 
@@ -54,8 +54,8 @@ Class {
 		'autosaveInput',
 		'acceptedBlocks'
 	],
-	#category : 'TheNoteTaker-Settings',
-	#package : 'TheNoteTaker',
+	#category : 'TheNoteTaker-UI3-Settings',
+	#package : 'TheNoteTaker-UI3',
 	#tag : 'Settings'
 }
 

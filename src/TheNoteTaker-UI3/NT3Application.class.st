@@ -22,6 +22,7 @@ I am the application of the new TheNoteTaker UI (UI3): I open the note taker win
 - `noteEdited:`, `isUnsaved:`, `saveNote:`, `saveAll`, `whenNoteSavedDo:`.
 - `settings` / `settings:`; `listMode` / `listMode:`, `showsTags` / `showsTags:`, `autosaveDelay` read and write them.
 - `start` loads the notes and opens the note taker.
+- `NT3Application open` opens it on the notes folder of `NTSettings default`, the user's settings saved in the preferences file; `NT3Application onSettings: someSettings` answers an application on other settings, not started.
 
 ```
 NT3Application example start
@@ -70,6 +71,20 @@ NT3Application class >> example [
 	^ application
 ]
 
+{ #category : 'world menu' }
+NT3Application class >> menuNoteTaker3On: aBuilder [
+	"Add NoteTaker 3 to the Tools menu of the World, after the other note takers"
+
+	<worldMenu>
+	(aBuilder item: #NoteTaker3)
+		parent: #Tools;
+		label: 'NoteTaker 3';
+		icon: (self iconNamed: #catalog);
+		action: [ self open ];
+		help: 'Open the note taker on your saved settings';
+		order: 632
+]
+
 { #category : 'private - demo' }
 NT3Application class >> noteTitled: aTitle body: aBody modifiedAt: aDateAndTime tagNames: aCollection [
 	"Answer a note for demos and tests, with a fixed modification date and the given tags"
@@ -79,6 +94,26 @@ NT3Application class >> noteTitled: aTitle body: aBody modifiedAt: aDateAndTime 
 	aCollection do: [ :each | note addTag: (NTTag newNamed: each) ].
 	note modificationDate: aDateAndTime.
 	^ note
+]
+
+{ #category : 'instance creation' }
+NT3Application class >> onSettings: aNTSettings [
+	"Answer an application using aNTSettings and their notes folder"
+
+	^ self new
+		  settings: aNTSettings;
+		  notesFolder: aNTSettings currentFolder;
+		  yourself
+]
+
+{ #category : 'opening' }
+NT3Application class >> open [
+	"Open the note taker on the notes folder of the user's settings; changed settings are saved in the preferences file"
+
+	<script>
+	^ (self onSettings: NTSettings default)
+		  run;
+		  yourself
 ]
 
 { #category : 'private - demo' }

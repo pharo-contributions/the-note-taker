@@ -54,6 +54,21 @@ NT3NoteListPresenterTest >> testANoteListedTwiceIsSelectedOnce [
 			recent }
 ]
 
+{ #category : 'tests - settings' }
+NT3NoteListPresenterTest >> testAcceptedSettingsChangeTheListModeAndTags [
+
+	SpWindowSimulateOpenModal
+		value: [ :aDialogPresenter |
+				aDialogPresenter presenter listModeDropDown selectItem: #byTag.
+				aDialogPresenter presenter showsTagsCheckBox state: false.
+				aDialogPresenter presenter accept ]
+		during: [ presenter settingsButton click ].
+	self assert: presenter mode class equals: NT3ByTagListMode.
+	self assert: (presenter modeButtons collect: [ :each | each state ] as: Array) equals: #( false true false ).
+	self deny: presenter tagsButton state.
+	self deny: presenter showsTags
+]
+
 { #category : 'tests - multiple selection' }
 NT3NoteListPresenterTest >> testAddedNoteIsTheSelectedNote [
 
@@ -94,6 +109,18 @@ NT3NoteListPresenterTest >> testClickingASeparatorKeepsTheSelection [
 	self click: 1.
 	self assert: presenter selectedNote equals: middle.
 	self assert: announcements isEmpty
+]
+
+{ #category : 'tests - settings' }
+NT3NoteListPresenterTest >> testClickingTheSettingsButtonOpensTheSettingsEditor [
+
+	| editor |
+	editor := nil.
+	SpWindowSimulateOpenModal
+		value: [ :aDialogPresenter | editor := aDialogPresenter presenter ]
+		during: [ presenter settingsButton click ].
+	self assert: editor class equals: NTSettingsPresenter.
+	self assert: editor model identicalTo: application settings
 ]
 
 { #category : 'tests - tags' }
@@ -316,6 +343,21 @@ NT3NoteListPresenterTest >> testSeparatorsAreNotSelectedNotes [
 	self assert: presenter selectedNotes asArray equals: {
 			untagged.
 			recent }
+]
+
+{ #category : 'tests - settings' }
+NT3NoteListPresenterTest >> testSettingsButtonIsJustBeforeTheTagsButton [
+
+	| buttons |
+	buttons := presenter layout children last children.
+	self assert: (buttons at: buttons size - 1) identicalTo: presenter settingsButton
+]
+
+{ #category : 'tests - settings' }
+NT3NoteListPresenterTest >> testSettingsButtonShowsTheSettingsIcon [
+
+	self assert: presenter settingsButton icon identicalTo: (presenter iconNamed: #smallConfiguration).
+	self assert: presenter settingsButton help equals: 'Settings'
 ]
 
 { #category : 'tests - tags' }

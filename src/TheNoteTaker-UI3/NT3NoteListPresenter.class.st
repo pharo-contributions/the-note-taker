@@ -1,5 +1,5 @@
 "
-I show a list of notes in one of three modes, with a tag search bar and the mode buttons below the list, followed by the `#` button that shows or hides the tags in the rows.
+I show a list of notes in one of three modes, with a tag search bar and the mode buttons below the list, followed by the settings button, which opens the settings editor, and the `#` button that shows or hides the tags in the rows.
 
 ## Responsibility:
 
@@ -11,13 +11,15 @@ I show a list of notes in one of three modes, with a tag search bar and the mode
 
 - `NT3ListMode` builds my rows; `NT3TagQuery` reads the search text.
 - `NT3NoteRowPresenter` shows each row of my `SpEasyListViewPresenter`.
-- `NT3Application` remembers my mode.
+- `NT3Application` keeps my mode and whether I show tags in its `NTSettings`.
+- `NTSettingsPresenter`: the settings editor opened by my settings button (`openSettings`); when it is saved I show the list as the settings say (`settingsAccepted`).
 
 ## Public API and Key Messages
 
 - `notes:` sets the notes; `refresh` after a note changed (I do not track changes).
 - `mode` / `mode:`; the buttons and Cmd+1/2/3 also change it.
-- `showsTags` / `showsTags:`, also changed by the `#` button (`tagsButton`), which is disabled in titles only mode; the application remembers it for the session.
+- `showsTags` / `showsTags:`, also changed by the `#` button (`tagsButton`), which is disabled in titles only mode; the application keeps it in its settings.
+- `openSettings`, also run by the settings button (`settingsButton`).
 - `selectedNotes`; `selectedNote` (the note selected last), `selectNote:` (selects only that note), `selectFirstNote`, `whenNoteSelectedDo:` (the block receives the note selected last, or nil, when it changes).
 - `isUnsaved:` (asked to the application): unsaved notes show a bullet before their title.
 - `tagSearchText:`, `clearTagSearch` (Escape), `submitTagSearch` (Enter).
@@ -31,7 +33,7 @@ I show a list of notes in one of three modes, with a tag search bar and the mode
 ## Internal Representation
 
 - `noteList`: an `SpEasyListViewPresenter` whose items are notes and `NT3ListSeparator`s.
-- `tagSearchInput`, `modeButtons` (toggle buttons in the order of `NT3ListMode modes`), `tagsButton` (a toggle button).
+- `tagSearchInput`, `modeButtons` (toggle buttons in the order of `NT3ListMode modes`), `settingsButton` (a button), `tagsButton` (a toggle button).
 - `currentNote`: the note selected last; `lastSelectedIndex`: its row; `selectedIndexes`: the selected rows, to find the rows the user just added.
 - `isAdjustingSelection`: to change the selection without reacting to it.
 - `hiddenNote`: the selected note that a filter hides, to select it again.
@@ -57,7 +59,8 @@ Class {
 		'hiddenNote',
 		'selectedIndexes',
 		'currentNote',
-		'tagsButton'
+		'tagsButton',
+		'settingsButton'
 	],
 	#category : 'TheNoteTaker-UI3',
 	#package : 'TheNoteTaker-UI3'
@@ -132,6 +135,7 @@ NT3NoteListPresenter >> connectPresenters [
 		whenRowPresenterInstantiatedDo: [ :row | self configureRow: row ];
 		whenSelectionChangedDo: [ self noteListSelectionChanged ].
 	tagsButton whenChangedDo: [ :state | self showsTags: state ].
+	settingsButton action: [ self openSettings ].
 	self
 		connectModes;
 		connectTagSearch
@@ -157,6 +161,10 @@ NT3NoteListPresenter >> defaultLayout [
 		           spacing: 2;
 		           yourself.
 	modeButtons do: [ :each | buttons add: each expand: false ].
+	buttons addLast: settingsButton withConstraints: [ :constraints |
+			constraints
+				expand: false;
+				width: 24 ].
 	buttons addLast: tagsButton expand: false.
 	^ SpBoxLayout newTopToBottom
 		  spacing: 4;
@@ -197,6 +205,10 @@ NT3NoteListPresenter >> initializePresenters [
 				               help: each help;
 				               yourself ].
 	modeButtons first associatedToggleButtons: modeButtons allButFirst.
+	settingsButton := self newButton
+		                  icon: (self iconNamed: #smallConfiguration);
+		                  help: 'Settings';
+		                  yourself.
 	tagsButton := self newToggleButton
 		              label: '#';
 		              help: 'Show tags';
@@ -305,6 +317,15 @@ NT3NoteListPresenter >> notes: aCollectionOfNotes [
 	self refresh
 ]
 
+{ #category : 'actions' }
+NT3NoteListPresenter >> openSettings [
+	"Edit the settings of the application in a dialog; when they are saved, show the list as they say"
+
+	(self application instantiate: NTSettingsPresenter on: self application settings)
+		whenAcceptedDo: [ self settingsAccepted ];
+		openModal
+]
+
 { #category : 'updating' }
 NT3NoteListPresenter >> refresh [
 	"Rebuild the rows from the notes, the mode and the searched tags, keeping the selected notes that are still listed.
@@ -376,6 +397,22 @@ NT3NoteListPresenter >> separatorSelectedAt: separatorIndex [
 					lastSelectedIndex := target.
 					currentNote := noteList items at: target.
 					self announceSelectedNote ] ]
+]
+
+{ #category : 'actions' }
+NT3NoteListPresenter >> settingsAccepted [
+	"Show the list in the mode and with the tags of the settings"
+
+	mode := self application listMode.
+	tagsButton state: self showsTags.
+	self updateModeButtons.
+	self refresh
+]
+
+{ #category : 'accessing' }
+NT3NoteListPresenter >> settingsButton [
+
+	^ settingsButton
 ]
 
 { #category : 'private' }

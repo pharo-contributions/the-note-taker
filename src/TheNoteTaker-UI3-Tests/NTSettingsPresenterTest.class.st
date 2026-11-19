@@ -19,8 +19,8 @@ Class {
 		'settings',
 		'presenter'
 	],
-	#category : 'TheNoteTaker-Tests-Settings',
-	#package : 'TheNoteTaker-Tests',
+	#category : 'TheNoteTaker-UI3-Tests-Settings',
+	#package : 'TheNoteTaker-UI3-Tests',
 	#tag : 'Settings'
 }
 

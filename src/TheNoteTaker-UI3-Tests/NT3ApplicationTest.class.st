@@ -144,6 +144,24 @@ NT3ApplicationTest >> testNewNoteTagsAreTheTagsOfTheContainer [
 	self assert: note tags anyOne identicalTo: application container tags anyOne
 ]
 
+{ #category : 'tests - settings' }
+NT3ApplicationTest >> testOnSettingsUsesTheNotesFolderOfTheSettings [
+
+	| settings |
+	settings := NTSettings new
+		            currentFolder: folder;
+		            yourself.
+	self assert: (NT3Application onSettings: settings) notesFolder identicalTo: folder
+]
+
+{ #category : 'tests - settings' }
+NT3ApplicationTest >> testOnSettingsUsesTheSettings [
+
+	| settings |
+	settings := NTSettings new.
+	self assert: (NT3Application onSettings: settings) settings identicalTo: settings
+]
+
 { #category : 'tests' }
 NT3ApplicationTest >> testSaveAllStopsTheTimer [
 
@@ -337,4 +355,17 @@ NT3ApplicationTest >> testTagStyleIsDeclared [
 	style := application styleSheet flattenClasses detect: [ :each | each fullName = 'label.ntTag' ] ifNone: [ nil ].
 	self assert: style isNotNil.
 	self assert: (style properties collect: [ :each | each class name ] as: Set) equals: #( #SpFontStyle #SpDrawStyle ) asSet
+]
+
+{ #category : 'tests - menu' }
+NT3ApplicationTest >> testWorldMenuItemIsInToolsAfterTheOtherNoteTakers [
+
+	| builder item |
+	builder := PragmaMenuBuilder new.
+	NT3Application menuNoteTaker3On: builder.
+	item := builder itemList first.
+	self assert: item name equals: #NoteTaker3.
+	self assert: item label equals: 'NoteTaker 3'.
+	self assert: item parentName equals: #Tools.
+	self assert: item order equals: 632
 ]

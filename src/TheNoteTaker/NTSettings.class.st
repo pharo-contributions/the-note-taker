@@ -4,10 +4,10 @@ Each setting is observable, so the applications react when it changes.
 
 ## Life cycle: who creates me and who uses me
 
-1. `NTSettings class>>#default` creates the shared settings of the user, loaded from and saved to `NTSettings class>>#defaultPreferencesFile` (`<preferences>/TheNoteTaker/settings.ston`) with `persistTo:`. `NT2Application class>>#open` reads its notes folder from them.
-2. `NTApplication>>#initialize` and `NT3Application>>#initialize` create their own settings with `new`. `NTApplication` loads them from its preferences file (`importSettings`) and saves them back (`exportSettings`).
-3. `NT3Application` reads and changes the list mode, whether tags are shown and the autosave delay through me; `NTNoteTakerMainUI` reads `gitEnable`.
-4. `NTSettingsPresenter` edits me: it writes its fields into me when accepted (`NTSpSettingsCommand>>#execute` opens it).
+1. `NTSettings class>>#default` creates the shared settings of the user, loaded from and saved to `NTSettings class>>#defaultPreferencesFile` (`<preferences>/TheNoteTaker/settings.ston`) with `persistTo:`. `NT3Application class>>#open` gives them to its application (`NT3Application class>>#onSettings:`).
+2. `NT3Application>>#initialize` creates its own settings with `new`, kept in memory, until `settings:` replaces them.
+3. `NT3Application` reads its notes folder from me, and reads and changes the list mode, whether tags are shown and the autosave delay.
+4. `NTSettingsPresenter` edits me: it writes its fields into me when accepted (`NT3NoteListPresenter>>#openSettings` opens it).
 
 ## Responsibility:
 
