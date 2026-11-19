@@ -74,3 +74,9 @@ NT3ByTagListMode >> labelOfTagNamed: aString [
 				  nextPut: $#;
 				  nextPutAll: aString ]
 ]
+
+{ #category : 'accessing' }
+NT3ByTagListMode >> settingName [
+
+	^ #byTag
+]

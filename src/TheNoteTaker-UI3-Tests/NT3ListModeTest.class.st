@@ -65,12 +65,24 @@ NT3ListModeTest >> testCompactListsNotesNewestFirstWithoutSeparators [
 	self assert: (self labelsOf: NT3CompactListMode new searching: #(  )) equals: #( 'Untagged' 'Recent' 'Middle' 'Old' )
 ]
 
+{ #category : 'tests - settings' }
+NT3ListModeTest >> testNamedAnswersTheModeHavingThatSettingName [
+
+	self assert: (NT3ListMode named: #byTag) class equals: NT3ByTagListMode
+]
+
 { #category : 'tests' }
 NT3ListModeTest >> testOnlyCompactModeHidesDetails [
 
 	self assert: NT3ByDateListMode new showsDetails.
 	self assert: NT3ByTagListMode new showsDetails.
 	self deny: NT3CompactListMode new showsDetails
+]
+
+{ #category : 'tests - settings' }
+NT3ListModeTest >> testSettingNamesAreTheListModesOfTheSettings [
+
+	self assert: (NT3ListMode modes collect: [ :each | each settingName ]) equals: NTSettings listModes
 ]
 
 { #category : 'tests - compact' }

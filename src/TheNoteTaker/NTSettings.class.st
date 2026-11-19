@@ -1,42 +1,65 @@
 "
-I hold the settings of The Note Taker: the folder of the notes and whether the git commands are shown.
-Each setting is observable, so the application reacts when it changes.
+I hold the settings of The Note Taker and save them in my own STON file, in the Pharo preferences folder.
+Each setting is observable, so the applications react when it changes.
+
+## Life cycle: who creates me and who uses me
+
+1. `NTSettings class>>#default` creates the shared settings of the user, loaded from and saved to `NTSettings class>>#defaultPreferencesFile` (`<preferences>/TheNoteTaker/settings.ston`) with `persistTo:`. `NT2Application class>>#open` reads its notes folder from them.
+2. `NTApplication>>#initialize` and `NT3Application>>#initialize` create their own settings with `new`. `NTApplication` loads them from its preferences file (`importSettings`) and saves them back (`exportSettings`).
+3. `NT3Application` reads and changes the list mode, whether tags are shown and the autosave delay through me; `NTNoteTakerMainUI` reads `gitEnable`.
+4. `NTSettingsPresenter` edits me: it writes its fields into me when accepted (`NTSpSettingsCommand>>#execute` opens it).
 
 ## Responsibility:
 
-- I know the notes folder (`currentFolder`) and the git switch (`gitEnable`).
-- I announce changes with `whenCurrentFolderChangeDo:` and `whenGitEnableChangeDo:`.
-- I load and save myself in a file, in the format of the Pharo settings persistence.
+- I know the notes folder (`currentFolder`), the git switch (`gitEnable`), the mode of the note list (`listMode`, one of `NTSettings listModes`), whether the list shows tags (`showsTags`) and the autosave delay in seconds (`autosaveSeconds`).
+- I announce each change (`whenCurrentFolderChangeDo:`, `whenGitEnableChangeDo:`, `property:whenChangedDo:`).
+- I read and write myself as a STON map, ignoring unknown keys and values of the wrong type.
 
 ## Collaborators:
 
-- `SettingsStonReader` and `SettingsStonWriter` read and write my file, holding `StoredSetting` and `AbsolutePathStoredSetting` objects.
-- The Pharo Settings browser edits `NTSettings default` through my class-side accessors (see `NTSettings class >> #settingsOn:`).
+- `STON`: reads and writes my file.
+- `NTSettingsPresenter`: the editor of my values.
+- `NT3ListMode`: its subclasses have the names of `NTSettings listModes` (`settingName`).
 
 ## Public API and Key Messages
 
 - `NTSettings new` creates independent settings, for an application or a test. It never replaces `NTSettings default`.
-- `NTSettings default` answers the settings of the Settings browser, loaded from and saved to `NTSettings defaultPreferencesFile`.
-- `loadFrom: aFile` and `saveTo: aFile` read and write a settings file.
-- `persistTo: aFile` loads from aFile, then saves to it each time a setting changes.
+- `NTSettings default` answers the shared settings, kept in the preferences file.
+- `loadFrom: aFile` and `saveTo: aFile` read and write a settings file; `persistTo: aFile` loads from aFile, then saves to it each time a setting changes.
+- `copyValuesFrom: otherSettings` takes the values of other settings.
+
+## Examples
 
 ```
-| settings |
-settings := NTSettings new.
-settings persistTo: FileSystem memory root / 'settings.config'.
-settings gitEnable: true. ""now written in the file""
+NTSettings exampleWithGitEnabled.
+NTSettings scriptPersistToAStonFile.
 ```
 
-See `NTSettings class >> #exampleWithGitEnabled`.
+The file looks like this (key order may vary):
+
+```
+{
+	'currentFolder' : '/Users/me/Notes',
+	'gitEnable' : true,
+	'listMode' : #byTag,
+	'showsTags' : false,
+	'autosaveSeconds' : 30
+}
+```
 
 ## Internal Representation
 
-- `currentFolder` (`ObservableSlot`): a `FileReference`. When unset, I answer `~/Documents/noteTaker` and create it.
-- `gitEnable` (`ObservableSlot`): a `Boolean`, false by default.
+All my slots are `ObservableSlot`s, lazily set to their default:
+- `currentFolder`: a `FileReference`; `~/Documents/noteTaker` by default, created when first asked.
+- `gitEnable`: a `Boolean`, false by default.
+- `listMode`: a `Symbol`, `#byDate` by default.
+- `showsTags`: a `Boolean`, true by default.
+- `autosaveSeconds`: a positive `Integer`, 10 by default.
 
 ### Implementation Points
 
-In the file, a setting is named like in the Settings browser, e.g. `#tnt_note#gitEnable`. When loading I only look at the last part of the name, and I skip settings I do not know.
+- A folder not on disk (e.g. in a memory file system during tests) is not written.
+- `sharedState` and `restoreSharedState:` let tests restore `Default`.
 "
 Class {
 	#name : 'NTSettings',
@@ -45,7 +68,10 @@ Class {
 	#classTraits : 'TObservable classTrait',
 	#instVars : [
 		'#currentFolder => ObservableSlot',
-		'#gitEnable => ObservableSlot'
+		'#gitEnable => ObservableSlot',
+		'#listMode => ObservableSlot',
+		'#showsTags => ObservableSlot',
+		'#autosaveSeconds => ObservableSlot'
 	],
 	#classVars : [
 		'#Default'
@@ -54,18 +80,6 @@ Class {
 	#package : 'TheNoteTaker',
 	#tag : 'Core'
 }
-
-{ #category : 'private' }
-NTSettings class >> currentFolder [
-
-	^ self default currentFolder
-]
-
-{ #category : 'private' }
-NTSettings class >> currentFolder: aFileReference [
-
-	self default currentFolder: aFileReference
-]
 
 { #category : 'accessing' }
 NTSettings class >> default [
@@ -85,31 +99,30 @@ NTSettings class >> default: aNTSettings [
 
 { #category : 'settings' }
 NTSettings class >> defaultPreferencesFile [
+	"Answer the file holding the user's settings, in the Pharo preferences folder"
 
-	^ (FileLocator preferences / 'TheNoteTaker' / 'TNTSettings.config') asFileReference
+	^ (FileLocator preferences / 'TheNoteTaker' / 'settings.ston') asFileReference
 ]
 
 { #category : 'examples' }
 NTSettings class >> exampleWithGitEnabled [
-	"Settings using a notes folder and showing the git commands"
+	"Settings using a notes folder, showing the git commands and listing the notes by tag without their tags"
 
 	<sampleInstance>
 	^ self new
 		  currentFolder: '/Users/me/Notes' asFileReference;
 		  gitEnable: true;
+		  listMode: #byTag;
+		  showsTags: false;
+		  autosaveSeconds: 30;
 		  yourself
 ]
 
-{ #category : 'commands' }
-NTSettings class >> gitEnable [
+{ #category : 'settings' }
+NTSettings class >> listModes [
+	"Answer the names of the modes of the note list, in the order of its mode buttons"
 
-	^ self default gitEnable
-]
-
-{ #category : 'commands' }
-NTSettings class >> gitEnable: aBoolean [
-
-	self default gitEnable: aBoolean
+	^ #( #byDate #byTag #compact )
 ]
 
 { #category : 'settings' }
@@ -119,32 +132,81 @@ NTSettings class >> reset [
 	Default := nil
 ]
 
-{ #category : 'settings' }
-NTSettings class >> settingsOn: aBuilder [
-	"<notetakersettings>"
+{ #category : 'testing support' }
+NTSettings class >> restoreSharedState: aNTSettingsOrNil [
 
-	<systemsettings>
-	(aBuilder group: #tnt)
-		label: 'The Note Taker';
-		description: 'All TNT related settings';
-		noOrdering;
-		with: [
-				(aBuilder group: #tnt_note)
-					label: 'Note section parameter';
-					with: [
-							(aBuilder setting: #gitEnable)
-								parent: #tnt_note;
-								target: self;
-								order: 60;
-								label: 'enable git command';
-								description: 'When enabled, show git command button.
-When disabled, hide git command button. '.
-							(aBuilder setting: #currentFolder)
-								label: 'Project Path';
-								target: self;
-								type: #Directory;
-								ghostHelp: self new defaultDocumentFolder fullName;
-								description: 'Enter your local or remote path where notes will be committed. It can be empty' ] ]
+	Default := aNTSettingsOrNil
+]
+
+{ #category : 'script' }
+NTSettings class >> scriptPersistToAStonFile [
+	"Settings persisted to a STON file in memory: changing a setting rewrites the file. Answers the contents of the file"
+
+	<example>
+	| settings file |
+	file := FileSystem memory root / 'TheNoteTaker' / 'settings.ston'.
+	settings := self new.
+	settings persistTo: file.
+	settings
+		gitEnable: true;
+		listMode: #compact.
+	^ file contents
+]
+
+{ #category : 'settings' }
+NTSettings class >> settingNames [
+	"Answer the names of the settings, which are also the names of their observable slots"
+
+	^ #( #currentFolder #gitEnable #listMode #showsTags #autosaveSeconds )
+]
+
+{ #category : 'testing support' }
+NTSettings class >> sharedState [
+	"Answer the shared settings, so that tests can restore them with `restoreSharedState:`"
+
+	^ Default
+]
+
+{ #category : 'private - persistence' }
+NTSettings >> asMap [
+	"Answer the settings to write, as a Dictionary of strings, symbols, booleans and integers.
+	A folder that is unset or not on disk (e.g. in a memory file system during tests) is not written"
+
+	| map |
+	map := Dictionary new.
+	(currentFolder isNotNil and: [ currentFolder asFileReference fileSystem isDiskFileSystem ]) ifTrue: [
+		map at: 'currentFolder' put: currentFolder asFileReference fullName ].
+	^ map
+		  at: 'gitEnable' put: self gitEnable;
+		  at: 'listMode' put: self listMode;
+		  at: 'showsTags' put: self showsTags;
+		  at: 'autosaveSeconds' put: self autosaveSeconds;
+		  yourself
+]
+
+{ #category : 'accessing' }
+NTSettings >> autosaveSeconds [
+	"Answer how many seconds after the last edit the unsaved notes are saved"
+
+	^ autosaveSeconds ifNil: [ autosaveSeconds := 10 ]
+]
+
+{ #category : 'accessing' }
+NTSettings >> autosaveSeconds: anInteger [
+
+	autosaveSeconds := anInteger
+]
+
+{ #category : 'accessing' }
+NTSettings >> copyValuesFrom: aNTSettings [
+	"Take the values of aNTSettings. Each changed value is announced"
+
+	self
+		currentFolder: aNTSettings currentFolder;
+		gitEnable: aNTSettings gitEnable;
+		listMode: aNTSettings listMode;
+		showsTags: aNTSettings showsTags;
+		autosaveSeconds: aNTSettings autosaveSeconds
 ]
 
 { #category : 'enumerating' }
@@ -178,13 +240,6 @@ NTSettings >> gitEnable: aBoolean [
 	gitEnable := aBoolean
 ]
 
-{ #category : 'private - persistence' }
-NTSettings >> identifierOf: aSettingName [
-	"Answer the identifier the Settings browser uses for aSettingName"
-
-	^ '#tnt_note#' , aSettingName
-]
-
 { #category : 'initialization' }
 NTSettings >> initialize [
 
@@ -192,23 +247,69 @@ NTSettings >> initialize [
 	super initialize.
 ]
 
+{ #category : 'accessing' }
+NTSettings >> listMode [
+	"Answer the name of the mode of the note list, one of `NTSettings listModes`"
+
+	^ listMode ifNil: [ listMode := self class listModes first ]
+]
+
+{ #category : 'accessing' }
+NTSettings >> listMode: aSymbol [
+
+	listMode := aSymbol
+]
+
 { #category : 'persistence' }
 NTSettings >> loadFrom: aFile [
-	"Set the receiver's settings from aFile, written in the format of Pharo settings persistence.
-	A missing or unreadable file and unknown settings are ignored."
+	"Set the receiver's settings from aFile, a STON map written by `saveTo:`.
+	A missing or unreadable file, unknown keys and values of the wrong type are ignored"
 
+	| map |
 	aFile exists ifFalse: [ ^ self ].
-	(SettingsStonReader new
-		 stream: aFile readStream;
-		 secureLoad) do: [ :each | self loadStoredSetting: each ]
+	map := [ STON fromString: aFile contents ]
+		       on: STONReaderError
+		       do: [ ^ self ].
+	map isDictionary ifFalse: [ ^ self ].
+	self loadFromMap: map
 ]
 
 { #category : 'private - persistence' }
-NTSettings >> loadStoredSetting: aStoredSetting [
-	| name |
-	name := (aStoredSetting settingNodeIdentifier splitOn: '#') last.
-	name = 'currentFolder' ifTrue: [ ^ self currentFolder: aStoredSetting realValue ].
-	name = 'gitEnable' ifTrue: [ ^ self gitEnable: aStoredSetting realValue ]
+NTSettings >> loadFromMap: aDictionary [
+	"Take the values of aDictionary that have the expected type"
+
+	self
+		read: 'currentFolder'
+		from: aDictionary
+		valid: #isString
+		do: [ :value | self currentFolder: value asFileReference ].
+	self
+		read: 'gitEnable'
+		from: aDictionary
+		valid: [ :value | #( true false ) includes: value ]
+		do: [ :value | self gitEnable: value ].
+	self loadNoteListFromMap: aDictionary
+]
+
+{ #category : 'private - persistence' }
+NTSettings >> loadNoteListFromMap: aDictionary [
+	"Take the settings of the note list and of the autosave in aDictionary that have the expected type"
+
+	self
+		read: 'listMode'
+		from: aDictionary
+		valid: [ :value | value isString and: [ self class listModes includes: value asSymbol ] ]
+		do: [ :value | self listMode: value asSymbol ].
+	self
+		read: 'showsTags'
+		from: aDictionary
+		valid: [ :value | #( true false ) includes: value ]
+		do: [ :value | self showsTags: value ].
+	self
+		read: 'autosaveSeconds'
+		from: aDictionary
+		valid: [ :value | value isInteger and: [ value > 0 ] ]
+		do: [ :value | self autosaveSeconds: value ]
 ]
 
 { #category : 'persistence' }
@@ -216,40 +317,36 @@ NTSettings >> persistTo: aFile [
 	"Load the receiver from aFile, then save it in aFile each time a setting changes"
 
 	self loadFrom: aFile.
-	self whenCurrentFolderChangeDo: [ self saveTo: aFile ].
-	self whenGitEnableChangeDo: [ self saveTo: aFile ]
+	self class settingNames do: [ :each | self property: each whenChangedDo: [ self saveTo: aFile ] ]
+]
+
+{ #category : 'private - persistence' }
+NTSettings >> read: aKey from: aDictionary valid: aValidBlock do: aBlock [
+	"Evaluate aBlock with the value of aKey in aDictionary when there is one and aValidBlock accepts it"
+
+	aDictionary at: aKey ifPresent: [ :value | (aValidBlock value: value) ifTrue: [ aBlock value: value ] ]
 ]
 
 { #category : 'persistence' }
 NTSettings >> saveTo: aFile [
-	"Write the receiver's settings in aFile, in the format of Pharo settings persistence"
+	"Write the receiver's settings in aFile, as a STON map"
 
 	aFile parent ensureCreateDirectory.
 	aFile ensureDelete.
-	aFile writeStreamDo: [ :stream |
-		SettingsStonWriter new
-			stream: stream;
-			addSettings: self storedSettings;
-			store ]
+	aFile writeStreamDo: [ :stream | STON put: self asMap onStreamPretty: stream ]
 ]
 
-{ #category : 'private - persistence' }
-NTSettings >> storedSettings [
-	"Answer the settings to write, as Pharo settings persistence objects.
-	A folder that is unset or not on disk (e.g. in a memory file system during tests) is not written"
+{ #category : 'accessing' }
+NTSettings >> showsTags [
+	"Answer whether the note list shows the first tags of the notes"
 
-	| result |
-	result := OrderedCollection new.
-	(currentFolder isNotNil and: [ currentFolder fileSystem isDiskFileSystem ]) ifTrue: [
-		result add: (AbsolutePathStoredSetting new
-				 settingNodeIdentifier: (self identifierOf: #currentFolder);
-				 realValue: currentFolder path segments asArray;
-				 yourself) ].
-	result add: (StoredSetting new
-			 settingNodeIdentifier: (self identifierOf: #gitEnable);
-			 realValue: self gitEnable;
-			 yourself).
-	^ result
+	^ showsTags ifNil: [ showsTags := true ]
+]
+
+{ #category : 'accessing' }
+NTSettings >> showsTags: aBoolean [
+
+	showsTags := aBoolean
 ]
 
 { #category : 'enumerating' }

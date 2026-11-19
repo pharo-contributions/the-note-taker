@@ -59,3 +59,9 @@ NT3ByDateListMode >> labelOfMonth: aMonth [
 				  space;
 				  print: aMonth year ]
 ]
+
+{ #category : 'accessing' }
+NT3ByDateListMode >> settingName [
+
+	^ #byDate
+]

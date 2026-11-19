@@ -4,13 +4,14 @@ I am the application of the new TheNoteTaker UI (UI3): I open the note taker win
 ## Responsibility:
 
 - I hold the `NTContainer` of the notes and load it from the notes folder (`~/Documents/Notes` by default).
-- I know which notes have unsaved edits, save them 10 seconds after the last edit, on demand, or all at once, and tell my listeners when a note is saved.
-- I remember the mode of the note list and whether it shows tags for the session, and declare the styles of the UI3 presenters (`ntSeparator`, `ntDetail`, `ntTag` coloured with the theme `urlColor`).
+- I know which notes have unsaved edits, save them some seconds after the last edit (`NTSettings>>#autosaveSeconds`, 10 by default), on demand, or all at once, and tell my listeners when a note is saved.
+- I keep the mode of the note list, whether it shows tags and the autosave delay in my `NTSettings`, and declare the styles of the UI3 presenters (`ntSeparator`, `ntDetail`, `ntTag` coloured with the theme `urlColor`).
 
 ## Collaborators:
 
 - `NTContainer` and `NTNote`: the notes; a note writes its own file (`save`).
 - `NT3Timer`: runs the autosave after a pause.
+- `NTSettings`: my settings (`NTSettings new` by default, `settings:` to share the persisted `NTSettings default`). The mode of the list is stored by its `NT3ListMode>>#settingName`.
 - `NT3NoteTakerPresenter`, `NT3NoteListPresenter`, `NT3NoteEditorPresenter`: the presenters I open and serve.
 
 ## Public API and Key Messages
@@ -19,7 +20,7 @@ I am the application of the new TheNoteTaker UI (UI3): I open the note taker win
 - `newNoteTitled:tagNames:` creates, adds and saves a note.
 - `tagNames`, `tagNotes:adding:removing:` adds and removes tags of several notes and saves them.
 - `noteEdited:`, `isUnsaved:`, `saveNote:`, `saveAll`, `whenNoteSavedDo:`.
-- `listMode` / `listMode:`, `showsTags` / `showsTags:`.
+- `settings` / `settings:`; `listMode` / `listMode:`, `showsTags` / `showsTags:`, `autosaveDelay` read and write them.
 - `start` loads the notes and opens the note taker.
 
 ```
@@ -30,7 +31,7 @@ NT3Application example start
 
 - `container`: an `NTContainer`; `notesFolder`: a `FileReference` or `FileLocator`.
 - `unsavedNotes`: an `IdentitySet` of notes; `noteSavedBlocks`: the listeners.
-- `autosaveTimer`: an `NT3Timer` (a manual timer in tests); `listMode`: an `NT3ListMode`; `showsTags`: a Boolean, true by default.
+- `autosaveTimer`: an `NT3Timer` (a manual timer in tests); `settings`: an `NTSettings`.
 
 ### Implementation Points
 
@@ -41,12 +42,11 @@ Class {
 	#superclass : 'SpApplication',
 	#instVars : [
 		'container',
-		'listMode',
 		'notesFolder',
 		'unsavedNotes',
 		'autosaveTimer',
 		'noteSavedBlocks',
-		'showsTags'
+		'settings'
 	],
 	#category : 'TheNoteTaker-UI3',
 	#package : 'TheNoteTaker-UI3'
@@ -137,7 +137,7 @@ NT3Application class >> scriptStart [
 NT3Application >> autosaveDelay [
 	"Answer how long after the last edit the unsaved notes are saved"
 
-	^ 10 seconds
+	^ settings autosaveSeconds seconds
 ]
 
 { #category : 'accessing' }
@@ -163,8 +163,7 @@ NT3Application >> initialize [
 
 	super initialize.
 	container := NTContainer new.
-	listMode := NT3ByDateListMode new.
-	showsTags := true.
+	settings := NTSettings new.
 	unsavedNotes := IdentitySet new.
 	noteSavedBlocks := OrderedCollection new.
 	autosaveTimer := NT3Timer application: self.
@@ -183,15 +182,15 @@ NT3Application >> isUnsaved: aNote [
 
 { #category : 'accessing' }
 NT3Application >> listMode [
-	"Answer the mode of the note list, kept for the session"
+	"Answer the mode of the note list, kept in the settings"
 
-	^ listMode
+	^ NT3ListMode named: settings listMode
 ]
 
 { #category : 'accessing' }
 NT3Application >> listMode: aListMode [
 
-	listMode := aListMode
+	settings listMode: aListMode settingName
 ]
 
 { #category : 'notes' }
@@ -255,16 +254,29 @@ NT3Application >> saveNote: aNote [
 ]
 
 { #category : 'accessing' }
-NT3Application >> showsTags [
-	"Answer whether the note list shows the first tags of the notes, kept for the session"
+NT3Application >> settings [
+	"Answer the settings giving the list mode, whether tags are shown and the autosave delay"
 
-	^ showsTags
+	^ settings
+]
+
+{ #category : 'accessing' }
+NT3Application >> settings: aNTSettings [
+
+	settings := aNTSettings
+]
+
+{ #category : 'accessing' }
+NT3Application >> showsTags [
+	"Answer whether the note list shows the first tags of the notes, kept in the settings"
+
+	^ settings showsTags
 ]
 
 { #category : 'accessing' }
 NT3Application >> showsTags: aBoolean [
 
-	showsTags := aBoolean
+	settings showsTags: aBoolean
 ]
 
 { #category : 'running' }

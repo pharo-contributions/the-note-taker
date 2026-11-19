@@ -8,7 +8,8 @@ Class {
 	#superclass : 'TestCase',
 	#instVars : [
 		'settings',
-		'file'
+		'file',
+		'savedSharedState'
 	],
 	#category : 'TheNoteTaker-Tests-Core',
 	#package : 'TheNoteTaker-Tests',
@@ -24,18 +25,60 @@ NTSettingsTest >> loadedSettings [
 
 { #category : 'running' }
 NTSettingsTest >> setUp [
+
 	super setUp.
-	file := FileSystem memory root / 'TheNoteTaker' / 'settings.config'.
+	savedSharedState := NTSettings sharedState.
+	file := FileSystem memory root / 'TheNoteTaker' / 'settings.ston'.
 	settings := NTSettings new
 ]
 
+{ #category : 'running' }
+NTSettingsTest >> tearDown [
+
+	NTSettings restoreSharedState: savedSharedState.
+	super tearDown
+]
+
 { #category : 'tests' }
-NTSettingsTest >> testFolderSettingHintIsDefaultDocumentFolder [
-	| builder declaration |
-	builder := SettingTreeBuilder new.
-	NTSettings settingsOn: builder.
-	declaration := (builder nodeList detect: [ :each | each item name = #currentFolder ]) item.
-	self assert: declaration ghostHelp equals: settings defaultDocumentFolder fullName
+NTSettingsTest >> testCopyValuesFrom [
+
+	| other |
+	other := NTSettings new
+		         currentFolder: '/Users/me/Notes' asFileReference;
+		         gitEnable: true;
+		         listMode: #byTag;
+		         showsTags: false;
+		         autosaveSeconds: 20;
+		         yourself.
+	settings copyValuesFrom: other.
+	self assert: settings currentFolder equals: other currentFolder.
+	self assert: settings gitEnable.
+	self assert: settings listMode equals: #byTag.
+	self deny: settings showsTags.
+	self assert: settings autosaveSeconds equals: 20
+]
+
+{ #category : 'tests' }
+NTSettingsTest >> testDefaultPreferencesFileIsAStonFileInThePreferencesFolder [
+
+	self
+		assert: NTSettings defaultPreferencesFile
+		equals: (FileLocator preferences / 'TheNoteTaker' / 'settings.ston') asFileReference
+]
+
+{ #category : 'tests' }
+NTSettingsTest >> testDefaultValues [
+
+	self deny: settings gitEnable.
+	self assert: settings listMode equals: #byDate.
+	self assert: settings showsTags.
+	self assert: settings autosaveSeconds equals: 10
+]
+
+{ #category : 'tests' }
+NTSettingsTest >> testListModesAreTheModesOfTheNoteList [
+
+	self assert: NTSettings listModes equals: #( #byDate #byTag #compact )
 ]
 
 { #category : 'tests' }
@@ -46,31 +89,45 @@ NTSettingsTest >> testLoadFromBrokenFileKeepsGitDisabled [
 ]
 
 { #category : 'tests' }
+NTSettingsTest >> testLoadFromFileNotHoldingAMapKeepsDefaults [
+
+	self writeFile: '[ true, 30 ]'.
+	settings loadFrom: file.
+	self deny: settings gitEnable
+]
+
+{ #category : 'tests' }
 NTSettingsTest >> testLoadFromFileWithoutFolderUsesDefaultDocumentFolder [
-	self writeFile: '[
-	StoredSetting {
-		#settingNodeIdentifier : ''#tnt_note#gitEnable'',
-		#realValue : true
-	}
-]'.
+
+	self writeFile: '{ ''gitEnable'' : true }'.
 	settings loadFrom: file.
 	self assert: settings currentFolder equals: (FileLocator documents / 'noteTaker') asFileReference
 ]
 
 { #category : 'tests' }
 NTSettingsTest >> testLoadFromIgnoresUnknownSettings [
-	self writeFile: '[
-	StoredSetting {
-		#settingNodeIdentifier : ''#tnt_note#AutoSave'',
-		#realValue : true
-	},
-	StoredSetting {
-		#settingNodeIdentifier : ''#tnt_note#gitEnable'',
-		#realValue : true
-	}
-]'.
+
+	self writeFile: '{ ''autoSave'' : true, ''gitEnable'' : true }'.
 	settings loadFrom: file.
 	self assert: settings gitEnable
+]
+
+{ #category : 'tests' }
+NTSettingsTest >> testLoadFromIgnoresValuesOfTheWrongType [
+
+	self writeFile: '{
+	''currentFolder'' : 42,
+	''gitEnable'' : ''yes'',
+	''listMode'' : #unknownMode,
+	''showsTags'' : 3,
+	''autosaveSeconds'' : -5
+}'.
+	settings loadFrom: file.
+	self assert: settings currentFolder equals: settings defaultDocumentFolder.
+	self deny: settings gitEnable.
+	self assert: settings listMode equals: #byDate.
+	self assert: settings showsTags.
+	self assert: settings autosaveSeconds equals: 10
 ]
 
 { #category : 'tests' }
@@ -80,20 +137,21 @@ NTSettingsTest >> testLoadFromMissingFileKeepsGitDisabled [
 ]
 
 { #category : 'tests' }
-NTSettingsTest >> testLoadFromReadsPharoSettingsFormat [
-	self writeFile: '[
-	AbsolutePathStoredSetting {
-		#settingNodeIdentifier : ''#tnt_note#currentFolder'',
-		#realValue : [ ''Users'', ''me'', ''Notes'' ]
-	},
-	StoredSetting {
-		#settingNodeIdentifier : ''#tnt_note#gitEnable'',
-		#realValue : true
-	}
-]'.
+NTSettingsTest >> testLoadFromReadsStonMap [
+
+	self writeFile: '{
+	''currentFolder'' : ''/Users/me/Notes'',
+	''gitEnable'' : true,
+	''listMode'' : #byTag,
+	''showsTags'' : false,
+	''autosaveSeconds'' : 30
+}'.
 	settings loadFrom: file.
 	self assert: settings currentFolder fullName equals: '/Users/me/Notes'.
-	self assert: settings gitEnable
+	self assert: settings gitEnable.
+	self assert: settings listMode equals: #byTag.
+	self deny: settings showsTags.
+	self assert: settings autosaveSeconds equals: 30
 ]
 
 { #category : 'tests' }
@@ -115,6 +173,14 @@ NTSettingsTest >> testPersistToLoadsExistingFile [
 ]
 
 { #category : 'tests' }
+NTSettingsTest >> testPersistToSavesWhenAutosaveSecondsChanges [
+
+	settings persistTo: file.
+	settings autosaveSeconds: 5.
+	self assert: self loadedSettings autosaveSeconds equals: 5
+]
+
+{ #category : 'tests' }
 NTSettingsTest >> testPersistToSavesWhenCurrentFolderChanges [
 	settings persistTo: file.
 	settings currentFolder: '/Users/me/Notes' asFileReference.
@@ -129,12 +195,35 @@ NTSettingsTest >> testPersistToSavesWhenGitEnableChanges [
 ]
 
 { #category : 'tests' }
+NTSettingsTest >> testPersistToSavesWhenListModeChanges [
+
+	settings persistTo: file.
+	settings listMode: #compact.
+	self assert: self loadedSettings listMode equals: #compact
+]
+
+{ #category : 'tests' }
+NTSettingsTest >> testPersistToSavesWhenShowsTagsChanges [
+
+	settings persistTo: file.
+	settings showsTags: false.
+	self deny: self loadedSettings showsTags
+]
+
+{ #category : 'tests' }
 NTSettingsTest >> testSaveToSkipsFolderNotOnDisk [
+
 	settings currentFolder: FileSystem memory root / 'notes'.
 	settings saveTo: file.
-	self
-		assert: (self loadedSettings storedSettings collect: [ :each | each settingNodeIdentifier ] as: Array)
-		equals: #( '#tnt_note#gitEnable' )
+	self deny: ((STON fromString: file contents) includesKey: 'currentFolder')
+]
+
+{ #category : 'tests' }
+NTSettingsTest >> testSaveToThenLoadFromKeepsAutosaveSeconds [
+
+	settings autosaveSeconds: 42.
+	settings saveTo: file.
+	self assert: self loadedSettings autosaveSeconds equals: 42
 ]
 
 { #category : 'tests' }
@@ -149,6 +238,43 @@ NTSettingsTest >> testSaveToThenLoadFromKeepsGitEnable [
 	settings gitEnable: true.
 	settings saveTo: file.
 	self assert: self loadedSettings gitEnable
+]
+
+{ #category : 'tests' }
+NTSettingsTest >> testSaveToThenLoadFromKeepsListMode [
+
+	settings listMode: #byTag.
+	settings saveTo: file.
+	self assert: self loadedSettings listMode equals: #byTag
+]
+
+{ #category : 'tests' }
+NTSettingsTest >> testSaveToThenLoadFromKeepsShowsTags [
+
+	settings showsTags: false.
+	settings saveTo: file.
+	self deny: self loadedSettings showsTags
+]
+
+{ #category : 'tests' }
+NTSettingsTest >> testSaveToWritesAStonMap [
+
+	| map |
+	settings
+		currentFolder: '/Users/me/Notes' asFileReference;
+		gitEnable: true;
+		listMode: #compact;
+		showsTags: false;
+		autosaveSeconds: 25.
+	settings saveTo: file.
+	map := STON fromString: file contents.
+	self assert: map equals: (Dictionary new
+			 at: 'currentFolder' put: '/Users/me/Notes';
+			 at: 'gitEnable' put: true;
+			 at: 'listMode' put: #compact;
+			 at: 'showsTags' put: false;
+			 at: 'autosaveSeconds' put: 25;
+			 yourself)
 ]
 
 { #category : 'helpers' }

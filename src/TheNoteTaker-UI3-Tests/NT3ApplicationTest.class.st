@@ -54,6 +54,13 @@ NT3ApplicationTest >> tagNamesOf: aNote [
 	^ aNote tags collect: [ :each | each tagName ] as: Set
 ]
 
+{ #category : 'tests - settings' }
+NT3ApplicationTest >> testAutosaveDelayIsTheDelayOfTheSettings [
+
+	application settings autosaveSeconds: 3.
+	self assert: application autosaveDelay equals: 3 seconds
+]
+
 { #category : 'tests' }
 NT3ApplicationTest >> testAutosaveSavesAllUnsavedNotes [
 
@@ -86,6 +93,13 @@ NT3ApplicationTest >> testEditingStartsTheAutosaveTimer [
 	self editedNewNote.
 	self assert: timer isRunning.
 	self assert: timer duration equals: 10 seconds
+]
+
+{ #category : 'tests - settings' }
+NT3ApplicationTest >> testListModeIsTheModeOfTheSettings [
+
+	application settings listMode: #byTag.
+	self assert: application listMode class equals: NT3ByTagListMode
 ]
 
 { #category : 'tests' }
@@ -172,6 +186,31 @@ NT3ApplicationTest >> testSavingAnnouncesTheNote [
 	self assert: saved identicalTo: note
 ]
 
+{ #category : 'tests - settings' }
+NT3ApplicationTest >> testSettingShowsTagsChangesTheSettings [
+
+	application showsTags: false.
+	self deny: application settings showsTags
+]
+
+{ #category : 'tests - settings' }
+NT3ApplicationTest >> testSettingTheListModeChangesTheSettings [
+
+	application listMode: NT3CompactListMode new.
+	self assert: application settings listMode equals: #compact
+]
+
+{ #category : 'tests - settings' }
+NT3ApplicationTest >> testSettingsCanBeReplaced [
+
+	| settings |
+	settings := NTSettings new
+		            listMode: #compact;
+		            yourself.
+	application settings: settings.
+	self assert: application listMode class equals: NT3CompactListMode
+]
+
 { #category : 'tests - tags' }
 NT3ApplicationTest >> testShowsTagsByDefault [
 
@@ -182,6 +221,13 @@ NT3ApplicationTest >> testShowsTagsByDefault [
 NT3ApplicationTest >> testShowsTagsCanBeChanged [
 
 	application showsTags: false.
+	self deny: application showsTags
+]
+
+{ #category : 'tests - settings' }
+NT3ApplicationTest >> testShowsTagsIsTheShowsTagsOfTheSettings [
+
+	application settings showsTags: false.
 	self deny: application showsTags
 ]
 

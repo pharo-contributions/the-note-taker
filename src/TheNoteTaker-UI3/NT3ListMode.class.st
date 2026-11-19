@@ -17,6 +17,7 @@ I am the abstract mode of the note list: I turn notes into the rows of the list.
 - `entriesFor: notes searchedTagNames: tagNames`
 - `showsDetails`, `iconName`, `help`
 - `NT3ListMode modes` answers one instance of each mode, in button order.
+- `settingName` answers my name in `NTSettings` (one of `NTSettings listModes`); `NT3ListMode named: aSymbol` answers the mode of that name.
 
 ```
 NT3ByDateListMode new entriesFor: NT3Application sampleNotes searchedTagNames: #()
@@ -45,6 +46,13 @@ NT3ListMode class >> modes [
 		  NT3ByDateListMode new.
 		  NT3ByTagListMode new.
 		  NT3CompactListMode new }
+]
+
+{ #category : 'instance creation' }
+NT3ListMode class >> named: aSymbol [
+	"Answer the mode whose setting name is aSymbol, or the first mode when there is none"
+
+	^ self modes detect: [ :each | each settingName = aSymbol ] ifNone: [ self modes first ]
 ]
 
 { #category : 'entries' }
@@ -81,6 +89,13 @@ NT3ListMode >> notes: aCollectionOfNotes havingAnyTagNamedIn: aCollectionOfStrin
 
 	aCollectionOfStrings ifEmpty: [ ^ aCollectionOfNotes ].
 	^ aCollectionOfNotes select: [ :note | note tags anySatisfy: [ :tag | aCollectionOfStrings includes: tag tagName ] ]
+]
+
+{ #category : 'accessing' }
+NT3ListMode >> settingName [
+	"Answer the name of the receiver in `NTSettings`, one of `NTSettings listModes`"
+
+	^ self subclassResponsibility
 ]
 
 { #category : 'testing' }

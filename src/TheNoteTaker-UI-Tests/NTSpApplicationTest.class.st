@@ -8,49 +8,21 @@ Class {
 { #category : 'tests' }
 NTSpApplicationTest >> contentsOfConfigFile [
 
-	^ '[
-	AbsolutePathStoredSetting {
-		#settingNodeIdentifier : ''#tnt_note#currentFolder'',
-		#realValue : [
-			''Users'',
-			''ducasse'',
-			''Documents'',
-			''TheNoteTaker''
-		]
-	},
-	StoredSetting {
-		#settingNodeIdentifier : ''#tnt_note#gitEnable'',
-		#realValue : false
-	},
-	StoredSetting {
-		#settingNodeIdentifier : ''#tnt_note#AutoSave'',
-		#realValue : true
-	}
-]'
+	^ '{
+	''currentFolder'' : ''/Users/ducasse/Documents/TheNoteTaker'',
+	''gitEnable'' : false,
+	''AutoSave'' : true
+}'
 ]
 
 { #category : 'tests' }
 NTSpApplicationTest >> contentsOfConfigFile2 [
 
-	^ '[
-	AbsolutePathStoredSetting {
-		#settingNodeIdentifier : ''#tnt_note#currentFolder'',
-		#realValue : [
-			''Users'',
-			''ducasse'',
-			''Documents'',
-			''NewTheNoteTaker''
-		]
-	},
-	StoredSetting {
-		#settingNodeIdentifier : ''#tnt_note#gitEnable'',
-		#realValue : false
-	},
-	StoredSetting {
-		#settingNodeIdentifier : ''#tnt_note#AutoSave'',
-		#realValue : true
-	}
-]'
+	^ '{
+	''currentFolder'' : ''/Users/ducasse/Documents/NewTheNoteTaker'',
+	''gitEnable'' : false,
+	''AutoSave'' : true
+}'
 ]
 
 { #category : 'tests' }

@@ -44,6 +44,12 @@ NT3CompactListMode >> iconName [
 	^ #smallJustified
 ]
 
+{ #category : 'accessing' }
+NT3CompactListMode >> settingName [
+
+	^ #compact
+]
+
 { #category : 'testing' }
 NT3CompactListMode >> showsDetails [
 

@@ -97,9 +97,7 @@ NTApplication >> currentFolder: aFileReference [
 { #category : 'accessing preferences' }
 NTApplication >> defaultPreferencesFile [
 
-	^ (FileLocator preferences / 'TheNoteTaker' / 'TNTSettings.config') asFileReference
-	
-
+	^ NTSettings defaultPreferencesFile
 ]
 
 { #category : 'running' }
