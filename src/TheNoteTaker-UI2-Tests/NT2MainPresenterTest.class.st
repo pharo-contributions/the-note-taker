@@ -14,6 +14,39 @@ Class {
 }
 
 { #category : 'helpers' }
+NT2MainPresenterTest >> deferringApplication [
+	"Answer an application on the memory folder that keeps the deferred blocks instead of running them.
+	Its class is built in a private environment, so it leaves no trace in the image"
+
+	| env fixtureClass |
+	env := SystemEnvironment new.
+	env codeChangeAnnouncer: Announcer new.
+	env at: #FixedLayout put: FixedLayout.
+	env at: #OrderedCollection put: OrderedCollection.
+	fixtureClass := (NT2Application << #NT2DeferringFixture)
+		                slots: { #deferredBlocks };
+		                environment: env;
+		                build.
+	fixtureClass
+		compile: 'deferredBlocks
+
+	^ deferredBlocks ifNil: [ deferredBlocks := OrderedCollection new ]'
+		classified: #fixture
+		withStamp: nil
+		logSource: false.
+	fixtureClass
+		compile: 'defer: aBlock
+
+	self deferredBlocks add: aBlock'
+		classified: #fixture
+		withStamp: nil
+		logSource: false.
+	^ fixtureClass new
+		  folder: memoryFS;
+		  yourself
+]
+
+{ #category : 'helpers' }
 NT2MainPresenterTest >> noteFiles [
 
 	^ memoryFS files
@@ -153,6 +186,23 @@ NT2MainPresenterTest >> testRemovingLastUseOfTagRemovesItFromFilter [
 
 	self assertEmpty: note tags.
 	self deny: (presenter noteList tagNames includes: 'work')
+]
+
+{ #category : 'tests - editing' }
+NT2MainPresenterTest >> testScheduledAutosaveIsDeferredThroughTheApplication [
+
+	| deferring deadline |
+	deferring := self deferringApplication.
+	presenter := NT2MainPresenter newApplication: deferring.
+	presenter newNote.
+	presenter editor textInput text: 'Draft'.
+	deadline := DateAndTime now + (presenter editor autosaveDelay + 3) seconds.
+	[ deferring deferredBlocks isEmpty and: [ DateAndTime now < deadline ] ] whileTrue: [ (Delay forMilliseconds: 50) wait ].
+	self assert: deferring deferredBlocks size equals: 1.
+	self assert: presenter editor isDirty.
+	deferring deferredBlocks first value.
+	self deny: presenter editor isDirty.
+	self assert: self noteFiles size equals: 1
 ]
 
 { #category : 'tests - list' }

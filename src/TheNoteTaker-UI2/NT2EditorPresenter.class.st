@@ -173,11 +173,12 @@ NT2EditorPresenter >> save [
 
 { #category : 'saving' }
 NT2EditorPresenter >> scheduleAutosave [
+	"Save the note in the UI process once the user stopped typing for autosaveDelay seconds"
 
 	self cancelAutosave.
 	saveProcess := [
 		               (Delay forSeconds: self autosaveDelay) wait.
-		               UIManager default defer: [ self autosaveNow ] ] forkAt: Processor userBackgroundPriority
+		               self defer: [ self autosaveNow ] ] forkAt: Processor userBackgroundPriority
 ]
 
 { #category : 'accessing' }
