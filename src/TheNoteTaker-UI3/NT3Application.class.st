@@ -288,6 +288,31 @@ NT3Application >> notesFolder: aFolder [
 	notesFolder := aFolder
 ]
 
+{ #category : 'notes' }
+NT3Application >> notesTagged: aTagName [
+	"Answer the notes having the tag named aTagName"
+
+	^ container notes select: [ :note | note tags anySatisfy: [ :tag | tag tagName = aTagName ] ]
+]
+
+{ #category : 'notes' }
+NT3Application >> removeTagNamed: aTagName [
+	"Remove the tag named aTagName from every note having it, and save these notes"
+
+	self tagNotes: (self notesTagged: aTagName) adding: #(  ) removing: { aTagName }
+]
+
+{ #category : 'notes' }
+NT3Application >> renameTagNamed: oldName to: newName [
+	"Put the tag named newName instead of the tag named oldName on each note having it, and save these notes.
+	Renaming to an existing tag merges both. newName is cleaned as any tag name (see NTTag class>>#cleanName:); a blank or unchanged name changes nothing"
+
+	| name |
+	name := NTTag cleanName: newName.
+	(name isEmpty or: [ name = oldName ]) ifTrue: [ ^ self ].
+	self tagNotes: (self notesTagged: oldName) adding: { name } removing: { oldName }
+]
+
 { #category : 'saving' }
 NT3Application >> saveAll [
 

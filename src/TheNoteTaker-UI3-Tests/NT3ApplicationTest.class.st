@@ -204,6 +204,18 @@ NT3ApplicationTest >> testNewNoteTagsAreTheTagsOfTheContainer [
 	self assert: note tags anyOne identicalTo: application container tags anyOne
 ]
 
+{ #category : 'tests - managing tags' }
+NT3ApplicationTest >> testNotesTaggedAreTheNotesHavingTheTag [
+
+	| both specOnly |
+	both := application newNoteTitled: 'Both' tagNames: #( 'pharo' 'spec' ).
+	application newNoteTitled: 'Pharo' tagNames: #( 'pharo' ).
+	specOnly := application newNoteTitled: 'Spec' tagNames: #( 'spec' ).
+	self assert: (application notesTagged: 'spec') asSet equals: {
+			both.
+			specOnly } asSet
+]
+
 { #category : 'tests - settings' }
 NT3ApplicationTest >> testOnSettingsUsesTheNotesFolderOfTheSettings [
 
@@ -220,6 +232,97 @@ NT3ApplicationTest >> testOnSettingsUsesTheSettings [
 	| settings |
 	settings := NTSettings new.
 	self assert: (NT3Application onSettings: settings) settings identicalTo: settings
+]
+
+{ #category : 'tests - managing tags' }
+NT3ApplicationTest >> testRemoveTagRemovesItFromEveryNote [
+
+	| both pharoOnly |
+	both := application newNoteTitled: 'Both' tagNames: #( 'pharo' 'spec' ).
+	pharoOnly := application newNoteTitled: 'Pharo' tagNames: #( 'pharo' ).
+	application removeTagNamed: 'pharo'.
+	self assert: (self tagNamesOf: both) equals: #( 'spec' ) asSet.
+	self assert: (self tagNamesOf: pharoOnly) isEmpty.
+	self assert: application tagNames asSet equals: #( 'spec' ) asSet
+]
+
+{ #category : 'tests - managing tags' }
+NT3ApplicationTest >> testRemoveTagSavesTheNotes [
+
+	| note |
+	note := application newNoteTitled: 'Pharo' tagNames: #( 'pharo' 'spec' ).
+	application removeTagNamed: 'pharo'.
+	self deny: (note fileReference contents includesSubstring: 'pharo')
+]
+
+{ #category : 'tests - managing tags' }
+NT3ApplicationTest >> testRenameTagChangingOnlyTheCaseRenamesIt [
+
+	| note |
+	note := application newNoteTitled: 'Pharo' tagNames: #( 'pharo' ).
+	application renameTagNamed: 'pharo' to: 'Pharo'.
+	self assert: (self tagNamesOf: note) equals: #( 'Pharo' ) asSet
+]
+
+{ #category : 'tests - managing tags' }
+NT3ApplicationTest >> testRenameTagPutsTheNewNameOnItsNotes [
+
+	| both pharoOnly specOnly |
+	both := application newNoteTitled: 'Both' tagNames: #( 'pharo' 'spec' ).
+	pharoOnly := application newNoteTitled: 'Pharo' tagNames: #( 'pharo' ).
+	specOnly := application newNoteTitled: 'Spec' tagNames: #( 'spec' ).
+	application renameTagNamed: 'pharo' to: 'smalltalk'.
+	self assert: (self tagNamesOf: both) equals: #( 'smalltalk' 'spec' ) asSet.
+	self assert: (self tagNamesOf: pharoOnly) equals: #( 'smalltalk' ) asSet.
+	self assert: (self tagNamesOf: specOnly) equals: #( 'spec' ) asSet
+]
+
+{ #category : 'tests - managing tags' }
+NT3ApplicationTest >> testRenameTagRemovesTheOldNameFromTheTags [
+
+	application newNoteTitled: 'Pharo' tagNames: #( 'pharo' ).
+	application renameTagNamed: 'pharo' to: 'smalltalk'.
+	self assert: application tagNames asSet equals: #( 'smalltalk' ) asSet
+]
+
+{ #category : 'tests - managing tags' }
+NT3ApplicationTest >> testRenameTagSavesTheNotes [
+
+	| note |
+	note := application newNoteTitled: 'Pharo' tagNames: #( 'pharo' ).
+	application renameTagNamed: 'pharo' to: 'smalltalk'.
+	self assert: (note fileReference contents includesSubstring: 'smalltalk').
+	self deny: (note fileReference contents includesSubstring: 'pharo')
+]
+
+{ #category : 'tests - managing tags' }
+NT3ApplicationTest >> testRenameTagToABlankNameKeepsIt [
+
+	| note |
+	note := application newNoteTitled: 'Pharo' tagNames: #( 'pharo' ).
+	application renameTagNamed: 'pharo' to: ' , '.
+	self assert: (self tagNamesOf: note) equals: #( 'pharo' ) asSet
+]
+
+{ #category : 'tests - managing tags' }
+NT3ApplicationTest >> testRenameTagToAnExistingTagMergesThem [
+
+	| both pharoOnly |
+	both := application newNoteTitled: 'Both' tagNames: #( 'pharo' 'spec' ).
+	pharoOnly := application newNoteTitled: 'Pharo' tagNames: #( 'pharo' ).
+	application renameTagNamed: 'pharo' to: 'spec'.
+	self assert: (self tagNamesOf: both) equals: #( 'spec' ) asSet.
+	self assert: (self tagNamesOf: pharoOnly) equals: #( 'spec' ) asSet.
+	self assert: (application container tags count: [ :each | each tagName = 'spec' ]) equals: 1
+]
+
+{ #category : 'tests - managing tags' }
+NT3ApplicationTest >> testRenameTagToItsOwnNameKeepsIt [
+
+	| note |
+	note := application newNoteTitled: 'Pharo' tagNames: #( 'pharo' ).
+	application renameTagNamed: 'pharo' to: ' pharo '.
+	self assert: (self tagNamesOf: note) equals: #( 'pharo' ) asSet
 ]
 
 { #category : 'tests - notes folder' }

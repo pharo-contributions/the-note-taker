@@ -5,7 +5,7 @@ I am the dialog to add and remove tags of one or several notes: a filter field a
 
 - I show each tag with an icon: checked when it will be on all the notes, partly checked when it is on some of them, unchecked otherwise.
 - A click on a tag checks or unchecks it; the filter shows the tags containing the typed text; Enter checks a tag for each typed word (words are separated by spaces), creating the tags that do not exist.
-- My Apply button closes me and runs the `okAction`, Cancel closes me without changing anything.
+- My Apply button first checks the typed words when the filter shows no tag (new tags typed without Enter), then closes me and runs the `okAction`, Cancel closes me without changing anything.
 
 ## Collaborators:
 
@@ -118,6 +118,7 @@ NT3TagsPresenter >> initializeDialogWindow: aDialogWindowPresenter [
 					triggerCancelAction;
 					close ];
 		addDefaultButton: 'Apply' do: [ :dialog |
+			self submitTypedNewTags.
 			dialog
 				beOk;
 				triggerOkAction;
@@ -163,6 +164,15 @@ NT3TagsPresenter >> submitFilter [
 	self filterText trimBoth ifEmpty: [ ^ self ].
 	self model addTagsNamedIn: self filterText.
 	self filterText: ''
+]
+
+{ #category : 'actions' }
+NT3TagsPresenter >> submitTypedNewTags [
+	"Check the tags typed in the filter but not submitted with Enter, when the filter shows no tag: the user typed new tags.
+	When the filter shows tags, its text only filters them"
+
+	tagList items ifNotEmpty: [ ^ self ].
+	self submitFilter
 ]
 
 { #category : 'accessing - presenters' }

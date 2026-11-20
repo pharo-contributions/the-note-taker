@@ -13,6 +13,15 @@ Class {
 	#package : 'TheNoteTaker-UI3-Tests'
 }
 
+{ #category : 'helpers' }
+NT3TagsPresenterTest >> clickApply [
+	"Open the receiver's presenter in its dialog and click Apply, which closes it"
+
+	| dialog |
+	dialog := presenter openDialog.
+	[ (dialog buttons detect: [ :each | each label = 'Apply' ]) click ] ensure: [ dialog isOpen ifTrue: [ dialog close ] ]
+]
+
 { #category : 'running' }
 NT3TagsPresenterTest >> setUp [
 
@@ -24,6 +33,31 @@ NT3TagsPresenterTest >> setUp [
 				          middle }
 		          tagNames: #( 'books' 'pharo' 'spec' ).
 	presenter := NT3TagsPresenter newApplication: application model: choice
+]
+
+{ #category : 'tests' }
+NT3TagsPresenterTest >> testApplyAddsEachTypedNewWordWithoutEnter [
+
+	presenter filterText: 'poesie lyrics'.
+	self clickApply.
+	self assert: (choice stateOf: 'poesie') equals: #all.
+	self assert: (choice stateOf: 'lyrics') equals: #all
+]
+
+{ #category : 'tests' }
+NT3TagsPresenterTest >> testApplyAddsTheTypedNewTagWithoutEnter [
+
+	presenter filterText: 'poesie'.
+	self clickApply.
+	self assert: (choice stateOf: 'poesie') equals: #all
+]
+
+{ #category : 'tests' }
+NT3TagsPresenterTest >> testApplyIgnoresAFilterShowingTags [
+
+	presenter filterText: 'pha'.
+	self clickApply.
+	self deny: (choice tagNames includes: 'pha')
 ]
 
 { #category : 'tests' }

@@ -123,6 +123,18 @@ NT3NoteListPresenterTest >> testClickingTheSettingsButtonOpensTheSettingsEditor 
 	self assert: editor model identicalTo: application settings
 ]
 
+{ #category : 'tests - tag manager' }
+NT3NoteListPresenterTest >> testClickingTheTagManagerButtonOpensTheTagManager [
+
+	| manager |
+	manager := nil.
+	SpWindowSimulateOpenModal
+		value: [ :aDialogPresenter | manager := aDialogPresenter presenter ]
+		during: [ presenter tagManagerButton click ].
+	self assert: manager class equals: NT3TagManagerPresenter.
+	self assert: manager application identicalTo: application
+]
+
 { #category : 'tests - tags' }
 NT3NoteListPresenterTest >> testClickingTheTagsButtonDoesNotChangeTheMode [
 
@@ -374,6 +386,21 @@ NT3NoteListPresenterTest >> testSubmittingTagSearchCompletesTheLastWord [
 	presenter tagSearchText: 'unknown'.
 	presenter submitTagSearch.
 	self assert: presenter entries isEmpty
+]
+
+{ #category : 'tests - tag manager' }
+NT3NoteListPresenterTest >> testTagManagerButtonIsJustBeforeTheSettingsButton [
+
+	| buttons |
+	buttons := presenter layout children last children.
+	self assert: (buttons at: buttons size - 2) identicalTo: presenter tagManagerButton
+]
+
+{ #category : 'tests - tag manager' }
+NT3NoteListPresenterTest >> testTagManagerButtonShowsTheEditIcon [
+
+	self assert: presenter tagManagerButton icon identicalTo: (presenter iconNamed: #edit).
+	self assert: presenter tagManagerButton help equals: 'Rename or remove tags'
 ]
 
 { #category : 'tests - search' }

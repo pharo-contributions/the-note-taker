@@ -60,7 +60,8 @@ Class {
 		'selectedIndexes',
 		'currentNote',
 		'tagsButton',
-		'settingsButton'
+		'settingsButton',
+		'tagManagerButton'
 	],
 	#category : 'TheNoteTaker-UI3',
 	#package : 'TheNoteTaker-UI3'
@@ -135,6 +136,7 @@ NT3NoteListPresenter >> connectPresenters [
 		whenRowPresenterInstantiatedDo: [ :row | self configureRow: row ];
 		whenSelectionChangedDo: [ self noteListSelectionChanged ].
 	tagsButton whenChangedDo: [ :state | self showsTags: state ].
+	tagManagerButton action: [ self openTagManager ].
 	settingsButton action: [ self openSettings ].
 	self
 		connectModes;
@@ -161,10 +163,13 @@ NT3NoteListPresenter >> defaultLayout [
 		           spacing: 2;
 		           yourself.
 	modeButtons do: [ :each | buttons add: each expand: false ].
-	buttons addLast: settingsButton withConstraints: [ :constraints |
-			constraints
-				expand: false;
-				width: 24 ].
+	{
+		tagManagerButton.
+		settingsButton } do: [ :each |
+			buttons addLast: each withConstraints: [ :constraints |
+					constraints
+						expand: false;
+						width: 24 ] ].
 	buttons addLast: tagsButton expand: false.
 	^ SpBoxLayout newTopToBottom
 		  spacing: 4;
@@ -205,6 +210,10 @@ NT3NoteListPresenter >> initializePresenters [
 				               help: each help;
 				               yourself ].
 	modeButtons first associatedToggleButtons: modeButtons allButFirst.
+	tagManagerButton := self newButton
+		                    icon: (self iconNamed: #edit);
+		                    help: 'Rename or remove tags';
+		                    yourself.
 	settingsButton := self newButton
 		                  icon: (self iconNamed: #smallConfiguration);
 		                  help: 'Settings';
@@ -324,6 +333,14 @@ NT3NoteListPresenter >> openSettings [
 	(self application instantiate: NTSettingsPresenter on: self application settings)
 		whenAcceptedDo: [ self settingsAccepted ];
 		openModal
+]
+
+{ #category : 'actions' }
+NT3NoteListPresenter >> openTagManager [
+	"Rename or remove tags of all the notes in a dialog; the changed notes are saved and the list shows them as they are now"
+
+	(self application instantiate: NT3TagManagerPresenter) openModal.
+	self refresh
 ]
 
 { #category : 'updating' }
@@ -464,6 +481,12 @@ NT3NoteListPresenter >> tagCompletion [
 		  filterBlock: [ :tagName :text | true ];
 		  chooseBlock: [ :tagName | self tagSearchText: ((self tagQueryOn: textBeforeCompletion) textCompletedWith: tagName) ];
 		  yourself
+]
+
+{ #category : 'accessing' }
+NT3NoteListPresenter >> tagManagerButton [
+
+	^ tagManagerButton
 ]
 
 { #category : 'tag search' }
