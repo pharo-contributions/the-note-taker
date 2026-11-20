@@ -4,7 +4,7 @@ I am the choice of tags made for several notes at once in the tags dialog: for e
 ## Responsibility:
 
 - I know the notes and, for each offered tag, its state: `#all` (on every note), `#none` (on no note) or `#some` (on some notes only, left untouched).
-- I toggle a tag between checked and unchecked, and add a typed tag (checked), reusing an existing tag that has the same name ignoring case.
+- I toggle a tag between checked and unchecked, and add typed tags (checked), one per word, reusing an existing tag that has the same name ignoring case.
 - I answer the tags to add to every note and the tags to remove from every note: only the tags whose state changed.
 
 ## Collaborators:
@@ -15,7 +15,7 @@ I am the choice of tags made for several notes at once in the tags dialog: for e
 ## Public API and Key Messages
 
 - `NT3TagChoice notes: notes tagNames: tagNames` (the tags of the notes are offered too).
-- `tagNames`, `stateOf:`, `toggle:`, `addTagNamed:`.
+- `tagNames`, `stateOf:`, `toggle:`, `addTagNamed:`, `addTagsNamedIn:` (one tag per word separated by spaces).
 - `addedTagNames`, `removedTagNames`, `notes`.
 
 ```
@@ -74,6 +74,13 @@ NT3TagChoice >> addTagNamed: aString [
 	name ifEmpty: [ ^ self ].
 	name := states keys detect: [ :each | each asLowercase = name asLowercase ] ifNone: [ name ].
 	states at: name put: #all
+]
+
+{ #category : 'choosing' }
+NT3TagChoice >> addTagsNamedIn: aString [
+	"Check a tag for each word of aString, words being separated by spaces, tabs or new lines (see addTagNamed:)"
+
+	aString substrings do: [ :each | self addTagNamed: each ]
 ]
 
 { #category : 'result' }

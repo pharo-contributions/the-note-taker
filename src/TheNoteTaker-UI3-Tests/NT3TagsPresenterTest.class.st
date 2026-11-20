@@ -79,6 +79,17 @@ NT3TagsPresenterTest >> testSubmittingAnEmptyFilterDoesNothing [
 ]
 
 { #category : 'tests' }
+NT3TagsPresenterTest >> testSubmittingSeveralWordsAddsATagPerWord [
+
+	presenter filterText: 'todo urgent'.
+	presenter submitFilter.
+	self assert: (choice stateOf: 'todo') equals: #all.
+	self assert: (choice stateOf: 'urgent') equals: #all.
+	self assert: presenter filterText isEmpty.
+	self assert: presenter tagList items asArray equals: #( 'books' 'pharo' 'spec' 'todo' 'urgent' )
+]
+
+{ #category : 'tests' }
 NT3TagsPresenterTest >> testSubmittingTheFilterAddsTheTypedTag [
 
 	presenter filterText: 'todo'.

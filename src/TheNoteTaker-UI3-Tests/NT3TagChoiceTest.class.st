@@ -63,6 +63,47 @@ NT3TagChoiceTest >> testAddTagNamedRemovesQuotesAndBackslashes [
 ]
 
 { #category : 'tests' }
+NT3TagChoiceTest >> testAddTagsNamedInChecksATagPerWord [
+
+	| choice |
+	choice := self choiceFor: { old }.
+	choice addTagsNamedIn: ' todo  urgent '.
+	self assert: choice addedTagNames asArray equals: #( 'todo' 'urgent' ).
+	self deny: (choice tagNames includes: 'todo  urgent')
+]
+
+{ #category : 'tests' }
+NT3TagChoiceTest >> testAddTagsNamedInChecksExistingTagsIgnoringCase [
+
+	| choice |
+	choice := self choiceFor: { old }.
+	choice addTagsNamedIn: 'Books todo'.
+	self assert: (choice tagNames select: [ :each | each asLowercase = 'books' ]) asArray equals: #( 'books' ).
+	self assert: (choice stateOf: 'books') equals: #all.
+	self assert: (choice stateOf: 'todo') equals: #all
+]
+
+{ #category : 'tests' }
+NT3TagChoiceTest >> testAddTagsNamedInCleansEachName [
+
+	| choice |
+	choice := self choiceFor: { old }.
+	choice addTagsNamedIn: 'to,do "urgent" ,'.
+	self assert: choice addedTagNames asArray equals: #( 'todo' 'urgent' )
+]
+
+{ #category : 'tests' }
+NT3TagChoiceTest >> testAddTagsNamedInSplitsOnTabsAndNewLines [
+
+	| choice |
+	choice := self choiceFor: { old }.
+	choice addTagsNamedIn: ('todo{1}urgent{2}later' format: {
+				 String tab.
+				 String cr }).
+	self assert: choice addedTagNames asArray equals: #( 'later' 'todo' 'urgent' )
+]
+
+{ #category : 'tests' }
 NT3TagChoiceTest >> testCheckedTagsAreAdded [
 
 	| choice |

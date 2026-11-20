@@ -4,7 +4,7 @@ I am the dialog to add and remove tags of one or several notes: a filter field a
 ## Responsibility:
 
 - I show each tag with an icon: checked when it will be on all the notes, partly checked when it is on some of them, unchecked otherwise.
-- A click on a tag checks or unchecks it; the filter shows the tags containing the typed text; Enter checks the typed tag, creating it when needed.
+- A click on a tag checks or unchecks it; the filter shows the tags containing the typed text; Enter checks a tag for each typed word (words are separated by spaces), creating the tags that do not exist.
 - My Apply button closes me and runs the `okAction`, Cancel closes me without changing anything.
 
 ## Collaborators:
@@ -128,7 +128,7 @@ NT3TagsPresenter >> initializeDialogWindow: aDialogWindowPresenter [
 NT3TagsPresenter >> initializePresenters [
 
 	filterInput := self newTextInput
-		               placeholder: 'Filter, or Enter to add a tag';
+		               placeholder: 'Filter, or Enter to add tags, e.g. todo urgent';
 		               yourself.
 	tagList := self newEasyListView
 		           activateOnSingleClick;
@@ -158,10 +158,10 @@ NT3TagsPresenter >> modelChanged [
 
 { #category : 'actions' }
 NT3TagsPresenter >> submitFilter [
-	"Check the typed tag, creating it when no tag has that name, and show all the tags again"
+	"Check a tag for each word typed, creating those that do not exist, and show all the tags again"
 
 	self filterText trimBoth ifEmpty: [ ^ self ].
-	self model addTagNamed: self filterText.
+	self model addTagsNamedIn: self filterText.
 	self filterText: ''
 ]
 
