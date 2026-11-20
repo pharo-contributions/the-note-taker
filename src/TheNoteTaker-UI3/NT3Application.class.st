@@ -5,6 +5,7 @@ I am the application of the new TheNoteTaker UI (UI3): I open the note taker win
 
 - I hold the `NTContainer` of the notes and load it from the notes folder (`~/Documents/Notes` by default).
 - I know which notes have unsaved edits, save them some seconds after the last edit (`NTSettings>>#autosaveSeconds`, 10 by default), on demand, or all at once, and tell my listeners when a note is saved.
+- I follow the notes folder of my settings: when it changes (e.g. in the `NTSettingsPresenter` dialog), I save the unsaved notes, load the notes of the new folder and tell my listeners. I stop following the settings once my last window is closed, since `NTSettings default` outlives me.
 - I keep the mode of the note list, whether it shows tags and the autosave delay in my `NTSettings`, and declare the styles of the UI3 presenters (`ntSeparator`, `ntDetail`, `ntTag` coloured with the theme `urlColor`).
 
 ## Collaborators:
@@ -20,18 +21,19 @@ I am the application of the new TheNoteTaker UI (UI3): I open the note taker win
 - `newNoteTitled:tagNames:` creates, adds and saves a note.
 - `tagNames`, `tagNotes:adding:removing:` adds and removes tags of several notes and saves them.
 - `noteEdited:`, `isUnsaved:`, `saveNote:`, `saveAll`, `whenNoteSavedDo:`.
+- `whenNotesFolderChangedDo:` runs a block once the notes of a new notes folder are loaded.
 - `settings` / `settings:`; `listMode` / `listMode:`, `showsTags` / `showsTags:`, `autosaveDelay` read and write them.
 - `start` loads the notes and opens the note taker.
 - `NT3Application open` opens it on the notes folder of `NTSettings default`, the user's settings saved in the preferences file; `NT3Application onSettings: someSettings` answers an application on other settings, not started.
 
 ```
-NT3Application example start
+NT3Application scriptStart
 ```
 
 ## Internal Representation
 
 - `container`: an `NTContainer`; `notesFolder`: a `FileReference` or `FileLocator`.
-- `unsavedNotes`: an `IdentitySet` of notes; `noteSavedBlocks`: the listeners.
+- `unsavedNotes`: an `IdentitySet` of notes; `noteSavedBlocks` and `notesFolderChangedBlocks`: the listeners.
 - `autosaveTimer`: an `NT3Timer` (a manual timer in tests); `settings`: an `NTSettings`.
 
 ### Implementation Points
@@ -47,7 +49,8 @@ Class {
 		'unsavedNotes',
 		'autosaveTimer',
 		'noteSavedBlocks',
-		'settings'
+		'settings',
+		'notesFolderChangedBlocks'
 	],
 	#category : 'TheNoteTaker-UI3',
 	#package : 'TheNoteTaker-UI3'
@@ -193,15 +196,30 @@ NT3Application >> container: aNTContainer [
 	container := aNTContainer
 ]
 
+{ #category : 'notes' }
+NT3Application >> followNotesFolder: aFolder [
+	"Show the notes of aFolder, the new notes folder of the settings. The unsaved notes are first saved in their own folder"
+
+	| folder |
+	folder := aFolder asFileReference.
+	folder = self notesFolder ifTrue: [ ^ self ].
+	self saveAll.
+	notesFolder := folder.
+	container := NTContainer new.
+	self loadNotes.
+	notesFolderChangedBlocks do: [ :each | each value ]
+]
+
 { #category : 'initialization' }
 NT3Application >> initialize [
 
 	super initialize.
 	container := NTContainer new.
-	settings := NTSettings new.
 	unsavedNotes := IdentitySet new.
 	noteSavedBlocks := OrderedCollection new.
+	notesFolderChangedBlocks := OrderedCollection new.
 	autosaveTimer := NT3Timer application: self.
+	self settings: NTSettings new.
 	self addStyleSheetFromString: '.application [
 		.label [
 			.ntSeparator [ Font { #bold: true } ],
@@ -297,8 +315,11 @@ NT3Application >> settings [
 
 { #category : 'accessing' }
 NT3Application >> settings: aNTSettings [
+	"Use aNTSettings, and follow the changes of their notes folder instead of those of the previous settings"
 
-	settings := aNTSettings
+	settings ifNotNil: [ settings unsubscribe: self ].
+	settings := aNTSettings.
+	settings whenCurrentFolderChangeDo: [ :folder | self followNotesFolder: folder ]
 ]
 
 { #category : 'accessing' }
@@ -347,4 +368,19 @@ NT3Application >> whenNoteSavedDo: aBlock [
 	"aBlock receives each note written to its file"
 
 	noteSavedBlocks add: aBlock
+]
+
+{ #category : 'events' }
+NT3Application >> whenNotesFolderChangedDo: aBlock [
+	"aBlock is evaluated once the notes of a new notes folder are loaded"
+
+	notesFolderChangedBlocks add: aBlock
+]
+
+{ #category : 'windows' }
+NT3Application >> windowClosed: aWindowPresenter [
+	"Once the last window is closed, stop following the settings, which may outlive the receiver"
+
+	super windowClosed: aWindowPresenter.
+	self windows ifEmpty: [ settings unsubscribe: self ]
 ]

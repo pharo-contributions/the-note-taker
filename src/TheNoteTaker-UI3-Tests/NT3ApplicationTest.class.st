@@ -36,6 +36,19 @@ NT3ApplicationTest >> editedNewNote [
 	^ note
 ]
 
+{ #category : 'helpers' }
+NT3ApplicationTest >> otherFolderWithNoteTitled: aString [
+	"Answer a second notes folder holding one saved note whose title is aString"
+
+	| other |
+	other := folder fileSystem root / 'Other'.
+	other ensureCreateDirectory.
+	(NTNote content: aString)
+		folderReference: other;
+		save.
+	^ other
+]
+
 { #category : 'running' }
 NT3ApplicationTest >> setUp [
 
@@ -73,6 +86,53 @@ NT3ApplicationTest >> testAutosaveSavesAllUnsavedNotes [
 	self deny: (application isUnsaved: first).
 	self deny: (application isUnsaved: second).
 	self assert: second fileReferenceContents equals: 'Other changed'
+]
+
+{ #category : 'tests - notes folder' }
+NT3ApplicationTest >> testChangingTheFolderOfTheSettingsAnnouncesIt [
+
+	| announced |
+	announced := false.
+	application whenNotesFolderChangedDo: [ announced := true ].
+	application settings currentFolder: (self otherFolderWithNoteTitled: 'Elsewhere').
+	self assert: announced
+]
+
+{ #category : 'tests - notes folder' }
+NT3ApplicationTest >> testChangingTheFolderOfTheSettingsChangesTheNotesFolder [
+
+	| other |
+	other := self otherFolderWithNoteTitled: 'Elsewhere'.
+	application settings currentFolder: other.
+	self assert: application notesFolder equals: other
+]
+
+{ #category : 'tests - notes folder' }
+NT3ApplicationTest >> testChangingTheFolderOfTheSettingsSavesTheUnsavedNotes [
+
+	| note |
+	note := self editedNewNote.
+	application settings currentFolder: (self otherFolderWithNoteTitled: 'Elsewhere').
+	self deny: (application isUnsaved: note).
+	self assert: note fileReferenceContents equals: note contents
+]
+
+{ #category : 'tests - notes folder' }
+NT3ApplicationTest >> testChangingTheFolderOfTheSettingsShowsOnlyItsNotes [
+
+	self editedNewNote.
+	application settings currentFolder: (self otherFolderWithNoteTitled: 'Elsewhere').
+	self assert: (application container notes collect: [ :each | each title ] as: Array) equals: #( 'Elsewhere' )
+]
+
+{ #category : 'tests - notes folder' }
+NT3ApplicationTest >> testClosedApplicationNoLongerFollowsTheSettings [
+
+	| window |
+	window := (application instantiate: NT3NoteTakerPresenter) open.
+	window close.
+	application settings currentFolder: (self otherFolderWithNoteTitled: 'Elsewhere').
+	self assert: application notesFolder equals: folder
 ]
 
 { #category : 'tests' }
@@ -162,6 +222,26 @@ NT3ApplicationTest >> testOnSettingsUsesTheSettings [
 	self assert: (NT3Application onSettings: settings) settings identicalTo: settings
 ]
 
+{ #category : 'tests - notes folder' }
+NT3ApplicationTest >> testReplacedSettingsAreNoLongerFollowed [
+
+	| previous |
+	previous := application settings.
+	application settings: NTSettings new.
+	previous currentFolder: (self otherFolderWithNoteTitled: 'Elsewhere').
+	self assert: application notesFolder equals: folder
+]
+
+{ #category : 'tests - notes folder' }
+NT3ApplicationTest >> testReplacingSettingsFollowsTheNewOnes [
+
+	| other |
+	application settings: NTSettings new.
+	other := self otherFolderWithNoteTitled: 'Elsewhere'.
+	application settings currentFolder: other.
+	self assert: application notesFolder equals: other
+]
+
 { #category : 'tests' }
 NT3ApplicationTest >> testSaveAllStopsTheTimer [
 
@@ -216,6 +296,18 @@ NT3ApplicationTest >> testSettingTheListModeChangesTheSettings [
 
 	application listMode: NT3CompactListMode new.
 	self assert: application settings listMode equals: #compact
+]
+
+{ #category : 'tests - notes folder' }
+NT3ApplicationTest >> testSettingTheSameFolderKeepsTheNotes [
+
+	| note announced |
+	note := self editedNewNote.
+	announced := false.
+	application whenNotesFolderChangedDo: [ announced := true ].
+	application settings currentFolder: folder.
+	self assert: (application container notes includes: note).
+	self deny: announced
 ]
 
 { #category : 'tests - settings' }

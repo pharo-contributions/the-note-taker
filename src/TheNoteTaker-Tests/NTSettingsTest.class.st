@@ -277,6 +277,26 @@ NTSettingsTest >> testSaveToWritesAStonMap [
 			 yourself)
 ]
 
+{ #category : 'tests - subscriptions' }
+NTSettingsTest >> testUnsubscribeKeepsTheBlocksOfOtherSubscribers [
+
+	settings persistTo: file.
+	settings unsubscribe: self.
+	settings listMode: #byTag.
+	self assert: ((STON fromString: file contents) at: 'listMode') equals: #byTag
+]
+
+{ #category : 'tests - subscriptions' }
+NTSettingsTest >> testUnsubscribeStopsTheBlocksOfTheSubscriber [
+
+	| changed |
+	changed := false.
+	settings whenCurrentFolderChangeDo: [ changed := true ].
+	settings unsubscribe: self.
+	settings currentFolder: FileSystem memory root / 'Notes'.
+	self deny: changed
+]
+
 { #category : 'helpers' }
 NTSettingsTest >> writeFile: aString [
 	"Write aString in the settings file, as Pharo settings persistence does"

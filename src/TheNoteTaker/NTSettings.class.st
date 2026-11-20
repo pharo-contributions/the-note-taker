@@ -349,6 +349,13 @@ NTSettings >> showsTags: aBoolean [
 	showsTags := aBoolean
 ]
 
+{ #category : 'subscriptions' }
+NTSettings >> unsubscribe: anObject [
+	"Stop evaluating, on a change of a setting, the blocks that anObject subscribed"
+
+	self class settingNames do: [ :each | (self observablePropertyNamed: each) unsubscribe: anObject ]
+]
+
 { #category : 'enumerating' }
 NTSettings >> whenCurrentFolderChangeDo: aBlock [
 

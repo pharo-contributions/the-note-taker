@@ -51,6 +51,19 @@ NT3NoteTakerPresenterTest >> noteWith: lines tagNames: tagNames daysAgo: days [
 ]
 
 { #category : 'helpers' }
+NT3NoteTakerPresenterTest >> otherFolderWithNoteTitled: aString [
+	"Answer a second notes folder holding one saved note whose title is aString"
+
+	| other |
+	other := application notesFolder fileSystem root / 'Other'.
+	other ensureCreateDirectory.
+	(NTNote content: aString)
+		folderReference: other;
+		save.
+	^ other
+]
+
+{ #category : 'helpers' }
 NT3NoteTakerPresenterTest >> selectNote: aNote [
 
 	presenter noteList selectNote: aNote.
@@ -125,6 +138,21 @@ NT3NoteTakerPresenterTest >> testApplyingATagChoiceUpdatesTheEditorInfo [
 	choice addTagNamed: 'todo'.
 	presenter applyTagChoice: choice.
 	self assert: (presenter editor infoText includesSubstring: '#todo')
+]
+
+{ #category : 'tests - notes folder' }
+NT3NoteTakerPresenterTest >> testChangingTheNotesFolderEmptiesTheEditor [
+
+	self selectNote: groceries.
+	application settings currentFolder: (self otherFolderWithNoteTitled: 'Elsewhere').
+	self assert: presenter editor note isNil
+]
+
+{ #category : 'tests - notes folder' }
+NT3NoteTakerPresenterTest >> testChangingTheNotesFolderListsItsNotes [
+
+	application settings currentFolder: (self otherFolderWithNoteTitled: 'Elsewhere').
+	self assert: (self listedNotes collect: [ :each | each title ] as: Array) equals: #( 'Elsewhere' )
 ]
 
 { #category : 'tests' }

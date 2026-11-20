@@ -96,7 +96,9 @@ NT3NoteTakerPresenter >> connectPanes [
 	"deferred, so that the key press that activated the row is not typed into the editor"
 	noteList noteList whenActivatedDo: [ :selection | self defer: [ editor textEditor takeKeyboardFocus ] ].
 	editor whenNoteEditedDo: [ :note | self noteEdited: note ].
-	self application whenNoteSavedDo: [ :note | self noteSaved: note ]
+	self application
+		whenNoteSavedDo: [ :note | self noteSaved: note ];
+		whenNotesFolderChangedDo: [ self updateSearch ]
 ]
 
 { #category : 'initialization' }
