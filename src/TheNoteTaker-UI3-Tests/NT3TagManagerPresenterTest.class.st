@@ -98,6 +98,16 @@ NT3TagManagerPresenterTest >> testCancellingTheRenameKeepsTheTag [
 	self assert: presenter tagList items asArray equals: #( 'pharo' 'spec' )
 ]
 
+{ #category : 'tests - completion' }
+NT3TagManagerPresenterTest >> testChoosingASuggestionPutsItInTheRequest [
+
+	| request |
+	presenter tagList selectItem: 'pharo'.
+	request := self requestOpenedBy: [ presenter renameButton click ].
+	request textInputPresenter entryCompletion chooseBlock value: 'spec'.
+	self assert: request text equals: 'spec'
+]
+
 { #category : 'tests' }
 NT3TagManagerPresenterTest >> testListShowsAllTheTagsSortedIgnoringCase [
 
@@ -127,6 +137,15 @@ NT3TagManagerPresenterTest >> testRemoveRequestStartsEmpty [
 	presenter tagList selectItem: 'pharo'.
 	request := self requestOpenedBy: [ presenter removeButton click ].
 	self assert: request text isEmpty
+]
+
+{ #category : 'tests - completion' }
+NT3TagManagerPresenterTest >> testRemoveSuggestsTheOtherTagsContainingTheTypedText [
+
+	| completion |
+	presenter tagList selectItem: 'pharo'.
+	completion := (self requestOpenedBy: [ presenter removeButton click ]) textInputPresenter entryCompletion.
+	self assert: (completion dataSourceBlock value: 'spe') asArray equals: #( 'spec' )
 ]
 
 { #category : 'tests - removing' }
@@ -195,6 +214,27 @@ NT3TagManagerPresenterTest >> testRenameShowsAndSelectsTheNewName [
 	self answer: 'smalltalk' during: [ presenter renameButton click ].
 	self assert: presenter tagList items asArray equals: #( 'smalltalk' 'spec' ).
 	self assert: presenter tagList selectedItem equals: 'smalltalk'
+]
+
+{ #category : 'tests - completion' }
+NT3TagManagerPresenterTest >> testRenameSuggestsAllTheOtherTagsBeforeTyping [
+
+	| completion |
+	presenter tagList selectItem: 'pharo'.
+	completion := (self requestOpenedBy: [ presenter renameButton click ]) textInputPresenter entryCompletion.
+	self assert: (completion dataSourceBlock value: '') asArray equals: #( 'spec' )
+]
+
+{ #category : 'tests - completion' }
+NT3TagManagerPresenterTest >> testRenameSuggestsTheOtherTagsContainingTheTypedText [
+
+	| completion |
+	application newNoteTitled: 'Spain' tagNames: #( 'Spain' ).
+	presenter := NT3TagManagerPresenter newApplication: application.
+	presenter tagList selectItem: 'pharo'.
+	completion := (self requestOpenedBy: [ presenter renameButton click ]) textInputPresenter entryCompletion.
+	self assert: (completion dataSourceBlock value: 'SP') asArray equals: #( 'Spain' 'spec' ).
+	self assert: (completion dataSourceBlock value: 'pha') asArray equals: #(  )
 ]
 
 { #category : 'tests - renaming' }

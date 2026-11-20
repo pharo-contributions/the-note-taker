@@ -12,11 +12,12 @@ I am the dialog to rename and remove tags across all the notes of an `NT3Applica
 - I list the tags of all the notes, alphabetically ignoring case, with their number of notes.
 - Rename… gives the selected tag a new name on all its notes; renaming to an existing tag merges both tags.
 - Remove… takes the selected tag off all its notes and, when a tag name is typed, puts that tag instead. A tag name is one word.
+- While a name is typed, I suggest the other tags containing it, ignoring case; choosing one puts it in the field, to merge with it.
 
 ## Collaborators:
 
 - `NT3Application`: knows the tags and the notes, and renames, removes and saves.
-- `SpRequestDialog` (`newRequest`): asks the new name or the replacing tag.
+- `SpRequestDialog` (`newRequest`): asks the new name or the replacing tag, with an `EntryCompletion` of the other tags (`entryCompletion:`, the only completion API of Spec text inputs).
 - `NT3NoteListPresenter`: opens me.
 
 ## Public API and Key Messages
@@ -143,7 +144,8 @@ NT3TagManagerPresenter >> removeSelectedTag [
 	replacement := (self
 		                requestTitled: 'Remove tag'
 		                message: ('Remove the tag {1}. Tag to put instead (leave empty to only remove it):' format: { tagName })
-		                text: '') ifNil: [ ^ self ].
+		                text: ''
+		                suggestingAllBut: tagName) ifNil: [ ^ self ].
 	replacement
 		ifEmpty: [ self application removeTagNamed: tagName ]
 		ifNotEmpty: [ self application renameTagNamed: tagName to: replacement ].
@@ -165,20 +167,24 @@ NT3TagManagerPresenter >> renameSelectedTag [
 	newName := (self
 		            requestTitled: 'Rename tag'
 		            message: ('New name of the tag {1} (an existing tag merges both):' format: { tagName })
-		            text: tagName) ifNil: [ ^ self ].
+		            text: tagName
+		            suggestingAllBut: tagName) ifNil: [ ^ self ].
 	self application renameTagNamed: tagName to: newName.
 	self showTagsSelecting: (NTTag cleanName: newName)
 ]
 
 { #category : 'private' }
-NT3TagManagerPresenter >> requestTitled: aTitle message: aMessage text: aString [
-	"Ask for a tag name in a dialog. Answer it trimmed, empty when nothing was typed, or nil when cancelled.
+NT3TagManagerPresenter >> requestTitled: aTitle message: aMessage text: aString suggestingAllBut: aTagName [
+	"Ask for a tag name in a dialog suggesting the other tags matching what is typed. Answer it trimmed, empty when nothing was typed, or nil when cancelled.
 	A tag name is one word: tags are separated by spaces when typed"
 
-	^ self application newRequest
+	| request |
+	request := self application newRequest.
+	^ request
 		  title: aTitle;
 		  message: aMessage;
 		  text: aString;
+		  entryCompletion: (self tagCompletionFor: request suggestingAllBut: aTagName);
 		  validateAnswer: [ :answer | answer substrings size <= 1 ];
 		  errorText: 'A tag name is one word';
 		  openModal
@@ -192,10 +198,30 @@ NT3TagManagerPresenter >> showTagsSelecting: aTagName [
 	(tagList items includes: aTagName) ifTrue: [ tagList selectItem: aTagName ]
 ]
 
+{ #category : 'private' }
+NT3TagManagerPresenter >> tagCompletionFor: aRequest suggestingAllBut: aTagName [
+	"Suggest the tags containing the typed text, ignoring case, other than aTagName; a chosen tag replaces the text of aRequest"
+
+	^ EntryCompletion new
+		  dataSourceBlock: [ :text | self tagNamesMatching: text suggestingAllBut: aTagName ];
+		  filterBlock: [ :tagName :text | true ];
+		  chooseBlock: [ :tagName | aRequest text: tagName ];
+		  yourself
+]
+
 { #category : 'accessing' }
 NT3TagManagerPresenter >> tagList [
 
 	^ tagList
+]
+
+{ #category : 'private' }
+NT3TagManagerPresenter >> tagNamesMatching: aString suggestingAllBut: aTagName [
+	"Answer the listed tags containing aString ignoring case, other than aTagName"
+
+	| typed |
+	typed := aString trimBoth asLowercase.
+	^ tagList items select: [ :each | each ~= aTagName and: [ each asLowercase includesSubstring: typed ] ]
 ]
 
 { #category : 'updating' }
